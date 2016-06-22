@@ -1,0 +1,138 @@
+\hypertarget{classmycontroller_1_1MyController}{\section{mycontroller\-:\-:My\-Controller Class Reference}
+\label{classmycontroller_1_1MyController}\index{mycontroller\-::\-My\-Controller@{mycontroller\-::\-My\-Controller}}
+}
+
+
+This is my awesome controller.  
+
+
+
+
+{\ttfamily \#include $<$My\-Controller.\-h$>$}
+
+Inheritance diagram for mycontroller\-:\-:My\-Controller\-:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{classmycontroller_1_1MyController}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classmycontroller_1_1MyController_a6f31f5a2318ff9e84accc3e3ce29e897}{\hyperlink{classmycontroller_1_1MyController_a6f31f5a2318ff9e84accc3e3ce29e897}{My\-Controller} ()}\label{classmycontroller_1_1MyController_a6f31f5a2318ff9e84accc3e3ce29e897}
+
+\begin{DoxyCompactList}\small\item\em Constructor Constructs my awesome controller. \end{DoxyCompactList}\item 
+\hypertarget{classmycontroller_1_1MyController_a30c609fe8c6f674a1d855bddd107f7f2}{\hyperlink{classmycontroller_1_1MyController_a30c609fe8c6f674a1d855bddd107f7f2}{$\sim$\-My\-Controller} () noexcept}\label{classmycontroller_1_1MyController_a30c609fe8c6f674a1d855bddd107f7f2}
+
+\begin{DoxyCompactList}\small\item\em Destructor Destructs my awesome controller \-:(. \end{DoxyCompactList}\item 
+bool \hyperlink{classmycontroller_1_1MyController_af9496597a461ffe70990e4a32a3d1cfd}{init} (hardware\-\_\-interface\-::\-Velocity\-Joint\-Interface $\ast$hw, ros\-::\-Node\-Handle \&controller\-\_\-nh)
+\begin{DoxyCompactList}\small\item\em Called every time the controller is initialized by the ros\-::controller\-\_\-manager. \end{DoxyCompactList}\item 
+bool \hyperlink{classmycontroller_1_1MyController_af16d743afe45456d6ad064d4a9e2860d}{starting} (const ros\-::\-Time \&time)
+\begin{DoxyCompactList}\small\item\em Called every time the controller is started by the ros\-::controller\-\_\-manager. \end{DoxyCompactList}\item 
+bool \hyperlink{classmycontroller_1_1MyController_a2839dfc2e9370ac8524b0f4e3bdd73c4}{update} (const ros\-::\-Time \&time, const ros\-::\-Duration \&period)
+\begin{DoxyCompactList}\small\item\em Called every time the controller is updated by the ros\-::controller\-\_\-manager. \end{DoxyCompactList}\item 
+bool \hyperlink{classmycontroller_1_1MyController_a2b7913b7eab96521a2ff14cda9afad3b}{stopping} (const ros\-::\-Time \&time)
+\begin{DoxyCompactList}\small\item\em Called every time the controller is stopped by the ros\-::controller\-\_\-manager. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+This is my awesome controller. 
+
+It's awesome! 
+
+\subsection{Member Function Documentation}
+\hypertarget{classmycontroller_1_1MyController_af9496597a461ffe70990e4a32a3d1cfd}{\index{mycontroller\-::\-My\-Controller@{mycontroller\-::\-My\-Controller}!init@{init}}
+\index{init@{init}!mycontroller::MyController@{mycontroller\-::\-My\-Controller}}
+\subsubsection[{init}]{\setlength{\rightskip}{0pt plus 5cm}bool mycontroller\-::\-My\-Controller\-::init (
+\begin{DoxyParamCaption}
+\item[{hardware\-\_\-interface\-::\-Velocity\-Joint\-Interface $\ast$}]{hw, }
+\item[{ros\-::\-Node\-Handle \&}]{controller\-\_\-nh}
+\end{DoxyParamCaption}
+)}}\label{classmycontroller_1_1MyController_af9496597a461ffe70990e4a32a3d1cfd}
+
+
+Called every time the controller is initialized by the ros\-::controller\-\_\-manager. 
+
+Does some cool stuff!
+
+
+\begin{DoxyParams}{Parameters}
+{\em hw} & \-: a pointer to the hardware interface used by this controller \\
+\hline
+{\em controller\-\_\-nh} & \-: the node handle of this controller \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true if the initialization was successful 
+\end{DoxyReturn}
+\hypertarget{classmycontroller_1_1MyController_af16d743afe45456d6ad064d4a9e2860d}{\index{mycontroller\-::\-My\-Controller@{mycontroller\-::\-My\-Controller}!starting@{starting}}
+\index{starting@{starting}!mycontroller::MyController@{mycontroller\-::\-My\-Controller}}
+\subsubsection[{starting}]{\setlength{\rightskip}{0pt plus 5cm}bool mycontroller\-::\-My\-Controller\-::starting (
+\begin{DoxyParamCaption}
+\item[{const ros\-::\-Time \&}]{time}
+\end{DoxyParamCaption}
+)}}\label{classmycontroller_1_1MyController_af16d743afe45456d6ad064d4a9e2860d}
+
+
+Called every time the controller is started by the ros\-::controller\-\_\-manager. 
+
+Does some cool stuff!
+
+
+\begin{DoxyParams}{Parameters}
+{\em time} & \-: the current wall-\/time in R\-O\-S \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true if the starting was successful 
+\end{DoxyReturn}
+\hypertarget{classmycontroller_1_1MyController_a2b7913b7eab96521a2ff14cda9afad3b}{\index{mycontroller\-::\-My\-Controller@{mycontroller\-::\-My\-Controller}!stopping@{stopping}}
+\index{stopping@{stopping}!mycontroller::MyController@{mycontroller\-::\-My\-Controller}}
+\subsubsection[{stopping}]{\setlength{\rightskip}{0pt plus 5cm}bool mycontroller\-::\-My\-Controller\-::stopping (
+\begin{DoxyParamCaption}
+\item[{const ros\-::\-Time \&}]{time}
+\end{DoxyParamCaption}
+)}}\label{classmycontroller_1_1MyController_a2b7913b7eab96521a2ff14cda9afad3b}
+
+
+Called every time the controller is stopped by the ros\-::controller\-\_\-manager. 
+
+Does some cool stuff!
+
+
+\begin{DoxyParams}{Parameters}
+{\em time} & \-: the current wall-\/time in R\-O\-S \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true if the stopping was successful 
+\end{DoxyReturn}
+\hypertarget{classmycontroller_1_1MyController_a2839dfc2e9370ac8524b0f4e3bdd73c4}{\index{mycontroller\-::\-My\-Controller@{mycontroller\-::\-My\-Controller}!update@{update}}
+\index{update@{update}!mycontroller::MyController@{mycontroller\-::\-My\-Controller}}
+\subsubsection[{update}]{\setlength{\rightskip}{0pt plus 5cm}bool mycontroller\-::\-My\-Controller\-::update (
+\begin{DoxyParamCaption}
+\item[{const ros\-::\-Time \&}]{time, }
+\item[{const ros\-::\-Duration \&}]{period}
+\end{DoxyParamCaption}
+)}}\label{classmycontroller_1_1MyController_a2839dfc2e9370ac8524b0f4e3bdd73c4}
+
+
+Called every time the controller is updated by the ros\-::controller\-\_\-manager. 
+
+Does some cool stuff!
+
+
+\begin{DoxyParams}{Parameters}
+{\em time} & \-: the current wall-\/time in R\-O\-S \\
+\hline
+{\em period} & \-: the time between the last update call and this, i.\-e. the sample time. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true if the update was successful 
+\end{DoxyReturn}
+
+
+The documentation for this class was generated from the following file\-:\begin{DoxyCompactItemize}
+\item 
+mycontroller/include/\hyperlink{MyController_8h}{My\-Controller.\-h}\end{DoxyCompactItemize}

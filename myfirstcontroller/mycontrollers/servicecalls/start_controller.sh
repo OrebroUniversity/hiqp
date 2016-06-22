@@ -1,0 +1,2 @@
+rosservice call /myrobot/controller_manager/load_controller "name: 'mycontroller'"
+rosservice call /myrobot/controller_manager/switch_controller "{start_controllers: ['mycontroller'], stop_controllers: [], strictness: 2}"
