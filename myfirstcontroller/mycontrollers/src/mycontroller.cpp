@@ -1,4 +1,5 @@
 #include <mycontroller.h>
+#include <pluginlib/class_list_macros.h> // to allow the controller to be loaded as a plugin
 
 #include <iostream>
 
@@ -98,3 +99,7 @@ void MyController::stopping
 
 
 } // namespace mycontroller
+
+
+// make the controller available to the library loader
+PLUGINLIB_EXPORT_CLASS(mycontroller::MyController, controller_interface::ControllerBase)
