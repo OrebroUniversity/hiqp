@@ -1,6 +1,4 @@
 var searchData=
 [
-  ['mycontroller',['MyController',['../classmycontroller_1_1MyController.html',1,'mycontroller']]],
-  ['mycontroller',['mycontroller',['../namespacemycontroller.html',1,'mycontroller'],['../classmycontroller_1_1MyController.html#a6f31f5a2318ff9e84accc3e3ce29e897',1,'mycontroller::MyController::MyController()']]],
-  ['mycontroller_2eh',['MyController.h',['../MyController_8h.html',1,'']]]
+  ['init',['init',['../classhiqp_1_1HiQP__Kinematic__Controller.html#af42f14229f8f2d34e04eda97349f2fa2',1,'hiqp::HiQP_Kinematic_Controller']]]
 ];

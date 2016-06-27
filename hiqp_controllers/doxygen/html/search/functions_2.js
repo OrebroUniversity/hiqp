@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['starting',['starting',['../classmycontroller_1_1MyController.html#af16d743afe45456d6ad064d4a9e2860d',1,'mycontroller::MyController']]],
-  ['stopping',['stopping',['../classmycontroller_1_1MyController.html#a2b7913b7eab96521a2ff14cda9afad3b',1,'mycontroller::MyController']]]
+  ['starting',['starting',['../classhiqp_1_1HiQP__Kinematic__Controller.html#ad41772f143ec0725004baac5090eb7f1',1,'hiqp::HiQP_Kinematic_Controller']]],
+  ['stopping',['stopping',['../classhiqp_1_1HiQP__Kinematic__Controller.html#a7b85b552fe4923cc2fe6363efaf0a414',1,'hiqp::HiQP_Kinematic_Controller']]]
 ];

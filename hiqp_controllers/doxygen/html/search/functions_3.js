@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['update',['update',['../classmycontroller_1_1MyController.html#a2839dfc2e9370ac8524b0f4e3bdd73c4',1,'mycontroller::MyController']]]
+  ['update',['update',['../classhiqp_1_1HiQP__Kinematic__Controller.html#ac8ae858ee94719281bd1abb9ca02aea4',1,'hiqp::HiQP_Kinematic_Controller']]]
 ];

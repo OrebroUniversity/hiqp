@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['mycontroller',['MyController',['../classmycontroller_1_1MyController.html',1,'mycontroller']]]
+  ['hiqp_5fkinematic_5fcontroller',['HiQP_Kinematic_Controller',['../classhiqp_1_1HiQP__Kinematic__Controller.html',1,'hiqp']]]
 ];

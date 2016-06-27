@@ -103,11 +103,11 @@
     <transmission name="simple_trans">
       <type>transmission_interface/SimpleTransmission</type>
       <joint name="joint1">
-        <hardwareInterface>EffortJointInterface</hardwareInterface>
+        <hardwareInterface>VelocityJointInterface</hardwareInterface>
       </joint>
       <actuator name="joint1">
         <mechanicalReduction>5</mechanicalReduction>
-        <hardwareInterface>EffortJointInterface</hardwareInterface>
+        <hardwareInterface>VelocityJointInterface</hardwareInterface>
       </actuator>
     </transmission>
 

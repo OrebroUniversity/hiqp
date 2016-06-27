@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['mycontroller',['mycontroller',['../namespacemycontroller.html',1,'']]]
+  ['hiqp',['hiqp',['../namespacehiqp.html',1,'']]]
 ];

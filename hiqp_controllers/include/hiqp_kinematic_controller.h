@@ -28,23 +28,36 @@
 #include <controller_interface/controller.h>
 #include <hardware_interface/joint_command_interface.h>
 
+// Orocos KDL
+#include <kdl/tree.hpp>
+#include <kdl_parser/kdl_parser.hpp>
+
+
+
+
+
+
+
+
+
+
+
 
 /*!
- * \namespace HiQP_Kinematic_Controller
+ * \namespace hiqp
  * 
- * namespace for HiQP_Kinematic_Controller-related stuff
+ * namespace for HiQP-related stuff
  */
 namespace hiqp
 {
 
+/** A name for the standard joint-velocity-controller in ROS */
 typedef 
-controller_interface::
-Controller<hardware_interface::VelocityJointInterface> 
+controller_interface::Controller<hardware_interface::VelocityJointInterface>
 JointVelocityController;
 
-typedef
-hardware_interface::VelocityJointInterface
-JointVelocityInterface;
+/** A name for the standard joint-velocity hardware interface in ROS */
+typedef hardware_interface::VelocityJointInterface JointVelocityInterface;
 
 /*!
  * \class HiQP_Kinematic_Controller
@@ -134,8 +147,17 @@ private:
 	HiQP_Kinematic_Controller& operator=(const HiQP_Kinematic_Controller& other) = delete;
 	HiQP_Kinematic_Controller& operator=(HiQP_Kinematic_Controller&& other) noexcept = delete;
 
-     ros::NodeHandle controller_nh_;
-     std::vector< std::string > joint_names_;
+
+
+
+     ros::NodeHandle                                   controller_nh_;
+     bool                                              is_active_;
+
+     std::vector< std::string >                        joint_names_;
+     unsigned int                                      n_joints_;
+     std::vector< hardware_interface::JointHandle >    joint_handles_;
+
+     KDL::Tree                                         kdl_tree_;
 
 };
 

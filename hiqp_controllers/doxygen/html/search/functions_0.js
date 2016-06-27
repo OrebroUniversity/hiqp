@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['init',['init',['../classmycontroller_1_1MyController.html#af9496597a461ffe70990e4a32a3d1cfd',1,'mycontroller::MyController']]]
+  ['hiqp_5fkinematic_5fcontroller',['HiQP_Kinematic_Controller',['../classhiqp_1_1HiQP__Kinematic__Controller.html#aa82bda256000e7dc52fb4107bbdf62af',1,'hiqp::HiQP_Kinematic_Controller']]]
 ];
