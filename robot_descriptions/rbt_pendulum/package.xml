@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <package>
-  <name>myrobot_description</name>
+  <name>rbt_pendulum</name>
   <version>0.0.1</version>
-  <description>The myrobot_description package</description>
+  <description>The rbt_pendulum package</description>
 
   <!-- One maintainer tag required, multiple allowed, one person per tag --> 
   <!-- Example:  -->
@@ -44,6 +44,7 @@
   <build_depend>roscpp</build_depend>
   <build_depend>rospy</build_depend>
   <build_depend>std_msgs</build_depend>
+  <build_depend>cmake_modules</build_depend>
   
   <run_depend>roscpp</run_depend>
   <run_depend>rospy</run_depend>

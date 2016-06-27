@@ -4,7 +4,7 @@
   <!-- LAUNCH PARAMETERS -->
   <!-- these are the arguments you can pass this launch file, for example paused:=true -->
 
-  <arg name="controllers" default="joint_state_controller mycontroller"/>
+  <arg name="controllers" default="joint_state_controller hiqp_kinematic_controller"/>
 
   <arg name="paused" default="false"/>
   <arg name="use_sim_time" default="true"/>
@@ -32,7 +32,7 @@
 
   <!-- Load the URDF into the ROS Parameter Server -->
   <param name="robot_description"
-         command="$(find xacro)/xacro.py '$(find myrobot_description)/urdf/myrobot.xacro'" />
+         command="$(find xacro)/xacro.py '$(find rbt_pendulum)/urdf/rbt_pendulum.xacro'" />
 
   <!-- Run a python script to the send a service call to gazebo_ros to spawn a URDF robot -->
   <node name="urdf_spawner" 
@@ -40,7 +40,7 @@
         type="spawn_model" 
         respawn="false" 
         output="screen"
-        args="-urdf -model myrobot -param robot_description"/>
+        args="-urdf -model rbt_pendulum -param robot_description"/>
 
 
 
@@ -48,7 +48,7 @@
 <!-- Load the controllers -->
 
   <!-- Load the YAML file -->
-  <rosparam file="$(find mycontrollers)/config/myrobot.yaml" command="load"/>
+  <rosparam file="$(find hiqp_controllers)/config/rbt_pendulum.yaml" command="load"/>
 
   <!-- Startup a spawner node that loads the controllers -->
   <node name="controller_spawner" 
@@ -56,7 +56,7 @@
         type="spawner" 
         respawn="false" 
         output="screen"
-        ns="/myrobot"
+        ns="/rbt_pendulum"
         args="$(arg controllers)"/>
 
   <!-- Spawn the robot_state_publisher -->
@@ -65,7 +65,7 @@
         type="robot_state_publisher" 
         respawn="false" 
         output="screen">
-    <remap from="/joint_states" to="/myrobot/joint_states" />
+    <remap from="/joint_states" to="/rbt_pendulum/joint_states" />
   </node>
 
 

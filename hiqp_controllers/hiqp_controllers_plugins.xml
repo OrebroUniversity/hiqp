@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<library path="lib/libhiqp_controllers">
+
+  <class name="hiqp_controllers/HiQP_Kinematic_Controller" 
+         type="hiqp::HiQP_Kinematic_Controller" 
+         base_class_type="controller_interface::ControllerBase">
+    <description>
+      The HiQP_Kinematioc_Controller generates velocity commands for a set of joints. It expects a VelocityJointInterface type of hardware interface.
+    </description>
+  </class>
+
+</library>

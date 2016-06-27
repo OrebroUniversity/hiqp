@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(mycontrollers)
+project(hiqp_controllers)
 
 set(CMAKE_CXX_FLAGS "-O3 -std=c++11")
 
@@ -24,8 +24,8 @@ catkin_package(
 
 include_directories(include ${catkin_INCLUDE_DIRS})
 
-add_library(${PROJECT_NAME} src/mycontroller.cpp
-                            include/mycontroller.h
+add_library(${PROJECT_NAME} src/hiqp_kinematic_controller.cpp
+                            include/hiqp_kinematic_controller.h
 )
 
 target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES})

@@ -1,0 +1,10 @@
+rbt_pendulum:
+  # Publish all joint states -----------------------------------
+  joint_state_controller:
+    type: joint_state_controller/JointStateController
+    publish_rate: 50  
+
+  hiqp_kinematic_controller:
+    type: hiqp_controllers/HiQP_Kinematic_Controller
+    joints:
+      - joint1

@@ -1,9 +1,9 @@
-#ifndef MYCONTROLLER_H
-#define MYCONTROLLER_H
+#ifndef HIQP_KINEMATIC_CONTROLLER_H
+#define HIQP_KINEMATIC_CONTROLLER_H
 
 /*!
- * \file MyController.h
- * \brief MyController is my super-nice controller
+ * \file HiQP_Kinematic_Controller.h
+ * \brief HiQP_Kinematic_Controller is my super-nice controller
  * \author Marcus A Johansson
  * \version 0.1
  * \date 2016-06-21

@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(myrobot_description)
+project(rbt_pendulum)
 
 find_package(catkin REQUIRED COMPONENTS
   roscpp
@@ -14,9 +14,6 @@ include_directories(
 )
 
 install(DIRECTORY launch
-  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
-
-install(DIRECTORY meshes
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
 
 install(DIRECTORY urdf
