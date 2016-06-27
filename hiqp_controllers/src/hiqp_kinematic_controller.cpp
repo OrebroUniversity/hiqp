@@ -9,16 +9,37 @@ namespace hiqp
 	
 
 
+
+
+
+
+
+
+
 HiQP_Kinematic_Controller::HiQP_Kinematic_Controller()
-: n_joints_(0), is_active_(false)
+: n_joints_(0), is_active_(true)
 {
 }
+
+
+
+
+
+
+
 
 
 
 HiQP_Kinematic_Controller::~HiQP_Kinematic_Controller() noexcept
 {
 }
+
+
+
+
+
+
+
 
 
 
@@ -62,6 +83,9 @@ bool HiQP_Kinematic_Controller::init
 		}
 	}
 
+	// Set the controls vector to all zero
+	controls_ = std::vector<double>(n_joints_, 0.0);
+
 	// Load the urdf-formatted robot description to build a KDL tree
 	std::string full_parameter_path;
     std::string robot_urdf;
@@ -77,10 +101,15 @@ bool HiQP_Kinematic_Controller::init
         return false;
     }
 
-    // Initialization was successful
-	ROS_INFO("HiQP_Kinematic_Controller successfully initialized.\n");
 	return true;
 }
+
+
+
+
+
+
+
 
 
 
@@ -88,9 +117,14 @@ void HiQP_Kinematic_Controller::starting
 (
 	const ros::Time& time
 )
-{
+{}
 
-}
+
+
+
+
+
+
 
 
 
@@ -100,8 +134,26 @@ void HiQP_Kinematic_Controller::update
 	const ros::Duration& period
 )
 {
-	joint_handles_.at(0).setCommand(1);
+	if (!is_active_) return;
+
+	controls_.at(0) = 1;
+
+	handles_mutex_.lock();
+	unsigned int i = 0;
+	for (auto&& handle : joint_handles_)
+	{
+		handle.setCommand(controls_.at(i));
+		i++;
+	}
+	handles_mutex_.unlock();
 }
+
+
+
+
+
+
+
 
 
 
@@ -109,9 +161,17 @@ void HiQP_Kinematic_Controller::stopping
 (
 	const ros::Time& time
 )
-{
+{}
 
-}
+
+
+
+
+
+
+
+
+
 
 
 

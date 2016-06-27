@@ -12,9 +12,10 @@
 // STL Includes
 #include <string>
 #include <vector>
+#include <mutex>
 
 // Boost Includes
-#include <boost/shared_ptr.hpp>
+//#include <boost/shared_ptr.hpp>
 
 // ROS Messages
 
@@ -158,6 +159,10 @@ private:
      std::vector< hardware_interface::JointHandle >    joint_handles_;
 
      KDL::Tree                                         kdl_tree_;
+
+     std::mutex                                        handles_mutex_;
+
+     std::vector<double>                               controls_;
 
 };
 
