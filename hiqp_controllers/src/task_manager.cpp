@@ -10,7 +10,7 @@
 
 // Orocos KDL
 //#include <kdl/chainfksolverpos_recursive.hpp>
-//#include <kdl/chainfksolvervel_recursive.hpp>
+#include <kdl/chainfksolvervel_recursive.hpp>
 
 
 
@@ -58,31 +58,29 @@ bool TaskManager::getKinematicControls
                << " controls do not match n_controls. Aborting!\n";
           return false;
      }
-/*
+
      KDL::Chain chain;
      kdl_tree.getChain("world", "link3", chain);
 
-     KDL::ChainFkSolverPos_recursive fk_solver_pos(chain);
-     KDL::Frame ee_pos;
-     fk_solver_pos.JntToCart(kdl_joint_pos, ee_pos);
-
      KDL::ChainFkSolverVel_recursive fk_solver_vel(chain);
-     KDL::FrameVel ee_vel_tmp;
-     //KDL::JntArray kdl_joint_vel = kdl_joint_states.qdot;
-     fk_solver_vel.JntToCart(kdl_joint_states, ee_vel_tmp);
-     KDL::Frame ee_vel = ee_vel_tmp.value();
+     KDL::FrameVel ee_pos_vel;
+     fk_solver_vel.JntToCart(kdl_joint_pos_vel, ee_pos_vel);
 
+     casadi::SX s;
 
-     std::vector<casadi::SX> n = {0, 0, 1};
-     std::vector<casadi::SX> p = {ee_pos(0,3), ee_pos(1,3), ee_pos(2,3)};
+     //std::vector<casadi::SX> n = {0, 0, 1};
+ /*    std::vector<casadi::SX> p = {
+          ee_pos_vel.value()(0,3), 
+          ee_pos_vel.value()(1,3), 
+          ee_pos_vel.value()(2,3)};
      double lambda = 1;
      double d = 1.2;
-     std::vector<casadi::SX> dpdq = {ee_vel(0,3), ee_vel(1,3), ee_vel(2,3)};
+     //std::vector<casadi::SX> dpdq = {ee_vel(0,3), ee_vel(1,3), ee_vel(2,3)};
 
-     std::cout << "Vel = (" 
-     << ee_vel(0,3) << ", " 
-     << ee_vel(1,3) << ", " 
-     << ee_vel(2,3) << ")\n";
+     std::cout << "pos = (" 
+     << p[0] << ", " 
+     << p[1] << ", " 
+     << p[2] << ")\n";
 */
      for (auto&& control : controls)
           control = 1;
