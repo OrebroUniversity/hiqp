@@ -7,11 +7,12 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   controller_interface
   orocos_kdl
+  kdl_parser
 )
 #find_package(orocos_kdl REQUIRED)
 
 catkin_package(
-  CATKIN_DEPENDS roscpp controller_interface
+  CATKIN_DEPENDS roscpp controller_interface kdl_parser
   INCLUDE_DIRS include
   LIBRARIES ${PROJECT_NAME}
   DEPENDS orocos_kdl
@@ -26,6 +27,8 @@ catkin_package(
 include_directories(include ${catkin_INCLUDE_DIRS})
 
 add_library(${PROJECT_NAME} src/hiqp_kinematic_controller.cpp
+                            include/hiqp_kinematic_controller.h
+			    src/hiqp_kinematic_controller.cpp
                             include/hiqp_kinematic_controller.h
 )
 
@@ -52,7 +55,7 @@ install(TARGETS ${PROJECT_NAME}
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
   )
 
-install(FILES mycontrollers_plugins.xml
+install(FILES hiqp_controllers_plugins.xml
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
 
 

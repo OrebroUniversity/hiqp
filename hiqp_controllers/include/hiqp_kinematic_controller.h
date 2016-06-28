@@ -14,8 +14,7 @@
 #include <vector>
 #include <mutex>
 
-// Boost Includes
-//#include <boost/shared_ptr.hpp>
+
 
 // ROS Messages
 
@@ -33,7 +32,8 @@
 #include <kdl/tree.hpp>
 #include <kdl_parser/kdl_parser.hpp>
 
-
+// HiQP
+#include <task_manager.h>
 
 
 
@@ -69,8 +69,6 @@ typedef hardware_interface::VelocityJointInterface JointVelocityInterface;
 class HiQP_Kinematic_Controller : public JointVelocityController
 {
 public:
-
-	//typedef HwIfT hardware_interface::VelocityJointInterface;
 
 	/*!
      * \brief Constructor
@@ -163,6 +161,8 @@ private:
      std::mutex                                        handles_mutex_;
 
      std::vector<double>                               controls_;
+
+     TaskManager                                       task_manager_;
 
 };
 

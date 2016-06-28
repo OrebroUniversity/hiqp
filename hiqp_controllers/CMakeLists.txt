@@ -26,8 +26,10 @@ catkin_package(
 
 include_directories(include ${catkin_INCLUDE_DIRS})
 
-add_library(${PROJECT_NAME} src/hiqp_kinematic_controller.cpp
-                            include/hiqp_kinematic_controller.h
+add_library(${PROJECT_NAME} include/hiqp_kinematic_controller.h
+                            include/task_manager.h
+                            src/hiqp_kinematic_controller.cpp
+                            src/task_manager.cpp
 )
 
 target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} ${orocos_kdl_LIBRARIES})

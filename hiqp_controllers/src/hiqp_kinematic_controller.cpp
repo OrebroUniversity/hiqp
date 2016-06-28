@@ -136,7 +136,7 @@ void HiQP_Kinematic_Controller::update
 {
 	if (!is_active_) return;
 
-	controls_.at(0) = 1;
+	task_manager_.getKinematicControls(kdl_tree_, n_joints_, controls_);
 
 	handles_mutex_.lock();
 	unsigned int i = 0;
