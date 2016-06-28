@@ -27,9 +27,11 @@
 #include <ros/node_handle.h>
 #include <controller_interface/controller.h>
 #include <hardware_interface/joint_command_interface.h>
+//#include <hardware_interface/posvel_command_interface.h>
 
 // Orocos KDL
 #include <kdl/tree.hpp>
+#include <kdl/jntarray.hpp>
 #include <kdl_parser/kdl_parser.hpp>
 
 // HiQP
@@ -157,10 +159,11 @@ private:
      std::vector< hardware_interface::JointHandle >    joint_handles_;
 
      KDL::Tree                                         kdl_tree_;
+     KDL::JntArray                                     kdl_joint_pos_;
 
      std::mutex                                        handles_mutex_;
 
-     std::vector<double>                               controls_;
+     std::vector<double>                               output_controls_;
 
      TaskManager                                       task_manager_;
 

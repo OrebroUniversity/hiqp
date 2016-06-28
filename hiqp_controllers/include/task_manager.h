@@ -12,8 +12,12 @@
 // Boost Includes
 //#include <boost/shared_ptr.hpp>
 
+// STL Includes
+#include <vector>
+
 // Orocos KDL
 #include <kdl/tree.hpp>
+#include <kdl/jntarray.hpp>
 
 
 
@@ -59,8 +63,9 @@ public:
      * \return true if the initialization was successful
      */
 	bool getKinematicControls(const KDL::Tree& kdl_tree,
-		                      unsigned int n_controls,
-		                      std::vector<double> &controls);
+                               const KDL::JntArray& kdl_joint_pos,
+		                     unsigned int n_controls,
+		                     std::vector<double> &controls);
 
 private:
 

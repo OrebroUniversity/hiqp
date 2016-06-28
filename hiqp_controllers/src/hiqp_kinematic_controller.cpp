@@ -83,8 +83,9 @@ bool HiQP_Kinematic_Controller::init
 		}
 	}
 
-	// Set the controls vector to all zero
-	controls_ = std::vector<double>(n_joints_, 0.0);
+	// Set the position and control vectors to all zero
+	kdl_joint_pos_ = KDL::JntArray(n_joints_);
+	output_controls_ = std::vector<double>(n_joints_, 0.0);
 
 	// Load the urdf-formatted robot description to build a KDL tree
 	std::string full_parameter_path;
@@ -134,18 +135,38 @@ void HiQP_Kinematic_Controller::update
 	const ros::Duration& period
 )
 {
+	// If the controller is inactive just return
 	if (!is_active_) return;
 
-	task_manager_.getKinematicControls(kdl_tree_, n_joints_, controls_);
 
+
+	// Lock the mutex and read all joint positions from the handles
 	handles_mutex_.lock();
 	unsigned int i = 0;
 	for (auto&& handle : joint_handles_)
-	{
-		handle.setCommand(controls_.at(i));
-		i++;
-	}
+		kdl_joint_pos_(i++) = handle.getPosition();
 	handles_mutex_.unlock();
+
+
+
+	// Calculate the kinematic controls
+	task_manager_.getKinematicControls(kdl_tree_, 
+									   kdl_joint_pos_,
+									   n_joints_, 
+									   output_controls_);
+
+
+
+	// Lock the mutex and write the controls to the joint handles
+	handles_mutex_.lock();
+	i = 0;
+	for (auto&& handle : joint_handles_)
+		handle.setCommand(output_controls_.at(i++));
+	handles_mutex_.unlock();
+
+
+
+	return;
 }
 
 
