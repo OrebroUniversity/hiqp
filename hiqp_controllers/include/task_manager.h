@@ -18,6 +18,7 @@
 // Orocos KDL
 #include <kdl/tree.hpp>
 #include <kdl/jntarray.hpp>
+#include <kdl/jntarrayvel.hpp>
 
 
 
@@ -63,7 +64,7 @@ public:
      * \return true if the initialization was successful
      */
 	bool getKinematicControls(const KDL::Tree& kdl_tree,
-                               const KDL::JntArray& kdl_joint_pos,
+                               const KDL::JntArrayVel& kdl_joint_pos_vel,
 		                     unsigned int n_controls,
 		                     std::vector<double> &controls);
 

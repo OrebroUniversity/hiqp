@@ -32,6 +32,7 @@
 // Orocos KDL
 #include <kdl/tree.hpp>
 #include <kdl/jntarray.hpp>
+#include <kdl/jntarrayvel.hpp>
 #include <kdl_parser/kdl_parser.hpp>
 
 // HiQP
@@ -159,7 +160,7 @@ private:
      std::vector< hardware_interface::JointHandle >    joint_handles_;
 
      KDL::Tree                                         kdl_tree_;
-     KDL::JntArray                                     kdl_joint_pos_;
+     KDL::JntArrayVel                                  kdl_joint_pos_vel_;
 
      std::mutex                                        handles_mutex_;
 

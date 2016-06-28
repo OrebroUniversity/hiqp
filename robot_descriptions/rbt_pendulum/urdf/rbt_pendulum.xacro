@@ -6,9 +6,9 @@
 	<xacro:property name="mass2" value="1.0" /> <!-- mass of Link 2 -->
 	<xacro:property name="mass3" value="1.2" /> <!-- mass of Link 3 -->
 	<xacro:property name="mass4" value="0.3" /> <!-- mass of Link 4 -->
-	<xacro:property name="length1" value="2.5" /> <!-- Length of Link 1 -->
-	<xacro:property name="length2" value="1.5" /> <!-- Length of Link 2 -->
-	<xacro:property name="length3" value="1.8" /> <!-- Length of Link 3 -->
+	<xacro:property name="length1" value="2.3" /> <!-- Length of Link 1 -->
+	<xacro:property name="length2" value="1.2" /> <!-- Length of Link 2 -->
+	<xacro:property name="length3" value="0.1" /> <!-- Length of Link 3 -->
 	<xacro:property name="length4" value="0.8" /> <!-- Length of Link 4 -->
 	<xacro:property name="rod_radius" value="0.05" /> <!-- Same radius for all rod links -->
 
@@ -95,6 +95,46 @@
   				izz="${mass2 / 12.0 * (6*rod_radius*rod_radius)}"/>
   		</inertial>
   	</link>
+
+
+
+
+
+
+    <joint name="joint2" type="fixed">
+      <parent link="link2"/>
+      <child link="link3"/>
+      <origin xyz="0 0 ${length2}" rpy="0 0 0"/>
+    </joint>
+
+
+
+
+    <link name="link3">
+      <collision>
+        <origin xyz="0 ${2*rod_radius} ${length3/2}" rpy="0 0 0"/>
+        <geometry>
+          <cylinder length="${length3}" radius="${rod_radius}" />
+        </geometry>
+      </collision>
+
+      <visual>
+        <origin xyz="0 ${2*rod_radius} ${length3/2}" rpy="0 0 0"/>
+        <geometry>
+          <cylinder length="${length3}" radius="${rod_radius}" />
+        </geometry>
+        <material name="red"/>
+      </visual>
+
+      <inertial>
+        <origin xyz="0 ${2*rod_radius} ${length3/2}" rpy="0 0 0"/>
+        <mass value="${mass3}"/>
+        <inertia
+          ixx="${mass3 / 12.0 * (length3*length3 + 3*rod_radius*rod_radius)}" ixy="0.0" ixz="0.0"
+          iyy="${mass3 / 12.0 * (length3*length3 + 3*rod_radius*rod_radius)}" iyz="0.0"
+          izz="${mass3 / 12.0 * (6*rod_radius*rod_radius)}"/>
+      </inertial>
+    </link>
 
 
 
