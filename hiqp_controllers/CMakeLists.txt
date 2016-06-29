@@ -26,7 +26,8 @@ catkin_package(
 
 include_directories(include ${catkin_INCLUDE_DIRS})
 
-add_library(${PROJECT_NAME} include/hiqp_kinematic_controller.h
+add_library(${PROJECT_NAME} include/hiqp_utils.h
+                            include/hiqp_kinematic_controller.h
                             include/task_manager.h
                             include/task.h
                             include/task_pop.h

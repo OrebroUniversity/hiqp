@@ -32,7 +32,7 @@
 
   <!-- Load the URDF into the ROS Parameter Server -->
   <param name="robot_description" 
-         command="$(find xacro)/xacro.py '$(find yumi_description)/urdf/yumi.urdf.xacro' prefix:=$(arg hardware_interface)" />
+         command="$(find xacro)/xacro.py '$(find rbt_pendulum)/urdf/rbt_pendulum.xacro'" />
 
   <!-- Run a python script to the send a service call to gazebo_ros to spawn a URDF robot -->
   <node name="urdf_spawner" 
@@ -40,7 +40,7 @@
         type="spawn_model" 
         respawn="false" 
         output="screen"
-        args="-urdf -model yumi -param robot_description"/>
+        args="-urdf -model rbt_pendulum -param robot_description"/>
 
 
 
@@ -48,7 +48,7 @@
 <!-- Load the controllers -->
 
   <!-- Load the YAML file -->
-  <rosparam file="$(find hiqp_controllers)/config/rbt_yumi.yaml" command="load"/>
+  <rosparam file="$(find hiqp_controllers)/config/rbt_pendulum.yaml" command="load"/>
 
   <!-- Startup a spawner node that loads the controllers -->
   <node name="controller_spawner" 
@@ -56,7 +56,7 @@
         type="spawner" 
         respawn="false" 
         output="screen"
-        ns="/rbt_pendulum"
+        ns="/yumi"
         args="$(arg controllers)"/>
 
   <!-- Spawn the robot_state_publisher -->

@@ -74,7 +74,7 @@ bool TaskManager::getKinematicControls
 
      double u = -lambda * J_inv * task_fun_val;
 
-     std::cout << " u = " << u << "\n";
+     //std::cout << " u = " << u << "\n";
      
      controls.at(0) = u;
 
