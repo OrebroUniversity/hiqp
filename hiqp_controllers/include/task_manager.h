@@ -1,5 +1,5 @@
-#ifndef TASK_MANAGER_H
-#define TASK_MANAGER_H
+#ifndef HIQP_TASK_MANAGER_H
+#define HIQP_TASK_MANAGER_H
 
 /*!
  * \file task_manager.h
@@ -9,15 +9,16 @@
  * \date 2016-06-28
  */
 
+#include <task.h>
+
 // Boost Includes
-//#include <boost/shared_ptr.hpp>
+#include <boost/shared_ptr.hpp>
 
 // STL Includes
 #include <vector>
 
 // Orocos KDL
 #include <kdl/tree.hpp>
-#include <kdl/jntarray.hpp>
 #include <kdl/jntarrayvel.hpp>
 
 
@@ -76,7 +77,7 @@ private:
 	TaskManager& operator=(const TaskManager& other) = delete;
 	TaskManager& operator=(TaskManager&& other) noexcept = delete;
 
-	
+     std::vector< boost::shared_ptr<Task> > tasks_;	
 
 };
 

@@ -1,0 +1,65 @@
+\hypertarget{classhiqp_1_1TaskManager}{\section{hiqp\-:\-:Task\-Manager Class Reference}
+\label{classhiqp_1_1TaskManager}\index{hiqp\-::\-Task\-Manager@{hiqp\-::\-Task\-Manager}}
+}
+
+
+Should be created only once!  
+
+
+
+
+{\ttfamily \#include $<$task\-\_\-manager.\-h$>$}
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classhiqp_1_1TaskManager_af190d8f0b3ee1c0d32acdb70fae6e03d}{\hyperlink{classhiqp_1_1TaskManager_af190d8f0b3ee1c0d32acdb70fae6e03d}{Task\-Manager} ()}\label{classhiqp_1_1TaskManager_af190d8f0b3ee1c0d32acdb70fae6e03d}
+
+\begin{DoxyCompactList}\small\item\em Constructor Constructs my awesome controller. \end{DoxyCompactList}\item 
+\hypertarget{classhiqp_1_1TaskManager_a688ad548e2ef681b458c1fc90326f6e6}{\hyperlink{classhiqp_1_1TaskManager_a688ad548e2ef681b458c1fc90326f6e6}{$\sim$\-Task\-Manager} () noexcept}\label{classhiqp_1_1TaskManager_a688ad548e2ef681b458c1fc90326f6e6}
+
+\begin{DoxyCompactList}\small\item\em Destructor Destructs my awesome manager. \end{DoxyCompactList}\item 
+bool \hyperlink{classhiqp_1_1TaskManager_a9243435c3819b03a9874f47d985a2147}{get\-Kinematic\-Controls} (const K\-D\-L\-::\-Tree \&kdl\-\_\-tree, const K\-D\-L\-::\-Jnt\-Array\-Vel \&kdl\-\_\-joint\-\_\-pos\-\_\-vel, unsigned int n\-\_\-controls, std\-::vector$<$ double $>$ \&controls)
+\begin{DoxyCompactList}\small\item\em Called every time the controller is initialized by the ros\-::controller\-\_\-manager. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Should be created only once! 
+
+It's awesome! 
+
+\subsection{Member Function Documentation}
+\hypertarget{classhiqp_1_1TaskManager_a9243435c3819b03a9874f47d985a2147}{\index{hiqp\-::\-Task\-Manager@{hiqp\-::\-Task\-Manager}!get\-Kinematic\-Controls@{get\-Kinematic\-Controls}}
+\index{get\-Kinematic\-Controls@{get\-Kinematic\-Controls}!hiqp::TaskManager@{hiqp\-::\-Task\-Manager}}
+\subsubsection[{get\-Kinematic\-Controls}]{\setlength{\rightskip}{0pt plus 5cm}bool hiqp\-::\-Task\-Manager\-::get\-Kinematic\-Controls (
+\begin{DoxyParamCaption}
+\item[{const K\-D\-L\-::\-Tree \&}]{kdl\-\_\-tree, }
+\item[{const K\-D\-L\-::\-Jnt\-Array\-Vel \&}]{kdl\-\_\-joint\-\_\-pos\-\_\-vel, }
+\item[{unsigned int}]{n\-\_\-controls, }
+\item[{std\-::vector$<$ double $>$ \&}]{controls}
+\end{DoxyParamCaption}
+)}}\label{classhiqp_1_1TaskManager_a9243435c3819b03a9874f47d985a2147}
+
+
+Called every time the controller is initialized by the ros\-::controller\-\_\-manager. 
+
+Does some cool stuff!
+
+
+\begin{DoxyParams}{Parameters}
+{\em kdl\-\_\-tree} & \-: the kinematic dynamic tree of the robot \\
+\hline
+{\em n\-\_\-controls} & \-: the number of controls \\
+\hline
+{\em controls} & \-: reference to the controls data \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true if the initialization was successful 
+\end{DoxyReturn}
+
+
+The documentation for this class was generated from the following files\-:\begin{DoxyCompactItemize}
+\item 
+include/\hyperlink{task__manager_8h}{task\-\_\-manager.\-h}\item 
+src/task\-\_\-manager.\-cpp\end{DoxyCompactItemize}

@@ -1,0 +1,44 @@
+\hypertarget{classhiqp_1_1Task}{\section{hiqp\-:\-:Task Class Reference}
+\label{classhiqp_1_1Task}\index{hiqp\-::\-Task@{hiqp\-::\-Task}}
+}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classhiqp_1_1Task_a556692dacc6abb51d0437f59594026d9}{\hyperlink{classhiqp_1_1Task_a556692dacc6abb51d0437f59594026d9}{Task} ()}\label{classhiqp_1_1Task_a556692dacc6abb51d0437f59594026d9}
+
+\begin{DoxyCompactList}\small\item\em Constructor Constructs my awesome task. \end{DoxyCompactList}\item 
+\hypertarget{classhiqp_1_1Task_a73b4e41812713f28557c8d15925587db}{\hyperlink{classhiqp_1_1Task_a73b4e41812713f28557c8d15925587db}{$\sim$\-Task} () noexcept}\label{classhiqp_1_1Task_a73b4e41812713f28557c8d15925587db}
+
+\begin{DoxyCompactList}\small\item\em Destructor Destructs my awesome task. \end{DoxyCompactList}\item 
+virtual bool \hyperlink{classhiqp_1_1Task_a61eacc4471c3af7824f0a5eebde750f3}{apply} (const K\-D\-L\-::\-Tree \&kdl\-\_\-tree, const K\-D\-L\-::\-Jnt\-Array\-Vel \&joints\-\_\-pos\-\_\-vel)=0
+\begin{DoxyCompactList}\small\item\em {\bfseries Pure virtual}. Calculates the task function and task jacobian values. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classhiqp_1_1Task_a61eacc4471c3af7824f0a5eebde750f3}{\index{hiqp\-::\-Task@{hiqp\-::\-Task}!apply@{apply}}
+\index{apply@{apply}!hiqp::Task@{hiqp\-::\-Task}}
+\subsubsection[{apply}]{\setlength{\rightskip}{0pt plus 5cm}virtual bool hiqp\-::\-Task\-::apply (
+\begin{DoxyParamCaption}
+\item[{const K\-D\-L\-::\-Tree \&}]{kdl\-\_\-tree, }
+\item[{const K\-D\-L\-::\-Jnt\-Array\-Vel \&}]{joints\-\_\-pos\-\_\-vel}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [pure virtual]}}}\label{classhiqp_1_1Task_a61eacc4471c3af7824f0a5eebde750f3}
+
+
+{\bfseries Pure virtual}. Calculates the task function and task jacobian values. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em kdl\-\_\-tree} & \-: reference to the kinematic dynamic tree of the robot \\
+\hline
+{\em joints\-\_\-pos\-\_\-vel} & \-: reference to the current joint positions and velocities\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true if the calculation was successful 
+\end{DoxyReturn}
+
+
+The documentation for this class was generated from the following file\-:\begin{DoxyCompactItemize}
+\item 
+include/\hyperlink{task_8h}{task.\-h}\end{DoxyCompactItemize}

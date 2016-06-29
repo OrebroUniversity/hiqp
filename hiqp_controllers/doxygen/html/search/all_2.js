@@ -1,5 +1,6 @@
 var searchData=
 [
-  ['jointvelocitycontroller',['JointVelocityController',['../namespacehiqp.html#a7b250295f6797153486ce8ab085bd450',1,'hiqp']]],
-  ['jointvelocityinterface',['JointVelocityInterface',['../namespacehiqp.html#ac536ca3b4ba33489281fa5bec490799c',1,'hiqp']]]
+  ['hiqp',['hiqp',['../namespacehiqp.html',1,'']]],
+  ['hiqp_5fkinematic_5fcontroller',['HiQP_Kinematic_Controller',['../classhiqp_1_1HiQP__Kinematic__Controller.html#aa82bda256000e7dc52fb4107bbdf62af',1,'hiqp::HiQP_Kinematic_Controller']]],
+  ['hiqp_5fkinematic_5fcontroller',['HiQP_Kinematic_Controller',['../classhiqp_1_1HiQP__Kinematic__Controller.html',1,'hiqp']]]
 ];
