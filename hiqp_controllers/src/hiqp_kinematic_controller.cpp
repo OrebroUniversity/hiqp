@@ -1,4 +1,5 @@
 #include <hiqp_kinematic_controller.h>
+#include <hiqp_utils.h>
 
 #include <pluginlib/class_list_macros.h> // to allow the controller to be loaded as a plugin
 
@@ -17,7 +18,7 @@ namespace hiqp
 
 
 HiQP_Kinematic_Controller::HiQP_Kinematic_Controller()
-: n_joints_(0), is_active_(true)
+: is_active_(true)
 {
 }
 
@@ -52,9 +53,13 @@ bool HiQP_Kinematic_Controller::init
 	// Store the handle of the node that runs this controller
 	controller_nh_ = controller_nh;
 
+
+
+
 	// Load the names of all joints specified in the .yaml file
 	std::string param_name = "joints";
-	if (!controller_nh.getParam(param_name, joint_names_))
+	std::vector< std::string > joint_names;
+	if (!controller_nh.getParam(param_name, joint_names))
     {
         ROS_ERROR_STREAM("In HiQP_Kinematic_Controller: Call to getParam('" 
         	<< param_name 
@@ -64,30 +69,10 @@ bool HiQP_Kinematic_Controller::init
         return false;
     }
 
-    // Store teh number of joints for convenience
-    n_joints_ = joint_names_.size();
-    ROS_INFO_STREAM("In HiQP_Kinematic_Controller: Found " 
-    	<< n_joints_ << " joints.");
 
-    // Load all joint handles for all joint name references
-	for (auto&& name : joint_names_)
-	{
-		try
-		{
-			joint_handles_.push_back(hw->getHandle(name));
-		}
-		catch (const hardware_interface::HardwareInterfaceException& e)
-		{
-			ROS_ERROR_STREAM("Exception thrown: " << e.what());
-            return false;
-		}
-	}
 
-	// Set the joint position and velocity and the control vectors to all zero
-	kdl_joint_pos_vel_.resize(n_joints_);
-	output_controls_ = std::vector<double>(n_joints_, 0.0);
 
-	// Load the urdf-formatted robot description to build a KDL tree
+    // Load the urdf-formatted robot description to build a KDL tree
 	std::string full_parameter_path;
     std::string robot_urdf;
     if (controller_nh_.searchParam("robot_description", full_parameter_path))
@@ -101,6 +86,49 @@ bool HiQP_Kinematic_Controller::init
         	<< " parameter 'robot_description' on the parameter server.");
         return false;
     }
+    std::cout << "KDL Tree loaded successfully! Printing it below.\n\n"
+    	<< kdl_tree_ << "\n\n";
+
+
+
+
+    // Load all joint handles for all joint name references
+	for (auto&& name : joint_names)
+	{
+		try
+		{
+			unsigned int q_nr = kdl_getQNrFromJointName(kdl_tree_, name);
+			joint_handles_map_.insert( 
+				JointHandleMapEntry(q_nr, hw->getHandle(name))
+			);
+		}
+		catch (const hardware_interface::HardwareInterfaceException& e)
+		{
+			ROS_ERROR_STREAM("Exception thrown: " << e.what());
+            return false;
+		}
+		// catch (MAP INSERT FAIL EXCEPTION)
+		// catch (HIQP Q_NR NOT AVAILABLE EXCEPTION)
+	}
+
+
+
+
+	// Set the joint position and velocity and the control vectors to all zero
+	unsigned int n_joint_names = joint_names.size();
+	unsigned int n_kdl_joints = kdl_tree_.getNrOfJoints();
+	if (n_joint_names > n_kdl_joints)
+	{
+		ROS_ERROR_STREAM("In HiQP_Kinematic_Controller: The .yaml file"
+			<< " includes more joint names than specified in the .urdf file."
+			<< " Could not succeffully initialize controller. Aborting!\n");
+		return false;
+	}
+	kdl_joint_pos_vel_.resize(n_kdl_joints);
+	output_controls_ = std::vector<double>(n_kdl_joints, 0.0);
+
+	
+
 
 	return true;
 }
@@ -141,15 +169,13 @@ void HiQP_Kinematic_Controller::update
 
 
 	// Lock the mutex and read all joint positions from the handles
-	unsigned int i = 0;
 	KDL::JntArray& q = kdl_joint_pos_vel_.q;
 	KDL::JntArray& qdot = kdl_joint_pos_vel_.qdot;
 	handles_mutex_.lock();
-	for (auto&& handle : joint_handles_)
+	for (auto&& handle : joint_handles_map_)
 	{
-		q(i) = handle.getPosition();
-		qdot(i) = handle.getVelocity();
-		++i;
+		q(handle.first) = handle.second.getPosition();
+		qdot(handle.first) = handle.second.getVelocity();
 	}
 	handles_mutex_.unlock();
 
@@ -158,16 +184,14 @@ void HiQP_Kinematic_Controller::update
 	// Calculate the kinematic controls
 	task_manager_.getKinematicControls(kdl_tree_, 
 									   kdl_joint_pos_vel_,
-									   n_joints_, 
 									   output_controls_);
 
 
 
 	// Lock the mutex and write the controls to the joint handles
 	handles_mutex_.lock();
-	i = 0;
-	for (auto&& handle : joint_handles_)
-		handle.setCommand(output_controls_.at(i++));
+	for (auto&& handle : joint_handles_map_)
+		handle.second.setCommand(output_controls_.at(handle.first));
 	handles_mutex_.unlock();
 
 

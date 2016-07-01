@@ -66,7 +66,6 @@ public:
      */
 	bool getKinematicControls(const KDL::Tree& kdl_tree,
                                const KDL::JntArrayVel& kdl_joint_pos_vel,
-		                     unsigned int n_controls,
 		                     std::vector<double> &controls);
 
 private:

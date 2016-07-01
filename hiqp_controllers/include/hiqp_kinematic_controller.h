@@ -114,7 +114,13 @@ public:
      * \brief Called every time the controller is updated by the 
      *        ros::controller_manager
      *
-     * Does some cool stuff!
+     * The function:
+     * <ol>
+     *   <li>locks a mutex and reads position and velocity values from the joint handles,</li>
+     *   <li>calls getKinematicControls() on its task manager,</li>
+     *   <li>and locks a mutex and writes velocity values to the joint handles.</li>
+     * </ol>
+     * The joint handles are stored as a map between the joints q-number in the KDL::Tree and the joint handles themselves.
      *
      * \param time : the current wall-time in ROS
      * \param period : the time between the last update call and this, i.e.
@@ -155,9 +161,12 @@ private:
      ros::NodeHandle                                   controller_nh_;
      bool                                              is_active_;
 
-     std::vector< std::string >                        joint_names_;
-     unsigned int                                      n_joints_;
-     std::vector< hardware_interface::JointHandle >    joint_handles_;
+     typedef std::map<unsigned int, hardware_interface::JointHandle >
+          JointHandleMap;
+     typedef std::pair<unsigned int, hardware_interface::JointHandle >
+          JointHandleMapEntry;
+
+     JointHandleMap                                    joint_handles_map_;
 
      KDL::Tree                                         kdl_tree_;
      KDL::JntArrayVel                                  kdl_joint_pos_vel_;

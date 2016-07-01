@@ -1,19 +1,22 @@
 cmake_minimum_required(VERSION 2.8.6)
 project(hiqp_controllers)
 
+set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR})
 set(CMAKE_CXX_FLAGS "-O3 -std=c++11")
 
 find_package(catkin REQUIRED COMPONENTS
   roscpp
   controller_interface
-  orocos_kdl
   kdl_parser
 )
+find_package(orocos_kdl REQUIRED)
+find_package(Eigen3 REQUIRED)
+
 #find_package(orocos_kdl REQUIRED)
 
 catkin_package(
   CATKIN_DEPENDS roscpp controller_interface kdl_parser
-  INCLUDE_DIRS include
+  INCLUDE_DIRS include #${EIGEN_INCLUDE_DIRS}
   LIBRARIES ${PROJECT_NAME} casadi
   DEPENDS orocos_kdl
 )
@@ -31,6 +34,7 @@ add_library(${PROJECT_NAME} include/hiqp_utils.h
                             include/task_manager.h
                             include/task.h
                             include/task_pop.h
+                            src/hiqp_utils.cpp
                             src/hiqp_kinematic_controller.cpp
                             src/task_manager.cpp
                             src/task_pop.cpp

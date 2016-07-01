@@ -65,7 +65,7 @@ public:
 		const KDL::Tree& kdl_tree, 
 		const KDL::JntArrayVel& kdl_joint_pos_vel,
 		double& task_fun_val,
-		double& task_jac_val
+		Eigen::MatrixXd& task_jac_val
 	) = 0;
 
 
