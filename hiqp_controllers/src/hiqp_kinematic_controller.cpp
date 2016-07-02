@@ -127,7 +127,7 @@ bool HiQP_Kinematic_Controller::init
 	kdl_joint_pos_vel_.resize(n_kdl_joints);
 	output_controls_ = std::vector<double>(n_kdl_joints, 0.0);
 
-	
+	std::cout << "JOINT NAME: " << joint_handles_map_.find(12)->second.getName() << "\n";
 
 
 	return true;

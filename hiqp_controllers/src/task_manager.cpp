@@ -67,22 +67,31 @@ bool TaskManager::getKinematicControls
      
      Eigen::MatrixXd Jinv;
      Jinv.resizeLike(task_jac_val);
-     pseudoInverse<Eigen::MatrixXd>(task_jac_val, Jinv);
-
+     int result = dampedLeastSquare(task_jac_val, Jinv);
+     //std::cout << result << "\n";
+     //std::cout << "task_jac_val = " << task_jac_val << "\n";
+     //std::cout << "Jinv = " << Jinv << "\n";
 
      Eigen::MatrixXd u;
      u.resizeLike(Jinv);
+
      u = -lambda * Jinv * task_fun_val;
 
+     //std::cout << "task_fun_val = " << task_fun_val << "\n";
      //std::cout << "u = " << u << "\n";
 
+     
      for (int i=0; i<controls.size(); ++i)
-          controls.at(i) = u(0,i);
+          controls.at(i) = u(i,0);
 
+/*
+     std::cout << "controls = ";
+     for (int i=0; i<controls.size(); ++i)
+          std::cout << controls.at(i) << ", ";
+     std::cout << "\n";
+  */   
 
-
-
-
+     //controls.at(12) = 0.5;
 
 
      return true;
