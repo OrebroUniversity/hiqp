@@ -1,0 +1,275 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"lambda",
+				"lambda_"
+			],
+			[
+				"kdl",
+				"kdl_tree"
+			],
+			[
+				"controls",
+				"controls"
+			],
+			[
+				"n",
+				"n_joints_"
+			],
+			[
+				"rod",
+				"rod_radius"
+			],
+			[
+				"contr",
+				"controller"
+			],
+			[
+				"controller",
+				"controller_interface"
+			]
+		]
+	},
+	"buffers":
+	[
+	],
+	"build_system": "",
+	"build_system_choices":
+	[
+	],
+	"build_varint": "",
+	"command_palette":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"console":
+	{
+		"height": 0.0,
+		"history":
+		[
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"expanded_folders":
+	[
+		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers"
+	],
+	"file_history":
+	[
+		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/src/task_manager.cpp",
+		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/src/task_pop.cpp",
+		"/home/neckutrek/dev/playground/test_protectedMembers/main.cpp",
+		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/src/task_beh_fo.cpp",
+		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/src/hiqp_utils.cpp",
+		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/include/task_beh_fo.h",
+		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/include/task_behaviour.h",
+		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/include/task_pop.h",
+		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/include/task.h",
+		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/include/hiqp_utils.h",
+		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/include/task_manager.h",
+		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/include/hiqp_kinematic_controller.h",
+		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/src/hiqp_kinematic_controller.cpp",
+		"/home/neckutrek/dev/playground/test_pseudoInverse/Makefile",
+		"/home/neckutrek/dev/playground/test_pseudoInverse/main.cpp",
+		"/home/neckutrek/dev/indigo_ws/src/apple/hqp_controllers/include/hqp_controllers/task_manager.h",
+		"/home/neckutrek/dev/indigo_ws/src/apple/hqp_controllers/src/task_manager.cpp",
+		"/home/neckutrek/dev/indigo_ws/src/apple/hqp_controllers/include/hqp_controllers/hqp_velocity_controller.h",
+		"/home/neckutrek/dev/indigo_ws/src/apple/hqp_controllers/src/hqp_velocity_controller.cpp",
+		"/home/neckutrek/dev/indigo_ws/src/apple/hqp_controllers/src/hqp.cpp",
+		"/home/neckutrek/dev/indigo_ws/src/apple/hqp_controllers/include/hqp_controllers/hqp.h",
+		"/home/neckutrek/dev/indigo_ws/src/apple/hqp_controllers/src/task.cpp",
+		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/include/utilities.h",
+		"/home/neckutrek/.config/sublime-text-3/Packages/Default/Preferences.sublime-settings",
+		"/home/neckutrek/.config/sublime-text-3/Packages/User/Preferences.sublime-settings",
+		"/home/neckutrek/dev/playground/myoptimizer.cpp",
+		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/CMakeLists.txt",
+		"/home/neckutrek/dev/indigo_ws/src/hiqp/robot_descriptions/rbt_pendulum/urdf/rbt_pendulum.xacro",
+		"/home/neckutrek/dev/indigo_ws/src/apple/hqp_controllers/include/hqp_controllers/task.h",
+		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/launch/hiqp_kinematic_controller.launch",
+		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/package.xml",
+		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/config/rbt_pendulum.yaml",
+		"/home/neckutrek/dev/indigo_ws/src/hiqp_controllers/hiqp_controllers/HiQP_Controllers/src/hiqp_kinematic_controller.cpp",
+		"/home/neckutrek/dev/indigo_ws/src/task_controllers/hiqp_controllers/HiQP_Controllers/include/hiqp_kinematic_controller.h",
+		"/home/neckutrek/dev/indigo_ws/src/task_controllers/hiqp_controllers/HiQP_Controllers/src/hiqp_kinematic_controller.cpp",
+		"/home/neckutrek/dev/indigo_ws/src/task_controllers/myfirstcontroller/mycontrollers/src/mycontroller.cpp",
+		"/home/neckutrek/dev/indigo_ws/src/myfirstcontroller/mycontrollers/launch/mycontroller.launch",
+		"/home/neckutrek/dev/indigo_ws/src/myfirstcontroller/myrobot_description/launch/myrobot_world.launch",
+		"/home/neckutrek/dev/indigo_ws/src/myfirstcontroller/mycontrollers/mycontrollers_plugins.xml",
+		"/home/neckutrek/dev/indigo_ws/src/myfirstcontroller/myrobot_description/urdf/myrobot.xacro",
+		"/home/neckutrek/dev/indigo_ws/src/myfirstcontroller/mycontrollers/config/myrobot.yaml",
+		"/home/neckutrek/dev/indigo_ws/src/myfirstcontroller/mycontrollers/include/mycontroller.h",
+		"/home/neckutrek/dev/indigo_ws/src/myfirstcontroller/mycontrollers/src/mycontroller.cpp",
+		"/home/neckutrek/dev/indigo_ws/src/apple/hqp_controllers/include/hqp_controllers/utilities.h",
+		"/home/neckutrek/dev/indigo_ws/src/myfirstcontroller/myrobot_description/urdf/myrobot.gazebo",
+		"/home/neckutrek/dev/indigo_ws/src/myfirstcontroller/mycontrollers/config/mycontrollers.yaml",
+		"/home/neckutrek/dev/indigo_ws/src/myfirstcontroller/mycontrollers/launch/mycontroller2.launch",
+		"/home/neckutrek/dev/indigo_ws/src/myfirstcontroller/mycontrollers/servicecalls/start_controller.sh",
+		"/home/neckutrek/dev/indigo_ws/src/gazebo_ros_demos/rrbot_control/launch/rrbot_control.launch",
+		"/home/neckutrek/dev/indigo_ws/src/myfirstcontroller/mycontrollers/src/MyController.cpp",
+		"/home/neckutrek/dev/indigo_ws/src/myfirstcontroller/mycontrollers/include/MyController.h",
+		"/home/neckutrek/dev/indigo_ws/src/gazebo_ros_demos/rrbot_description/urdf/rrbot.xacro",
+		"/home/neckutrek/dev/indigo_ws/src/gazebo_ros_demos/rrbot_description/launch/rrbot_rviz.launch",
+		"/home/neckutrek/dev/indigo_ws/src/gazebo_ros_demos/rrbot_description/launch/rrbot.rviz",
+		"/home/neckutrek/dev/indigo_ws/src/myfirstcontroller/myrobot_description/launch/myrobot.rviz",
+		"/home/neckutrek/dev/indigo_ws/src/yumi/yumi_description/launch/yumi.rviz",
+		"/home/neckutrek/dev/indigo_ws/src/myfirstcontroller/CMakeLists.txt",
+		"/home/neckutrek/dev/indigo_ws/src/myfirstcontroller/robot_description/urdf/myrobot.xacro",
+		"/home/neckutrek/dev/indigo_ws/src/myfirstcontroller/robot_description/launch/myrobot_rviz.launch",
+		"/home/neckutrek/dev/indigo_ws/src/myfirstcontroller/robot_description/urdf/materials.xacro",
+		"/home/neckutrek/dev/indigo_ws/src/yumi/yumi_description/urdf/yumi.xacro",
+		"/home/neckutrek/dev/indigo_ws/src/gazebo_ros_demos/rrbot_description/urdf/rrbot.gazebo",
+		"/home/neckutrek/dev/playground/twotasks.cpp",
+		"/home/neckutrek/dev/indigo_ws/src/gazebo_ros_demos/rrbot_description/urdf/materials.xacro",
+		"/home/neckutrek/dev/indigo_ws/src/myfirstcontroller/doxygen.config",
+		"/home/neckutrek/dev/playground/Makefile",
+		"/home/neckutrek/dev/playground/CMakeLists.txt",
+		"/home/neckutrek/dev/casadi/docs/examples/cplusplus/propagating_sparsity.cpp",
+		"/home/neckutrek/dev/casadi/docs/examples/cplusplus/rocket_single_shooting.cpp",
+		"/home/neckutrek/dev/casadi/docs/examples/cplusplus/rosenbrock.cpp",
+		"/home/neckutrek/dev/casadi/docs/examples/cplusplus/chain_qp.cpp",
+		"/home/neckutrek/dev/casadi/CMakeLists.txt",
+		"/home/neckutrek/dev/casadi/docs/examples/cplusplus/CMakeLists.txt",
+		"/home/neckutrek/dev/casadi/casadi/CMakeLists.txt",
+		"/home/neckutrek/dev/casadi/casadi/casadi.hpp"
+	],
+	"find":
+	{
+		"height": 25.0
+	},
+	"find_in_files":
+	{
+		"height": 0.0,
+		"where_history":
+		[
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			"HiQP_Kinematic_Controller",
+			"MyController"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+			"HiQPKinematicController",
+			"HiQP_Kinematic_Controller"
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"sheets":
+			[
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 25.0
+	},
+	"input":
+	{
+		"height": 0.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"pinned_build_system": "",
+	"project": "hiqp_controllers.sublime-project",
+	"replace":
+	{
+		"height": 64.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_symbol":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"selected_group": 0,
+	"settings":
+	{
+	},
+	"show_minimap": true,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 285.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}

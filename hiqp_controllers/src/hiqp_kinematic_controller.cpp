@@ -1,5 +1,16 @@
-#include <hiqp_kinematic_controller.h>
-#include <hiqp_utils.h>
+/*!
+ * \file   hiqp_kinematic_controller.cpp
+ * \Author Marcus A Johansson (marcus.adam.johansson@gmail.com)
+ * \date   July, 2016
+ * \brief  Brief description of file.
+ *
+ * Detailed description of file.
+ */
+
+
+
+#include <hiqp/hiqp_kinematic_controller.h>
+#include <hiqp/hiqp_utils.h>
 
 #include <pluginlib/class_list_macros.h> // to allow the controller to be loaded as a plugin
 
@@ -17,7 +28,7 @@ namespace hiqp
 
 
 
-HiQP_Kinematic_Controller::HiQP_Kinematic_Controller()
+HiQPKinematicController::HiQPKinematicController()
 : is_active_(true)
 {
 }
@@ -31,7 +42,7 @@ HiQP_Kinematic_Controller::HiQP_Kinematic_Controller()
 
 
 
-HiQP_Kinematic_Controller::~HiQP_Kinematic_Controller() noexcept
+HiQPKinematicController::~HiQPKinematicController() noexcept
 {
 }
 
@@ -44,7 +55,7 @@ HiQP_Kinematic_Controller::~HiQP_Kinematic_Controller() noexcept
 
 
 
-bool HiQP_Kinematic_Controller::init
+bool HiQPKinematicController::init
 (
 	hardware_interface::VelocityJointInterface *hw, 
 	ros::NodeHandle &controller_nh
@@ -61,7 +72,7 @@ bool HiQP_Kinematic_Controller::init
 	std::vector< std::string > joint_names;
 	if (!controller_nh.getParam(param_name, joint_names))
     {
-        ROS_ERROR_STREAM("In HiQP_Kinematic_Controller: Call to getParam('" 
+        ROS_ERROR_STREAM("In HiQPKinematicController: Call to getParam('" 
         	<< param_name 
         	<< "') in namespace '" 
         	<< controller_nh.getNamespace() 
@@ -82,7 +93,7 @@ bool HiQP_Kinematic_Controller::init
     }
     else
     {
-        ROS_ERROR_STREAM("In HiQP_Kinematic_Controller: Could not find"
+        ROS_ERROR_STREAM("In HiQPKinematicController: Could not find"
         	<< " parameter 'robot_description' on the parameter server.");
         return false;
     }
@@ -119,15 +130,13 @@ bool HiQP_Kinematic_Controller::init
 	unsigned int n_kdl_joints = kdl_tree_.getNrOfJoints();
 	if (n_joint_names > n_kdl_joints)
 	{
-		ROS_ERROR_STREAM("In HiQP_Kinematic_Controller: The .yaml file"
+		ROS_ERROR_STREAM("In HiQPKinematicController: The .yaml file"
 			<< " includes more joint names than specified in the .urdf file."
 			<< " Could not succeffully initialize controller. Aborting!\n");
 		return false;
 	}
 	kdl_joint_pos_vel_.resize(n_kdl_joints);
 	output_controls_ = std::vector<double>(n_kdl_joints, 0.0);
-
-	std::cout << "JOINT NAME: " << joint_handles_map_.find(12)->second.getName() << "\n";
 
 
 	return true;
@@ -142,7 +151,7 @@ bool HiQP_Kinematic_Controller::init
 
 
 
-void HiQP_Kinematic_Controller::starting
+void HiQPKinematicController::starting
 (
 	const ros::Time& time
 )
@@ -157,7 +166,7 @@ void HiQP_Kinematic_Controller::starting
 
 
 
-void HiQP_Kinematic_Controller::update
+void HiQPKinematicController::update
 (
 	const ros::Time& time, 
 	const ros::Duration& period
@@ -208,7 +217,7 @@ void HiQP_Kinematic_Controller::update
 
 
 
-void HiQP_Kinematic_Controller::stopping
+void HiQPKinematicController::stopping
 (
 	const ros::Time& time
 )
@@ -247,8 +256,8 @@ void HiQP_Kinematic_Controller::stopping
 
 
 
-} // namespace HiQP_Kinematic_Controller
+} // namespace HiQPKinematicController
 
 
 // make the controller available to the library loader
-PLUGINLIB_EXPORT_CLASS(hiqp::HiQP_Kinematic_Controller, controller_interface::ControllerBase)
+PLUGINLIB_EXPORT_CLASS(hiqp::HiQPKinematicController, controller_interface::ControllerBase)

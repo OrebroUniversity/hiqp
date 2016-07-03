@@ -56,7 +56,7 @@
         type="spawner" 
         respawn="false" 
         output="screen"
-        ns="/yumi"
+        ns="/rbt_pendulum"
         args="$(arg controllers)"/>
 
   <!-- Spawn the robot_state_publisher -->

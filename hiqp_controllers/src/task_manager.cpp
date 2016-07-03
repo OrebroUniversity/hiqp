@@ -1,14 +1,22 @@
-#include <task_manager.h>
-#include <task_pop.h>
-#include <hiqp_utils.h>
+/*!
+ * \file   task_manager.cpp
+ * \Author Marcus A Johansson (marcus.adam.johansson@gmail.com)
+ * \date   July, 2016
+ * \brief  Brief description of file.
+ *
+ * Detailed description of file.
+ */
+
+#include <hiqp/task_manager.h>
+#include <hiqp/task_pop.h>
+#include <hiqp/task_behaviour.h>
+#include <hiqp/task_beh_fo.h>
 
 // STL Includes
-#include <iostream>
-
-// CasADi includes
-#include <casadi/casadi.hpp>
+//#include <iostream>
 
 
+#include <Eigen/Dense>
 
 
 
@@ -33,15 +41,15 @@ namespace hiqp {
 
 TaskManager::TaskManager()
 {
-     double n[3] = {0,0,1};
-     boost::shared_ptr<Task> poptask( new TaskPoP(n, 0.1) );
+     TaskBehaviour* fobeh = new TaskBehFO(1.0);
+     Task* poptask = new TaskPoP(fobeh, "gripper_r_base", 0, 0, 1, 0.1);
      tasks_.push_back(poptask);
 }
 
 
 TaskManager::~TaskManager() noexcept
 {
-     // We have a memory leak!!
+     // We have memory leaks!!
 }
 
 
@@ -52,47 +60,21 @@ bool TaskManager::getKinematicControls
 	std::vector<double> &controls
 )
 {
-
-     double task_fun_val;
-     Eigen::MatrixXd task_jac_val;
-     
-     tasks_.at(0)->apply(kdl_tree, 
-                         kdl_joint_pos_vel, 
-                         task_fun_val, 
-                         task_jac_val);
-
-
-
-     double lambda = 1;
-     
-     Eigen::MatrixXd Jinv;
-     Jinv.resizeLike(task_jac_val);
-     int result = dampedLeastSquare(task_jac_val, Jinv);
-     //std::cout << result << "\n";
-     //std::cout << "task_jac_val = " << task_jac_val << "\n";
-     //std::cout << "Jinv = " << Jinv << "\n";
-
-     Eigen::MatrixXd u;
-     u.resizeLike(Jinv);
-
-     u = -lambda * Jinv * task_fun_val;
-
-     //std::cout << "task_fun_val = " << task_fun_val << "\n";
-     //std::cout << "u = " << u << "\n";
+     tasks_.at(0)->getControls(kdl_tree, 
+                               kdl_joint_pos_vel, 
+                               controls);
 
      
-     for (int i=0; i<controls.size(); ++i)
-          controls.at(i) = u(i,0);
+     //std::cout << tasks_.at(0)->getJ() << std::endl;
 
-/*
+     /*
      std::cout << "controls = ";
-     for (int i=0; i<controls.size(); ++i)
-          std::cout << controls.at(i) << ", ";
+     for (double c : controls)
+     {
+          std::cout << c << ", ";
+     }
      std::cout << "\n";
-  */   
-
-     //controls.at(12) = 0.5;
-
+     */
 
      return true;
 }

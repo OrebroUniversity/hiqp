@@ -1,13 +1,17 @@
+/*!
+ * \file   hiqp_kinematic_controller.h
+ * \Author Marcus A Johansson (marcus.adam.johansson@gmail.com)
+ * \date   July, 2016
+ * \brief  Brief description of file.
+ *
+ * Detailed description of file.
+ */
+
+
+
 #ifndef HIQP_HIQP_KINEMATIC_CONTROLLER_H
 #define HIQP_HIQP_KINEMATIC_CONTROLLER_H
 
-/*!
- * \file HiQP_Kinematic_Controller.h
- * \brief HiQP_Kinematic_Controller is my super-nice controller
- * \author Marcus A Johansson
- * \version 0.1
- * \date 2016-06-21
- */
 
 // STL Includes
 #include <string>
@@ -35,8 +39,8 @@
 #include <kdl/jntarrayvel.hpp>
 #include <kdl_parser/kdl_parser.hpp>
 
-// HiQP
-#include <task_manager.h>
+// HiQP Includes
+#include <hiqp/task_manager.h>
 
 
 
@@ -64,12 +68,12 @@ JointVelocityController;
 typedef hardware_interface::VelocityJointInterface JointVelocityInterface;
 
 /*!
- * \class HiQP_Kinematic_Controller
+ * \class HiQPKinematicController
  * \brief This is my awesome controller
  *
  *  It's awesome!
  */	
-class HiQP_Kinematic_Controller : public JointVelocityController
+class HiQPKinematicController : public JointVelocityController
 {
 public:
 
@@ -77,13 +81,13 @@ public:
      * \brief Constructor
      * Constructs my awesome controller
      */
-	HiQP_Kinematic_Controller();
+	HiQPKinematicController();
 
 	/*!
      * \brief Destructor
      * Destructs my awesome controller :(
      */
-	~HiQP_Kinematic_Controller() noexcept;
+	~HiQPKinematicController() noexcept;
 	
 
 	/*!
@@ -150,10 +154,10 @@ public:
 private:
 
 	// No copying of this class is allowed !
-	HiQP_Kinematic_Controller(const HiQP_Kinematic_Controller& other) = delete;
-	HiQP_Kinematic_Controller(HiQP_Kinematic_Controller&& other) = delete;
-	HiQP_Kinematic_Controller& operator=(const HiQP_Kinematic_Controller& other) = delete;
-	HiQP_Kinematic_Controller& operator=(HiQP_Kinematic_Controller&& other) noexcept = delete;
+	HiQPKinematicController(const HiQPKinematicController& other) = delete;
+	HiQPKinematicController(HiQPKinematicController&& other) = delete;
+	HiQPKinematicController& operator=(const HiQPKinematicController& other) = delete;
+	HiQPKinematicController& operator=(HiQPKinematicController&& other) noexcept = delete;
 
 
 

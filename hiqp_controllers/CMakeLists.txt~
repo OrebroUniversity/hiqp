@@ -33,10 +33,14 @@ add_library(${PROJECT_NAME} include/hiqp_utils.h
                             include/hiqp_kinematic_controller.h
                             include/task_manager.h
                             include/task.h
+                            include/task_behaviour.h
                             include/task_pop.h
+                            include/task_beh_fo.h
+                            src/hiqp_utils.cpp
                             src/hiqp_kinematic_controller.cpp
                             src/task_manager.cpp
                             src/task_pop.cpp
+                            src/task_beh_fo.cpp
 )
 
 target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} ${orocos_kdl_LIBRARIES} casadi)

@@ -4,7 +4,7 @@
   <!-- LAUNCH PARAMETERS -->
   <!-- these are the arguments you can pass this launch file, for example paused:=true -->
 
-  <arg name="controllers" default="joint_state_controller hiqp_kinematic_controller"/>
+  
 
   <arg name="paused" default="false"/>
   <arg name="use_sim_time" default="true"/>

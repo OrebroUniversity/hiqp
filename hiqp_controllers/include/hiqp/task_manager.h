@@ -1,18 +1,20 @@
+/*!
+ * \file   task_manager.h
+ * \Author Marcus A Johansson (marcus.adam.johansson@gmail.com)
+ * \date   July, 2016
+ * \brief  Brief description of file.
+ *
+ * Detailed description of file.
+ */
+
+
+
+
 #ifndef HIQP_TASK_MANAGER_H
 #define HIQP_TASK_MANAGER_H
 
-/*!
- * \file task_manager.h
- * \brief A manager class that provides an interface to all tasks
- * \author Marcus A Johansson
- * \version 0.1
- * \date 2016-06-28
- */
-
-#include <task.h>
-
-// Boost Includes
-#include <boost/shared_ptr.hpp>
+// HiQP Includes
+#include <hiqp/task.h>
 
 // STL Includes
 #include <vector>
@@ -76,7 +78,7 @@ private:
 	TaskManager& operator=(const TaskManager& other) = delete;
 	TaskManager& operator=(TaskManager&& other) noexcept = delete;
 
-     std::vector< boost::shared_ptr<Task> > tasks_;	
+     std::vector< Task* > tasks_;	
 
 };
 

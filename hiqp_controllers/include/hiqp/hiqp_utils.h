@@ -1,3 +1,14 @@
+/*!
+ * \file   hiqp_utils.h
+ * \Author Marcus A Johansson (marcus.adam.johansson@gmail.com)
+ * \date   July, 2016
+ * \brief  Brief description of file.
+ *
+ * Detailed description of file.
+ */
+
+
+
 #ifndef HIQP_UTILS_H
 #define HIQP_UTILS_H
 

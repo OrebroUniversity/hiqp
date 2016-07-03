@@ -1,4 +1,15 @@
-#include <hiqp_utils.h>
+/*!
+ * \file   hiqp_utils.cpp
+ * \Author Marcus A Johansson (marcus.adam.johansson@gmail.com)
+ * \date   July, 2016
+ * \brief  Brief description of file.
+ *
+ * Detailed description of file.
+ */
+
+
+
+#include <hiqp/hiqp_utils.h>
 
 #include <iomanip>
 

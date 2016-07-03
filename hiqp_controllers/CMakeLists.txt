@@ -29,15 +29,18 @@ catkin_package(
 
 include_directories(include ${catkin_INCLUDE_DIRS})
 
-add_library(${PROJECT_NAME} include/hiqp_utils.h
-                            include/hiqp_kinematic_controller.h
-                            include/task_manager.h
-                            include/task.h
-                            include/task_pop.h
+add_library(${PROJECT_NAME} include/hiqp/hiqp_utils.h
+                            include/hiqp/hiqp_kinematic_controller.h
+                            include/hiqp/task_manager.h
+                            include/hiqp/task.h
+                            include/hiqp/task_behaviour.h
+                            include/hiqp/task_pop.h
+                            include/hiqp/task_beh_fo.h
                             src/hiqp_utils.cpp
                             src/hiqp_kinematic_controller.cpp
                             src/task_manager.cpp
                             src/task_pop.cpp
+                            src/task_beh_fo.cpp
 )
 
 target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} ${orocos_kdl_LIBRARIES} casadi)

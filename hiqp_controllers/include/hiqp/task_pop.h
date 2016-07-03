@@ -1,22 +1,23 @@
+/*!
+ * \file   task_pop.h
+ * \Author Marcus A Johansson (marcus.adam.johansson@gmail.com)
+ * \date   July, 2016
+ * \brief  Brief description of file.
+ *
+ * Detailed description of file.
+ */
+
+
+
 #ifndef HIQP_TASK_POP_H
 #define HIQP_TASK_POP_H
 
-/*!
- * \file task_pop.h
- * \brief The abstract interface for tasks
- * \author Marcus A Johansson
- * \version 0.1
- * \date 2016-06-29
- */
 
-#include <task.h>
+// HiQP Includes
+#include <hiqp/task.h>
 
-// Orocos KDL Includes
-#include <kdl/tree.hpp>
-#include <kdl/jntarrayvel.hpp>
-
-// Eigen Includes
-#include <Eigen/Dense>
+// STL Includes
+#include <string>
 
 
 
@@ -30,7 +31,6 @@ namespace hiqp
 
 
 
-
 class TaskPoP : public Task
 {
 public:
@@ -39,7 +39,10 @@ public:
      * \brief Constructor
      * Constructs my awesome task
      */
-	TaskPoP(double n[3], double d);
+	TaskPoP(TaskBehaviour* behaviour,
+		    std::string link_name,
+		    double nx, double ny, double nz,
+		    double d);
 
 	/*!
      * \brief Destructor
@@ -57,12 +60,10 @@ public:
      *
      * \return true if the calculation was successful
      */
-	bool apply
+	int apply
 	(
 		const KDL::Tree& kdl_tree, 
-		const KDL::JntArrayVel& kdl_joint_pos_vel,
-		double& task_fun_val,
-		Eigen::MatrixXd& task_jac_val
+		const KDL::JntArrayVel& kdl_joint_pos_vel
 	);
 
 
@@ -78,8 +79,9 @@ private:
 	TaskPoP& operator=(const TaskPoP& other) = delete;
 	TaskPoP& operator=(TaskPoP&& other) noexcept = delete;
 
-	Eigen::Vector3d n_;
-	double d_;
+	std::string			link_name_; // the name of the end-effector link
+	Eigen::Vector3d 	n_; // the normal vector of the plane
+	double 				d_; // the distance to the plane from the origin
 
 
 
