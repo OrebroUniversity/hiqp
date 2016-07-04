@@ -1,4 +1,4 @@
 TaskSpec  task_spec  # specification of the task to be created
 ---
-uint16    id         # the unique identifier associated with the created task
+uint16    task_id    # the unique identifier associated with the created task
 bool      success    # true if the task creation was successful

@@ -1,0 +1,1 @@
+rosservice call /yumi/hiqp_kinematic_controller/removeTask 'task_id: 2'

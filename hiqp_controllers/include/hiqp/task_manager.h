@@ -93,6 +93,8 @@ public:
                          bool visibility,
                          const std::vector<std::string>& parameters);
 
+     int removeTask(std::size_t task_id);
+
 private:
 
 	// No copying of this class is allowed !

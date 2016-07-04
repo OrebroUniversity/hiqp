@@ -149,6 +149,13 @@ bool HiQPKinematicController::init
 		this
 	);
 
+	remove_task_service_ = controller_nh_.advertiseService
+	(
+		"removeTask",
+		&HiQPKinematicController::removeTask,
+		this
+	);
+
 
 
 
@@ -248,15 +255,44 @@ bool HiQPKinematicController::addTask
     hiqp_msgs_srvs::AddTask::Response& res
 )
 {
-	std::cout << "HiQPKinematicController::addTask\n";
+	res.task_id = task_manager_.addTask(req.task_spec.task, 
+			   						    req.task_spec.behaviour,
+									    req.task_spec.behaviour_parameters,
+									    req.task_spec.priority,
+									    req.task_spec.visibility,
+								 	    req.task_spec.parameters);
+	res.success = (res.task_id < 0 ? false : true);
 
-	res.id = task_manager_.addTask(req.task_spec.task, 
-								   req.task_spec.behaviour,
-								   req.task_spec.behaviour_parameters,
-								   req.task_spec.priority,
-								   req.task_spec.visibility,
-								   req.task_spec.parameters);
-	res.success = (res.id < 0 ? false : true);
+	if (res.success)
+	{
+		ROS_INFO_STREAM("Added task of type '" 
+			<< req.task_spec.task << "'"
+			<< " with priority " << req.task_spec.priority
+			<< " and identifier " << res.task_id);
+	}
+
+	return true;
+}
+
+
+bool HiQPKinematicController::removeTask
+(
+	hiqp_msgs_srvs::RemoveTask::Request& req, 
+    hiqp_msgs_srvs::RemoveTask::Response& res
+)
+{
+	res.success = false;
+	if (task_manager_.removeTask(req.task_id) == 0)
+		res.success = true;
+
+	if (res.success)
+	{
+		ROS_INFO_STREAM("Removed task '" << req.task_id << "' successfully!");
+	}
+	else
+	{
+		ROS_INFO_STREAM("Couldn't remove task '" << req.task_id << "'!");	
+	}
 
 	return true;
 }

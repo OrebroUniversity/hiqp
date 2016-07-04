@@ -139,6 +139,25 @@ std::size_t TaskManager::addTask
 
 
 
+int TaskManager::removeTask
+(
+    std::size_t task_id
+)
+{
+
+    if (tasks_.find(task_id) == tasks_.end())
+        return -1;
+
+    tasks_.erase(task_id);
+    return 0;
+}
+
+
+
+
+
+
+
 
 
 Task* TaskManager::buildTask

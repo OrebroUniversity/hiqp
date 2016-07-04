@@ -43,6 +43,7 @@
 #include <hiqp/task_manager.h>
 
 #include <hiqp_msgs_srvs/AddTask.h>
+#include <hiqp_msgs_srvs/RemoveTask.h>
 
 
 
@@ -172,6 +173,13 @@ private:
      bool addTask(hiqp_msgs_srvs::AddTask::Request& req, 
                   hiqp_msgs_srvs::AddTask::Response& res);
 
+     bool removeTask(hiqp_msgs_srvs::RemoveTask::Request& req, 
+                     hiqp_msgs_srvs::RemoveTask::Response& res);
+
+     
+     // setTaskVisibility, setTaskActive, updateTask, setTaskPriority
+     // printTaskInfo (for debugging purposes)
+
 
 
 
@@ -190,6 +198,7 @@ private:
 
      ros::NodeHandle                                   controller_nh_;
      ros::ServiceServer                                add_task_service_;
+     ros::ServiceServer                                remove_task_service_;
 
      JointHandleMap                                    joint_handles_map_;
      std::mutex                                        handles_mutex_;
