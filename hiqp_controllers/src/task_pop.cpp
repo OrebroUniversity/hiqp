@@ -51,6 +51,19 @@ TaskPoP::TaskPoP
 
 
 
+int TaskPoP::init()
+{
+	// Request creation of all visual primitives used by this task
+
+	//getTaskVisualizer().createPlane(n_(0), n_(1), n_(2), d, 0xcc, 0x80, 0x40);
+}
+
+
+
+
+
+
+
 int TaskPoP::apply // this is for yumi
 (
 	const KDL::Tree& kdl_tree, 
@@ -87,10 +100,10 @@ int TaskPoP::apply // this is for yumi
 	}
 
 	// Set the task function and jacobian values
-	e = n_.dot(p);
-	J.resize(1, kdl_joint_pos_vel.q.rows());
+	e_ = n_.dot(p);
+	J_.resize(1, kdl_joint_pos_vel.q.rows());
 	for (int i=0; i<kdl_joint_pos_vel.q.rows(); ++i)
-		J(0, i) = jac.getColumn(i).vel.z();
+		J_(0, i) = jac.getColumn(i).vel.z();
 
 
     //std::cout << "J = " << J << "\n";
@@ -101,6 +114,10 @@ int TaskPoP::apply // this is for yumi
 
 
 
+int TaskPoP::draw()
+{
+	// Update all visual primitives used by this task
+}
 
 
 

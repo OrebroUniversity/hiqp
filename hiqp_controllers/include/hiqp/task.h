@@ -37,21 +37,19 @@ namespace hiqp
 
 
 
+    class TaskManager; // see task_manager.h for the definition
 
-
-class Task
-{
-public:
+    class Task
+    {
+    public:
 
 	/*!
      * \brief Constructor
      * Constructs my awesome task
      */
-	Task(TaskBehaviour* task_behaviour)
-     : task_behaviour_(task_behaviour)
-     {}
-
-
+    Task(TaskBehaviour* task_behaviour)
+    : task_behaviour_(task_behaviour)
+    {}
 
 
 
@@ -59,11 +57,9 @@ public:
      * \brief Destructor
      * Destructs my awesome task
      */
-	~Task() noexcept {}
+    ~Task() noexcept {}
 
-
-
-
+    virtual int init() = 0;
 
 	/*!
      * \brief <i>Pure virtual</i>. Calculates the task function and task 
@@ -78,65 +74,88 @@ public:
      *
      * \return 0 if the calculation was successful
      */
-	virtual int apply
-	(
-		const KDL::Tree& kdl_tree, 
-		const KDL::JntArrayVel& kdl_joint_pos_vel
-	) = 0;
+    virtual int apply
+    (
+        const KDL::Tree& kdl_tree, 
+        const KDL::JntArrayVel& kdl_joint_pos_vel
+    ) = 0;
+
+    virtual int draw() = 0;
+    
+
+
+    
 
 
 
 
 
-     /*!
+
+    protected:
+
+    double              e_; // the task function
+     
+    Eigen::MatrixXd     J_; // the task jacobian
+
+    TaskBehaviour*      task_behaviour_; // pointer to the task behaviour
+
+
+
+    inline bool isVisible() { return is_visible_; }
+
+    inline void setVisible(bool visible) { is_visible_ = visible; }
+
+    bool is_visible_;
+
+    
+
+
+
+
+
+
+
+    private:
+
+	// No copying of this class is allowed !
+    Task(const Task& other) = delete;
+    Task(Task&& other) = delete;
+    Task& operator=(const Task& other) = delete;
+    Task& operator=(Task&& other) noexcept = delete;
+
+    
+
+    /*!
      * \brief This is called from TaskManager, makes calls to Task::apply()
      *        and TaskBehaviour::apply() to get the new controls.
      *        New tasks and task behaviours are created by implementing the 
-     *        apply function fo the respective classes.
+     *        apply function of the respective classes.
      */
-     int getControls
-     (
-          const KDL::Tree& kdl_tree, 
-          const KDL::JntArrayVel& kdl_joint_pos_vel,
-          std::vector<double>& controls
-     )
-     {
-          apply(kdl_tree, kdl_joint_pos_vel);
-          // The results are stored in protected members e and J
+    int getControls
+    (
+        const KDL::Tree& kdl_tree, 
+        const KDL::JntArrayVel& kdl_joint_pos_vel,
+        std::vector<double>& controls
+    )
+    {
+        apply(kdl_tree, kdl_joint_pos_vel);
+        // The results are stored in protected members e and J
 
-          //std::cout << "e = " << e << "\n";
-          //std::cout << "J = " << J << "\n";
+        //std::cout << "e = " << e << "\n";
+        //std::cout << "J = " << J << "\n";
 
-          task_behaviour_->apply(e, J, controls);
+        task_behaviour_->apply(e_, J_, controls);
 
-          return 0;
-     }
-
-     const Eigen::MatrixXd& getJ() {return J;}
+        return 0;
+    }
 
 
-
-
-
-protected:
-     
-     double              e; // the task function
-     
-     Eigen::MatrixXd     J; // the task jacobian
-
-     TaskBehaviour*      task_behaviour_; // pointer to the task behaviour
+    friend TaskManager;
 
 
 
 
 
-private:
-
-	// No copying of this class is allowed !
-	Task(const Task& other) = delete;
-	Task(Task&& other) = delete;
-	Task& operator=(const Task& other) = delete;
-	Task& operator=(Task&& other) noexcept = delete;
 
 };
 

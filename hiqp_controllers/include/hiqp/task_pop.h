@@ -35,6 +35,9 @@ class TaskPoP : public Task
 {
 public:
 
+
+
+
 	/*!
      * \brief Constructor
      * Constructs my awesome task
@@ -44,11 +47,27 @@ public:
 		    double nx, double ny, double nz,
 		    double d);
 
+
+
+
 	/*!
      * \brief Destructor
      * Destructs my awesome task
      */
 	~TaskPoP() noexcept {}
+
+
+
+
+	/*!
+     * \brief <i>Pure virtual</i>. Initializes the task
+     *
+     * \return 0 upon success
+     */
+	int init();
+
+
+
 
 	/*!
      * \brief <i>Pure virtual</i>. Calculates the task function and task 
@@ -66,6 +85,15 @@ public:
 		const KDL::JntArrayVel& kdl_joint_pos_vel
 	);
 
+
+
+
+	/*!
+     * \brief <i>Pure virtual</i>. Draws the task
+     *
+     * \return 0 upon success
+     */
+	int draw();
 
 
 

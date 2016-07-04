@@ -15,6 +15,7 @@
 
 // HiQP Includes
 #include <hiqp/task.h>
+#include <hiqp/task_visualizer.h>
 
 // STL Includes
 #include <vector>
