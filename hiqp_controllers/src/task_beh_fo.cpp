@@ -27,6 +27,24 @@ namespace hiqp
 
 
 
+int TaskBehFO::init
+(
+    const std::vector<std::string>& parameters
+)
+{
+    if (parameters.size() != 1)
+        return -1;
+
+    lambda_ = std::stod( parameters.at(0) );
+    
+    return 0;
+}
+
+
+
+
+
+
 
 int TaskBehFO::apply
 (

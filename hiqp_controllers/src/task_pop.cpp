@@ -30,30 +30,23 @@ namespace hiqp
 
 
 
-TaskPoP::TaskPoP
-(
-	TaskBehaviour* behaviour,
-	std::string link_name,
-	double nx, 
-	double ny, 
-	double nz,
-	double d
-)
-: Task(behaviour), link_name_(link_name), d_(d)
+TaskPoP::TaskPoP() {}
+
+
+
+
+
+
+int TaskPoP::init(const std::vector<std::string>& parameters)
 {
-	n_(0) = nx;
-	n_(1) = ny;
-	n_(2) = nz;
-}
+	if (parameters.size() != 5)
+		return -1;
 
-
-
-
-
-
-int TaskPoP::init()
-{
-	// Request creation of all visual primitives used by this task
+	link_name_ = parameters.at(0);
+	n_(0) = std::stod( parameters.at(1) );
+	n_(1) = std::stod( parameters.at(2) );
+	n_(2) = std::stod( parameters.at(3) );
+	d_ = std::stod( parameters.at(4) );
 
 	//getTaskVisualizer().createPlane(n_(0), n_(1), n_(2), d, 0xcc, 0x80, 0x40);
 }

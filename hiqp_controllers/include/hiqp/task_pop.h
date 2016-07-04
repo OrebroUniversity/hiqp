@@ -42,10 +42,7 @@ public:
      * \brief Constructor
      * Constructs my awesome task
      */
-	TaskPoP(TaskBehaviour* behaviour,
-		    std::string link_name,
-		    double nx, double ny, double nz,
-		    double d);
+	TaskPoP();
 
 
 
@@ -64,7 +61,7 @@ public:
      *
      * \return 0 upon success
      */
-	int init();
+	int init(const std::vector<std::string>& parameters);
 
 
 

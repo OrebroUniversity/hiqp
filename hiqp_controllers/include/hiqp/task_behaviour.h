@@ -40,6 +40,8 @@ public:
 	TaskBehaviour() {}
 	~TaskBehaviour() noexcept {}
 
+	virtual int init(const std::vector<std::string>& parameters) = 0;
+
 	virtual int apply
 	(
 		double e, 

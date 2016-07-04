@@ -139,6 +139,19 @@ bool HiQPKinematicController::init
 	output_controls_ = std::vector<double>(n_kdl_joints, 0.0);
 
 
+
+
+	// Advertise available ROS services and link the callback functions
+	add_task_service_ = controller_nh_.advertiseService
+	(
+		"addTask",
+		&HiQPKinematicController::addTask,
+		this
+	);
+
+
+
+
 	return true;
 }
 
@@ -224,6 +237,29 @@ void HiQPKinematicController::stopping
 {}
 
 
+
+
+
+
+
+bool HiQPKinematicController::addTask
+(
+	hiqp_msgs_srvs::AddTask::Request& req, 
+    hiqp_msgs_srvs::AddTask::Response& res
+)
+{
+	std::cout << "HiQPKinematicController::addTask\n";
+
+	res.id = task_manager_.addTask(req.task_spec.task, 
+								   req.task_spec.behaviour,
+								   req.task_spec.behaviour_parameters,
+								   req.task_spec.priority,
+								   req.task_spec.visibility,
+								   req.task_spec.parameters);
+	res.success = (res.id < 0 ? false : true);
+
+	return true;
+}
 
 
 

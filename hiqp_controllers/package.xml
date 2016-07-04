@@ -18,11 +18,13 @@
   <build_depend>controller_interface</build_depend>
   <build_depend>orocos_kdl</build_depend>
   <build_depend>kdl_parser</build_depend>
+  <build_depend>hiqp_msgs_srvs</build_depend>
 
   <run_depend>roscpp</run_depend>
   <run_depend>controller_interface</run_depend>
   <run_depend>orocos_kdl</run_depend>
   <run_depend>kdl_parser</run_depend>
+  <run_depend>hiqp_msgs_srvs</run_depend>
 
   <export>
     <controller_interface plugin="${prefix}/hiqp_controllers_plugins.xml"/>

@@ -42,6 +42,8 @@
 // HiQP Includes
 #include <hiqp/task_manager.h>
 
+#include <hiqp_msgs_srvs/AddTask.h>
+
 
 
 
@@ -65,7 +67,9 @@ controller_interface::Controller<hardware_interface::VelocityJointInterface>
 JointVelocityController;
 
 /** A name for the standard joint-velocity hardware interface in ROS */
-typedef hardware_interface::VelocityJointInterface JointVelocityInterface;
+typedef 
+hardware_interface::VelocityJointInterface 
+JointVelocityInterface;
 
 /*!
  * \class HiQPKinematicController
@@ -124,7 +128,8 @@ public:
      *   <li>calls getKinematicControls() on its task manager,</li>
      *   <li>and locks a mutex and writes velocity values to the joint handles.</li>
      * </ol>
-     * The joint handles are stored as a map between the joints q-number in the KDL::Tree and the joint handles themselves.
+     * The joint handles are stored as a map between the joints q-number in the 
+     * KDL::Tree and the joint handles themselves.
      *
      * \param time : the current wall-time in ROS
      * \param period : the time between the last update call and this, i.e.
@@ -162,24 +167,42 @@ private:
 
 
 
-     ros::NodeHandle                                   controller_nh_;
-     bool                                              is_active_;
+
+     // These are callback functions for ROS service calls
+     bool addTask(hiqp_msgs_srvs::AddTask::Request& req, 
+                  hiqp_msgs_srvs::AddTask::Response& res);
+
+
+
+
 
      typedef std::map<unsigned int, hardware_interface::JointHandle >
           JointHandleMap;
      typedef std::pair<unsigned int, hardware_interface::JointHandle >
           JointHandleMapEntry;
 
+
+
+
+
+
+     bool                                              is_active_;
+
+     ros::NodeHandle                                   controller_nh_;
+     ros::ServiceServer                                add_task_service_;
+
      JointHandleMap                                    joint_handles_map_;
+     std::mutex                                        handles_mutex_;
+
+     TaskManager                                       task_manager_;
 
      KDL::Tree                                         kdl_tree_;
      KDL::JntArrayVel                                  kdl_joint_pos_vel_;
 
-     std::mutex                                        handles_mutex_;
-
      std::vector<double>                               output_controls_;
 
-     TaskManager                                       task_manager_;
+
+
 
 };
 

@@ -40,11 +40,8 @@ namespace hiqp {
 
 
 TaskManager::TaskManager()
-{
-    TaskBehaviour* fobeh = new TaskBehFO(1.0);
-    Task* poptask = new TaskPoP(fobeh, "gripper_r_base", 0, 0, 1, 0.1);
-    tasks_.push_back(poptask);
-}
+: next_task_id_(0), next_task_behaviour_id_(0)
+{}
 
 
 TaskManager::~TaskManager() noexcept
@@ -53,13 +50,20 @@ TaskManager::~TaskManager() noexcept
 }
 
 
+
+
+
+
+
 bool TaskManager::getKinematicControls
 (
     const KDL::Tree& kdl_tree,
     const KDL::JntArrayVel& kdl_joint_pos_vel,
-	std::vector<double> &controls
+    std::vector<double> &controls
 )
 {
+    if (tasks_.size() < 1) return true;
+
     tasks_.at(0)->getControls(kdl_tree, 
                               kdl_joint_pos_vel, 
                               controls);
@@ -82,6 +86,86 @@ bool TaskManager::getKinematicControls
 
 
 
+
+
+
+
+std::size_t TaskManager::addTask
+(
+    const std::string& task_name,
+    const std::string& behaviour_name,
+    const std::vector<std::string>& behaviour_parameters,
+    unsigned int priority,
+    bool visibility,
+    const std::vector<std::string>& parameters
+)
+{
+    // Create the task behaviour
+    TaskBehaviour* behaviour = buildTaskBehaviour(behaviour_name);
+    if (behaviour == NULL)
+        return -1;
+
+    // Initialize the task behaviour
+    behaviour->init(behaviour_parameters);
+
+    // Add the task behaviour to the behaviours map
+    task_behaviours_[next_task_behaviour_id_] = behaviour;
+    next_task_behaviour_id_++;
+
+    // Create and initialize the task
+    Task* task = buildTask(task_name);
+    if (task == NULL)
+    {
+        delete behaviour;
+        return -1;
+    }
+
+    // Initialize the task
+    task->setTaskBehaviour(behaviour);
+    task->setPriority(priority);
+    task->setVisibility(visibility);
+    task->init(parameters);
+
+    // Add the task to the tasks map
+    tasks_[next_task_id_] = task;
+    next_task_id_++;
+
+    return next_task_id_-1;
+}
+
+
+
+
+
+
+
+
+
+Task* TaskManager::buildTask
+(
+    const std::string& task_name
+)
+{
+    if (task_name.compare("TaskPoP") != 0)
+        return NULL;
+
+    return new TaskPoP();
+}
+
+
+
+
+
+TaskBehaviour* TaskManager::buildTaskBehaviour
+(
+    const std::string& behaviour_name
+)
+{
+    if (behaviour_name.compare("TaskBehFO") != 0)
+        return NULL;
+
+    return new TaskBehFO();
+}
 
 
 

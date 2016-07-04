@@ -15,6 +15,7 @@
 
 // HiQP Includes
 #include <hiqp/task.h>
+#include <hiqp/task_behaviour.h>
 #include <hiqp/task_visualizer.h>
 
 // STL Includes
@@ -71,6 +72,27 @@ public:
                                const KDL::JntArrayVel& kdl_joint_pos_vel,
 		                     std::vector<double> &controls);
 
+     /*!
+     * \brief Adds a task to the task manager and activates it
+     *
+     * \param task_name : name of the task to be created
+     * \param behaviour_name : name of the behaviour that shall be associated 
+     *                         with this task
+     * \param priority : the priority of this task (1 is highest)
+     * \param visible : whether this task should be visible or not
+     * \param parameters : the task specific parameters
+     *
+     * \return 0 if the task creation was successful,
+     *         -1 is the task name was not recognised,
+     *         -2 if the task behaviour name was not recognised
+     */
+     std::size_t addTask(const std::string& task_name,
+                         const std::string& behaviour_name,
+                         const std::vector<std::string>& behaviour_parameters,
+                         unsigned int priority,
+                         bool visibility,
+                         const std::vector<std::string>& parameters);
+
 private:
 
 	// No copying of this class is allowed !
@@ -79,7 +101,20 @@ private:
 	TaskManager& operator=(const TaskManager& other) = delete;
 	TaskManager& operator=(TaskManager&& other) noexcept = delete;
 
-     std::vector< Task* > tasks_;	
+
+     Task* buildTask(const std::string& task_name);
+
+     TaskBehaviour* buildTaskBehaviour(const std::string& behaviour_name);
+
+
+
+
+
+     std::map< std::size_t, Task* >               tasks_;
+     std::size_t                                  next_task_id_;
+
+     std::map< std::size_t, TaskBehaviour* >      task_behaviours_;
+     std::size_t                                  next_task_behaviour_id_;
 
 };
 

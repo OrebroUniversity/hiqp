@@ -30,11 +30,11 @@ class TaskBehFO : public TaskBehaviour
 {
 public:
 
-	TaskBehFO(double lambda)
-	: lambda_(lambda)
-	{}
+	TaskBehFO() {}
 
 	~TaskBehFO() noexcept {}
+
+	int init(const std::vector<std::string>& parameters);
 
 	int apply
 	(

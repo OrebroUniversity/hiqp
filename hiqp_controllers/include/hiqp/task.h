@@ -47,9 +47,7 @@ namespace hiqp
      * \brief Constructor
      * Constructs my awesome task
      */
-    Task(TaskBehaviour* task_behaviour)
-    : task_behaviour_(task_behaviour)
-    {}
+    Task() {}
 
 
 
@@ -59,7 +57,7 @@ namespace hiqp
      */
     ~Task() noexcept {}
 
-    virtual int init() = 0;
+    virtual int init(const std::vector<std::string>& parameters) = 0;
 
 	/*!
      * \brief <i>Pure virtual</i>. Calculates the task function and task 
@@ -97,15 +95,11 @@ namespace hiqp
      
     Eigen::MatrixXd     J_; // the task jacobian
 
-    TaskBehaviour*      task_behaviour_; // pointer to the task behaviour
+    
 
 
 
-    inline bool isVisible() { return is_visible_; }
-
-    inline void setVisible(bool visible) { is_visible_ = visible; }
-
-    bool is_visible_;
+    
 
     
 
@@ -123,7 +117,17 @@ namespace hiqp
     Task& operator=(const Task& other) = delete;
     Task& operator=(Task&& other) noexcept = delete;
 
-    
+
+    inline void setVisibility(bool visibility) 
+    { visibility_ = visibility; }
+
+    inline void setTaskBehaviour(TaskBehaviour* task_behaviour)
+    { task_behaviour_ = task_behaviour; }
+
+    inline void setPriority(unsigned int priority)
+    { priority_ = priority; }
+
+
 
     /*!
      * \brief This is called from TaskManager, makes calls to Task::apply()
@@ -150,10 +154,18 @@ namespace hiqp
     }
 
 
-    friend TaskManager;
+
+
+    TaskBehaviour*      task_behaviour_; // pointer to the task behaviour
+
+    unsigned int        priority_;
+
+    bool                visibility_;
 
 
 
+
+    friend              TaskManager;
 
 
 
