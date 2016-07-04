@@ -14,6 +14,7 @@
 
 // HiQP Includes
 #include <hiqp/task_behaviour.h>
+#include <hiqp/task_visualizer.h>
 
 // STL Includes
 #include <vector>
@@ -91,9 +92,12 @@ namespace hiqp
 
     protected:
 
-    double              e_; // the task function
+    double                          e_; // the task function
      
-    Eigen::MatrixXd     J_; // the task jacobian
+    Eigen::MatrixXd                 J_; // the task jacobian
+
+    TaskVisualizer* getTaskVisualizer()
+    { return task_visualizer_; }
 
     
 
@@ -123,6 +127,9 @@ namespace hiqp
 
     inline void setTaskBehaviour(TaskBehaviour* task_behaviour)
     { task_behaviour_ = task_behaviour; }
+
+    inline void setTaskVisualizer(TaskVisualizer* task_visualizer)
+    { task_visualizer_ = task_visualizer; }
 
     inline void setPriority(unsigned int priority)
     { priority_ = priority; }
@@ -157,6 +164,8 @@ namespace hiqp
 
 
     TaskBehaviour*      task_behaviour_; // pointer to the task behaviour
+
+    TaskVisualizer*     task_visualizer_;
 
     unsigned int        priority_;
 

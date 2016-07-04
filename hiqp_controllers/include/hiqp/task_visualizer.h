@@ -27,8 +27,38 @@ class TaskVisualizer
 {
 public:
 
-	TaskVisualizer() {}
+	TaskVisualizer() 
+	: next_id_(0)
+	{}
+
 	~TaskVisualizer() noexcept {}
+
+
+
+	int draw();
+
+
+
+	/*!
+     * \brief Sets the visibility of the object (more efficient than setting 
+     *        alpha to zero)
+     *
+     * \param id : the identifier of the visual primitive
+     * \param visibility : the new visibility value
+     *  
+     * \return 0 on success, -1 if the primitive was not found
+     */
+	inline int setVisibility(std::size_t id, bool visibility)
+	{
+		MapIterator it = primitives_map_.find(id);
+		if (it == primitives_map_.end())
+			return -1;
+		it->second->visibility_ = visibility;
+		return 0;
+	}
+
+
+
 
 	/*!
      * \brief Creates and registers a plane among the objects to be visualized.
@@ -104,8 +134,7 @@ private:
 	TaskVisualizer& operator=(const TaskVisualizer& other) = delete;
 	TaskVisualizer& operator=(TaskVisualizer&& other) noexcept = delete;
 
-
-
+	
 
 	class TaskVisualPrimitive
 	{
@@ -115,7 +144,7 @@ private:
 		inline void setEsthetics(double r, double g, double b, double a)
 		{ r_ = r; g_ = g; b_ = b; a_ = a; }
 
-		double r_; double g_; double b_; double a_;
+		double r_; double g_; double b_; double a_; bool visibility_;
 	};
 
 	class TaskVisualPlane : public TaskVisualPrimitive
@@ -140,7 +169,21 @@ private:
 
 
 
-	MapType		primitives_map_;
+
+	inline std::size_t insertPrimitive(TaskVisualPrimitive* primitive)
+	{ 
+		primitives_map_.insert( MapElement(next_id_, primitive) );
+		next_id_++;
+		return next_id_-1;
+	}
+
+
+
+
+
+	MapType			primitives_map_;
+
+	std::size_t		next_id_;
 
 
 

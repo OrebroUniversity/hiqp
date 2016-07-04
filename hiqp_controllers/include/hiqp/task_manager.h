@@ -118,6 +118,8 @@ private:
      std::map< std::size_t, TaskBehaviour* >      task_behaviours_;
      std::size_t                                  next_task_behaviour_id_;
 
+     TaskVisualizer*                              task_visualizer_;
+
 };
 
 } // namespace hiqp

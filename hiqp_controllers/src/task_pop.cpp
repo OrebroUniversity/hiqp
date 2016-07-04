@@ -48,7 +48,7 @@ int TaskPoP::init(const std::vector<std::string>& parameters)
 	n_(2) = std::stod( parameters.at(3) );
 	d_ = std::stod( parameters.at(4) );
 
-	//getTaskVisualizer().createPlane(n_(0), n_(1), n_(2), d, 0xcc, 0x80, 0x40);
+	getTaskVisualizer()->createPlane(n_(0), n_(1), n_(2), d_, 0xcc, 0x80, 0x40, 0.75);
 }
 
 

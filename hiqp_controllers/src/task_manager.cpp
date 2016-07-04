@@ -41,12 +41,15 @@ namespace hiqp {
 
 TaskManager::TaskManager()
 : next_task_id_(0), next_task_behaviour_id_(0)
-{}
+{
+    task_visualizer_ = new TaskVisualizer();
+}
 
 
 TaskManager::~TaskManager() noexcept
 {
     // We have memory leaks!!
+    delete task_visualizer_;
 }
 
 
@@ -122,6 +125,7 @@ std::size_t TaskManager::addTask
 
     // Initialize the task
     task->setTaskBehaviour(behaviour);
+    task->setTaskVisualizer(task_visualizer_);
     task->setPriority(priority);
     task->setVisibility(visibility);
     task->init(parameters);

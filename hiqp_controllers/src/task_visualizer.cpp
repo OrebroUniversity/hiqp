@@ -8,7 +8,8 @@
  */
 
 
-
+#include <iostream>
+ 
 #include <hiqp/task_visualizer.h>
 
 
@@ -20,11 +21,25 @@ namespace hiqp
 {
 
 
+int TaskVisualizer::draw()
+{
+	for (MapElement&& primitive : primitives_map_)
+	{
+		if (primitive.second->visibility_ == true)
+		{
+			// Draw this primitive in Gazebo/Rviz or whatever!
+		}
+	}
+
+	return 0;
+}
+
+
 TaskVisualizer::TaskVisualPrimitive::TaskVisualPrimitive
 (
 	double r, double g, double b, double a
 )
-: r_(r), g_(g), b_(b), a_(a) 
+: r_(r), g_(g), b_(b), a_(a), visibility_(true)
 {}
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -42,9 +57,6 @@ TaskVisualizer::TaskVisualPlane::TaskVisualPlane
 {}
 
 
-
-
-
 std::size_t TaskVisualizer::createPlane
 (
 	double nx, double ny, double nz, double d, 
@@ -53,17 +65,9 @@ std::size_t TaskVisualizer::createPlane
 {
 	TaskVisualPrimitive* visual = new TaskVisualPlane(nx, ny, nz, d,
 													  r, g, b, a);
-	std::size_t hash_key = 
-		std::hash<TaskVisualPlane*>{}( (TaskVisualPlane*)visual );
-	
-	primitives_map_.insert( MapElement(hash_key, visual) );
-
-	return hash_key;
+	std::cout << "A plane has been created!\n";
+	return insertPrimitive(visual);
 }
-
-
-
-
 
 
 int TaskVisualizer::setPlaneGeometry
@@ -83,10 +87,6 @@ int TaskVisualizer::setPlaneGeometry
 }
 
 
-
-
-
-
 int TaskVisualizer::setPlaneEsthetics
 (
 	std::size_t id, 
@@ -102,8 +102,6 @@ int TaskVisualizer::setPlaneEsthetics
 
 	return 0;
 }
-
-
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -142,6 +140,15 @@ int TaskVisualizer::setPlaneEsthetics
 // 																			  //
 ////////////////////////////////////////////////////////////////////////////////
 
+
+
+
+
+////////////////////////////////////////////////////////////////////////////////
+// 																			  //
+//						      C Y L I N D E R                                 //
+// 																			  //
+////////////////////////////////////////////////////////////////////////////////
 
 
 
