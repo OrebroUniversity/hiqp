@@ -39,17 +39,17 @@ namespace hiqp {
 
 
 
-TaskManager::TaskManager()
-: next_task_id_(0), next_task_behaviour_id_(0)
+TaskManager::TaskManager(TaskVisualizer* task_visualizer)
+: next_task_id_(0), 
+  next_task_behaviour_id_(0),
+  task_visualizer_(task_visualizer)
 {
-    task_visualizer_ = new TaskVisualizer();
 }
 
 
 TaskManager::~TaskManager() noexcept
 {
     // We have memory leaks!!
-    delete task_visualizer_;
 }
 
 

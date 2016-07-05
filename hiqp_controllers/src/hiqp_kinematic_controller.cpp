@@ -29,7 +29,7 @@ namespace hiqp
 
 
 HiQPKinematicController::HiQPKinematicController()
-: is_active_(true)
+: is_active_(true), task_manager_(&task_visualizer_)
 {
 }
 
@@ -63,7 +63,7 @@ bool HiQPKinematicController::init
 {
 	// Store the handle of the node that runs this controller
 	controller_nh_ = controller_nh;
-
+	task_visualizer_.init(&controller_nh_);
 
 
 

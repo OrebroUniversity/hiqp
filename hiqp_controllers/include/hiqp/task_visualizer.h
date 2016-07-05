@@ -11,8 +11,15 @@
 #define HIQP_TASK_VISUALIZER_H
 
 
+// STL Includes
 #include <cstddef> // std::size_t
 #include <map>
+
+
+// ROS Includes
+#include <ros/ros.h>
+
+
 
 
 
@@ -23,19 +30,36 @@ namespace hiqp
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+class TaskVisualPrimitive;
+
 class TaskVisualizer
 {
 public:
 
-	TaskVisualizer() 
-	: next_id_(0)
-	{}
+	TaskVisualizer();
 
 	~TaskVisualizer() noexcept {}
 
 
 
-	int draw();
+
+
+	int init(ros::NodeHandle* controller_nh);
+
+
 
 
 
@@ -48,14 +72,8 @@ public:
      *  
      * \return 0 on success, -1 if the primitive was not found
      */
-	inline int setVisibility(std::size_t id, bool visibility)
-	{
-		MapIterator it = primitives_map_.find(id);
-		if (it == primitives_map_.end())
-			return -1;
-		it->second->visibility_ = visibility;
-		return 0;
-	}
+	int setVisibility(std::size_t id, bool visibility);
+
 
 
 
@@ -134,60 +152,20 @@ private:
 	TaskVisualizer& operator=(const TaskVisualizer& other) = delete;
 	TaskVisualizer& operator=(TaskVisualizer&& other) noexcept = delete;
 
-	
-
-	class TaskVisualPrimitive
-	{
-	public:
-		TaskVisualPrimitive(double r, double g, double b, double a);
-
-		inline void setEsthetics(double r, double g, double b, double a)
-		{ r_ = r; g_ = g; b_ = b; a_ = a; }
-
-		double r_; double g_; double b_; double a_; bool visibility_;
-	};
-
-	class TaskVisualPlane : public TaskVisualPrimitive
-	{
-	public:
-		TaskVisualPlane(double nx, double ny, double nz, double d,
-				        double r, double g, double b, double a);
-
-		inline void setGeometry(double nx, double ny, double nz, double d)
-		{ nx_ = nx; ny_ = ny; nz_ = nz; d_ = d; }
-
-		double nx_; double ny_; double nz_; double d_;
-	};
-
-
-
+	std::size_t insertPrimitive(TaskVisualPrimitive* primitive);
 
 	typedef std::pair<std::size_t, TaskVisualPrimitive*>           MapElement;
 	typedef std::map<std::size_t, TaskVisualPrimitive*>            MapType;
 	typedef std::map<std::size_t, TaskVisualPrimitive*>::iterator  MapIterator;
 
 
+	MapType								primitives_map_;
 
+	std::size_t							next_id_;
 
+	ros::NodeHandle*                    controller_nh_;
 
-	inline std::size_t insertPrimitive(TaskVisualPrimitive* primitive)
-	{ 
-		primitives_map_.insert( MapElement(next_id_, primitive) );
-		next_id_++;
-		return next_id_-1;
-	}
-
-
-
-
-
-	MapType			primitives_map_;
-
-	std::size_t		next_id_;
-
-
-
-
+	ros::Publisher 						marker_pub_;
 
 };
 

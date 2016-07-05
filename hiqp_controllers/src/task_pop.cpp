@@ -48,6 +48,8 @@ int TaskPoP::init(const std::vector<std::string>& parameters)
 	n_(2) = std::stod( parameters.at(3) );
 	d_ = std::stod( parameters.at(4) );
 
+	std::cout << "TaskPoP::init\n";
+
 	getTaskVisualizer()->createPlane(n_(0), n_(1), n_(2), d_, 0xcc, 0x80, 0x40, 0.75);
 }
 
@@ -97,7 +99,6 @@ int TaskPoP::apply // this is for yumi
 	J_.resize(1, kdl_joint_pos_vel.q.rows());
 	for (int i=0; i<kdl_joint_pos_vel.q.rows(); ++i)
 		J_(0, i) = jac.getColumn(i).vel.z();
-
 
     //std::cout << "J = " << J << "\n";
 

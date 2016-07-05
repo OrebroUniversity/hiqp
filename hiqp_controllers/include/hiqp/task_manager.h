@@ -49,7 +49,7 @@ public:
      * \brief Constructor
      * Constructs my awesome controller
      */
-	TaskManager();
+	TaskManager(TaskVisualizer* task_visualizer);
 
 	/*!
      * \brief Destructor

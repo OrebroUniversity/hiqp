@@ -203,6 +203,7 @@ private:
      JointHandleMap                                    joint_handles_map_;
      std::mutex                                        handles_mutex_;
 
+     TaskVisualizer                                    task_visualizer_;
      TaskManager                                       task_manager_;
 
      KDL::Tree                                         kdl_tree_;
