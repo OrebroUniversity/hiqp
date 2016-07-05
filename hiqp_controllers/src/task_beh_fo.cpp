@@ -53,19 +53,7 @@ int TaskBehFO::apply
 	std::vector<double>& controls
 )
 {
-	Eigen::MatrixXd Jinv;
-    Jinv.resize(J.cols(), J.rows());
-    int result = dampedLeastSquare(J, Jinv);
-
-    //std::cout << "e = " << e << "\n";
-    //std::cout << "J = " << J << "\n";
-    //std::cout << "result = " << result << "\n";
-    //std::cout << "Jinv = \n" << Jinv << "\n";
-
-    Eigen::MatrixXd u;
-    u.resizeLike(Jinv);
-
-    u = -lambda_ * Jinv * e;
+	Eigen::MatrixXd u = -lambda_ * pinv(J) * e;
 
     //std::cout << "u = \n" << u << "\n";
      

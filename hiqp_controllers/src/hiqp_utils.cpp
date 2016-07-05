@@ -25,62 +25,62 @@ namespace hiqp
 
 
 // Auxiliary function to 'ostream& << KDL::Tree&'
-	void printChildrenToOstream
-	(
-		std::ostream& os, 
-		const std::vector<KDL::SegmentMap::const_iterator>& children,
-		std::vector<bool>& is_last_child,
-		unsigned int level = 0
-		)
+void printChildrenToOstream
+(
+	std::ostream& os, 
+	const std::vector<KDL::SegmentMap::const_iterator>& children,
+	std::vector<bool>& is_last_child,
+	unsigned int level = 0
+	)
+{
+	is_last_child.push_back(false);
+	for (auto&& child : children)
 	{
-		is_last_child.push_back(false);
-		for (auto&& child : children)
-		{
-			for (int i=0; i<level; ++i)
-				os << (is_last_child[i] ? "   " : " | ");
+		for (int i=0; i<level; ++i)
+			os << (is_last_child[i] ? "   " : " | ");
 
-			os << " + " << child->first 
-			<< " : " << child->second.segment.getJoint().getName() 
-			<< "(" << child->second.q_nr << ")"
-			<< "\n";
+		os << " + " << child->first 
+		<< " : " << child->second.segment.getJoint().getName() 
+		<< "(" << child->second.q_nr << ")"
+		<< "\n";
 
-			is_last_child.at(level) = (child == children.back());
-			printChildrenToOstream(
-				os, 
-				child->second.children, 
-				is_last_child,
-				level+1
-				);
-		}
-
-		return;
+		is_last_child.at(level) = (child == children.back());
+		printChildrenToOstream(
+			os, 
+			child->second.children, 
+			is_last_child,
+			level+1
+			);
 	}
 
-	std::ostream& operator<<
-	(
-		std::ostream& os, 
-		const KDL::Tree& kdl_tree
-		)
-	{
-		KDL::SegmentMap::const_iterator root_segment = kdl_tree.getRootSegment();
-		os << "nr of joints: " << kdl_tree.getNrOfJoints() << "\n";
-		os << "nr of segments: " << kdl_tree.getNrOfSegments() << "\n";
-		os << root_segment->first << "\n";
+	return;
+}
 
-		std::vector<bool> is_last_child;
-		printChildrenToOstream(os, root_segment->second.children, is_last_child);
+std::ostream& operator<<
+(
+	std::ostream& os, 
+	const KDL::Tree& kdl_tree
+	)
+{
+	KDL::SegmentMap::const_iterator root_segment = kdl_tree.getRootSegment();
+	os << "nr of joints: " << kdl_tree.getNrOfJoints() << "\n";
+	os << "nr of segments: " << kdl_tree.getNrOfSegments() << "\n";
+	os << root_segment->first << "\n";
 
-		return os;
-/*
-	const KDL::SegmentMap& segmap = kdl_tree.getSegments();
-	for (auto&& it : segmap)
-	{
-		const KDL::Segment& seg = it.second.segment;
-		os << seg.getName() << ", ";
+	std::vector<bool> is_last_child;
+	printChildrenToOstream(os, root_segment->second.children, is_last_child);
 
-	}
 	return os;
-	*/
+/*
+const KDL::SegmentMap& segmap = kdl_tree.getSegments();
+for (auto&& it : segmap)
+{
+	const KDL::Segment& seg = it.second.segment;
+	os << seg.getName() << ", ";
+
+}
+return os;
+*/
 }
 
 
