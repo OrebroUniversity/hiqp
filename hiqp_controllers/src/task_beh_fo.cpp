@@ -53,9 +53,7 @@ int TaskBehFO::apply
 	std::vector<double>& controls
 )
 {
-	Eigen::MatrixXd u = -lambda_ * pinv(J) * e;
-
-    //std::cout << "u = \n" << u << "\n";
+	Eigen::MatrixXd u = -lambda_ * dls(J, 0.1) * e;
      
     for (int i=0; i<controls.size(); ++i)
          controls.at(i) = u(i,0);

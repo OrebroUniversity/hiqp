@@ -92,39 +92,37 @@ Derived pinv(const Eigen::MatrixBase<Derived>& a)
 
 
 
-
-template<typename T>
-int dampedLeastSquare
+/*!
+ *  \brief calculates the Damped-Least-Square matrix.
+ *
+ *  \param a : the matrix to be inverted
+ *
+ *  \return the damped-least-square matrix on success, 
+ *          the given matrix is returned otherwise.
+ */
+template<typename Derived>
+Derived dls
 (
-    const T& a, 
-    T& result, 
+    const Eigen::MatrixBase<Derived>& a, 
     double eta = 0.01
-    )
+)
 {
     unsigned int r = a.rows();
     unsigned int c = a.cols();
 
-    if (r > c) return -1;
+    if (r > c) 
+        return a;
 
     if (r == c)
-    {
-        pinvSVD(a, result);
-        return 0;
-    }
+        return pinv(a);
 
-    unsigned int d = c-r;
-
-    Eigen::MatrixXd a_ext(c, c);
-
+    Derived a_ext(r+c, c);
     a_ext.block(0, 0, r, c) = a;
-    
-    a_ext.block(r, 0, d, d) = eta * Eigen::MatrixXd::Identity(d, d);
-
-    Eigen::MatrixXd b = Eigen::MatrixXd::Zero(r+d, r);
+    a_ext.block(r, 0, c, c) = eta * Eigen::MatrixXd::Identity(c, c);
+    Derived b = Eigen::MatrixXd::Zero(r+c, r);
     b.block(0, 0, r, r) = Eigen::MatrixXd::Identity(r, r);
-    result = pinv(a_ext) * b;
 
-    return 0;
+    return pinv(a_ext) * b;
 }
 
 
