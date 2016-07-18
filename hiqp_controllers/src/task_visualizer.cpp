@@ -85,6 +85,20 @@ int TaskVisualizer::init(ros::NodeHandle* controller_nh)
 
 
 
+int TaskVisualizer::redraw()
+{
+	for (MapElement&& element : primitives_map_)
+	{
+		TaskVisualPrimitive* primitive = element.second;
+		primitive->draw(marker_pub_, visualization_msgs::Marker::ADD);
+	}
+}
+
+
+
+
+
+
 int TaskVisualizer::setVisibility(std::size_t id, bool visibility)
 {
 	MapIterator it = primitives_map_.find(id);
@@ -162,12 +176,9 @@ void TaskVisualPlane::draw
 {
 	visualization_msgs::Marker marker;
 
-	//const std::string kFrameId    = "/whatever_link";
-	//const std::string kNamespace  = "yumi";
-
 	marker.header.frame_id = "/world";
     marker.header.stamp = ros::Time::now();
-    marker.ns = "";
+    marker.ns = kNamespace;
     marker.id = id_;
     marker.type = visualization_msgs::Marker::CUBE;
     marker.action = action; 

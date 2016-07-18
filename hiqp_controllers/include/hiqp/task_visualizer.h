@@ -59,6 +59,8 @@ public:
 
 	int init(ros::NodeHandle* controller_nh);
 
+     int redraw();
+
 
 
 

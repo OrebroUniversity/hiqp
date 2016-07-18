@@ -81,6 +81,8 @@ bool TaskManager::getKinematicControls
         controls[i] = u(i);
     }
 
+    task_visualizer_->redraw();
+
     //std::cout << tasks_.at(0)->getJ() << std::endl;
 
     /*
