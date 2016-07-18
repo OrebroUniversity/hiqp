@@ -1,6 +1,5 @@
 var searchData=
 [
-  ['hiqp',['hiqp',['../namespacehiqp.html',1,'']]],
-  ['hiqp_5fkinematic_5fcontroller',['HiQP_Kinematic_Controller',['../classhiqp_1_1HiQP__Kinematic__Controller.html#aa82bda256000e7dc52fb4107bbdf62af',1,'hiqp::HiQP_Kinematic_Controller']]],
-  ['hiqp_5fkinematic_5fcontroller',['HiQP_Kinematic_Controller',['../classhiqp_1_1HiQP__Kinematic__Controller.html',1,'hiqp']]]
+  ['dls',['dls',['../namespacehiqp.html#a8fb181f069898cddd461b0a33f2f19d1',1,'hiqp']]],
+  ['draw',['draw',['../classhiqp_1_1TaskPoP.html#a5e7a17a2371c5a3d28986c4cb4c09319',1,'hiqp::TaskPoP']]]
 ];

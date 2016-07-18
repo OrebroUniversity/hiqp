@@ -44,10 +44,26 @@
 	"buffers":
 	[
 		{
-			"file": "/home/neckutrek/dev/playground/test_pseudoInverse/main.cpp",
+			"file": "hiqp_controllers/include/hiqp/hiqp_utils.h",
 			"settings":
 			{
-				"buffer_size": 479,
+				"buffer_size": 3278,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "hiqp_controllers/servicecalls/add_task.sh",
+			"settings":
+			{
+				"buffer_size": 218,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "hiqp_controllers/src/task_beh_fo.cpp",
+			"settings":
+			{
+				"buffer_size": 756,
 				"line_ending": "Unix"
 			}
 		}
@@ -85,15 +101,23 @@
 	"expanded_folders":
 	[
 		"/home/neckutrek/dev/indigo_ws/src/hiqp",
-		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers"
+		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers",
+		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/include",
+		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/include/hiqp",
+		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/servicecalls",
+		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/src"
 	],
 	"file_history":
 	[
+		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/src/hiqp_utils.cpp",
+		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/src/task_beh_fo.cpp",
+		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/servicecalls/add_task.sh",
+		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/include/hiqp/task.h",
+		"/home/neckutrek/dev/playground/test_pseudoInverse/main.cpp",
 		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/include/hiqp/task_manager.h",
 		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/include/hiqp/hiqp_kinematic_controller.h",
 		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/src/hiqp_kinematic_controller.cpp",
 		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/src/task_manager.cpp",
-		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/include/hiqp/task.h",
 		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/src/task_pop.cpp",
 		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/launch/yumi.rviz",
 		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/package.xml",
@@ -108,8 +132,6 @@
 		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/servicecalls/remove_task.sh",
 		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_msgs_srvs/srv/AddTask.srv",
 		"/home/neckutrek/dev/playground/test_protectedMembers/main.cpp",
-		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/src/task_beh_fo.cpp",
-		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/src/hiqp_utils.cpp",
 		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/include/task_beh_fo.h",
 		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/include/task_behaviour.h",
 		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/include/task_pop.h",
@@ -118,7 +140,6 @@
 		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/include/task_manager.h",
 		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/include/hiqp_kinematic_controller.h",
 		"/home/neckutrek/dev/playground/test_pseudoInverse/Makefile",
-		"/home/neckutrek/dev/playground/test_pseudoInverse/main.cpp",
 		"/home/neckutrek/dev/indigo_ws/src/apple/hqp_controllers/include/hqp_controllers/task_manager.h",
 		"/home/neckutrek/dev/indigo_ws/src/apple/hqp_controllers/src/task_manager.cpp",
 		"/home/neckutrek/dev/indigo_ws/src/apple/hqp_controllers/include/hqp_controllers/hqp_velocity_controller.h",
@@ -220,30 +241,94 @@
 			[
 				{
 					"buffer": 0,
-					"file": "/home/neckutrek/dev/playground/test_pseudoInverse/main.cpp",
+					"file": "hiqp_controllers/include/hiqp/hiqp_utils.h",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 479,
+						"buffer_size": 3278,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								479,
-								479
+								3205,
+								3205
 							]
 						],
 						"settings":
 						{
-							"syntax": "Packages/C++/C++.sublime-syntax"
+							"rulers":
+							[
+								80
+							],
+							"syntax": "Packages/C++/C++.sublime-syntax",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 1581.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "hiqp_controllers/servicecalls/add_task.sh",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 218,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								132,
+								132
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/ShellScript/Shell-Unix-Generic.sublime-syntax"
 						},
 						"translation.x": 0.0,
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 0,
+					"stack_index": 2,
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "hiqp_controllers/src/task_beh_fo.cpp",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 756,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								624,
+								624
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.sublime-syntax",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 408.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
 					"type": "text"
 				}
 			]

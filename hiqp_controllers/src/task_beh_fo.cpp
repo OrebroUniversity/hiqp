@@ -46,19 +46,12 @@ int TaskBehFO::init
 
 
 
-int TaskBehFO::apply
+double TaskBehFO::apply
 (
-	double e, 
-	const Eigen::MatrixXd& J, 
-	std::vector<double>& controls
+	double e
 )
 {
-	Eigen::MatrixXd u = -lambda_ * dls(J, 0.1) * e;
-     
-    for (int i=0; i<controls.size(); ++i)
-         controls.at(i) = u(i,0);
-
-	return 0;
+	return -lambda_ * e;
 }
 
 

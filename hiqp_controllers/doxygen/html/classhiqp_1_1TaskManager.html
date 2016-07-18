@@ -101,23 +101,92 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:af190d8f0b3ee1c0d32acdb70fae6e03d"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af190d8f0b3ee1c0d32acdb70fae6e03d"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classhiqp_1_1TaskManager.html#af190d8f0b3ee1c0d32acdb70fae6e03d">TaskManager</a> ()</td></tr>
-<tr class="memdesc:af190d8f0b3ee1c0d32acdb70fae6e03d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor Constructs my awesome controller. <br/></td></tr>
-<tr class="separator:af190d8f0b3ee1c0d32acdb70fae6e03d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af3ca4a5c83b5edb21acb10b79545941e"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af3ca4a5c83b5edb21acb10b79545941e"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classhiqp_1_1TaskManager.html#af3ca4a5c83b5edb21acb10b79545941e">TaskManager</a> (<a class="el" href="classhiqp_1_1TaskVisualizer.html">TaskVisualizer</a> *task_visualizer)</td></tr>
+<tr class="memdesc:af3ca4a5c83b5edb21acb10b79545941e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor Constructs my awesome controller. <br/></td></tr>
+<tr class="separator:af3ca4a5c83b5edb21acb10b79545941e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a688ad548e2ef681b458c1fc90326f6e6"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a688ad548e2ef681b458c1fc90326f6e6"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classhiqp_1_1TaskManager.html#a688ad548e2ef681b458c1fc90326f6e6">~TaskManager</a> () noexcept</td></tr>
 <tr class="memdesc:a688ad548e2ef681b458c1fc90326f6e6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destructor Destructs my awesome manager. <br/></td></tr>
 <tr class="separator:a688ad548e2ef681b458c1fc90326f6e6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9243435c3819b03a9874f47d985a2147"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classhiqp_1_1TaskManager.html#a9243435c3819b03a9874f47d985a2147">getKinematicControls</a> (const KDL::Tree &amp;kdl_tree, const KDL::JntArrayVel &amp;kdl_joint_pos_vel, unsigned int n_controls, std::vector&lt; double &gt; &amp;controls)</td></tr>
-<tr class="memdesc:a9243435c3819b03a9874f47d985a2147"><td class="mdescLeft">&#160;</td><td class="mdescRight">Called every time the controller is initialized by the ros::controller_manager.  <a href="#a9243435c3819b03a9874f47d985a2147">More...</a><br/></td></tr>
-<tr class="separator:a9243435c3819b03a9874f47d985a2147"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a54458771323acf4e35b1543473810d20"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classhiqp_1_1TaskManager.html#a54458771323acf4e35b1543473810d20">getKinematicControls</a> (const KDL::Tree &amp;kdl_tree, const KDL::JntArrayVel &amp;kdl_joint_pos_vel, std::vector&lt; double &gt; &amp;controls)</td></tr>
+<tr class="memdesc:a54458771323acf4e35b1543473810d20"><td class="mdescLeft">&#160;</td><td class="mdescRight">Called every time the controller is initialized by the ros::controller_manager.  <a href="#a54458771323acf4e35b1543473810d20">More...</a><br/></td></tr>
+<tr class="separator:a54458771323acf4e35b1543473810d20"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a623cbd089f186f92293721d08f6fc5b4"><td class="memItemLeft" align="right" valign="top">std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classhiqp_1_1TaskManager.html#a623cbd089f186f92293721d08f6fc5b4">addTask</a> (const std::string &amp;task_name, const std::string &amp;behaviour_name, const std::vector&lt; std::string &gt; &amp;behaviour_parameters, unsigned int priority, bool visibility, const std::vector&lt; std::string &gt; &amp;parameters)</td></tr>
+<tr class="memdesc:a623cbd089f186f92293721d08f6fc5b4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds a task to the task manager and activates it.  <a href="#a623cbd089f186f92293721d08f6fc5b4">More...</a><br/></td></tr>
+<tr class="separator:a623cbd089f186f92293721d08f6fc5b4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2e7eae21859a4ef31d502a227e6d15b5"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2e7eae21859a4ef31d502a227e6d15b5"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><b>removeTask</b> (std::size_t task_id)</td></tr>
+<tr class="separator:a2e7eae21859a4ef31d502a227e6d15b5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Should be created only once! </p>
 <p>It's awesome! </p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
-<a class="anchor" id="a9243435c3819b03a9874f47d985a2147"></a>
+<a class="anchor" id="a623cbd089f186f92293721d08f6fc5b4"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::size_t hiqp::TaskManager::addTask </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>task_name</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>behaviour_name</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; std::string &gt; &amp;&#160;</td>
+          <td class="paramname"><em>behaviour_parameters</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">unsigned int&#160;</td>
+          <td class="paramname"><em>priority</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>visibility</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; std::string &gt; &amp;&#160;</td>
+          <td class="paramname"><em>parameters</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Adds a task to the task manager and activates it. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">task_name</td><td>: name of the task to be created </td></tr>
+    <tr><td class="paramname">behaviour_name</td><td>: name of the behaviour that shall be associated with this task </td></tr>
+    <tr><td class="paramname">priority</td><td>: the priority of this task (1 is highest) </td></tr>
+    <tr><td class="paramname">visible</td><td>: whether this task should be visible or not </td></tr>
+    <tr><td class="paramname">parameters</td><td>: the task specific parameters</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>0 if the task creation was successful, -1 is the task name was not recognised, -2 if the task behaviour name was not recognised </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a54458771323acf4e35b1543473810d20"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -132,12 +201,6 @@ Public Member Functions</h2></td></tr>
           <td></td>
           <td class="paramtype">const KDL::JntArrayVel &amp;&#160;</td>
           <td class="paramname"><em>kdl_joint_pos_vel</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">unsigned int&#160;</td>
-          <td class="paramname"><em>n_controls</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -168,13 +231,13 @@ Public Member Functions</h2></td></tr>
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following files:<ul>
-<li>include/<a class="el" href="task__manager_8h_source.html">task_manager.h</a></li>
-<li>src/task_manager.cpp</li>
+<li>include/hiqp/<a class="el" href="task__manager_8h_source.html">task_manager.h</a></li>
+<li>src/<a class="el" href="task__manager_8cpp.html">task_manager.cpp</a></li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Jun 29 2016 11:01:14 for HiQP_Controllers ROS Package by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Mon Jul 18 2016 13:55:12 for HiQP_Controllers ROS Package by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

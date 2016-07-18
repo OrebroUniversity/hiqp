@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['update',['update',['../classhiqp_1_1HiQP__Kinematic__Controller.html#ac8ae858ee94719281bd1abb9ca02aea4',1,'hiqp::HiQP_Kinematic_Controller']]]
+  ['pinv',['pinv',['../namespacehiqp.html#a5762e31938369b2fdbd81ac2bd11ca0f',1,'hiqp']]]
 ];

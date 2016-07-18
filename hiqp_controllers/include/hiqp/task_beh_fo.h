@@ -36,11 +36,9 @@ public:
 
 	int init(const std::vector<std::string>& parameters);
 
-	int apply
+	double apply
 	(
-		double e, 
-		const Eigen::MatrixXd& J, 
-		std::vector<double>& controls
+		double e
 	);
 
 private:

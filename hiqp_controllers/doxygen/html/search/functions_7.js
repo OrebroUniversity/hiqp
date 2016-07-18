@@ -1,6 +1,8 @@
 var searchData=
 [
-  ['_7ehiqp_5fkinematic_5fcontroller',['~HiQP_Kinematic_Controller',['../classhiqp_1_1HiQP__Kinematic__Controller.html#ae82482094e3e5eee72441b639fb63522',1,'hiqp::HiQP_Kinematic_Controller']]],
-  ['_7etask',['~Task',['../classhiqp_1_1Task.html#a73b4e41812713f28557c8d15925587db',1,'hiqp::Task']]],
-  ['_7etaskmanager',['~TaskManager',['../classhiqp_1_1TaskManager.html#a688ad548e2ef681b458c1fc90326f6e6',1,'hiqp::TaskManager']]]
+  ['setplaneesthetics',['setPlaneEsthetics',['../classhiqp_1_1TaskVisualizer.html#a9615b534b49aa9d9cf0c2d91cd10ba0e',1,'hiqp::TaskVisualizer']]],
+  ['setplanegeometry',['setPlaneGeometry',['../classhiqp_1_1TaskVisualizer.html#acac4eca22d5adadac5857327d06d9b5a',1,'hiqp::TaskVisualizer']]],
+  ['setvisibility',['setVisibility',['../classhiqp_1_1TaskVisualizer.html#ac591685c77aa46472120dad1483cb7e1',1,'hiqp::TaskVisualizer']]],
+  ['starting',['starting',['../classhiqp_1_1HiQPKinematicController.html#ad7b0146f120356c6ed350ff8ed7760d5',1,'hiqp::HiQPKinematicController']]],
+  ['stopping',['stopping',['../classhiqp_1_1HiQPKinematicController.html#ad23d401ef3f80bfc3a1af5f078f8b7f8',1,'hiqp::HiQPKinematicController']]]
 ];

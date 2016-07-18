@@ -42,12 +42,12 @@ public:
 
 	virtual int init(const std::vector<std::string>& parameters) = 0;
 
-	virtual int apply
+	virtual double apply
 	(
-		double e, 
-		const Eigen::MatrixXd& J, 
-		std::vector<double>& controls
+		double e
 	) = 0;
+
+
 
 private:
 

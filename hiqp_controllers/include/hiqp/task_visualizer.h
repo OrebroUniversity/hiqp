@@ -163,7 +163,7 @@ private:
 
 	std::size_t							next_id_;
 
-	ros::NodeHandle*                    controller_nh_;
+	ros::NodeHandle*                             controller_nh_;
 
 	ros::Publisher 						marker_pub_;
 

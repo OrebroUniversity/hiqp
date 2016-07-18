@@ -1,0 +1,27 @@
+digraph G {
+"world" -> "yumi_body"[label="Broadcaster: /robot_state_publisher\nAverage rate: 50.205 Hz\nMost recent transform: 1674.896 ( -0.492 sec old)\nBuffer length: 4.880 sec\n"];
+"yumi_link_7_l" -> "gripper_l_base"[label="Broadcaster: /robot_state_publisher\nAverage rate: 50.205 Hz\nMost recent transform: 1674.896 ( -0.492 sec old)\nBuffer length: 4.880 sec\n"];
+"yumi_link_6_l" -> "yumi_link_7_l"[label="Broadcaster: /robot_state_publisher\nAverage rate: 33.884 Hz\nMost recent transform: 1674.350 ( 0.054 sec old)\nBuffer length: 4.840 sec\n"];
+"yumi_link_7_r" -> "gripper_r_base"[label="Broadcaster: /robot_state_publisher\nAverage rate: 50.205 Hz\nMost recent transform: 1674.896 ( -0.492 sec old)\nBuffer length: 4.880 sec\n"];
+"yumi_link_6_r" -> "yumi_link_7_r"[label="Broadcaster: /robot_state_publisher\nAverage rate: 33.884 Hz\nMost recent transform: 1674.350 ( 0.054 sec old)\nBuffer length: 4.840 sec\n"];
+"gripper_l_base" -> "gripper_l_finger_r"[label="Broadcaster: /robot_state_publisher\nAverage rate: 33.884 Hz\nMost recent transform: 1674.350 ( 0.054 sec old)\nBuffer length: 4.840 sec\n"];
+"gripper_l_base" -> "gripper_l_finger_l"[label="Broadcaster: /robot_state_publisher\nAverage rate: 33.884 Hz\nMost recent transform: 1674.350 ( 0.054 sec old)\nBuffer length: 4.840 sec\n"];
+"gripper_r_base" -> "gripper_r_finger_r"[label="Broadcaster: /robot_state_publisher\nAverage rate: 33.884 Hz\nMost recent transform: 1674.350 ( 0.054 sec old)\nBuffer length: 4.840 sec\n"];
+"gripper_r_base" -> "gripper_r_finger_l"[label="Broadcaster: /robot_state_publisher\nAverage rate: 33.884 Hz\nMost recent transform: 1674.350 ( 0.054 sec old)\nBuffer length: 4.840 sec\n"];
+"yumi_body" -> "yumi_link_1_l"[label="Broadcaster: /robot_state_publisher\nAverage rate: 33.884 Hz\nMost recent transform: 1674.350 ( 0.054 sec old)\nBuffer length: 4.840 sec\n"];
+"yumi_body" -> "yumi_link_1_r"[label="Broadcaster: /robot_state_publisher\nAverage rate: 33.884 Hz\nMost recent transform: 1674.350 ( 0.054 sec old)\nBuffer length: 4.840 sec\n"];
+"yumi_link_1_l" -> "yumi_link_2_l"[label="Broadcaster: /robot_state_publisher\nAverage rate: 33.884 Hz\nMost recent transform: 1674.350 ( 0.054 sec old)\nBuffer length: 4.840 sec\n"];
+"yumi_link_1_r" -> "yumi_link_2_r"[label="Broadcaster: /robot_state_publisher\nAverage rate: 33.884 Hz\nMost recent transform: 1674.350 ( 0.054 sec old)\nBuffer length: 4.840 sec\n"];
+"yumi_link_3_l" -> "yumi_link_4_l"[label="Broadcaster: /robot_state_publisher\nAverage rate: 33.884 Hz\nMost recent transform: 1674.350 ( 0.054 sec old)\nBuffer length: 4.840 sec\n"];
+"yumi_link_2_l" -> "yumi_link_3_l"[label="Broadcaster: /robot_state_publisher\nAverage rate: 33.884 Hz\nMost recent transform: 1674.350 ( 0.054 sec old)\nBuffer length: 4.840 sec\n"];
+"yumi_link_3_r" -> "yumi_link_4_r"[label="Broadcaster: /robot_state_publisher\nAverage rate: 33.884 Hz\nMost recent transform: 1674.350 ( 0.054 sec old)\nBuffer length: 4.840 sec\n"];
+"yumi_link_2_r" -> "yumi_link_3_r"[label="Broadcaster: /robot_state_publisher\nAverage rate: 33.884 Hz\nMost recent transform: 1674.350 ( 0.054 sec old)\nBuffer length: 4.840 sec\n"];
+"yumi_link_4_l" -> "yumi_link_5_l"[label="Broadcaster: /robot_state_publisher\nAverage rate: 33.884 Hz\nMost recent transform: 1674.350 ( 0.054 sec old)\nBuffer length: 4.840 sec\n"];
+"yumi_link_4_r" -> "yumi_link_5_r"[label="Broadcaster: /robot_state_publisher\nAverage rate: 33.884 Hz\nMost recent transform: 1674.350 ( 0.054 sec old)\nBuffer length: 4.840 sec\n"];
+"yumi_link_5_l" -> "yumi_link_6_l"[label="Broadcaster: /robot_state_publisher\nAverage rate: 33.884 Hz\nMost recent transform: 1674.350 ( 0.054 sec old)\nBuffer length: 4.840 sec\n"];
+"yumi_link_5_r" -> "yumi_link_6_r"[label="Broadcaster: /robot_state_publisher\nAverage rate: 33.884 Hz\nMost recent transform: 1674.350 ( 0.054 sec old)\nBuffer length: 4.840 sec\n"];
+edge [style=invis];
+ subgraph cluster_legend { style=bold; color=black; label ="view_frames Result";
+"Recorded at time: 1674.404"[ shape=plaintext ] ;
+ }->"world";
+}

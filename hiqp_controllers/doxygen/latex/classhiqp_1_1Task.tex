@@ -1,6 +1,12 @@
 \hypertarget{classhiqp_1_1Task}{\section{hiqp\-:\-:Task Class Reference}
 \label{classhiqp_1_1Task}\index{hiqp\-::\-Task@{hiqp\-::\-Task}}
 }
+Inheritance diagram for hiqp\-:\-:Task\-:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{classhiqp_1_1Task}
+\end{center}
+\end{figure}
 \subsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
@@ -10,35 +16,62 @@
 \hypertarget{classhiqp_1_1Task_a73b4e41812713f28557c8d15925587db}{\hyperlink{classhiqp_1_1Task_a73b4e41812713f28557c8d15925587db}{$\sim$\-Task} () noexcept}\label{classhiqp_1_1Task_a73b4e41812713f28557c8d15925587db}
 
 \begin{DoxyCompactList}\small\item\em Destructor Destructs my awesome task. \end{DoxyCompactList}\item 
-virtual bool \hyperlink{classhiqp_1_1Task_a61eacc4471c3af7824f0a5eebde750f3}{apply} (const K\-D\-L\-::\-Tree \&kdl\-\_\-tree, const K\-D\-L\-::\-Jnt\-Array\-Vel \&joints\-\_\-pos\-\_\-vel)=0
-\begin{DoxyCompactList}\small\item\em {\bfseries Pure virtual}. Calculates the task function and task jacobian values. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\hypertarget{classhiqp_1_1Task_a02b6ccead41f86f26e7d1b2cb2e013ae}{virtual int {\bfseries init} (const std\-::vector$<$ std\-::string $>$ \&parameters)=0}\label{classhiqp_1_1Task_a02b6ccead41f86f26e7d1b2cb2e013ae}
+
+\item 
+virtual int \hyperlink{classhiqp_1_1Task_a2f81c249b39a1fd6557501d61548917b}{apply} (const K\-D\-L\-::\-Tree \&kdl\-\_\-tree, const K\-D\-L\-::\-Jnt\-Array\-Vel \&kdl\-\_\-joint\-\_\-pos\-\_\-vel)=0
+\begin{DoxyCompactList}\small\item\em {\itshape Pure virtual}. Calculates the task function and task jacobian values. \end{DoxyCompactList}\item 
+\hypertarget{classhiqp_1_1Task_a0d018a8a797cb730111614a9230d59e2}{virtual int {\bfseries draw} ()=0}\label{classhiqp_1_1Task_a0d018a8a797cb730111614a9230d59e2}
+
+\end{DoxyCompactItemize}
+\subsection*{Protected Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classhiqp_1_1Task_adbd4a69acbd2402d14fc51446d9c7a94}{\hyperlink{classhiqp_1_1TaskVisualizer}{Task\-Visualizer} $\ast$ {\bfseries get\-Task\-Visualizer} ()}\label{classhiqp_1_1Task_adbd4a69acbd2402d14fc51446d9c7a94}
+
+\end{DoxyCompactItemize}
+\subsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classhiqp_1_1Task_af1290bb9764f71d8abd3c26eb6997425}{double {\bfseries e\-\_\-}}\label{classhiqp_1_1Task_af1290bb9764f71d8abd3c26eb6997425}
+
+\item 
+\hypertarget{classhiqp_1_1Task_a10cc3261be638fbc5778c1ee71c16784}{Eigen\-::\-Matrix\-Xd {\bfseries J\-\_\-}}\label{classhiqp_1_1Task_a10cc3261be638fbc5778c1ee71c16784}
+
+\end{DoxyCompactItemize}
 
 
 \subsection{Member Function Documentation}
-\hypertarget{classhiqp_1_1Task_a61eacc4471c3af7824f0a5eebde750f3}{\index{hiqp\-::\-Task@{hiqp\-::\-Task}!apply@{apply}}
+\hypertarget{classhiqp_1_1Task_a2f81c249b39a1fd6557501d61548917b}{\index{hiqp\-::\-Task@{hiqp\-::\-Task}!apply@{apply}}
 \index{apply@{apply}!hiqp::Task@{hiqp\-::\-Task}}
-\subsubsection[{apply}]{\setlength{\rightskip}{0pt plus 5cm}virtual bool hiqp\-::\-Task\-::apply (
+\subsubsection[{apply}]{\setlength{\rightskip}{0pt plus 5cm}virtual int hiqp\-::\-Task\-::apply (
 \begin{DoxyParamCaption}
 \item[{const K\-D\-L\-::\-Tree \&}]{kdl\-\_\-tree, }
-\item[{const K\-D\-L\-::\-Jnt\-Array\-Vel \&}]{joints\-\_\-pos\-\_\-vel}
+\item[{const K\-D\-L\-::\-Jnt\-Array\-Vel \&}]{kdl\-\_\-joint\-\_\-pos\-\_\-vel}
 \end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily [pure virtual]}}}\label{classhiqp_1_1Task_a61eacc4471c3af7824f0a5eebde750f3}
+)\hspace{0.3cm}{\ttfamily [pure virtual]}}}\label{classhiqp_1_1Task_a2f81c249b39a1fd6557501d61548917b}
 
 
-{\bfseries Pure virtual}. Calculates the task function and task jacobian values. 
+{\itshape Pure virtual}. Calculates the task function and task jacobian values. 
 
 
 \begin{DoxyParams}{Parameters}
 {\em kdl\-\_\-tree} & \-: reference to the kinematic dynamic tree of the robot \\
 \hline
-{\em joints\-\_\-pos\-\_\-vel} & \-: reference to the current joint positions and velocities\\
+{\em kdl\-\_\-joint\-\_\-pos\-\_\-vel} & \-: reference to the current joint positions and velocities \\
+\hline
+{\em task\-\_\-fun\-\_\-val} & \-: reference to where the output controls are to be stored\\
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
-true if the calculation was successful 
+0 if the calculation was successful 
 \end{DoxyReturn}
+
+
+Implemented in \hyperlink{classhiqp_1_1TaskPoP_a7f50f65c7e09492a0021715ad2ef2866}{hiqp\-::\-Task\-Po\-P}.
+
 
 
 The documentation for this class was generated from the following file\-:\begin{DoxyCompactItemize}
 \item 
-include/\hyperlink{task_8h}{task.\-h}\end{DoxyCompactItemize}
+include/hiqp/\hyperlink{task_8h}{task.\-h}\end{DoxyCompactItemize}

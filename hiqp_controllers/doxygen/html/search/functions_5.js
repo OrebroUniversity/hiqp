@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['task',['Task',['../classhiqp_1_1Task.html#a556692dacc6abb51d0437f59594026d9',1,'hiqp::Task']]],
-  ['taskmanager',['TaskManager',['../classhiqp_1_1TaskManager.html#af190d8f0b3ee1c0d32acdb70fae6e03d',1,'hiqp::TaskManager']]]
+  ['init',['init',['../classhiqp_1_1HiQPKinematicController.html#a3aa91fd2992e5b0647a34fe61c97d23f',1,'hiqp::HiQPKinematicController::init()'],['../classhiqp_1_1TaskPoP.html#a23279792f72d60c49a941be747d5a641',1,'hiqp::TaskPoP::init()']]]
 ];

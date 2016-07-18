@@ -96,6 +96,8 @@ namespace hiqp
      
     Eigen::MatrixXd                 J_; // the task jacobian
 
+    double                          e_dot_star_; // the task dynamics
+
     TaskVisualizer* getTaskVisualizer()
     { return task_visualizer_; }
 
@@ -142,20 +144,16 @@ namespace hiqp
      *        New tasks and task behaviours are created by implementing the 
      *        apply function of the respective classes.
      */
-    int getControls
+    int computeTaskMetrics
     (
         const KDL::Tree& kdl_tree, 
-        const KDL::JntArrayVel& kdl_joint_pos_vel,
-        std::vector<double>& controls
+        const KDL::JntArrayVel& kdl_joint_pos_vel
     )
     {
         apply(kdl_tree, kdl_joint_pos_vel);
-        // The results are stored in protected members e and J
+        // The results are stored in protected members e_ and J_
 
-        //std::cout << "e = " << e << "\n";
-        //std::cout << "J = " << J << "\n";
-
-        task_behaviour_->apply(e_, J_, controls);
+        e_dot_star_ = task_behaviour_->apply(e_);
 
         return 0;
     }

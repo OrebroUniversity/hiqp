@@ -12,6 +12,8 @@
 #include <hiqp/task_behaviour.h>
 #include <hiqp/task_beh_fo.h>
 
+#include <hiqp/hiqp_utils.h>
+
 // STL Includes
 //#include <iostream>
 
@@ -67,11 +69,18 @@ bool TaskManager::getKinematicControls
 {
     if (tasks_.size() < 1) return true;
 
-    tasks_.at(0)->getControls(kdl_tree, 
-                              kdl_joint_pos_vel, 
-                              controls);
+    tasks_.at(0)->computeTaskMetrics(kdl_tree, 
+                                     kdl_joint_pos_vel);
 
-     
+    double e_dot_star = tasks_.at(0)->e_dot_star_;
+    Eigen::MatrixXd J = tasks_.at(0)->J_;
+
+    Eigen::MatrixXd u = e_dot_star * dls(J, 0.01);
+    for (int i= 0; i<controls.size(); ++i)
+    {
+        controls[i] = u(i);
+    }
+
     //std::cout << tasks_.at(0)->getJ() << std::endl;
 
     /*

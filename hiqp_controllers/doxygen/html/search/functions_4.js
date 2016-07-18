@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['starting',['starting',['../classhiqp_1_1HiQP__Kinematic__Controller.html#ad41772f143ec0725004baac5090eb7f1',1,'hiqp::HiQP_Kinematic_Controller']]],
-  ['stopping',['stopping',['../classhiqp_1_1HiQP__Kinematic__Controller.html#a7b85b552fe4923cc2fe6363efaf0a414',1,'hiqp::HiQP_Kinematic_Controller']]]
+  ['hiqpkinematiccontroller',['HiQPKinematicController',['../classhiqp_1_1HiQPKinematicController.html#a3dd9c3d69dc2a4beafe67b1b5ac2de50',1,'hiqp::HiQPKinematicController']]]
 ];

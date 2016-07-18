@@ -162,9 +162,12 @@ void TaskVisualPlane::draw
 {
 	visualization_msgs::Marker marker;
 
-	marker.header.frame_id = kFrameId;
+	//const std::string kFrameId    = "/whatever_link";
+	//const std::string kNamespace  = "yumi";
+
+	marker.header.frame_id = "/world";
     marker.header.stamp = ros::Time::now();
-    marker.ns = kNamespace;
+    marker.ns = "";
     marker.id = id_;
     marker.type = visualization_msgs::Marker::CUBE;
     marker.action = action; 
