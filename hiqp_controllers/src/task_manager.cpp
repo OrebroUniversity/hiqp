@@ -46,12 +46,14 @@ TaskManager::TaskManager(TaskVisualizer* task_visualizer)
   next_task_behaviour_id_(0),
   task_visualizer_(task_visualizer)
 {
+    solver_ = new CasADiSolver();
 }
 
 
 TaskManager::~TaskManager() noexcept
 {
     // We have memory leaks!!
+    delete solver_;
 }
 
 
@@ -74,6 +76,8 @@ bool TaskManager::getKinematicControls
 
     double e_dot_star = tasks_.at(0)->e_dot_star_;
     Eigen::MatrixXd J = tasks_.at(0)->J_;
+
+    solver_->setStageParameters(0, e_dot_star, J);
 
     Eigen::MatrixXd u = e_dot_star * dls(J, 0.01);
     for (int i= 0; i<controls.size(); ++i)

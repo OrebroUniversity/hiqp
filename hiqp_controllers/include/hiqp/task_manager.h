@@ -17,6 +17,8 @@
 #include <hiqp/task.h>
 #include <hiqp/task_behaviour.h>
 #include <hiqp/task_visualizer.h>
+#include <hiqp/hiqp_solver.h>
+#include <hiqp/casadi_solver.h>
 
 // STL Includes
 #include <vector>
@@ -119,6 +121,8 @@ private:
      std::size_t                                  next_task_behaviour_id_;
 
      TaskVisualizer*                              task_visualizer_;
+
+     HiQPSolver*                                  solver_;
 
 };
 
