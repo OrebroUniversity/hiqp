@@ -52,6 +52,7 @@ int TaskPoP::init(const std::vector<std::string>& parameters)
 	std::cout << "TaskPoP::init\n";
 
 	getTaskVisualizer()->createPlane(base_link_name_, n_(0), n_(1), n_(2), d_, 0.85, 0.0, 0.0, 0.5);
+	getTaskVisualizer()->createSphere(link_name_, 0.0, 0.0, 0.0, 0.05, 1.0, 0.0, 0.0, 0.85);
 }
 
 

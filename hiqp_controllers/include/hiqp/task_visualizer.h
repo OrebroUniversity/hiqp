@@ -137,6 +137,68 @@ public:
 	);
 
 
+
+
+
+
+
+     /*!
+     * \brief Creates and registers a sphere among the objects to be visualized.
+     *
+     * \param x : the x position of the sphere
+     * \param y : the y position of the sphere
+     * \param z : the z position of the sphere
+     * \param radius : 
+     * \param red : the red color component (0-255)
+     * \param blue : the blue color component (0-255)
+     * \param green : the green color component (0-255)
+     * \param alpha : the alpha component (0-255)
+     *  
+     * \return the unique identifier of the created task
+     */
+     std::size_t createSphere
+     (
+          const std::string& base_link_name,
+          double x, double y, double z, double radius,
+          double r, double g, double b, double a
+     );
+
+     /*!
+     * \brief Sets an already existing sphere's geometry
+     *
+     * \param id : the unique identifier of the plane
+     * \param x : 
+     * \param y : 
+     * \param z : 
+     * \param radius : 
+     *
+     * \return 0 on success, -1 if the identifier was invalid
+     */
+     int setSphereGeometry
+     (
+          std::size_t id, 
+          double x, double y, double z, double radius
+     );
+
+     /*!
+     * \brief Sets an already existing sphere's esthetics
+     *
+     * \param id : the unique identifier of the plane
+     * \param red : the new red color component (0-255)
+     * \param blue : the new blue color component (0-255)
+     * \param green : the new green color component (0-255)
+     * \param alpha : the new alpha component (0-255)
+     *
+     * \return 0 on success, -1 if the identifier was not found, -2 if the
+     *         identifier was not associated with a plane primitive.
+     */
+     int setSphereEsthetics
+     (
+          std::size_t id, 
+          double r, double g, double b, double a
+     );
+
+
 	
 
 
@@ -156,6 +218,11 @@ private:
 	TaskVisualizer& operator=(TaskVisualizer&& other) noexcept = delete;
 
 	std::size_t insertPrimitive(TaskVisualPrimitive* primitive);
+
+     int setPrimitiveEsthetics(
+          std::size_t id, 
+          double r, double g, double b, double a
+     );
 
 	typedef std::pair<std::size_t, TaskVisualPrimitive*>           MapElement;
 	typedef std::map<std::size_t, TaskVisualPrimitive*>            MapType;

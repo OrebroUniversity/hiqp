@@ -123,6 +123,27 @@ std::size_t TaskVisualizer::insertPrimitive(TaskVisualPrimitive* primitive)
 
 
 
+int TaskVisualizer::setPrimitiveEsthetics
+(
+	std::size_t id, 
+	double r, double g, double b, double a
+)
+{
+	MapIterator it = primitives_map_.find(id);
+	if (it == primitives_map_.end())
+		return -1;
+
+	TaskVisualPrimitive* primitive = (TaskVisualPrimitive*)(it->second);
+	primitive->setEsthetics(r,g,b,a);
+
+	primitive->draw(marker_pub_, visualization_msgs::Marker::MODIFY);
+
+	return 0;
+}
+
+
+
+
 
 
 
@@ -293,14 +314,7 @@ int TaskVisualizer::setPlaneEsthetics
 	double r, double g, double b, double a
 )
 {
-	MapIterator it = primitives_map_.find(id);
-	if (it == primitives_map_.end())
-		return -1;
-
-	TaskVisualPrimitive* plane = (TaskVisualPrimitive*)(it->second);
-	plane->setEsthetics(r,g,b,a);
-
-	plane->draw(marker_pub_, visualization_msgs::Marker::MODIFY);
+	setPrimitiveEsthetics(id, r, g, b, a);
 
 	return 0;
 }
@@ -319,6 +333,165 @@ int TaskVisualizer::setPlaneEsthetics
 //								S P H E R E                                   //
 // 																			  //
 ////////////////////////////////////////////////////////////////////////////////
+
+class TaskVisualSphere : public TaskVisualPrimitive
+{
+public:
+	TaskVisualSphere(const std::string& base_link_name,
+					 double x, double y, double z, double radius,
+			         double r, double g, double b, double a);
+
+	void setGeometry(double x, double y, double z, double radius);
+
+	void draw(const ros::Publisher& marker_pub, int action);
+
+	std::string		base_link_name_;
+	double 			x_; 
+	double 			y_; 
+	double 			z_;
+	double 			radius_;
+};
+
+
+
+
+
+TaskVisualSphere::TaskVisualSphere
+(
+	const std::string& base_link_name,
+	double x, double y, double z, double radius,
+	double r, double g, double b, double a
+)
+: TaskVisualPrimitive(r, g, b, a), base_link_name_(base_link_name), x_(x), y_(y), z_(z), radius_(radius)
+{}
+
+
+
+
+
+
+void TaskVisualSphere::setGeometry
+(
+	double x, double y, double z, double radius
+)
+{
+	x_ = x;
+	y_ = y;
+	z_ = z;
+	radius_ = radius;
+}
+
+
+
+
+
+
+void TaskVisualSphere::draw
+(
+	const ros::Publisher& marker_pub,
+	int action
+)
+{
+	visualization_msgs::Marker marker;
+
+	marker.header.frame_id = "/" + base_link_name_;
+    marker.header.stamp = ros::Time::now();
+    marker.ns = kNamespace;
+    marker.id = id_;
+    marker.type = visualization_msgs::Marker::SPHERE;
+    marker.action = action; 
+
+    marker.pose.position.x = x_;
+    marker.pose.position.y = y_;
+    marker.pose.position.z = z_;
+
+    marker.pose.orientation.x = 0.0;
+    marker.pose.orientation.y = 0.0;
+    marker.pose.orientation.z = 0.0;
+    marker.pose.orientation.w = 1.0;
+
+    marker.scale.x = 2*radius_;
+    marker.scale.y = 2*radius_;
+    marker.scale.z = 2*radius_;
+
+    marker.color.r = r_;
+    marker.color.g = g_;
+    marker.color.b = b_;
+    marker.color.a = a_;
+
+    marker.lifetime = ros::Duration(0); // forever
+
+	//visualization_msgs::MarkerArray marker_array; // std::vector<...>
+
+    marker_pub.publish(marker);
+
+    std::cout << "TaskVisualizer::TaskVisualSphere::draw" << "\n";
+
+    return;
+}
+
+
+
+
+
+std::size_t TaskVisualizer::createSphere
+(
+	const std::string& base_link_name,
+	double x, double y, double z, double radius, 
+	double r, double g, double b, double a
+)
+{
+	TaskVisualPrimitive* plane = new TaskVisualSphere(base_link_name,
+													  x, y, z, radius,
+													  r, g, b, a);
+	std::size_t id = insertPrimitive(plane);
+
+	plane->draw(marker_pub_, visualization_msgs::Marker::ADD);
+
+	std::cout << "TaskVisualizer::createSphere\n";
+
+	return id;
+}
+
+
+
+
+
+int TaskVisualizer::setSphereGeometry
+(
+	std::size_t id, 
+	double x, double y, double z, double radius
+)
+{
+	MapIterator it = primitives_map_.find(id);
+	if (it == primitives_map_.end())
+		return -1;
+
+	TaskVisualSphere* sphere = (TaskVisualSphere*)(it->second);
+	sphere->setGeometry(x, y, z, radius);
+
+	sphere->draw(marker_pub_, visualization_msgs::Marker::MODIFY);
+
+	return 0;
+}
+
+
+
+
+
+int TaskVisualizer::setSphereEsthetics
+(
+	std::size_t id, 
+	double r, double g, double b, double a
+)
+{
+	setPrimitiveEsthetics(id, r, g, b, a);
+
+	return 0;
+}
+
+
+
 
 
 
