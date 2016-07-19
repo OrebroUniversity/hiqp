@@ -105,7 +105,8 @@ private:
 	TaskPoP& operator=(TaskPoP&& other) noexcept = delete;
 
 	std::string			link_name_; // the name of the end-effector link
-	Eigen::Vector3d 	n_; // the normal vector of the plane
+     std::string              base_link_name_; // the name of the base link
+	Eigen::Vector3d 	     n_; // the normal vector of the plane
 	double 				d_; // the distance to the plane from the origin
 
 

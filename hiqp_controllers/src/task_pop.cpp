@@ -39,18 +39,19 @@ TaskPoP::TaskPoP() {}
 
 int TaskPoP::init(const std::vector<std::string>& parameters)
 {
-	if (parameters.size() != 5)
+	if (parameters.size() != 6)
 		return -1;
 
 	link_name_ = parameters.at(0);
-	n_(0) = std::stod( parameters.at(1) );
-	n_(1) = std::stod( parameters.at(2) );
-	n_(2) = std::stod( parameters.at(3) );
-	d_ = std::stod( parameters.at(4) );
+	base_link_name_ = parameters.at(1);
+	n_(0) = std::stod( parameters.at(2) );
+	n_(1) = std::stod( parameters.at(3) );
+	n_(2) = std::stod( parameters.at(4) );
+	d_ = std::stod( parameters.at(5) );
 
 	std::cout << "TaskPoP::init\n";
 
-	getTaskVisualizer()->createPlane(n_(0), n_(1), n_(2), d_, 0xcc, 0x80, 0x40, 0.75);
+	getTaskVisualizer()->createPlane(base_link_name_, n_(0), n_(1), n_(2), d_, 0.85, 0.0, 0.0, 0.5);
 }
 
 

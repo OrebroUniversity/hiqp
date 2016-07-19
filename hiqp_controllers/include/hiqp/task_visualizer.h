@@ -96,6 +96,7 @@ public:
      */
 	std::size_t createPlane
 	(
+          const std::string& base_link_name,
 		double nx, double ny, double nz, double d, 
 		double r, double g, double b, double a
 	);

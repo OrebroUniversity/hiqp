@@ -24,9 +24,9 @@ namespace hiqp
 {
 
 
-// corresponds to 'Marker Topic: /yumi/hiqp/hiqp_visuals' in the .rviz file
-const std::string kFrameId    = "/whatever_link";
 const std::string kNamespace  = "yumi";
+
+const float kAlphaLevel = 0.5f;
 
 
 
@@ -138,14 +138,15 @@ std::size_t TaskVisualizer::insertPrimitive(TaskVisualPrimitive* primitive)
 class TaskVisualPlane : public TaskVisualPrimitive
 {
 public:
-	TaskVisualPlane(double nx, double ny, double nz, double d,
+	TaskVisualPlane(const std::string& base_link_name,
+					double nx, double ny, double nz, double d,
 			        double r, double g, double b, double a);
 
-	inline void setGeometry(double nx, double ny, double nz, double d)
-	{ nx_ = nx; ny_ = ny; nz_ = nz; d_ = d; }
+	void setGeometry(double nx, double ny, double nz, double d);
 
 	void draw(const ros::Publisher& marker_pub, int action);
 
+	std::string		base_link_name_;
 	double 			nx_; 
 	double 			ny_; 
 	double 			nz_; 
@@ -158,11 +159,36 @@ public:
 
 TaskVisualPlane::TaskVisualPlane
 (
+	const std::string& base_link_name,
 	double nx, double ny, double nz, double d,
 	double r, double g, double b, double a
 )
-: TaskVisualPrimitive(r, g, b, a), nx_(nx), ny_(ny), nz_(nz), d_(d)
-{}
+: TaskVisualPrimitive(r, g, b, a), base_link_name_(base_link_name)
+{
+	setGeometry(nx, ny, nz, d);
+}
+
+
+
+
+
+
+void TaskVisualPlane::setGeometry
+(
+	double nx, 
+	double ny, 
+	double nz, 
+	double d
+)
+{
+	// Normalize the normal vector!
+	double n = sqrt(nx*nx + ny*ny + nz*nz);
+	nx_ = nx/n;
+	ny_ = ny/n;
+	nz_ = nz/n;
+	d_ = d;
+}
+
 
 
 
@@ -176,30 +202,30 @@ void TaskVisualPlane::draw
 {
 	visualization_msgs::Marker marker;
 
-	marker.header.frame_id = "/world";
+	marker.header.frame_id = "/" + base_link_name_;
     marker.header.stamp = ros::Time::now();
     marker.ns = kNamespace;
     marker.id = id_;
     marker.type = visualization_msgs::Marker::CUBE;
     marker.action = action; 
 
-    marker.pose.position.x = 2;
-    marker.pose.position.y = 2;
-    marker.pose.position.z = 2;
+    marker.pose.position.x = d_;
+    marker.pose.position.y = d_;
+    marker.pose.position.z = d_;
 
-    marker.pose.orientation.x = 0.0;
-    marker.pose.orientation.y = 0.0;
-    marker.pose.orientation.z = 0.0;
+    marker.pose.orientation.x = nx_;
+    marker.pose.orientation.y = ny_;
+    marker.pose.orientation.z = nz_;
     marker.pose.orientation.w = 1.0;
 
-    marker.scale.x = 1.0;
-    marker.scale.y = 1.0;
-    marker.scale.z = 1.0;
+    marker.scale.x = 15.0;
+    marker.scale.y = 15.0;
+    marker.scale.z = 0.001;
 
-    marker.color.r = 1.0f;
-    marker.color.g = 0.0f;
-    marker.color.b = 0.0f;
-    marker.color.a = 1.0f;
+    marker.color.r = r_;
+    marker.color.g = g_;
+    marker.color.b = b_;
+    marker.color.a = a_;
 
     marker.lifetime = ros::Duration(0); // forever
 
@@ -218,12 +244,14 @@ void TaskVisualPlane::draw
 
 std::size_t TaskVisualizer::createPlane
 (
+	const std::string& base_link_name,
 	double nx, double ny, double nz, double d, 
 	double r, double g, double b, double a
 )
 {
-	TaskVisualPrimitive* plane = new TaskVisualPlane(nx, ny, nz, d,
-													  r, g, b, a);
+	TaskVisualPrimitive* plane = new TaskVisualPlane(base_link_name,
+													 nx, ny, nz, d,
+													 r, g, b, a);
 	std::size_t id = insertPrimitive(plane);
 
 	plane->draw(marker_pub_, visualization_msgs::Marker::ADD);
