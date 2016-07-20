@@ -40,7 +40,7 @@ struct HiQPStage
 
 	Eigen::MatrixXd J_;
 
-	double slack;
+	double w_;
 };
 
 
