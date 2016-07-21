@@ -4,6 +4,10 @@
 		"selected_items":
 		[
 			[
+				"n",
+				"nRows"
+			],
+			[
 				"p",
 				"p"
 			],
@@ -48,10 +52,6 @@
 				"controls"
 			],
 			[
-				"n",
-				"n_joints_"
-			],
-			[
 				"rod",
 				"rod_radius"
 			],
@@ -71,9 +71,25 @@
 			"file": "/home/neckutrek/dev/playground/test_casadi_hiqp/main.cpp",
 			"settings":
 			{
-				"buffer_size": 1851,
+				"buffer_size": 5460,
 				"line_ending": "Unix",
 				"name": "#include <iostream>"
+			}
+		},
+		{
+			"file": "hiqp_controllers/include/hiqp/hiqp_solver.h",
+			"settings":
+			{
+				"buffer_size": 1607,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "hiqp_controllers/src/casadi_solver.cpp",
+			"settings":
+			{
+				"buffer_size": 916,
+				"line_ending": "Unix"
 			}
 		}
 	],
@@ -268,15 +284,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 1851,
+						"buffer_size": 5460,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								921,
-								921
+								900,
+								900
 							]
 						],
 						"settings":
@@ -285,10 +301,68 @@
 							"syntax": "Packages/C++/C++.sublime-syntax"
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 2565.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "hiqp_controllers/include/hiqp/hiqp_solver.h",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1607,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								451,
+								451
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.sublime-syntax",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 225.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "hiqp_controllers/src/casadi_solver.cpp",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 916,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								359,
+								359
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.sublime-syntax",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 135.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
 					"type": "text"
 				}
 			]
