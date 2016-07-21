@@ -36,9 +36,10 @@ public:
 
 	int init(const std::vector<std::string>& parameters);
 
-	double apply
+	int apply
 	(
-		double e
+		const Eigen::MatrixXd& e,
+		Eigen::MatrixXd& e_dot_star
 	);
 
 private:

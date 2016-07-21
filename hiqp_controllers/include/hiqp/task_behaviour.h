@@ -42,9 +42,10 @@ public:
 
 	virtual int init(const std::vector<std::string>& parameters) = 0;
 
-	virtual double apply
+	virtual int apply
 	(
-		double e
+		const Eigen::MatrixXd& e,
+		Eigen::MatrixXd& e_dot_star
 	) = 0;
 
 

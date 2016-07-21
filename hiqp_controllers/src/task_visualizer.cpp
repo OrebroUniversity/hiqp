@@ -250,11 +250,7 @@ void TaskVisualPlane::draw
 
     marker.lifetime = ros::Duration(0); // forever
 
-	//visualization_msgs::MarkerArray marker_array; // std::vector<...>
-
     marker_pub.publish(marker);
-
-    std::cout << "TaskVisualizer::TaskVisualPlane::draw" << "\n";
 
     return;
 }
@@ -276,8 +272,6 @@ std::size_t TaskVisualizer::createPlane
 	std::size_t id = insertPrimitive(plane);
 
 	plane->draw(marker_pub_, visualization_msgs::Marker::ADD);
-
-	std::cout << "TaskVisualizer::createPlane\n";
 
 	return id;
 }
@@ -421,11 +415,7 @@ void TaskVisualSphere::draw
 
     marker.lifetime = ros::Duration(0); // forever
 
-	//visualization_msgs::MarkerArray marker_array; // std::vector<...>
-
     marker_pub.publish(marker);
-
-    std::cout << "TaskVisualizer::TaskVisualSphere::draw" << "\n";
 
     return;
 }
@@ -447,8 +437,6 @@ std::size_t TaskVisualizer::createSphere
 	std::size_t id = insertPrimitive(plane);
 
 	plane->draw(marker_pub_, visualization_msgs::Marker::ADD);
-
-	std::cout << "TaskVisualizer::createSphere\n";
 
 	return id;
 }

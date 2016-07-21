@@ -17,6 +17,7 @@
 // STL Includes
 #include <map>
 #include <vector>
+#include <iostream>
 
 // Eigen Includes
 #include <Eigen/Dense>
@@ -36,11 +37,11 @@ namespace hiqp
 
 struct HiQPStage
 {
-	double e_dot_star_;
+	int nRows;
+
+	Eigen::MatrixXd e_dot_star_;
 
 	Eigen::MatrixXd J_;
-
-	double w_;
 };
 
 
@@ -56,12 +57,27 @@ public:
 	HiQPSolver() {}
 	~HiQPSolver() noexcept {}
 
-	virtual int solveHiQPProblem(std::vector<double>& solution) = 0;
+	virtual int solve(std::vector<double>& solution) = 0;
 
-	int setStageParameters
+
+
+
+
+	int clearStages()
+	{
+		stages_map_.clear();
+
+		return 0;
+	}
+
+
+
+
+
+	int appendStage
 	(
 		std::size_t priority_level, 
-		double e_dot_star,
+		const Eigen::MatrixXd& e_dot_star,
 		const Eigen::MatrixXd& J
 	)
 	{
@@ -77,12 +93,33 @@ public:
 		}
 		else
 		{
-			it->second.e_dot_star_ = e_dot_star;
-			it->second.J_ = J;	
+			int rows = it->second.e_dot_star_.rows() + e_dot_star.rows();
+
+			Eigen::MatrixXd edotstar__(rows, 1);
+
+			edotstar__ << it->second.e_dot_star_, 
+			              e_dot_star;
+
+			it->second.e_dot_star_.resize(rows, 1);
+
+			it->second.e_dot_star_ << edotstar__;
+
+
+
+			Eigen::MatrixXd J__(rows, it->second.J_.cols());
+			
+			J__ << it->second.J_,
+			       J;
+
+			it->second.J_ << J__;
 		}
 
 		return 0;
 	}
+
+
+
+
 
 
 protected:

@@ -105,16 +105,18 @@ private:
 	TaskManager& operator=(const TaskManager& other) = delete;
 	TaskManager& operator=(TaskManager&& other) noexcept = delete;
 
-
      Task* buildTask(const std::string& task_name);
 
      TaskBehaviour* buildTaskBehaviour(const std::string& behaviour_name);
 
 
 
+     typedef std::map< std::size_t, Task* >            TaskMap;
+     typedef std::map< std::size_t, Task* >::iterator  TaskMapIterator;
+     typedef std::pair< std::size_t, Task* >           TaskMapElement;
 
 
-     std::map< std::size_t, Task* >               tasks_;
+     TaskMap                                      tasks_;
      std::size_t                                  next_task_id_;
 
      std::map< std::size_t, TaskBehaviour* >      task_behaviours_;

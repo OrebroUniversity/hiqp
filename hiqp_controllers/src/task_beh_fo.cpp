@@ -46,12 +46,15 @@ int TaskBehFO::init
 
 
 
-double TaskBehFO::apply
+int TaskBehFO::apply
 (
-	double e
+	const Eigen::MatrixXd& e,
+	Eigen::MatrixXd& e_dot_star
 )
 {
-	return -lambda_ * e;
+	e_dot_star = -lambda_ * e;
+
+	return 0;
 }
 
 

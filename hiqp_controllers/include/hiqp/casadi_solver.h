@@ -40,7 +40,7 @@ public:
 	CasADiSolver() {}
 	~CasADiSolver() noexcept {}
 
-	int solveHiQPProblem(std::vector<double>& solution);
+	int solve(std::vector<double>& solution);
 
 
 private:

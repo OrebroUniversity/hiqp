@@ -69,8 +69,25 @@ bool TaskManager::getKinematicControls
     std::vector<double> &controls
 )
 {
-    if (tasks_.size() < 1) return true;
+    if (tasks_.size() < 1) return false;
 
+    solver_->clearStages();
+
+    for (TaskMapElement&& element : tasks_)
+    {
+        element.second->computeTaskMetrics(kdl_tree,
+                                           kdl_joint_pos_vel);
+
+        solver_->appendStage(element.second->priority_, 
+                             element.second->e_dot_star_, 
+                             element.second->J_);
+    }
+
+    solver_->solve(controls);
+
+    task_visualizer_->redraw();
+
+    /*
     tasks_.at(0)->computeTaskMetrics(kdl_tree, 
                                      kdl_joint_pos_vel);
 
@@ -86,7 +103,7 @@ bool TaskManager::getKinematicControls
     }
 
     task_visualizer_->redraw();
-
+    */
     //std::cout << tasks_.at(0)->getJ() << std::endl;
 
     /*
@@ -100,7 +117,6 @@ bool TaskManager::getKinematicControls
 
     return true;
 }
-
 
 
 
@@ -142,11 +158,12 @@ std::size_t TaskManager::addTask
     task->setTaskBehaviour(behaviour);
     task->setTaskVisualizer(task_visualizer_);
     task->setPriority(priority);
+    task->setId(next_task_id_);
     task->setVisibility(visibility);
     task->init(parameters);
 
     // Add the task to the tasks map
-    tasks_[next_task_id_] = task;
+    tasks_.insert( TaskMapElement(next_task_id_, task) );
     next_task_id_++;
 
     return next_task_id_-1;
@@ -163,12 +180,10 @@ int TaskManager::removeTask
     std::size_t task_id
 )
 {
+    if (tasks_.erase(task_id) == 1) 
+        return 0;
 
-    if (tasks_.find(task_id) == tasks_.end())
-        return -1;
-
-    tasks_.erase(task_id);
-    return 0;
+    return -1;
 }
 
 

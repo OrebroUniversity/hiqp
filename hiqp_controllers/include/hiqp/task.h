@@ -19,6 +19,7 @@
 // STL Includes
 #include <vector>
 #include <iostream>
+#include <cassert>
 
 // Eigen Includes
 #include <Eigen/Dense>
@@ -92,11 +93,11 @@ namespace hiqp
 
     protected:
 
-    double                          e_; // the task function
+    Eigen::MatrixXd                 e_; // the task function
      
     Eigen::MatrixXd                 J_; // the task jacobian
 
-    double                          e_dot_star_; // the task dynamics
+    Eigen::MatrixXd                 e_dot_star_; // the task dynamics
 
     TaskVisualizer* getTaskVisualizer()
     { return task_visualizer_; }
@@ -136,6 +137,15 @@ namespace hiqp
     inline void setPriority(unsigned int priority)
     { priority_ = priority; }
 
+    inline unsigned int getPriority()
+    { return priority_; }
+
+    inline void setId(std::size_t id)
+    { id_ = id; }
+
+    inline std::size_t getId()
+    { return id_; }
+
 
 
     /*!
@@ -153,7 +163,13 @@ namespace hiqp
         apply(kdl_tree, kdl_joint_pos_vel);
         // The results are stored in protected members e_ and J_
 
-        e_dot_star_ = task_behaviour_->apply(e_);
+        assert(e_.rows() == J_.rows());
+        
+        task_behaviour_->apply(e_, e_dot_star_);
+
+        assert(e_.rows() == e_dot_star_.rows());
+
+        rows_ = e_.rows();
 
         return 0;
     }
@@ -167,7 +183,11 @@ namespace hiqp
 
     unsigned int        priority_;
 
+    std::size_t         id_;
+
     bool                visibility_;
+
+    unsigned int        rows_; // the number of dimensions of the task
 
 
 

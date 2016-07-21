@@ -67,6 +67,7 @@ int TaskPoP::apply // this is for yumi
 	const KDL::JntArrayVel& kdl_joint_pos_vel
 )
 {
+	
 	// Compute the pose of the end-effector
 	KDL::TreeFkSolverPos_recursive fk_solver_pos(kdl_tree);
 	KDL::Frame pose;
@@ -96,8 +97,11 @@ int TaskPoP::apply // this is for yumi
 		return -2;
 	}
 
+	//std::cout << "here\n";
+
 	// Set the task function and jacobian values
-	e_ = n_.dot(p);
+	e_.resize(1, 1);
+	e_(0, 0) = n_.dot(p);
 	J_.resize(1, kdl_joint_pos_vel.q.rows());
 	for (int i=0; i<kdl_joint_pos_vel.q.rows(); ++i)
 		J_(0, i) = jac.getColumn(i).vel.z();
