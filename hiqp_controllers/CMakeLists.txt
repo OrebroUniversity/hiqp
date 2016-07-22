@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8.6)
 project(hiqp_controllers)
 
-set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR})
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake_modules)
 set(CMAKE_CXX_FLAGS "-O3 -std=c++11")
 
 find_package(catkin REQUIRED COMPONENTS
@@ -13,6 +13,7 @@ find_package(catkin REQUIRED COMPONENTS
 )
 find_package(orocos_kdl REQUIRED)
 find_package(Eigen3 REQUIRED)
+find_package(CASADI REQUIRED)
 
 #find_package(orocos_kdl REQUIRED)
 
@@ -25,11 +26,16 @@ catkin_package(
 
 
 
+
+
+
+
+
 ###########
 ## Build ##
 ###########
 
-include_directories(include ${catkin_INCLUDE_DIRS})
+include_directories(include ${catkin_INCLUDE_DIRS} ${CASADI_INCLUDE_DIR})
 
 add_library(${PROJECT_NAME} include/hiqp/hiqp_utils.h
                             include/hiqp/hiqp_kinematic_controller.h
@@ -50,8 +56,7 @@ add_library(${PROJECT_NAME} include/hiqp/hiqp_utils.h
                             src/task_beh_fo.cpp
 )
 
-target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} ${orocos_kdl_LIBRARIES} casadi)
-
+target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} ${orocos_kdl_LIBRARIES} ${CASADI_LIBRARIES})
 
 
 #############
