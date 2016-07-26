@@ -43,7 +43,7 @@ struct HiQPStage
 
 	Eigen::MatrixXd J_;
 
-	std::vector<int> signs_;
+	std::vector<int> constraint_signs_;
 };
 
 
@@ -80,7 +80,8 @@ public:
 	(
 		std::size_t priority_level, 
 		const Eigen::MatrixXd& e_dot_star,
-		const Eigen::MatrixXd& J
+		const Eigen::MatrixXd& J,
+		const std::vector<int>& constraint_signs
 	)
 	{
 		StageMapIterator it = stages_map_.find(priority_level);
@@ -90,6 +91,7 @@ public:
 			HiQPStage stage;
 			stage.e_dot_star_ = e_dot_star;
 			stage.J_ = J;
+			stage.constraint_signs_ = constraint_signs;
 			stage.nRows = e_dot_star.rows();
 
 			stages_map_.insert(StageMapElement(priority_level, stage));
@@ -115,6 +117,13 @@ public:
 			       J;
 
 			it->second.J_ << J__;
+
+
+
+			it->second.constraint_signs_.insert(
+				it->second.constraint_signs_.begin(),
+				constraint_signs.begin(),
+				constraint_signs.end() );
 
 
 

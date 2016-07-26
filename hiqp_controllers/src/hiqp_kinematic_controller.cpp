@@ -137,6 +137,7 @@ bool HiQPKinematicController::init
 	}
 	kdl_joint_pos_vel_.resize(n_kdl_joints);
 	output_controls_ = std::vector<double>(n_kdl_joints, 0.0);
+	task_manager_.setNumControls(n_kdl_joints);
 
 
 

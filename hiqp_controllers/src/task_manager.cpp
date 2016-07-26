@@ -16,6 +16,7 @@
 
 // STL Includes
 //#include <iostream>
+#include <cassert>
 
 
 #include <Eigen/Dense>
@@ -41,7 +42,10 @@ namespace hiqp {
 
 
 
-TaskManager::TaskManager(TaskVisualizer* task_visualizer)
+TaskManager::TaskManager
+(
+    TaskVisualizer* task_visualizer
+)
 : next_task_id_(0), 
   next_task_behaviour_id_(0),
   task_visualizer_(task_visualizer)
@@ -80,40 +84,13 @@ bool TaskManager::getKinematicControls
 
         solver_->appendStage(element.second->priority_, 
                              element.second->e_dot_star_, 
-                             element.second->J_);
+                             element.second->J_,
+                             element.second->task_types_);
     }
 
     solver_->solve(controls);
 
     task_visualizer_->redraw();
-
-    /*
-    tasks_.at(0)->computeTaskMetrics(kdl_tree, 
-                                     kdl_joint_pos_vel);
-
-    double e_dot_star = tasks_.at(0)->e_dot_star_;
-    Eigen::MatrixXd J = tasks_.at(0)->J_;
-
-    solver_->setStageParameters(0, e_dot_star, J);
-
-    Eigen::MatrixXd u = e_dot_star * dls(J, 0.01);
-    for (int i= 0; i<controls.size(); ++i)
-    {
-        controls[i] = u(i);
-    }
-
-    task_visualizer_->redraw();
-    */
-    //std::cout << tasks_.at(0)->getJ() << std::endl;
-
-    /*
-    std::cout << "controls = ";
-    for (double c : controls)
-    {
-         std::cout << c << ", ";
-    }
-    std::cout << "\n";
-    */
 
     return true;
 }
@@ -160,7 +137,11 @@ std::size_t TaskManager::addTask
     task->setPriority(priority);
     task->setId(next_task_id_);
     task->setVisibility(visibility);
-    task->init(parameters);
+    task->init(parameters, numControls_);
+
+    assert(task->e_.rows() == task->J_.rows());
+    assert(task->e_.rows() == task->e_dot_star_.rows());
+    assert(task->e_.rows() == task->task_types_.size());
 
     // Add the task to the tasks map
     tasks_.insert( TaskMapElement(next_task_id_, task) );

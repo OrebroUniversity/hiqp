@@ -19,7 +19,6 @@
 // STL Includes
 #include <vector>
 #include <iostream>
-#include <cassert>
 
 // Eigen Includes
 #include <Eigen/Dense>
@@ -59,7 +58,11 @@ namespace hiqp
      */
     ~Task() noexcept {}
 
-    virtual int init(const std::vector<std::string>& parameters) = 0;
+    virtual int init
+    (
+        const std::vector<std::string>& parameters,
+        unsigned int numControls
+    ) = 0;
 
 	/*!
      * \brief <i>Pure virtual</i>. Calculates the task function and task 
@@ -80,8 +83,6 @@ namespace hiqp
         const KDL::JntArrayVel& kdl_joint_pos_vel
     ) = 0;
 
-    virtual int draw() = 0;
-    
 
 
     
@@ -98,6 +99,8 @@ namespace hiqp
     Eigen::MatrixXd                 J_; // the task jacobian
 
     Eigen::MatrixXd                 e_dot_star_; // the task dynamics
+
+    std::vector<int>                task_types_; // -1 leq, 0 eq, 1 geq
 
     TaskVisualizer* getTaskVisualizer()
     { return task_visualizer_; }
@@ -162,14 +165,8 @@ namespace hiqp
     {
         apply(kdl_tree, kdl_joint_pos_vel);
         // The results are stored in protected members e_ and J_
-
-        assert(e_.rows() == J_.rows());
         
         task_behaviour_->apply(e_, e_dot_star_);
-
-        assert(e_.rows() == e_dot_star_.rows());
-
-        rows_ = e_.rows();
 
         return 0;
     }
@@ -186,8 +183,6 @@ namespace hiqp
     std::size_t         id_;
 
     bool                visibility_;
-
-    unsigned int        rows_; // the number of dimensions of the task
 
 
 

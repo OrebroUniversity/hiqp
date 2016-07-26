@@ -79,8 +79,33 @@ int CasADiSolver::solve
 
 		lbx.insert( lbx.end(), rows, 0 );
 		ubx.insert( ubx.end(), rows, std::numeric_limits<double>::infinity() );
-		lbg.insert( lbg.end(), rows, -0.001 );
-		ubg.insert( ubg.end(), rows, 0.001 );//std::numeric_limits<double>::infinity() );
+
+		for (int sign : stage.constraint_signs_)
+		{
+			switch (sign)
+			{
+				case -1: // less-than-or-equal-to
+				lbg.insert( lbg.end(), 1, -std::numeric_limits<double>::infinity() );
+				ubg.insert( ubg.end(), 1, 0.0 );
+				break;
+
+				case 0: // equal-to
+				lbg.insert( lbg.end(), 1, 0.0 );
+				ubg.insert( ubg.end(), 1, 0.0 );
+				break;
+
+				case 1: // greater-than-or-equal-to
+				lbg.insert( lbg.end(), 1, 0.0 );
+				ubg.insert( ubg.end(), 1, std::numeric_limits<double>::infinity() );
+				break;
+
+				default: // equal-to
+				lbg.insert( lbg.end(), 1, 0.0 );
+				ubg.insert( ubg.end(), 1, 0.0 );
+				break;
+			}
+		}
+		
 
 		casadi::DMDict arg = {{"lbx", lbx},
                               {"ubx", ubx},

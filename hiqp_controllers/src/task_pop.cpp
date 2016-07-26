@@ -37,7 +37,11 @@ TaskPoP::TaskPoP() {}
 
 
 
-int TaskPoP::init(const std::vector<std::string>& parameters)
+int TaskPoP::init
+(
+    const std::vector<std::string>& parameters,
+    unsigned int numControls
+)
 {
 	if (parameters.size() != 9)
 		return -1;
@@ -58,6 +62,11 @@ int TaskPoP::init(const std::vector<std::string>& parameters)
 
 	getTaskVisualizer()->createPlane(plane_frame_id_, 
 		n_(0), n_(1), n_(2), d_, 1.0, 0.0, 0.0, 0.9);
+
+	e_.resize(1, 1);
+	J_.resize(1, numControls);
+	e_dot_star_.resize(1, 1);
+	task_types_.insert(task_types_.begin(), 1, -1); // a 1-D equality task
 
 	std::cout << "TaskPoP::init finished successfully\n";
 }
@@ -155,11 +164,8 @@ int TaskPoP::apply
 
 
 	// Set the task function and jacobian values
-	e_.resize(1, 1);
 
 	e_(0, 0) = KDL::dot(n, p) - d;
-
-	J_.resize(1, kdl_joint_pos_vel.q.rows());
 
 	for (int q_nr = 0; q_nr < kdl_joint_pos_vel.q.rows(); ++q_nr)
 	{
@@ -176,14 +182,6 @@ int TaskPoP::apply
     //std::cout << "J = " << J_ << "\n\n";
 
 	return 0;
-}
-
-
-
-
-int TaskPoP::draw()
-{
-	// Update all visual primitives used by this task
 }
 
 

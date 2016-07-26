@@ -59,6 +59,9 @@ public:
      */
 	~TaskManager() noexcept;
 
+     inline void setNumControls(unsigned int numControls)
+     { numControls_ = numControls; }
+
 	/*!
      * \brief Called every time the controller is initialized by the 
      *        ros::controller_manager
@@ -83,6 +86,7 @@ public:
      * \param priority : the priority of this task (1 is highest)
      * \param visible : whether this task should be visible or not
      * \param parameters : the task specific parameters
+     * \param numControls : the total number of controls used by the controller
      *
      * \return 0 if the task creation was successful,
      *         -1 is the task name was not recognised,
@@ -125,6 +129,8 @@ private:
      TaskVisualizer*                              task_visualizer_;
 
      HiQPSolver*                                  solver_;
+
+     unsigned int                                 numControls_;
 
 };
 

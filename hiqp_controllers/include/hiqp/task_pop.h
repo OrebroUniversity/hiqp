@@ -61,7 +61,11 @@ public:
      *
      * \return 0 upon success
      */
-	int init(const std::vector<std::string>& parameters);
+	int init
+     (
+          const std::vector<std::string>& parameters,
+          unsigned int numControls
+     );
 
 
 
@@ -83,14 +87,6 @@ public:
 	);
 
 
-
-
-	/*!
-     * \brief <i>Pure virtual</i>. Draws the task
-     *
-     * \return 0 upon success
-     */
-	int draw();
 
 
 
