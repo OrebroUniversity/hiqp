@@ -4,6 +4,10 @@ project(hiqp_controllers)
 set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR})
 set(CMAKE_CXX_FLAGS "-O3 -std=c++11")
 
+set(GUROBI_INCLUDE_DIR "$ENV{GUROBI_HOME}/include") 
+set(GUROBI_LIB_DIR "$ENV{GUROBI_HOME}/lib")
+set(GUROBI_LIBS gurobi_c++ gurobi65)
+
 find_package(catkin REQUIRED COMPONENTS
   roscpp
   controller_interface
@@ -30,6 +34,9 @@ catkin_package(
 ###########
 
 include_directories(include ${catkin_INCLUDE_DIRS})
+include_directories(${GUROBI_INCLUDE_DIR})
+
+link_directories(${GUROBI_LIB_DIR})
 
 add_library(${PROJECT_NAME} include/hiqp/hiqp_utils.h
                             include/hiqp/hiqp_kinematic_controller.h
@@ -50,7 +57,7 @@ add_library(${PROJECT_NAME} include/hiqp/hiqp_utils.h
                             src/task_beh_fo.cpp
 )
 
-target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} ${orocos_kdl_LIBRARIES} casadi)
+target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} ${orocos_kdl_LIBRARIES} casadi ${GUROBI_LIBS})
 
 
 

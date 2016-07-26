@@ -220,7 +220,9 @@ void HiQPKinematicController::update
 	// Lock the mutex and write the controls to the joint handles
 	handles_mutex_.lock();
 	for (auto&& handle : joint_handles_map_)
+	{
 		handle.second.setCommand(output_controls_.at(handle.first));
+	}
 	handles_mutex_.unlock();
 
 

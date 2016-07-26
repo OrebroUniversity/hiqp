@@ -4,6 +4,18 @@
 		"selected_items":
 		[
 			[
+				"stage",
+				"stages_map_"
+			],
+			[
+				"kdl",
+				"kdl_joint_pos_vel"
+			],
+			[
+				"edotstar",
+				"edotstar"
+			],
+			[
 				"n",
 				"nRows"
 			],
@@ -44,10 +56,6 @@
 				"lambda_"
 			],
 			[
-				"kdl",
-				"kdl_tree"
-			],
-			[
 				"controls",
 				"controls"
 			],
@@ -67,31 +75,6 @@
 	},
 	"buffers":
 	[
-		{
-			"file": "/home/neckutrek/dev/playground/test_casadi_hiqp/main.cpp",
-			"settings":
-			{
-				"buffer_size": 5460,
-				"line_ending": "Unix",
-				"name": "#include <iostream>"
-			}
-		},
-		{
-			"file": "hiqp_controllers/include/hiqp/hiqp_solver.h",
-			"settings":
-			{
-				"buffer_size": 1607,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "hiqp_controllers/src/casadi_solver.cpp",
-			"settings":
-			{
-				"buffer_size": 916,
-				"line_ending": "Unix"
-			}
-		}
 	],
 	"build_system": "",
 	"build_system_choices":
@@ -132,27 +115,33 @@
 		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/include/hiqp",
 		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/launch",
 		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/servicecalls",
-		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/src"
+		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/src",
+		"/home/neckutrek/dev/indigo_ws/src/hiqp/playground",
+		"/home/neckutrek/dev/indigo_ws/src/hiqp/playground/test_casadi_hiqp"
 	],
 	"file_history":
 	[
-		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/src/task_pop.cpp",
-		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/CMakeLists.txt",
-		"/home/neckutrek/dev/playground/test_casadi_hiqp/Makefile",
-		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/include/hiqp/hiqp_solver.h",
-		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/include/hiqp/task_manager.h",
-		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/src/task_manager.cpp",
 		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/include/hiqp/casadi_solver.h",
+		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/CMakeLists.txt",
+		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/include/hiqp/hiqp_solver.h",
 		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/src/casadi_solver.cpp",
+		"/home/neckutrek/dev/indigo_ws/src/hiqp/playground/test_casadi_hiqp/Makefile",
+		"/home/neckutrek/dev/indigo_ws/src/hiqp/playground/test_casadi_hiqp/main.cpp",
+		"/home/neckutrek/dev/indigo_ws/src/hiqp/playground/test_casadi_hiqp/main2.cpp",
+		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/src/task_pop.cpp",
 		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/include/hiqp/task.h",
+		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/src/task_visualizer.cpp",
+		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/src/task_manager.cpp",
+		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/include/hiqp/task_manager.h",
+		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/include/hiqp/task_behaviour.h",
 		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/src/task_beh_fo.cpp",
+		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/include/hiqp/task_beh_fo.h",
+		"/home/neckutrek/dev/playground/test_casadi_hiqp/main.cpp",
+		"/home/neckutrek/dev/playground/test_casadi_hiqp/Makefile",
 		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/include/hiqp/task_pop.h",
 		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/servicecalls/add_task.sh",
 		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/include/hiqp/task_visualizer.h",
-		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/src/task_visualizer.cpp",
 		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/include/hiqp/hiqp_utils.h",
-		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/include/hiqp/task_beh_fo.h",
-		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/include/hiqp/task_behaviour.h",
 		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/src/hiqp_utils.cpp",
 		"/home/neckutrek/dev/playground/test_pseudoInverse/main.cpp",
 		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/include/hiqp/hiqp_kinematic_controller.h",
@@ -252,6 +241,7 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"f_qdot",
 			"base_link_name",
 			"draw",
 			"HiQP_Kinematic_Controller",
@@ -275,96 +265,8 @@
 	"groups":
 	[
 		{
-			"selected": 0,
 			"sheets":
 			[
-				{
-					"buffer": 0,
-					"file": "/home/neckutrek/dev/playground/test_casadi_hiqp/main.cpp",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 5460,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								900,
-								900
-							]
-						],
-						"settings":
-						{
-							"auto_name": "#include <iostream>",
-							"syntax": "Packages/C++/C++.sublime-syntax"
-						},
-						"translation.x": 0.0,
-						"translation.y": 2565.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 0,
-					"type": "text"
-				},
-				{
-					"buffer": 1,
-					"file": "hiqp_controllers/include/hiqp/hiqp_solver.h",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 1607,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								451,
-								451
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/C++/C++.sublime-syntax",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 225.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 1,
-					"type": "text"
-				},
-				{
-					"buffer": 2,
-					"file": "hiqp_controllers/src/casadi_solver.cpp",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 916,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								359,
-								359
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/C++/C++.sublime-syntax",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 135.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 2,
-					"type": "text"
-				}
 			]
 		}
 	],

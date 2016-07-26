@@ -25,6 +25,9 @@
 
 
 
+
+
+
 namespace hiqp
 {
 
@@ -35,46 +38,108 @@ namespace hiqp
 
 
 
+const double kDampingFactor = 1e-5; // dont set to zero!
+
+
+
+
 int CasADiSolver::solve
 (
 	std::vector<double>& solution
 )
 {
-	StageMapIterator it = stages_map_.find(1);
+	unsigned int solutionSize = solution.size();
 
-	HiQPStage& stage = it->second;
+	// Setup the parts of the QP problem that wont change between interations
+	casadi::SX					qdot = casadi::SX::sym("q_dot", solutionSize, 1);
+	casadi::SX 					f_qdot = kDampingFactor * casadi::SX::dot(qdot, qdot);
+	casadi::SX 					g_i;
+	std::vector<double> 		lbx(solutionSize, -std::numeric_limits<double>::infinity() );
+	std::vector<double> 		ubx(solutionSize,  std::numeric_limits<double>::infinity() );
+	std::vector<double> 		lbg, ubg;
 
-	Eigen::MatrixXd u = double(stage.e_dot_star_(0, 0)) * dls(stage.J_, 0.01);
+	// Iterate over all stages and solve one QP per each stage
+	StageMapIterator it = stages_map_.begin();
+	while (it != stages_map_.end())
+	{
+		HiQPStage& stage = it->second;
+		++it;
+		int rows = stage.nRows;
 
-    for (int i= 0; i<solution.size(); ++i)
-    {
-        solution[i] = u(i);
-    }
+		casadi::SX 					w_p = casadi::SX::sym("w_p", rows, 1);
+		casadi::SX 					f_w = 0.5 * casadi::SX::dot(w_p, w_p);
+		casadi::SX 					g_p = -w_p;
 
-/*
-	double 					e_dot_star 	= stages_map_.find(0)->second.e_dot_star_;
-	const Eigen::MatrixXd&  J 			= stages_map_.find(0)->second.J_;
-	double& 				w 			= stages_map_.find(0)->second.w_;
+		for (int k=0; k<rows; ++k)
+		{
+			g_p(k, 0) += - stage.e_dot_star_(k, 0);
+			for (int kk=0; kk<solutionSize; ++kk)
+				g_p(k, 0) += qdot(kk, 0) * stage.J_(k, kk);
+		}
 
+		lbx.insert( lbx.end(), rows, 0 );
+		ubx.insert( ubx.end(), rows, std::numeric_limits<double>::infinity() );
+		lbg.insert( lbg.end(), rows, -0.001 );
+		ubg.insert( ubg.end(), rows, 0.001 );//std::numeric_limits<double>::infinity() );
 
-	casadi::SX w_p;
+		casadi::DMDict arg = {{"lbx", lbx},
+                              {"ubx", ubx},
+                			  {"lbg", lbg},
+                			  {"ubg", ubg}};  
+      	
+      	// For debugging purposes
+        //std::cout << "edotstar = " << stage.e_dot_star_ << "\n\n";
+        //std::cout << "J = " << stage.J_ << "\n\n";
+        
+        // std::cout << "x = " << vertcat(qdot, w_p) << "\n\n";
+        // std::cout << "f_qdot = " << f_qdot << "\n\n";
+        // std::cout << "f_w = " << f_w << "\n\n";
+        // std::cout << "f = " << f_qdot + f_w << "\n\n";
+        // std::cout << "g_i = " << g_i << "\n\n";
+        // std::cout << "g_p = " << g_p << "\n\n";
+        // std::cout << "g = " << vertcat(g_i, g_p) << "\n\n";
+        // std::cout << "lbx = " << lbx << "\n\n";
+        // std::cout << "ubx = " << ubx << "\n\n";
+        // std::cout << "lbg = " << lbg << "\n\n";
+        // std::cout << "ubg = " << ubg << "\n\n";
+		
+		casadi::SXDict qp = {{ "x", vertcat(qdot, w_p)   }, 
+		                     { "f", f_qdot + f_w },
+		                     { "g", vertcat(g_i, g_p)    }};
+        casadi::Function solver = qpsol("solver", "gurobi", qp);
+        casadi::DMDict res = solver(arg);
+        casadi::DM x_opt = res["x"];
+		std::vector<double> x_opt_d(x_opt);
 
-	casadi::SX q_dot = casadi::SX::zeros(14);
+		for (int k=0; k<rows; ++k)
+		{
+			casadi::SX g_i__ = - stage.e_dot_star_(k, 0);
+			for (int kk=0; kk<solutionSize; ++kk)
+				g_i__ += qdot[kk] * stage.J_(k, kk);
+			g_i__ += - x_opt_d[k + solutionSize];
+			g_i = vertcat(g_i, g_i__);
+		}
 
-	casadi::SX f = 0.5 * casadi::sq( casadi::fabs( w_p ) );
+        //std::cout << "w_p = " << x_opt_d[solutionSize] << "\n\n";
 
-	casadi::SX g = J * q_dot - e_dot_star;
+		lbx.erase( lbx.end()-rows, lbx.end() );
+		ubx.erase( ubx.end()-rows, ubx.end() );
 
+		if (it == stages_map_.end())
+		{
+			//std::cout << "solution = [";
+			for (int k=0; k<solutionSize; ++k)
+			{
+				//std::cout << x_opt_d[k] << ", ";
+				solution.at(k) = x_opt_d[k];
+			}
+			//std::cout << "]\n\n";
+		}
 
-	casadi::SXDict qp = {{"x", vertcat(w_p, q_dot)}, {"f", f}, {"g", g}};
+	}
 
-	casadi::qpsol solver("solver", "gurobi", qp);
-*/
-	
-
-
-	return 0;
 }
+
 
 
 

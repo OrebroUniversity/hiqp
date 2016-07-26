@@ -84,7 +84,7 @@ int TaskPoP::apply // this is for yumi
 	}
 	Eigen::Vector3d p( pose.p.x(), pose.p.y(), pose.p.z() );
 
-	// Compute the task jacobian dp/dq
+	// Compute the task jacobian dp/dt
 	KDL::Jacobian jac;
 	jac.resize(kdl_joint_pos_vel.q.rows());
 	retval = kdl_JntToJac(kdl_tree, kdl_joint_pos_vel, jac, link_name_);
@@ -97,16 +97,22 @@ int TaskPoP::apply // this is for yumi
 		return -2;
 	}
 
-	//std::cout << "here\n";
-
 	// Set the task function and jacobian values
 	e_.resize(1, 1);
-	e_(0, 0) = n_.dot(p);
-	J_.resize(1, kdl_joint_pos_vel.q.rows());
-	for (int i=0; i<kdl_joint_pos_vel.q.rows(); ++i)
-		J_(0, i) = jac.getColumn(i).vel.z();
+	e_(0, 0) = n_.dot(p) - d_;
 
-    //std::cout << "J = " << J << "\n";
+	J_.resize(1, kdl_joint_pos_vel.q.rows());
+	for (int q_nr = 0; q_nr < kdl_joint_pos_vel.q.rows(); ++q_nr)
+	{
+		double dedt = n_(0) * jac.getColumn(q_nr).vel.x() + 
+		              n_(1) * jac.getColumn(q_nr).vel.y() + 
+		              n_(2) * jac.getColumn(q_nr).vel.z();
+		double qdot = kdl_joint_pos_vel.qdot(q_nr);
+		J_(0, q_nr) = (qdot==0 ? 0 : dedt/qdot);
+	}
+
+    //std::cout << "e = " << e_ << "\n\n";
+    //std::cout << "J = " << J_ << "\n\n";
 
 	return 0;
 }

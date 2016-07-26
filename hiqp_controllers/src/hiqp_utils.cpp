@@ -212,7 +212,6 @@ int kdl_JntToJac
 	if (it == tree.getSegments().end())
 		return -2;
 
-	//KDL::SetToZero(jac);
 	jac.data.setZero();
 
 	KDL::SegmentMap::const_iterator root = tree.getRootSegment();

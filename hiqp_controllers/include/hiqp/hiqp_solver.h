@@ -88,6 +88,7 @@ public:
 			HiQPStage stage;
 			stage.e_dot_star_ = e_dot_star;
 			stage.J_ = J;
+			stage.nRows = e_dot_star.rows();
 
 			stages_map_.insert(StageMapElement(priority_level, stage));
 		}
@@ -112,6 +113,10 @@ public:
 			       J;
 
 			it->second.J_ << J__;
+
+
+
+			it->second.nRows += e_dot_star.rows();
 		}
 
 		return 0;
