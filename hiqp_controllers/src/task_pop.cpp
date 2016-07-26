@@ -53,6 +53,10 @@ int TaskPoP::init(const std::vector<std::string>& parameters)
 
 	getTaskVisualizer()->createPlane(base_link_name_, n_(0), n_(1), n_(2), d_, 0.85, 0.0, 0.0, 0.5);
 	getTaskVisualizer()->createSphere(link_name_, 0.0, 0.0, 0.0, 0.05, 1.0, 0.0, 0.0, 0.85);
+	//getTaskVisualizer()->createBox("yumi_link_7_r", 0, 0, 0, 1, 1, 1, 0.8, 0.8, 0.8, 0.8);
+	//getTaskVisualizer()->createArrow("world", 1, 1, 1, 0, 0, 1, 0.8, 0.8, 0.8, 0.5);
+	//getTaskVisualizer()->createLine("world", 1, 1, 1, 0, 0, 1, 3, 0.8, 0.8, 0.8, 0.5);
+	getTaskVisualizer()->createCylinder("world", 1, 1, 1, 0.5, 1, 0.8, 0.8, 0.8, 0.5);
 }
 
 
@@ -107,8 +111,9 @@ int TaskPoP::apply // this is for yumi
 		double dedt = n_(0) * jac.getColumn(q_nr).vel.x() + 
 		              n_(1) * jac.getColumn(q_nr).vel.y() + 
 		              n_(2) * jac.getColumn(q_nr).vel.z();
-		double qdot = kdl_joint_pos_vel.qdot(q_nr);
-		J_(0, q_nr) = (qdot==0 ? 0 : dedt/qdot);
+		//double qdot = kdl_joint_pos_vel.qdot(q_nr);
+		//J_(0, q_nr) = (qdot==0 ? 0 : dedt/qdot);
+		J_(0, q_nr) = dedt;      
 	}
 
     //std::cout << "e = " << e_ << "\n\n";

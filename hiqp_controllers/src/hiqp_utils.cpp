@@ -234,7 +234,7 @@ int kdl_JntToJac
 		{
 			KDL::Twist t_local = 
 				GetTreeElementSegment(it->second).twist(q_in(q_nr),
-															 qdot_in(q_nr));
+														0);
 
 			t_local = t_local.RefPoint(T_total.p - T_local.p);
 

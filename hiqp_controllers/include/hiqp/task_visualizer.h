@@ -86,11 +86,11 @@ public:
      * \param nx : x-component of the normal vector of the plane
      * \param ny : y-component of the normal vector of the plane
      * \param nz : z-component of the normal vector of the plane
-     * \param d : distance from the plane to the origin
-     * \param red : the red color component (0-255)
-     * \param blue : the blue color component (0-255)
-     * \param green : the green color component (0-255)
-     * \param alpha : the alpha component (0-255)
+     * \param d : distance from the plane to the origin (offset)
+     * \param r : the red color component (0.0-1.0)
+     * \param g : the green color component (0.0-1.0)
+     * \param b : the blue color component (0.0-1.0)
+     * \param a : the alpha component (0.0-1.0)
      *  
      * \return the unique identifier of the created task
      */
@@ -110,7 +110,8 @@ public:
      * \param nz : the new z-component of the normal vector of the plane
      * \param d : the new distance from the plane to the origin
      *
-     * \return 0 on success, -1 if the identifier was invalid
+     * \return 0 on success, -1 if the identifier was not found, -2 if the
+     *         identifier was not associated with a plane primitive.
      */
 	int setPlaneGeometry
 	(
@@ -122,13 +123,12 @@ public:
      * \brief Sets an already existing planes esthetics
      *
      * \param id : the unique identifier of the plane
-     * \param red : the new red color component (0-255)
-     * \param blue : the new blue color component (0-255)
-     * \param green : the new green color component (0-255)
-     * \param alpha : the new alpha component (0-255)
+     * \param r : the red color component (0.0-1.0)
+     * \param g : the green color component (0.0-1.0)
+     * \param b : the blue color component (0.0-1.0)
+     * \param a : the alpha component (0.0-1.0)
      *
-     * \return 0 on success, -1 if the identifier was not found, -2 if the
-     *         identifier was not associated with a plane primitive.
+     * \return 0 on success, -1 if the identifier was not found.
      */
 	int setPlaneEsthetics
 	(
@@ -145,14 +145,15 @@ public:
      /*!
      * \brief Creates and registers a sphere among the objects to be visualized.
      *
-     * \param x : the x position of the sphere
-     * \param y : the y position of the sphere
-     * \param z : the z position of the sphere
-     * \param radius : 
-     * \param red : the red color component (0-255)
-     * \param blue : the blue color component (0-255)
-     * \param green : the green color component (0-255)
-     * \param alpha : the alpha component (0-255)
+     * \param base_link_name : the frame with respect to which the sphere is placed
+     * \param x : the x position of the geometrical centrum of the sphere
+     * \param y : the y position of the geometrical centrum of the sphere
+     * \param z : the z position of the geometrical centrum of the sphere
+     * \param radius : the radius of the sphere
+     * \param r : the red color component (0.0-1.0)
+     * \param g : the green color component (0.0-1.0)
+     * \param b : the blue color component (0.0-1.0)
+     * \param a : the alpha component (0.0-1.0)
      *  
      * \return the unique identifier of the created task
      */
@@ -166,13 +167,14 @@ public:
      /*!
      * \brief Sets an already existing sphere's geometry
      *
-     * \param id : the unique identifier of the plane
-     * \param x : 
-     * \param y : 
-     * \param z : 
-     * \param radius : 
+     * \param id : the unique identifier of the sphere
+     * \param x : the x position of the geometrical centrum of the sphere
+     * \param y : the y position of the geometrical centrum of the sphere
+     * \param z : the z position of the geometrical centrum of the sphere
+     * \param radius : the radius of the sphere
      *
-     * \return 0 on success, -1 if the identifier was invalid
+     * \return 0 on success, -1 if the identifier was not found, -2 if the
+     *         identifier was not associated with a sphere primitive.
      */
      int setSphereGeometry
      (
@@ -183,14 +185,13 @@ public:
      /*!
      * \brief Sets an already existing sphere's esthetics
      *
-     * \param id : the unique identifier of the plane
-     * \param red : the new red color component (0-255)
-     * \param blue : the new blue color component (0-255)
-     * \param green : the new green color component (0-255)
-     * \param alpha : the new alpha component (0-255)
+     * \param id : the unique identifier of the sphere
+     * \param r : the red color component (0.0-1.0)
+     * \param g : the green color component (0.0-1.0)
+     * \param b : the blue color component (0.0-1.0)
+     * \param a : the alpha component (0.0-1.0)
      *
-     * \return 0 on success, -1 if the identifier was not found, -2 if the
-     *         identifier was not associated with a plane primitive.
+     * \return 0 on success, -1 if the identifier was not found.
      */
      int setSphereEsthetics
      (
@@ -198,6 +199,276 @@ public:
           double r, double g, double b, double a
      );
 
+
+
+
+
+
+
+     /*!
+     * \brief Creates and registers a box among the objects to be visualized.
+     *
+     * \param base_link_name : the frame with respect to which the box is placed
+     * \param x : the x position of the geometrical center of the box
+     * \param y : the y position of the geometrical center of the box
+     * \param z : the z position of the geometrical center of the box
+     * \param w : the width of the box
+     * \param h : the height of the box
+     * \param d : the depth of the box
+     * \param r : the red color component (0.0-1.0)
+     * \param g : the green color component (0.0-1.0)
+     * \param b : the blue color component (0.0-1.0)
+     * \param a : the alpha component (0.0-1.0)
+     *  
+     * \return the unique identifier of the created task
+     */
+     std::size_t createBox
+     (
+          const std::string& base_link_name,
+          double x, double y, double z, double w, double h, double d,
+          double r, double g, double b, double a
+     );
+
+     /*!
+     * \brief Sets an already existing box's geometry
+     *
+     * \param id : the unique identifier of the box
+     * \param x : the x position of the geometrical center of the box
+     * \param y : the y position of the geometrical center of the box
+     * \param z : the z position of the geometrical center of the box
+     * \param w : the width of the box
+     * \param h : the height of the box
+     * \param d : the depth of the box
+     *
+     * \return 0 on success, -1 if the identifier was not found, -2 if the
+     *         identifier was not associated with a box primitive.
+     */
+     int setBoxGeometry
+     (
+          std::size_t id, 
+          double x, double y, double z, double w, double h, double d
+     );
+
+     /*!
+     * \brief Sets an already existing box's esthetics
+     *
+     * \param id : the unique identifier of the box
+     * \param r : the red color component (0.0-1.0)
+     * \param g : the green color component (0.0-1.0)
+     * \param b : the blue color component (0.0-1.0)
+     * \param a : the alpha component (0.0-1.0)
+     *
+     * \return 0 on success, -1 if the identifier was not found.
+     */
+     int setBoxEsthetics
+     (
+          std::size_t id, 
+          double r, double g, double b, double a
+     );
+
+
+
+
+
+
+
+     /*!
+     * \brief Creates and registers an arrow among the objects to be visualized.
+     *
+     * \param base_link_name : the frame with respect to which the box is placed
+     * \param x : the x position of the geometrical center of the arrow
+     * \param y : the y position of the geometrical center of the arrow
+     * \param z : the z position of the geometrical center of the arrow
+     * \param nx : the x-component of the direction of the arrow 
+     * \param ny : the y-component of the direction of the arrow 
+     * \param nz : the z-component of the direction of the arrow 
+     * \param r : the red color component (0.0-1.0)
+     * \param g : the green color component (0.0-1.0)
+     * \param b : the blue color component (0.0-1.0)
+     * \param a : the alpha component (0.0-1.0)
+     *  
+     * \return the unique identifier of the created task
+     */
+     std::size_t createArrow
+     (
+          const std::string& base_link_name,
+          double x, double y, double z, double nx, double ny, double nz,
+          double r, double g, double b, double a
+     );
+
+     /*!
+     * \brief Sets an already existing arrows's geometry
+     *
+     * \param id : the unique identifier of the arrow
+     * \param x : the x position of the geometrical center of the arrow
+     * \param y : the y position of the geometrical center of the arrow
+     * \param z : the z position of the geometrical center of the arrow
+     * \param nx : the x-component of the direction of the arrow 
+     * \param ny : the y-component of the direction of the arrow 
+     * \param nz : the z-component of the direction of the arrow 
+     *
+     * \return 0 on success, -1 if the identifier was not found, -2 if the
+     *         identifier was not associated with an arrow primitive.
+     */
+     int setArrowGeometry
+     (
+          std::size_t id, 
+          double x, double y, double z, double nx, double ny, double nz
+     );
+
+     /*!
+     * \brief Sets an already existing arrows's esthetics
+     *
+     * \param id : the unique identifier of the arrow
+     * \param r : the red color component (0.0-1.0)
+     * \param g : the green color component (0.0-1.0)
+     * \param b : the blue color component (0.0-1.0)
+     * \param a : the alpha component (0.0-1.0)
+     *
+     * \return 0 on success, -1 if the identifier was not found.
+     */
+     int setArrowEsthetics
+     (
+          std::size_t id, 
+          double r, double g, double b, double a
+     );
+
+
+
+
+
+
+
+     /*!
+     * \brief Creates and registers a line among the objects to be visualized.
+     *
+     * \param base_link_name : the frame with respect to which the line is placed
+     * \param x : the x position of the geometrical center of the line
+     * \param y : the y position of the geometrical center of the line
+     * \param z : the z position of the geometrical center of the line
+     * \param nx : the x-component of the direction of the line 
+     * \param ny : the y-component of the direction of the line 
+     * \param nz : the z-component of the direction of the line 
+     * \param l : the length of the line
+     * \param r : the red color component (0.0-1.0)
+     * \param g : the green color component (0.0-1.0)
+     * \param b : the blue color component (0.0-1.0)
+     * \param a : the alpha component (0.0-1.0)
+     *  
+     * \return the unique identifier of the created task
+     */
+     // std::size_t createLine
+     // (
+     //      const std::string& base_link_name,
+     //      double x, double y, double z, double nx, double ny, double nz,
+     //      double l,
+     //      double r, double g, double b, double a
+     // );
+
+     /*!
+     * \brief Sets an already existing arrows's geometry
+     *
+     * \param id : the unique identifier of the line
+     * \param x : the x position of the geometrical center of the line
+     * \param y : the y position of the geometrical center of the line
+     * \param z : the z position of the geometrical center of the line
+     * \param nx : the x-component of the direction of the line 
+     * \param ny : the y-component of the direction of the line 
+     * \param nz : the z-component of the direction of the line 
+     * \param l : the length of the line
+     *
+     * \return 0 on success, -1 if the identifier was not found, -2 if the
+     *         identifier was not associated with a line primitive.
+     */
+     // int setLineGeometry
+     // (
+     //      std::size_t id, 
+     //      double x, double y, double z, double nx, double ny, double nz,
+     //      double l
+     // );
+
+     /*!
+     * \brief Sets an already existing arrows's esthetics
+     *
+     * \param id : the unique identifier of the line
+     * \param r : the red color component (0.0-1.0)
+     * \param g : the green color component (0.0-1.0)
+     * \param b : the blue color component (0.0-1.0)
+     * \param a : the alpha component (0.0-1.0)
+     *
+     * \return 0 on success, -1 if the identifier was not found.
+     */
+     // int setLineEsthetics
+     // (
+     //      std::size_t id, 
+     //      double r, double g, double b, double a
+     // );
+
+
+
+
+
+
+
+
+     /*!
+     * \brief Creates and registers a cylinder among the objects to be visualized.
+     *
+     * \param base_link_name : the frame with respect to which the cylinder is placed
+     * \param x : the x position of the geometrical center of the cylinder
+     * \param y : the y position of the geometrical center of the cylinder
+     * \param z : the z position of the geometrical center of the cylinder
+     * \param radius : the radius of the cylinder
+     * \param height : the height of the cylinder
+     * \param r : the red color component (0.0-1.0)
+     * \param g : the green color component (0.0-1.0)
+     * \param b : the blue color component (0.0-1.0)
+     * \param a : the alpha component (0.0-1.0)
+     *  
+     * \return the unique identifier of the created task
+     */
+     std::size_t createCylinder
+     (
+          const std::string& base_link_name,
+          double x, double y, double z, double radius, double height,
+          double r, double g, double b, double a
+     );
+
+     /*!
+     * \brief Sets an already existing cylinder's geometry
+     *
+     * \param id : the unique identifier of the cylinder
+     * \param x : the x position of the geometrical center of the cylinder
+     * \param y : the y position of the geometrical center of the cylinder
+     * \param z : the z position of the geometrical center of the cylinder
+     * \param radius : the radius of the cylinder
+     * \param height : the height of the cylinder
+     *
+     * \return 0 on success, -1 if the identifier was not found, -2 if the
+     *         identifier was not associated with an cylinder primitive.
+     */
+     int setCylinderGeometry
+     (
+          std::size_t id, 
+          double x, double y, double z, double radius, double height
+     );
+
+     /*!
+     * \brief Sets an already existing cylinder's esthetics
+     *
+     * \param id : the unique identifier of the arrow
+     * \param r : the red color component (0.0-1.0)
+     * \param g : the green color component (0.0-1.0)
+     * \param b : the blue color component (0.0-1.0)
+     * \param a : the alpha component (0.0-1.0)
+     *
+     * \return 0 on success, -1 if the identifier was not found.
+     */
+     int setCylinderEsthetics
+     (
+          std::size_t id, 
+          double r, double g, double b, double a
+     );
 
 	
 

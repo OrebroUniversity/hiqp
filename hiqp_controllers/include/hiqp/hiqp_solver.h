@@ -42,6 +42,8 @@ struct HiQPStage
 	Eigen::MatrixXd e_dot_star_;
 
 	Eigen::MatrixXd J_;
+
+	std::vector<int> signs_;
 };
 
 
