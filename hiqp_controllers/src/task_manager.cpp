@@ -52,7 +52,7 @@ TaskManager::TaskManager(TaskVisualizer* task_visualizer)
 
 TaskManager::~TaskManager() noexcept
 {
-    // We have memory leaks!!
+    // We have memory leaks in tasks_ and task_behaviours_ !!!
     delete solver_;
 }
 

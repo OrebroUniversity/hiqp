@@ -104,10 +104,24 @@ private:
 	TaskPoP& operator=(const TaskPoP& other) = delete;
 	TaskPoP& operator=(TaskPoP&& other) noexcept = delete;
 
-	std::string			link_name_; // the name of the end-effector link
-     std::string              base_link_name_; // the name of the base link
-	Eigen::Vector3d 	     n_; // the normal vector of the plane
-	double 				d_; // the distance to the plane from the origin
+
+
+
+     // the name of the end-effector link
+	std::string			point_frame_id_;
+
+     // p_ is a vector in the end-effector link frame from the link's origin
+     // to the end-effector point
+     KDL::Vector              p_;
+
+     // the name of the plane link
+     std::string              plane_frame_id_;
+
+     // the normal vector of the plane in plane frame coordinates
+	KDL::Vector 	          n_;
+
+     // the distance to the plane from the origin of the plane frame
+	double 				d_;
 
 
 

@@ -39,24 +39,27 @@ TaskPoP::TaskPoP() {}
 
 int TaskPoP::init(const std::vector<std::string>& parameters)
 {
-	if (parameters.size() != 6)
+	if (parameters.size() != 9)
 		return -1;
 
-	link_name_ = parameters.at(0);
-	base_link_name_ = parameters.at(1);
-	n_(0) = std::stod( parameters.at(2) );
-	n_(1) = std::stod( parameters.at(3) );
-	n_(2) = std::stod( parameters.at(4) );
-	d_ = std::stod( parameters.at(5) );
+	point_frame_id_ = parameters.at(0);
+	p_(0) = std::stod( parameters.at(1) );
+	p_(1) = std::stod( parameters.at(2) );
+	p_(2) = std::stod( parameters.at(3) );
 
-	std::cout << "TaskPoP::init\n";
+	plane_frame_id_ = parameters.at(4);
+	n_(0) = std::stod( parameters.at(5) );
+	n_(1) = std::stod( parameters.at(6) );
+	n_(2) = std::stod( parameters.at(7) );
+	d_ = std::stod( parameters.at(8) );
 
-	getTaskVisualizer()->createPlane(base_link_name_, n_(0), n_(1), n_(2), d_, 0.85, 0.0, 0.0, 0.5);
-	getTaskVisualizer()->createSphere(link_name_, 0.0, 0.0, 0.0, 0.05, 1.0, 0.0, 0.0, 0.85);
-	//getTaskVisualizer()->createBox("yumi_link_7_r", 0, 0, 0, 1, 1, 1, 0.8, 0.8, 0.8, 0.8);
-	//getTaskVisualizer()->createArrow("world", 1, 1, 1, 0, 0, 1, 0.8, 0.8, 0.8, 0.5);
-	//getTaskVisualizer()->createLine("world", 1, 1, 1, 0, 0, 1, 3, 0.8, 0.8, 0.8, 0.5);
-	getTaskVisualizer()->createCylinder("world", 1, 1, 1, 0.5, 1, 0.8, 0.8, 0.8, 0.5);
+	getTaskVisualizer()->createSphere(point_frame_id_, 
+		p_(0), p_(1), p_(2), 0.005, 1.0, 0.0, 0.0, 0.9);
+
+	getTaskVisualizer()->createPlane(plane_frame_id_, 
+		n_(0), n_(1), n_(2), d_, 1.0, 0.0, 0.0, 0.9);
+
+	std::cout << "TaskPoP::init finished successfully\n";
 }
 
 
@@ -65,7 +68,7 @@ int TaskPoP::init(const std::vector<std::string>& parameters)
 
 
 
-int TaskPoP::apply // this is for yumi
+int TaskPoP::apply
 (
 	const KDL::Tree& kdl_tree, 
 	const KDL::JntArrayVel& kdl_joint_pos_vel
@@ -74,47 +77,100 @@ int TaskPoP::apply // this is for yumi
 	
 	// Compute the pose of the end-effector
 	KDL::TreeFkSolverPos_recursive fk_solver_pos(kdl_tree);
+
 	KDL::Frame pose;
+
 	int retval = fk_solver_pos.JntToCart(kdl_joint_pos_vel.q, 
 		                                 pose,
-		                                 link_name_);
+		                                 point_frame_id_);
+
 	if (retval != 0)
 	{
 		std::cerr << "In TaskPoP::apply : Can't solve position of link "
-			<< "'" << link_name_ << "'" << " in the KDL tree! "
+			<< "'" << point_frame_id_ << "'" << " in the KDL tree! "
 			<< "KDL::TreeFkSolverPos_recursive::JntToCart return error code "
 			<< "'" << retval << "'\n";
 		return -1;
 	}
-	Eigen::Vector3d p( pose.p.x(), pose.p.y(), pose.p.z() );
 
-	// Compute the task jacobian dp/dt
+	KDL::Vector p__ = pose.M * p_;
+
+	// this gives a vector to the end-effector in root coordinates
+	KDL::Vector p( pose.p.x() + p__(0), 
+		           pose.p.y() + p__(1), 
+		           pose.p.z() + p__(2) );
+
+
+
+
+
+	// Compute the pose of the plane
+	retval = fk_solver_pos.JntToCart(kdl_joint_pos_vel.q, 
+	                                 pose,
+	                                 plane_frame_id_);
+
+	if (retval != 0)
+	{
+		std::cerr << "In TaskPoP::apply : Can't solve position of link "
+			<< "'" << plane_frame_id_ << "'" << " in the KDL tree! "
+			<< "KDL::TreeFkSolverPos_recursive::JntToCart return error code "
+			<< "'" << retval << "'\n";
+		return -1;
+	}
+
+	// this gives the plane normal in root coordinates
+	KDL::Vector n = pose.M * n_;
+
+	// this gives the offset from the plane to the root origo
+	double d = d_ + KDL::dot(n, pose.p);
+
+
+
+
+
+	// Compute the task jacobian dp/dq in root coordinates
 	KDL::Jacobian jac;
+
 	jac.resize(kdl_joint_pos_vel.q.rows());
-	retval = kdl_JntToJac(kdl_tree, kdl_joint_pos_vel, jac, link_name_);
+
+	KDL::TreeJntToJacSolver fk_solver_jac(kdl_tree);
+
+	retval = fk_solver_jac.JntToJac(kdl_joint_pos_vel.q,
+		                            jac,
+		                            point_frame_id_);
+
+	//retval = kdl_JntToJac(kdl_tree, kdl_joint_pos_vel, jac, point_frame_id_);
+
 	if (retval != 0)
 	{
 		std::cerr << "In TaskPoP::apply : Can't solve jacobian of link "
-			<< "'" << link_name_ << "'" << " in the KDL tree! "
-			<< "hiqp::JntToJac return error code "
+			<< "'" << point_frame_id_ << "'" << " in the KDL tree! "
+			<< "KDL::TreeJntToJacSolver return error code "
 			<< "'" << retval << "'\n";
 		return -2;
 	}
 
+
+
+
+
 	// Set the task function and jacobian values
 	e_.resize(1, 1);
-	e_(0, 0) = n_.dot(p) - d_;
+
+	e_(0, 0) = KDL::dot(n, p) - d;
 
 	J_.resize(1, kdl_joint_pos_vel.q.rows());
+
 	for (int q_nr = 0; q_nr < kdl_joint_pos_vel.q.rows(); ++q_nr)
 	{
-		double dedt = n_(0) * jac.getColumn(q_nr).vel.x() + 
-		              n_(1) * jac.getColumn(q_nr).vel.y() + 
-		              n_(2) * jac.getColumn(q_nr).vel.z();
-		//double qdot = kdl_joint_pos_vel.qdot(q_nr);
-		//J_(0, q_nr) = (qdot==0 ? 0 : dedt/qdot);
-		J_(0, q_nr) = dedt;      
+		J_(0, q_nr) = n(0) * jac.getColumn(q_nr).vel.x() + 
+		              n(1) * jac.getColumn(q_nr).vel.y() + 
+		              n(2) * jac.getColumn(q_nr).vel.z();      
 	}
+
+
+
+
 
     //std::cout << "e = " << e_ << "\n\n";
     //std::cout << "J = " << J_ << "\n\n";
