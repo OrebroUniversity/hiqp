@@ -261,6 +261,7 @@ bool HiQPKinematicController::addTask
 	res.task_id = task_manager_.addTask(req.task_spec.task, 
 			   						    req.task_spec.behaviour,
 									    req.task_spec.behaviour_parameters,
+									    req.task_spec.name,
 									    req.task_spec.priority,
 									    req.task_spec.visibility,
 								 	    req.task_spec.parameters);

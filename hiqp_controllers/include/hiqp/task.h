@@ -140,11 +140,14 @@ namespace hiqp
     inline void setPriority(unsigned int priority)
     { priority_ = priority; }
 
-    inline unsigned int getPriority()
-    { return priority_; }
-
     inline void setId(std::size_t id)
     { id_ = id; }
+
+    inline void setTaskName(const std::string& name)
+    { task_name_ = name; }
+
+    inline unsigned int getPriority()
+    { return priority_; }
 
     inline std::size_t getId()
     { return id_; }
@@ -178,9 +181,11 @@ namespace hiqp
 
     TaskVisualizer*     task_visualizer_;
 
-    unsigned int        priority_;
+    std::size_t         id_; // unique identifier of the task
 
-    std::size_t         id_;
+    std::string         task_name_; // non-unique task name
+
+    unsigned int        priority_;
 
     bool                visibility_;
 

@@ -92,9 +92,10 @@ public:
      *         -1 is the task name was not recognised,
      *         -2 if the task behaviour name was not recognised
      */
-     std::size_t addTask(const std::string& task_name,
-                         const std::string& behaviour_name,
+     std::size_t addTask(const std::string& task_type,
+                         const std::string& behaviour_type,
                          const std::vector<std::string>& behaviour_parameters,
+                         const std::string& task_name,
                          unsigned int priority,
                          bool visibility,
                          const std::vector<std::string>& parameters);

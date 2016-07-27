@@ -103,16 +103,17 @@ bool TaskManager::getKinematicControls
 
 std::size_t TaskManager::addTask
 (
-    const std::string& task_name,
-    const std::string& behaviour_name,
+    const std::string& task_type,
+    const std::string& behaviour_type,
     const std::vector<std::string>& behaviour_parameters,
+    const std::string& task_name,
     unsigned int priority,
     bool visibility,
     const std::vector<std::string>& parameters
 )
 {
     // Create the task behaviour
-    TaskBehaviour* behaviour = buildTaskBehaviour(behaviour_name);
+    TaskBehaviour* behaviour = buildTaskBehaviour(behaviour_type);
     if (behaviour == NULL)
         return -1;
 
@@ -124,7 +125,7 @@ std::size_t TaskManager::addTask
     next_task_behaviour_id_++;
 
     // Create and initialize the task
-    Task* task = buildTask(task_name);
+    Task* task = buildTask(task_type);
     if (task == NULL)
     {
         delete behaviour;
@@ -134,8 +135,9 @@ std::size_t TaskManager::addTask
     // Initialize the task
     task->setTaskBehaviour(behaviour);
     task->setTaskVisualizer(task_visualizer_);
-    task->setPriority(priority);
     task->setId(next_task_id_);
+    task->setTaskName(task_name);
+    task->setPriority(priority);
     task->setVisibility(visibility);
     task->init(parameters, numControls_);
 
