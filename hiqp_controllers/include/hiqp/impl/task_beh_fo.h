@@ -25,7 +25,12 @@ namespace hiqp
 
 
 
-
+/*!
+ * \class TaskBehFO
+ * \brief This is my awesome controller
+ *
+ *  It's awesome!
+ */	
 class TaskBehFO : public TaskBehaviour
 {
 public:
@@ -38,8 +43,8 @@ public:
 
 	int apply
 	(
-		const Eigen::MatrixXd& e,
-		Eigen::MatrixXd& e_dot_star
+		const Eigen::VectorXd& e,
+		Eigen::VectorXd& e_dot_star
 	);
 
 private:

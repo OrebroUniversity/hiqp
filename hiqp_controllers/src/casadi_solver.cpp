@@ -72,7 +72,7 @@ int CasADiSolver::solve
 
 		for (int k=0; k<rows; ++k)
 		{
-			g_p(k, 0) += - stage.e_dot_star_(k, 0);
+			g_p(k, 0) += - stage.e_dot_star_(k);
 			for (int kk=0; kk<solutionSize; ++kk)
 				g_p(k, 0) += qdot(kk, 0) * stage.J_(k, kk);
 		}
@@ -113,8 +113,8 @@ int CasADiSolver::solve
                 			  {"ubg", ubg}};  
       	
       	// For debugging purposes
-        //std::cout << "edotstar = " << stage.e_dot_star_ << "\n\n";
-        //std::cout << "J = " << stage.J_ << "\n\n";
+        std::cout << "edotstar = " << stage.e_dot_star_ << "\n\n";
+        std::cout << "J = " << stage.J_ << "\n\n";
         
         // std::cout << "x = " << vertcat(qdot, w_p) << "\n\n";
         // std::cout << "f_qdot = " << f_qdot << "\n\n";
@@ -138,7 +138,7 @@ int CasADiSolver::solve
 
 		for (int k=0; k<rows; ++k)
 		{
-			casadi::SX g_i__ = - stage.e_dot_star_(k, 0);
+			casadi::SX g_i__ = - stage.e_dot_star_(k);
 			for (int kk=0; kk<solutionSize; ++kk)
 				g_i__ += qdot[kk] * stage.J_(k, kk);
 			g_i__ += - x_opt_d[k + solutionSize];
@@ -152,13 +152,13 @@ int CasADiSolver::solve
 
 		if (it == stages_map_.end())
 		{
-			//std::cout << "solution = [";
+			std::cout << "solution = [";
 			for (int k=0; k<solutionSize; ++k)
 			{
-				//std::cout << x_opt_d[k] << ", ";
+				std::cout << x_opt_d[k] << ", ";
 				solution.at(k) = x_opt_d[k];
 			}
-			//std::cout << "]\n\n";
+			std::cout << "]\n\n";
 		}
 
 	}

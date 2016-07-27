@@ -94,11 +94,11 @@ namespace hiqp
 
     protected:
 
-    Eigen::MatrixXd                 e_; // the task function
+    Eigen::VectorXd                 e_; // the task function
      
     Eigen::MatrixXd                 J_; // the task jacobian
 
-    Eigen::MatrixXd                 e_dot_star_; // the task dynamics
+    Eigen::VectorXd                 e_dot_star_; // the task dynamics
 
     std::vector<int>                task_types_; // -1 leq, 0 eq, 1 geq
 

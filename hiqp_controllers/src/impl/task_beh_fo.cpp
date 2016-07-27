@@ -9,7 +9,7 @@
 
 
 
-#include <hiqp/task_beh_fo.h>
+#include <hiqp/impl/task_beh_fo.h>
 #include <hiqp/hiqp_utils.h>
 
 
@@ -48,11 +48,13 @@ int TaskBehFO::init
 
 int TaskBehFO::apply
 (
-	const Eigen::MatrixXd& e,
-	Eigen::MatrixXd& e_dot_star
+	const Eigen::VectorXd& e,
+	Eigen::VectorXd& e_dot_star
 )
 {
 	e_dot_star = -lambda_ * e;
+
+	//std::cout << "e_dot_star = " << e_dot_star << "\n\n";
 
 	return 0;
 }

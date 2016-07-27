@@ -54,15 +54,15 @@ add_library(${PROJECT_NAME} include/hiqp/hiqp_utils.h
                             include/hiqp/casadi_solver.h
                             include/hiqp/task.h
                             include/hiqp/task_behaviour.h
-                            include/hiqp/task_pop.h
-                            include/hiqp/task_beh_fo.h
+                            include/hiqp/impl/task_pop.h
+                            include/hiqp/impl/task_beh_fo.h
                             src/hiqp_utils.cpp
                             src/hiqp_kinematic_controller.cpp
                             src/task_manager.cpp
                             src/task_visualizer.cpp
                             src/casadi_solver.cpp
-                            src/task_pop.cpp
-                            src/task_beh_fo.cpp
+                            src/impl/task_pop.cpp
+                            src/impl/task_beh_fo.cpp
 )
 
 target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} ${orocos_kdl_LIBRARIES} ${CASADI_LIBRARIES} ${GUROBI_LIBS})

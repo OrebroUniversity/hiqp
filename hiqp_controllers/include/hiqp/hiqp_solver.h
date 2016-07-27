@@ -39,7 +39,7 @@ struct HiQPStage
 {
 	int nRows;
 
-	Eigen::MatrixXd e_dot_star_;
+	Eigen::VectorXd e_dot_star_;
 
 	Eigen::MatrixXd J_;
 
@@ -79,7 +79,7 @@ public:
 	int appendStage
 	(
 		std::size_t priority_level, 
-		const Eigen::MatrixXd& e_dot_star,
+		const Eigen::VectorXd& e_dot_star,
 		const Eigen::MatrixXd& J,
 		const std::vector<int>& constraint_signs
 	)
@@ -100,12 +100,12 @@ public:
 		{
 			int rows = it->second.e_dot_star_.rows() + e_dot_star.rows();
 
-			Eigen::MatrixXd edotstar__(rows, 1);
+			Eigen::VectorXd edotstar__(rows);
 
 			edotstar__ << it->second.e_dot_star_, 
 			              e_dot_star;
 
-			it->second.e_dot_star_.resize(rows, 1);
+			it->second.e_dot_star_.resize(rows);
 
 			it->second.e_dot_star_ << edotstar__;
 

@@ -44,8 +44,8 @@ public:
 
 	virtual int apply
 	(
-		const Eigen::MatrixXd& e,
-		Eigen::MatrixXd& e_dot_star
+		const Eigen::VectorXd& e,
+		Eigen::VectorXd& e_dot_star
 	) = 0;
 
 

@@ -1,5 +1,5 @@
 /*!
- * \file   task_pop.h
+ * \file   task_jnt_limit.h
  * \Author Marcus A Johansson (marcus.adam.johansson@gmail.com)
  * \date   July, 2016
  * \brief  Brief description of file.
@@ -31,18 +31,25 @@ namespace hiqp
 
 
 
-class TaskPoP : public Task
+
+
+/*!
+ * \class TaskJntLimit
+ * \brief Represents a task that limits joint positions/velocities/accelerations
+ *
+ *  The type of limitation (pos/vel/acc) is given as a parameter to the task
+ *  along with all lower and upper bounds for each joint.
+ */	
+class TaskJntLimit : public Task
 {
+
 public:
-
-
-
 
 	/*!
      * \brief Constructor
      * Constructs my awesome task
      */
-	TaskPoP();
+	TaskJntLimit();
 
 
 
@@ -51,7 +58,7 @@ public:
      * \brief Destructor
      * Destructs my awesome task
      */
-	~TaskPoP() noexcept {}
+	~TaskJntLimit() noexcept {}
 
 
 
@@ -88,45 +95,20 @@ public:
 
 
 
-
-
-
-
 private:
 
 	// No copying of this class is allowed !
-	TaskPoP(const TaskPoP& other) = delete;
-	TaskPoP(TaskPoP&& other) = delete;
-	TaskPoP& operator=(const TaskPoP& other) = delete;
-	TaskPoP& operator=(TaskPoP&& other) noexcept = delete;
+	TaskJntLimit(const TaskJntLimit& other) = delete;
+	TaskJntLimit(TaskJntLimit&& other) = delete;
+	TaskJntLimit& operator=(const TaskJntLimit& other) = delete;
+	TaskJntLimit& operator=(TaskJntLimit&& other) noexcept = delete;
 
+	enum LimitationType {kPos = 0, kVel = 1, kAcc = 2};
 
-
-
-     // the name of the end-effector link
-	std::string			point_frame_id_;
-
-     // p_ is a vector in the end-effector link frame from the link's origin
-     // to the end-effector point
-     KDL::Vector              p_;
-
-     // the name of the plane link
-     std::string              plane_frame_id_;
-
-     // the normal vector of the plane in plane frame coordinates
-	KDL::Vector 	          n_;
-
-     // the distance to the plane from the origin of the plane frame
-	double 				d_;
-
+	
 
 
 };
-
-
-
-
-
 
 
 

@@ -8,9 +8,9 @@
  */
 
 #include <hiqp/task_manager.h>
-#include <hiqp/task_pop.h>
+#include <hiqp/impl/task_pop.h>
 #include <hiqp/task_behaviour.h>
-#include <hiqp/task_beh_fo.h>
+#include <hiqp/impl/task_beh_fo.h>
 
 #include <hiqp/hiqp_utils.h>
 

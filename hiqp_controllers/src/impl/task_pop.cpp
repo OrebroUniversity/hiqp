@@ -9,7 +9,7 @@
 
 
 
-#include <hiqp/task_pop.h>
+#include <hiqp/impl/task_pop.h>
 #include <hiqp/hiqp_utils.h>
 
 // Orocos KDL Includes
@@ -63,10 +63,10 @@ int TaskPoP::init
 	getTaskVisualizer()->createPlane(plane_frame_id_, 
 		n_(0), n_(1), n_(2), d_, 1.0, 0.0, 0.0, 0.9);
 
-	e_.resize(1, 1);
+	e_.resize(1);
 	J_.resize(1, numControls);
-	e_dot_star_.resize(1, 1);
-	task_types_.insert(task_types_.begin(), 1, -1); // a 1-D equality task
+	e_dot_star_.resize(1);
+	task_types_.insert(task_types_.begin(), 1, 0); // a 1-D eq task
 
 	std::cout << "TaskPoP::init finished successfully\n";
 }
@@ -165,7 +165,7 @@ int TaskPoP::apply
 
 	// Set the task function and jacobian values
 
-	e_(0, 0) = KDL::dot(n, p) - d;
+	e_(0) = KDL::dot(n, p) - d;
 
 	for (int q_nr = 0; q_nr < kdl_joint_pos_vel.q.rows(); ++q_nr)
 	{
