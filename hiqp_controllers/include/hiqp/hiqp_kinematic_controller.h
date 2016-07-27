@@ -215,9 +215,14 @@ private:
 
      bool                                              is_active_;
 
+     bool                                              monitoring_active_;
+     double                                            monitoring_publish_rate_;
+     ros::Time                                         last_monitoring_update_;
+
      ros::NodeHandle                                   controller_nh_;
      ros::ServiceServer                                add_task_service_;
      ros::ServiceServer                                remove_task_service_;
+     ros::Publisher                                    monitoring_pub_;
 
      JointHandleMap                                    joint_handles_map_;
      std::mutex                                        handles_mutex_;

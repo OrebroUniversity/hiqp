@@ -87,6 +87,8 @@ int TaskPoP::init
 	e_dot_star_.resize(1);
 	task_types_.insert(task_types_.begin(), 1, 0); // a 1-D eq task
 
+	performance_measures_.resize(1);
+
 	std::cout << "TaskPoP::init finished successfully\n";
 }
 
@@ -200,6 +202,16 @@ int TaskPoP::apply
     //std::cout << "e = " << e_ << "\n\n";
     //std::cout << "J = " << J_ << "\n\n";
 
+	return 0;
+}
+
+
+
+
+int TaskPoP::monitor()
+{
+	performance_measures_.at(0) = e_(0);
+	
 	return 0;
 }
 

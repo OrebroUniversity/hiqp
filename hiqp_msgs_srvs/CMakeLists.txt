@@ -15,7 +15,9 @@ find_package(catkin REQUIRED COMPONENTS
 
 add_message_files(
   FILES
-  TaskSpec.msg
+  TaskSpecMsg.msg
+  PerfMeasMsg.msg
+  MonitorDataMsg.msg
   )
 
 

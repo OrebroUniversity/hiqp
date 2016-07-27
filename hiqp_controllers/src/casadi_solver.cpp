@@ -132,8 +132,8 @@ int CasADiSolver::solve
                 			  {"ubg", ubg}};  
       	
       	// For debugging purposes
-        std::cout << "edotstar = " << stage.e_dot_star_ << "\n\n";
-        std::cout << "J = " << stage.J_ << "\n\n";
+        //std::cout << "edotstar = " << stage.e_dot_star_ << "\n\n";
+        //std::cout << "J = " << stage.J_ << "\n\n";
         
         // std::cout << "x = " << vertcat(qdot, w_p) << "\n\n";
         // std::cout << "f_qdot = " << f_qdot << "\n\n";
@@ -171,13 +171,13 @@ int CasADiSolver::solve
 
 		if (it == stages_map_.end())
 		{
-			std::cout << "solution = [";
+			//std::cout << "solution = [";
 			for (int k=0; k<solutionSize; ++k)
 			{
-				std::cout << x_opt_d[k] << ", ";
+				//std::cout << x_opt_d[k] << ", ";
 				solution.at(k) = x_opt_d[k];
 			}
-			std::cout << "]\n\n";
+			//std::cout << "]\n\n";
 		}
 
 	}

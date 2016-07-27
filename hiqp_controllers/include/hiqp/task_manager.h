@@ -56,6 +56,38 @@
 
 namespace hiqp {
 
+
+
+/*!
+ * \class TaskMonitoringData
+ * \brief An aggregation of const references to facilitate communication of
+ *        monitoring data.
+ *
+ */  
+class TaskMonitoringData
+{
+public:
+     TaskMonitoringData
+     (
+          unsigned int task_id,
+          const std::string& task_name,
+          const std::vector<double>& performance_measures
+     )
+     : task_id_(task_id), 
+       task_name_(task_name), 
+       performance_measures_(performance_measures)
+     {}
+
+     std::size_t                 task_id_;
+     const std::string&          task_name_;
+     const std::vector<double>&  performance_measures_;
+};
+
+
+
+
+
+
 /*!
  * \class TaskManager
  * \brief Should be created only once!
@@ -82,7 +114,7 @@ public:
      { numControls_ = numControls; }
 
 	/*!
-     * \brief Called every time the controller is initialized by the 
+     * \brief Called every time the controller is updated by the 
      *        ros::controller_manager
      *
      * Does some cool stuff!
@@ -95,6 +127,16 @@ public:
 	bool getKinematicControls(const KDL::Tree& kdl_tree,
                                const KDL::JntArrayVel& kdl_joint_pos_vel,
 		                     std::vector<double> &controls);
+
+     /*!
+     * \brief Retrieves the performance measures for every active task along
+     *        with the task's name and unique identifier.
+     *
+     * NOTE: The vector sent to this function is supposed to be empty
+     *
+     * \param data : a reference to a vector of monitoring data structures
+     */
+     void getTaskMonitoringData(std::vector<TaskMonitoringData>& data);
 
      /*!
      * \brief Adds a task to the task manager and activates it

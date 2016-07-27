@@ -104,6 +104,16 @@ namespace hiqp
 
 
 
+    /*!
+     * \brief <i>Pure virtual</i>. Computes all performance measures used when
+     *        monitoring this task.
+     *
+     * \return 0 if the calculation was successful
+     */
+    virtual int monitor() = 0;
+
+
+
     
 
 
@@ -120,6 +130,8 @@ namespace hiqp
     Eigen::VectorXd                 e_dot_star_; // the task dynamics
 
     std::vector<int>                task_types_; // -1 leq, 0 eq, 1 geq
+
+    std::vector<double>             performance_measures_;
 
     TaskVisualizer* getTaskVisualizer()
     { return task_visualizer_; }
@@ -156,20 +168,23 @@ namespace hiqp
     inline void setTaskVisualizer(TaskVisualizer* task_visualizer)
     { task_visualizer_ = task_visualizer; }
 
-    inline void setPriority(unsigned int priority)
-    { priority_ = priority; }
-
     inline void setId(std::size_t id)
     { id_ = id; }
+
+    inline std::size_t getId()
+    { return id_; }
+
+    inline const std::string& getTaskName()
+    { return task_name_; }
 
     inline void setTaskName(const std::string& name)
     { task_name_ = name; }
 
+    inline void setPriority(unsigned int priority)
+    { priority_ = priority; }
+
     inline unsigned int getPriority()
     { return priority_; }
-
-    inline std::size_t getId()
-    { return id_; }
 
 
 

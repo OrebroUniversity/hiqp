@@ -19,3 +19,6 @@ yumi:
       - yumi_joint_4_l
       - yumi_joint_5_l
       - yumi_joint_6_l
+    task_monitoring:
+      active: 1
+      publish_rate: 50.0

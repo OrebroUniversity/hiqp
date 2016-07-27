@@ -31,7 +31,12 @@
 #include <hiqp/hiqp_kinematic_controller.h>
 #include <hiqp/hiqp_utils.h>
 
+#include <hiqp_msgs_srvs/PerfMeasMsg.h>
+#include <hiqp_msgs_srvs/MonitorDataMsg.h>
+
 #include <pluginlib/class_list_macros.h> // to allow the controller to be loaded as a plugin
+
+#include <XmlRpcValue.h>
 
 #include <iostream>
 
@@ -48,7 +53,7 @@ namespace hiqp
 
 
 HiQPKinematicController::HiQPKinematicController()
-: is_active_(true), task_manager_(&task_visualizer_)
+: is_active_(true), monitoring_active_(false), task_manager_(&task_visualizer_)
 {
 }
 
@@ -99,6 +104,26 @@ bool HiQPKinematicController::init
         return false;
     }
 
+
+
+
+    // Load the monitoring setup specified in the .yaml file
+	XmlRpc::XmlRpcValue task_monitoring;
+	if (!controller_nh.getParam("task_monitoring", task_monitoring))
+    {
+        ROS_ERROR_STREAM("In HiQPKinematicController: Call to getParam('" 
+        	<< "task_monitoring" 
+        	<< "') in namespace '" 
+        	<< controller_nh.getNamespace() 
+        	<< "' failed.");
+        return false;
+    }
+    int active = static_cast<int>(task_monitoring["active"]);
+    monitoring_active_ = (active == 1 ? true : false);
+    monitoring_publish_rate_ = 
+    	static_cast<double>(task_monitoring["publish_rate"]);
+    monitoring_pub_ = controller_nh_.advertise<hiqp_msgs_srvs::MonitorDataMsg>
+		("monitoring_data", 1);
 
 
 
@@ -217,6 +242,10 @@ void HiQPKinematicController::update
 
 
 
+
+
+
+
 	// Lock the mutex and read all joint positions from the handles
 	KDL::JntArray& q = kdl_joint_pos_vel_.q;
 	KDL::JntArray& qdot = kdl_joint_pos_vel_.qdot;
@@ -244,6 +273,62 @@ void HiQPKinematicController::update
 		handle.second.setCommand(output_controls_.at(handle.first));
 	}
 	handles_mutex_.unlock();
+
+
+
+	// If monitoring is turned on, generate monitoring data and publish it
+	if (monitoring_active_)
+	{
+		ros::Time now = ros::Time::now();
+		ros::Duration d = now - last_monitoring_update_;
+		if (d.toSec() >= 1.0/monitoring_publish_rate_)
+		{
+			last_monitoring_update_ = now;
+			std::vector<TaskMonitoringData> data;
+			task_manager_.getTaskMonitoringData(data);
+
+			hiqp_msgs_srvs::MonitorDataMsg mon_msg;
+			mon_msg.ts = now;
+
+			std::vector<TaskMonitoringData>::iterator it = data.begin();
+			while (it != data.end())
+			{
+				hiqp_msgs_srvs::PerfMeasMsg per_msg;
+				
+				per_msg.task_id = it->task_id_;
+				per_msg.task_name = it->task_name_;
+				per_msg.data.insert(per_msg.data.begin(),
+					                it->performance_measures_.cbegin(),
+					                it->performance_measures_.cend());
+
+				mon_msg.data.push_back(per_msg);
+				++it;
+			}
+			
+			monitoring_pub_.publish(mon_msg);
+
+/*
+			std::cout << "Monitoring performance:\n";
+			std::vector<TaskMonitoringData>::iterator it = data.begin();
+			while (it != data.end())
+			{
+				std::size_t t = it->task_id_;
+
+				std::cout << it->task_id_ << "   "
+				          << it->task_name_ << "   ";
+				std::vector<double>::const_iterator it2 = it->performance_measures_.begin();
+				while (it2 != it->performance_measures_.end())
+				{
+					std::cout << *it2 << ",";
+					it2++;
+				}
+				std::cout << std::endl;
+				it++;
+			}
+			*/
+		}
+
+	}
 
 
 
@@ -277,10 +362,10 @@ bool HiQPKinematicController::addTask
     hiqp_msgs_srvs::AddTask::Response& res
 )
 {
-	res.task_id = task_manager_.addTask(req.task_spec.task, 
-			   						    req.task_spec.behaviour,
+	res.task_id = task_manager_.addTask(req.task_spec.task_type, 
+			   						    req.task_spec.behaviour_type,
 									    req.task_spec.behaviour_parameters,
-									    req.task_spec.name,
+									    req.task_spec.task_name,
 									    req.task_spec.priority,
 									    req.task_spec.visibility,
 								 	    req.task_spec.parameters);
@@ -289,7 +374,7 @@ bool HiQPKinematicController::addTask
 	if (res.success)
 	{
 		ROS_INFO_STREAM("Added task of type '" 
-			<< req.task_spec.task << "'"
+			<< req.task_spec.task_type << "'"
 			<< " with priority " << req.task_spec.priority
 			<< " and identifier " << res.task_id);
 	}

@@ -116,6 +116,27 @@ bool TaskManager::getKinematicControls
 
 
 
+void TaskManager::getTaskMonitoringData
+(
+    std::vector<TaskMonitoringData>& data
+)
+{
+    for (TaskMapElement&& element : tasks_)
+    {
+        element.second->monitor(); // computes the performance measures
+        data.push_back( 
+            TaskMonitoringData
+            (
+                element.second->getId(),
+                element.second->getTaskName(),
+                element.second->performance_measures_
+            )
+        );
+    }
+}
+
+
+
 
 
 

@@ -81,7 +81,7 @@ public:
 
 
 	/*!
-     * \brief <i>Pure virtual</i>. Initializes the task
+     * \brief Initializes the task
      *
      * \return 0 upon success
      */
@@ -95,8 +95,7 @@ public:
 
 
 	/*!
-     * \brief <i>Pure virtual</i>. Calculates the task function and task 
-     *        jacobian values.
+     * \brief Calculates the task function and task jacobian values.
      *
      * \param kdl_tree : reference to the kinematic dynamic tree of the robot
      * \param joints_pos_vel : reference to the current joint positions and 
@@ -109,6 +108,16 @@ public:
 		const KDL::Tree& kdl_tree, 
 		const KDL::JntArrayVel& kdl_joint_pos_vel
 	);
+
+
+
+
+     /*!
+     * \brief Computes all performance measures used when monitoring this task.
+     *
+     * \return 0 if the calculation was successful
+     */
+     int monitor();
 
 
 
