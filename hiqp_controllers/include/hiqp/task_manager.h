@@ -150,13 +150,13 @@ public:
      * \param numControls : the total number of controls used by the controller
      *
      * \return 0 if the task creation was successful,
-     *         -1 is the task name was not recognised,
-     *         -2 if the task behaviour name was not recognised
+     *         -1 is the behaviour_parameters argument was invalid,
+     *         -2 if the task behaviour name was not recognised,
+     *         -3 if the task name was not recognised
      */
-     std::size_t addTask(const std::string& task_type,
-                         const std::string& behaviour_type,
+     std::size_t addTask(const std::string& name,
+                         const std::string& type,
                          const std::vector<std::string>& behaviour_parameters,
-                         const std::string& task_name,
                          unsigned int priority,
                          bool visibility,
                          const std::vector<std::string>& parameters);

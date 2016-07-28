@@ -143,40 +143,52 @@ void TaskManager::getTaskMonitoringData
 
 std::size_t TaskManager::addTask
 (
-    const std::string& task_type,
-    const std::string& behaviour_type,
+    const std::string& name,
+    const std::string& type,
     const std::vector<std::string>& behaviour_parameters,
-    const std::string& task_name,
     unsigned int priority,
     bool visibility,
     const std::vector<std::string>& parameters
 )
 {
-    // Create the task behaviour
-    TaskBehaviour* behaviour = buildTaskBehaviour(behaviour_type);
-    if (behaviour == NULL)
-        return -1;
 
-    // Initialize the task behaviour
-    behaviour->init(behaviour_parameters);
+
+    // Create the task behaviour
+    TaskBehaviour* behaviour = nullptr;
+    if (behaviour_parameters.size() == 1 && behaviour_parameters.at(0).compare("NA") == 0)
+    {
+        behaviour = buildTaskBehaviour("TaskBehFO");
+        behaviour->init( {"TaskBehFO", "1.0"} );
+    }
+    else if (behaviour_parameters.size() >= 2)
+    {
+        behaviour = buildTaskBehaviour(behaviour_parameters.at(0));
+        if (behaviour == NULL)
+            return -2;
+        behaviour->init(behaviour_parameters);
+    }
+    else
+    {
+        return -1;
+    }
 
     // Add the task behaviour to the behaviours map
     task_behaviours_[next_task_behaviour_id_] = behaviour;
     next_task_behaviour_id_++;
 
     // Create and initialize the task
-    Task* task = buildTask(task_type);
+    Task* task = buildTask(type);
     if (task == NULL)
     {
         delete behaviour;
-        return -1;
+        return -3;
     }
 
     // Initialize the task
     task->setTaskBehaviour(behaviour);
     task->setTaskVisualizer(task_visualizer_);
     task->setId(next_task_id_);
-    task->setTaskName(task_name);
+    task->setTaskName(name);
     task->setPriority(priority);
     task->setVisibility(visibility);
     task->init(parameters, numControls_);

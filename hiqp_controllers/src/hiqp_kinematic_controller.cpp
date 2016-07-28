@@ -36,7 +36,7 @@
 
 #include <pluginlib/class_list_macros.h> // to allow the controller to be loaded as a plugin
 
-#include <XmlRpcValue.h>
+#include <XmlRpcValue.h>  
 
 #include <iostream>
 
@@ -201,6 +201,13 @@ bool HiQPKinematicController::init
 		this
 	);
 
+	add_geomprim_service_ = controller_nh_.advertiseService
+	(
+		"addGeomPrim",
+		&HiQPKinematicController::addGeometricPrimitive,
+		this
+	);
+
 
 
 
@@ -362,20 +369,17 @@ bool HiQPKinematicController::addTask
     hiqp_msgs_srvs::AddTask::Response& res
 )
 {
-	res.task_id = task_manager_.addTask(req.task_spec.task_type, 
-			   						    req.task_spec.behaviour_type,
-									    req.task_spec.behaviour_parameters,
-									    req.task_spec.task_name,
-									    req.task_spec.priority,
-									    req.task_spec.visibility,
-								 	    req.task_spec.parameters);
+	res.task_id = task_manager_.addTask(req.name, req.type, req.behaviour,
+									    req.priority, req.visibility, 
+									    req.parameters);
+
 	res.success = (res.task_id < 0 ? false : true);
 
 	if (res.success)
 	{
 		ROS_INFO_STREAM("Added task of type '" 
-			<< req.task_spec.task_type << "'"
-			<< " with priority " << req.task_spec.priority
+			<< req.type << "'"
+			<< " with priority " << req.priority
 			<< " and identifier " << res.task_id);
 	}
 
@@ -401,6 +405,19 @@ bool HiQPKinematicController::removeTask
 	{
 		ROS_INFO_STREAM("Couldn't remove task '" << req.task_id << "'!");	
 	}
+
+	return true;
+}
+
+
+bool HiQPKinematicController::addGeometricPrimitive
+(
+    hiqp_msgs_srvs::AddGeometricPrimitive::Request& req, 
+    hiqp_msgs_srvs::AddGeometricPrimitive::Response& res
+)
+{
+
+	std::cout << "addGeometricPrimitive\n";
 
 	return true;
 }

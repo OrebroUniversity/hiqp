@@ -63,6 +63,7 @@
 
 #include <hiqp_msgs_srvs/AddTask.h>
 #include <hiqp_msgs_srvs/RemoveTask.h>
+#include <hiqp_msgs_srvs/AddGeometricPrimitive.h>
 
 
 
@@ -189,12 +190,28 @@ private:
 
 
      // These are callback functions for ROS service calls
-     bool addTask(hiqp_msgs_srvs::AddTask::Request& req, 
-                  hiqp_msgs_srvs::AddTask::Response& res);
+     bool addTask
+     (
+          hiqp_msgs_srvs::AddTask::Request& req, 
+          hiqp_msgs_srvs::AddTask::Response& res
+     );
 
-     bool removeTask(hiqp_msgs_srvs::RemoveTask::Request& req, 
-                     hiqp_msgs_srvs::RemoveTask::Response& res);
+     bool removeTask
+     (
+          hiqp_msgs_srvs::RemoveTask::Request& req, 
+          hiqp_msgs_srvs::RemoveTask::Response& res
+     );
 
+     bool addGeometricPrimitive
+     (
+          hiqp_msgs_srvs::AddGeometricPrimitive::Request& req, 
+          hiqp_msgs_srvs::AddGeometricPrimitive::Response& res
+     );
+
+/*
+     bool removeGeometricPrimitive(hiqp_msgs_srvs::RemoveGeometricPrimitive::Request& req, 
+                                   hiqp_msgs_srvs::RemoveGeometricPrimitive::Response& res);
+*/
      
      // setTaskVisibility, setTaskActive, updateTask, setTaskPriority
      // printTaskInfo (for debugging purposes)
@@ -220,9 +237,11 @@ private:
      ros::Time                                         last_monitoring_update_;
 
      ros::NodeHandle                                   controller_nh_;
+     ros::Publisher                                    monitoring_pub_;
+
      ros::ServiceServer                                add_task_service_;
      ros::ServiceServer                                remove_task_service_;
-     ros::Publisher                                    monitoring_pub_;
+     ros::ServiceServer                                add_geomprim_service_;
 
      JointHandleMap                                    joint_handles_map_;
      std::mutex                                        handles_mutex_;

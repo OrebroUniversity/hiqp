@@ -15,7 +15,6 @@ find_package(catkin REQUIRED COMPONENTS
 
 add_message_files(
   FILES
-  TaskSpecMsg.msg
   PerfMeasMsg.msg
   MonitorDataMsg.msg
   )
@@ -26,6 +25,7 @@ add_service_files(
   FILES
   AddTask.srv
   RemoveTask.srv
+  AddGeometricPrimitive.srv
   )
 
 
