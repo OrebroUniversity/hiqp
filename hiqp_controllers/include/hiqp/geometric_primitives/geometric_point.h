@@ -73,10 +73,11 @@ public:
 		y_ = std::stod( parameters.at(1) );
 		z_ = std::stod( parameters.at(2) );
 
-		std::cout << "i'm here\n";
-
-		owner_->getTaskVisualizer()->createSphere(frame_id, 
-			x_, y_, z_, 0.005, r_, g_, b_, a_);
+		if (visible)
+		{
+			owner_->getTaskVisualizer()->createSphere(frame_id, 
+				x_, y_, z_, 0.005, r_, g_, b_, a_);
+		}
 	}
 
 

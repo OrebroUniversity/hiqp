@@ -18,7 +18,7 @@
 
 
 /*!
- * \file   task_pop.cpp
+ * \file   task_geometric_projection.cpp
  * \Author Marcus A Johansson (marcus.adam.johansson@gmail.com)
  * \date   July, 2016
  * \brief  Brief description of file.
@@ -28,7 +28,7 @@
 
 
 
-#include <hiqp/impl/task_pop.h>
+#include <hiqp/impl/task_geometric_projection.h>
 #include <hiqp/hiqp_utils.h>
 
 // Orocos KDL Includes
@@ -49,14 +49,14 @@ namespace hiqp
 
 
 
-TaskPoP::TaskPoP() {}
+TaskGeometricProjection::TaskGeometricProjection() {}
 
 
 
 
 
 
-int TaskPoP::init
+int TaskGeometricProjection::init
 (
     const std::vector<std::string>& parameters,
     unsigned int numControls
@@ -92,7 +92,7 @@ int TaskPoP::init
 
 	performance_measures_.resize(1);
 
-	std::cout << "TaskPoP::init finished successfully\n";
+	std::cout << "TaskGeometricProjection::init finished successfully\n";
 }
 
 
@@ -101,7 +101,7 @@ int TaskPoP::init
 
 
 
-int TaskPoP::apply
+int TaskGeometricProjection::apply
 (
 	const KDL::Tree& kdl_tree, 
 	const KDL::JntArrayVel& kdl_joint_pos_vel
@@ -119,7 +119,7 @@ int TaskPoP::apply
 
 	if (retval != 0)
 	{
-		std::cerr << "In TaskPoP::apply : Can't solve position of link "
+		std::cerr << "In TaskGeometricProjection::apply : Can't solve position of link "
 			<< "'" << point_frame_id_ << "'" << " in the KDL tree! "
 			<< "KDL::TreeFkSolverPos_recursive::JntToCart return error code "
 			<< "'" << retval << "'\n";
@@ -144,7 +144,7 @@ int TaskPoP::apply
 
 	if (retval != 0)
 	{
-		std::cerr << "In TaskPoP::apply : Can't solve position of link "
+		std::cerr << "In TaskGeometricProjection::apply : Can't solve position of link "
 			<< "'" << plane_frame_id_ << "'" << " in the KDL tree! "
 			<< "KDL::TreeFkSolverPos_recursive::JntToCart return error code "
 			<< "'" << retval << "'\n";
@@ -176,7 +176,7 @@ int TaskPoP::apply
 
 	if (retval != 0)
 	{
-		std::cerr << "In TaskPoP::apply : Can't solve jacobian of link "
+		std::cerr << "In TaskGeometricProjection::apply : Can't solve jacobian of link "
 			<< "'" << point_frame_id_ << "'" << " in the KDL tree! "
 			<< "KDL::TreeJntToJacSolver return error code "
 			<< "'" << retval << "'\n";
@@ -211,7 +211,7 @@ int TaskPoP::apply
 
 
 
-int TaskPoP::monitor()
+int TaskGeometricProjection::monitor()
 {
 	performance_measures_.at(0) = e_(0);
 	

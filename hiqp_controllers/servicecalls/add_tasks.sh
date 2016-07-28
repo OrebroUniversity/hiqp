@@ -1,6 +1,6 @@
 rosservice call /yumi/hiqp_kinematic_controller/addTask \
 "name: 'mytask'
-type: 'TaskPoP'
+type: 'TaskGeometricProjection'
 behaviour: ['TaskBehFO', '10']
 priority: 1
 visibility: 1

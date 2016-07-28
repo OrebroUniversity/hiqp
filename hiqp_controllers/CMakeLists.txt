@@ -74,7 +74,7 @@ add_library(${PROJECT_NAME} include/hiqp/hiqp_utils.h
                             include/hiqp/task.h
                             include/hiqp/task_behaviour.h
 
-                            include/hiqp/impl/task_pop.h
+                            include/hiqp/impl/task_geometric_projection.h
                             include/hiqp/impl/task_beh_fo.h
 
                             include/hiqp/geometric_primitives/geometric_primitive.h
@@ -86,7 +86,7 @@ add_library(${PROJECT_NAME} include/hiqp/hiqp_utils.h
                             src/task_manager.cpp
                             src/task_visualizer.cpp
                             src/casadi_solver.cpp
-                            src/impl/task_pop.cpp
+                            src/impl/task_geometric_projection.cpp
                             src/impl/task_beh_fo.cpp
 )
 

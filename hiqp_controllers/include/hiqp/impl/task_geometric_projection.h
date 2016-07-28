@@ -18,7 +18,7 @@
 
 
 /*!
- * \file   task_pop.h
+ * \file   task_geometric_projection.h
  * \Author Marcus A Johansson (marcus.adam.johansson@gmail.com)
  * \date   July, 2016
  * \brief  Brief description of file.
@@ -28,8 +28,8 @@
 
 
 
-#ifndef HIQP_TASK_POP_H
-#define HIQP_TASK_POP_H
+#ifndef HIQP_TASK_GEOMETRIC_PROJECTION_H
+#define HIQP_TASK_GEOMETRIC_PROJECTION_H
 
 
 // HiQP Includes
@@ -50,12 +50,12 @@ namespace hiqp
 
 
 /*!
- * \class TaskPoP
- * \brief This is my awesome controller
+ * \class TaskGeometricProjection
+ * \brief 
  *
  *  It's awesome!
  */  
-class TaskPoP : public Task
+class TaskGeometricProjection : public Task
 {
 public:
 
@@ -64,18 +64,16 @@ public:
 
 	/*!
      * \brief Constructor
-     * Constructs my awesome task
      */
-	TaskPoP();
+	TaskGeometricProjection();
 
 
 
 
 	/*!
      * \brief Destructor
-     * Destructs my awesome task
      */
-	~TaskPoP() noexcept {}
+	~TaskGeometricProjection() noexcept {}
 
 
 
@@ -128,10 +126,10 @@ public:
 private:
 
 	// No copying of this class is allowed !
-	TaskPoP(const TaskPoP& other) = delete;
-	TaskPoP(TaskPoP&& other) = delete;
-	TaskPoP& operator=(const TaskPoP& other) = delete;
-	TaskPoP& operator=(TaskPoP&& other) noexcept = delete;
+	TaskGeometricProjection(const TaskGeometricProjection& other) = delete;
+	TaskGeometricProjection(TaskGeometricProjection&& other) = delete;
+	TaskGeometricProjection& operator=(const TaskGeometricProjection& other) = delete;
+	TaskGeometricProjection& operator=(TaskGeometricProjection&& other) noexcept = delete;
 
 
 

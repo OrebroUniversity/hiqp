@@ -27,7 +27,7 @@
  */
 
 #include <hiqp/task_manager.h>
-#include <hiqp/impl/task_pop.h>
+#include <hiqp/impl/task_geometric_projection.h>
 #include <hiqp/task_behaviour.h>
 #include <hiqp/impl/task_beh_fo.h>
 
@@ -363,10 +363,10 @@ Task* TaskManager::buildTask
     const std::string& task_name
 )
 {
-    if (task_name.compare("TaskPoP") != 0)
+    if (task_name.compare("TaskGeometricProjection") != 0)
         return NULL;
 
-    return new TaskPoP();
+    return new TaskGeometricProjection();
 }
 
 

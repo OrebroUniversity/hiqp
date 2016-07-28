@@ -77,8 +77,11 @@ public:
 		ny_ = std::stod( parameters.at(4) );
 		nz_ = std::stod( parameters.at(5) );
 
-		owner_->getTaskVisualizer()->createPlane(frame_id, 
-			nx_, ny_, nz_, 0, r_, g_, b_, a_);
+		if (visible)
+		{
+			owner_->getTaskVisualizer()->createPlane(frame_id, 
+				nx_, ny_, nz_, 0, r_, g_, b_, a_);
+		}
 	}
 
 
