@@ -33,6 +33,9 @@
 
 #include <hiqp/hiqp_utils.h>
 
+ #include <hiqp/geometric_primitives/geometric_point.h>
+ #include <hiqp/geometric_primitives/geometric_plane.h>
+
 // STL Includes
 //#include <iostream>
 #include <cassert>
@@ -191,6 +194,7 @@ std::size_t TaskManager::addTask
     task->setTaskName(name);
     task->setPriority(priority);
     task->setVisibility(visibility);
+
     task->init(parameters, numControls_);
 
     assert(task->e_.rows() == task->J_.rows());
@@ -219,6 +223,131 @@ int TaskManager::removeTask
         return 0;
 
     return -1;
+}
+
+
+
+
+int TaskManager::addGeometricPrimitive
+(
+    const std::string& name,
+    const std::string& type,
+    const std::string& frame_id,
+    bool visible,
+    const std::vector<double>& color,
+    const std::vector<std::string>& parameters
+)
+{
+
+
+    /*
+# Available types and parameter list syntaxes
+
+# point:        [x, y, z]
+
+# line_vec:     [x, y, z, nx, ny, nz, l]
+# line_pp:      [x1, y1, z1, x2, y2, z2]
+
+# plane:        [x, y, z, nx, ny, nz]
+
+# box:          [x1, y1, z1, x2, y2, z2]
+# box_rot:      [x1, y1, z1, x2, y2, z2, nx, ny, nz, angle]
+
+# cylinder_vec: [x, y, z, nx, ny, nz, height, radius]
+# cylinder_pp:  [x1, y1, z1, x2, y2, z2, radius]
+
+# sphere:       [x, y, z, radius]
+    */
+
+    // Assert that the name is not already registered
+    assert( 
+        geometric_primitives_map_.find(name) == geometric_primitives_map_.end() 
+    );
+
+
+    GeometricPrimitive* primitive;
+
+
+
+    if (type.compare("point") == 0)
+    {
+        primitive = new GeometricPoint(this, name, frame_id, visible, color, 
+                                       parameters);
+
+
+        
+    }/*
+    else if (type.compare("line_segment_pp") == 0)
+    {
+        primitive = new GeometricLineSegment();
+
+
+        
+    }
+    else if (type.compare("line_segment_vec") == 0)
+    {
+        primitive = new GeometricLineSegment();
+
+
+        
+    }*/
+    else if (type.compare("plane") == 0)
+    {
+        primitive = new GeometricPlane(this, name, frame_id, visible, color, 
+                                       parameters);
+
+
+        
+    }/*
+    else if (type.compare("box") == 0)
+    {
+        primitive = new GeometricBox();
+
+
+        
+    }
+    else if (type.compare("box_rot") == 0)
+    {
+        primitive = new GeometricBox();
+
+
+        
+    }
+    else if (type.compare("cylinder_vec") == 0)
+    {
+        primitive = new GeometricCylinder();
+
+
+        
+    }
+    else if (type.compare("cylinder_pp") == 0)
+    {
+        primitive = new GeometricCylinder();
+
+
+
+    }
+    else if (type.compare("sphere") == 0)
+    {
+        primitive = new GeometricSphere();
+
+
+
+    }*/
+    else
+    {
+
+    }
+
+
+    geometric_primitives_map_.insert( GeometricPrimitiveMapElement
+        (
+            name,
+            primitive
+        )
+    );
+
+    return 0;
 }
 
 

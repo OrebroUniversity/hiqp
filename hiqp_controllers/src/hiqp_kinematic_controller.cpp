@@ -416,8 +416,18 @@ bool HiQPKinematicController::addGeometricPrimitive
     hiqp_msgs_srvs::AddGeometricPrimitive::Response& res
 )
 {
+	int retval = task_manager_.addGeometricPrimitive(
+		req.name, req.type, req.frame_id, req.visible, req.color, req.parameters
+	);
 
-	std::cout << "addGeometricPrimitive\n";
+	res.success = (retval == 0 ? true : false);
+
+	if (res.success)
+	{
+		ROS_INFO_STREAM("Added geometric primitive of type '" 
+			<< req.type << "'"
+			<< " with name " << req.name);
+	}
 
 	return true;
 }

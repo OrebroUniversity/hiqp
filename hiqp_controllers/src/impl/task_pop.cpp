@@ -76,11 +76,14 @@ int TaskPoP::init
 	n_(2) = std::stod( parameters.at(7) );
 	d_ = std::stod( parameters.at(8) );
 
-	getTaskVisualizer()->createSphere(point_frame_id_, 
-		p_(0), p_(1), p_(2), 0.005, 1.0, 0.0, 0.0, 0.9);
+	if (getVisibility())
+	{
+		getTaskVisualizer()->createSphere(point_frame_id_, 
+			p_(0), p_(1), p_(2), 0.005, 1.0, 0.0, 0.0, 0.9);
 
-	getTaskVisualizer()->createPlane(plane_frame_id_, 
-		n_(0), n_(1), n_(2), d_, 1.0, 0.0, 0.0, 0.9);
+		getTaskVisualizer()->createPlane(plane_frame_id_, 
+			n_(0), n_(1), n_(2), d_, 1.0, 0.0, 0.0, 0.9);
+	}
 
 	e_.resize(1);
 	J_.resize(1, numControls);

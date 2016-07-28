@@ -439,6 +439,8 @@ void TaskVisualSphere::draw
 
     marker_pub.publish(marker);
 
+    std::cout << "TaskVisualSphere::draw\n";
+
     return;
 }
 
@@ -459,6 +461,18 @@ std::size_t TaskVisualizer::createSphere
 	std::size_t id = insertPrimitive(sphere);
 
 	sphere->draw(marker_pub_, visualization_msgs::Marker::ADD);
+
+	std::cout << "createSphere: " 
+	<< base_link_name << ", "
+	<< x << ", "
+	<< y << ", "
+	<< z << ", "
+	<< radius << ", "
+	<< r << ", "
+	<< g << ", "
+	<< b << ", "
+	<< a << ", "
+	<< "\n";
 
 	return id;
 }

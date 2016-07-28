@@ -26,7 +26,6 @@ string[]            parameters
 
 ---
 
-uint16              primitive_id
 bool                success
 
 

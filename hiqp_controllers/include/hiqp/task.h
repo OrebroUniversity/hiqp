@@ -133,8 +133,53 @@ namespace hiqp
 
     std::vector<double>             performance_measures_;
 
+    
+
+
+
+
+
+    
+
+    inline void setTaskBehaviour(TaskBehaviour* task_behaviour)
+    { task_behaviour_ = task_behaviour; }
+
+
+
+
+    inline void setTaskVisualizer(TaskVisualizer* task_visualizer)
+    { task_visualizer_ = task_visualizer; }
+
     TaskVisualizer* getTaskVisualizer()
     { return task_visualizer_; }
+
+
+    inline void setId(std::size_t id)
+    { id_ = id; }
+
+    inline std::size_t getId()
+    { return id_; }
+
+
+    inline void setTaskName(const std::string& name)
+    { task_name_ = name; }
+
+    inline const std::string& getTaskName()
+    { return task_name_; }
+
+
+    inline void setPriority(unsigned int priority)
+    { priority_ = priority; }
+
+    inline unsigned int getPriority()
+    { return priority_; }
+    
+
+    inline void setVisibility(bool visibility) 
+    { visibility_ = visibility; }
+
+    inline bool getVisibility()
+    { return visibility_; }
 
     
 
@@ -157,36 +202,6 @@ namespace hiqp
     Task(Task&& other) = delete;
     Task& operator=(const Task& other) = delete;
     Task& operator=(Task&& other) noexcept = delete;
-
-
-    inline void setVisibility(bool visibility) 
-    { visibility_ = visibility; }
-
-    inline void setTaskBehaviour(TaskBehaviour* task_behaviour)
-    { task_behaviour_ = task_behaviour; }
-
-    inline void setTaskVisualizer(TaskVisualizer* task_visualizer)
-    { task_visualizer_ = task_visualizer; }
-
-    inline void setId(std::size_t id)
-    { id_ = id; }
-
-    inline std::size_t getId()
-    { return id_; }
-
-    inline const std::string& getTaskName()
-    { return task_name_; }
-
-    inline void setTaskName(const std::string& name)
-    { task_name_ = name; }
-
-    inline void setPriority(unsigned int priority)
-    { priority_ = priority; }
-
-    inline unsigned int getPriority()
-    { return priority_; }
-
-
 
     /*!
      * \brief This is called from TaskManager, makes calls to Task::apply()

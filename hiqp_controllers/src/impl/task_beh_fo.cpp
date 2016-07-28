@@ -51,10 +51,10 @@ int TaskBehFO::init
     const std::vector<std::string>& parameters
 )
 {
-    if (parameters.size() != 1)
+    if (parameters.size() != 2)
         return -1;
 
-    lambda_ = std::stod( parameters.at(0) );
+    lambda_ = std::stod( parameters.at(1) );
     
     return 0;
 }

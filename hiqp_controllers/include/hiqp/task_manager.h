@@ -39,6 +39,8 @@
 #include <hiqp/hiqp_solver.h>
 #include <hiqp/casadi_solver.h>
 
+#include <hiqp/geometric_primitives/geometric_primitive.h>
+
 // STL Includes
 #include <vector>
 
@@ -110,8 +112,21 @@ public:
      */
 	~TaskManager() noexcept;
 
+
+
+
+
+
      inline void setNumControls(unsigned int numControls)
      { numControls_ = numControls; }
+
+     inline TaskVisualizer* getTaskVisualizer()
+     { return task_visualizer_; }
+
+
+
+
+
 
 	/*!
      * \brief Called every time the controller is updated by the 
@@ -128,6 +143,11 @@ public:
                                const KDL::JntArrayVel& kdl_joint_pos_vel,
 		                     std::vector<double> &controls);
 
+
+
+
+
+
      /*!
      * \brief Retrieves the performance measures for every active task along
      *        with the task's name and unique identifier.
@@ -137,6 +157,11 @@ public:
      * \param data : a reference to a vector of monitoring data structures
      */
      void getTaskMonitoringData(std::vector<TaskMonitoringData>& data);
+
+
+
+
+
 
      /*!
      * \brief Adds a task to the task manager and activates it
@@ -161,7 +186,37 @@ public:
                          bool visibility,
                          const std::vector<std::string>& parameters);
 
+
+
+
+
+
      int removeTask(std::size_t task_id);
+
+
+
+
+
+
+     int addGeometricPrimitive
+     (
+          const std::string& name,
+          const std::string& type,
+          const std::string& frame_id,
+          bool visible,
+          const std::vector<double>& color,
+          const std::vector<std::string>& parameters
+     );
+
+
+
+
+
+
+
+
+
+
 
 private:
 
@@ -181,12 +236,23 @@ private:
      typedef std::map< std::size_t, Task* >::iterator  TaskMapIterator;
      typedef std::pair< std::size_t, Task* >           TaskMapElement;
 
+     typedef std::map< std::string, GeometricPrimitive* > 
+          GeometricPrimitiveMap;
+
+     typedef std::map< std::string, GeometricPrimitive* >::iterator 
+          GeometricPrimitiveMapIterator;
+
+     typedef std::pair< std::string, GeometricPrimitive* > 
+          GeometricPrimitiveMapElement;
+
 
      TaskMap                                      tasks_;
      std::size_t                                  next_task_id_;
 
      std::map< std::size_t, TaskBehaviour* >      task_behaviours_;
      std::size_t                                  next_task_behaviour_id_;
+
+     GeometricPrimitiveMap                        geometric_primitives_map_;
 
      TaskVisualizer*                              task_visualizer_;
 

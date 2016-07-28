@@ -22,37 +22,3 @@ yumi:
     task_monitoring:
       active: 1
       publish_rate: 50.0
-    virtual_geometries:
-      gripper_r_line:
-        name: gripper_r_line
-        type: line                     
-        frame_id: gripper_r_base
-        visible: true
-        color: [1, 1, 1, 1]
-        parameters: [0, 0, 0, 1, 1, 1, 0.5]
-      gripper_l_cylinder:
-        name: gripper_l_cylinder
-        type: cylinder
-        frame_id: gripper_l_base
-        visible: true
-        color: [1, 0, 0, 1]
-        parameters: [1, 1, 1, 0, 0, 0, 0.3, 1.0]
-
-
-
-# Available types and parameter list syntaxes
-
-# point:        [x, y, z]
-
-# line_vec:     [x, y, z, nx, ny, nz, l]
-# line_pp:      [x1, y1, z1, x2, y2, z2]
-
-# plane:        [x, y, z, nx, ny, nz]
-
-# box:          [x1, y1, z1, x2, y2, z2]
-# box_rot:      [x1, y1, z1, x2, y2, z2, nx, ny, nz, angle]
-
-# cylinder_vec: [x, y, z, nx, ny, nz, height, radius]
-# cylinder_pp:  [x1, y1, z1, x2, y2, z2, radius]
-
-# sphere:       [x, y, z, radius]
