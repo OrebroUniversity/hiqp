@@ -12,4 +12,4 @@ type: 'plane'
 frame_id: 'gripper_l_base'
 visible: true
 color: [1.0, 0.0, 0.0, 0.9]
-parameters: ['1', '0', '0', '0']"
+parameters: ['1', '0', '0', '-0.2']"

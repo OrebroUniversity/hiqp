@@ -65,8 +65,6 @@ int TaskGeometricProjection<GeometricPoint, GeometricPlane>::project
 )
 {
 
-	std::cout << "inside project()\n";
-
 	KDL::Vector p__ = pose_a_.M * point->getPoint();
 
 	KDL::Vector p( pose_a_.p.x() + p__(0), 
@@ -85,9 +83,6 @@ int TaskGeometricProjection<GeometricPoint, GeometricPlane>::project
 		              + n(1) * jacobian_a_.getColumn(q_nr).vel.y()
 		              + n(2) * jacobian_a_.getColumn(q_nr).vel.z();
 	}
-
-	std::cout << "e = " << e_(0) << "\n";
-	std::cout << "J = " << J_ << "\n";
 	
 	return 0;
 
