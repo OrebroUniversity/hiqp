@@ -34,6 +34,7 @@
 // HiQP Includes
 #include <hiqp/task_behaviour.h>
 #include <hiqp/task_visualizer.h>
+ #include <hiqp/geometric_primitives/geometric_primitive_map.h>
 
 // STL Includes
 #include <vector>
@@ -77,11 +78,19 @@ namespace hiqp
      */
     ~Task() noexcept {}
 
+
+
+
+
     virtual int init
     (
         const std::vector<std::string>& parameters,
         unsigned int numControls
     ) = 0;
+
+
+
+
 
 	/*!
      * \brief <i>Pure virtual</i>. Calculates the task function and task 
@@ -133,51 +142,33 @@ namespace hiqp
 
     std::vector<double>             performance_measures_;
 
-    
-
-
-
-
+    GeometricPrimitiveMap*          geometric_primitive_map_;
 
     
 
-    inline void setTaskBehaviour(TaskBehaviour* task_behaviour)
-    { task_behaviour_ = task_behaviour; }
 
 
 
 
-    inline void setTaskVisualizer(TaskVisualizer* task_visualizer)
-    { task_visualizer_ = task_visualizer; }
+    
+
+    
 
     TaskVisualizer* getTaskVisualizer()
     { return task_visualizer_; }
 
-
-    inline void setId(std::size_t id)
-    { id_ = id; }
+    GeometricPrimitiveMap* getGeometricPrimitiveMap()
+    { return geometric_primitive_map_; }
 
     inline std::size_t getId()
     { return id_; }
 
-
-    inline void setTaskName(const std::string& name)
-    { task_name_ = name; }
-
     inline const std::string& getTaskName()
     { return task_name_; }
-
-
-    inline void setPriority(unsigned int priority)
-    { priority_ = priority; }
 
     inline unsigned int getPriority()
     { return priority_; }
     
-
-    inline void setVisibility(bool visibility) 
-    { visibility_ = visibility; }
-
     inline bool getVisibility()
     { return visibility_; }
 
@@ -203,6 +194,39 @@ namespace hiqp
     Task& operator=(const Task& other) = delete;
     Task& operator=(Task&& other) noexcept = delete;
 
+
+
+
+
+
+    inline void setTaskBehaviour(TaskBehaviour* task_behaviour)
+    { task_behaviour_ = task_behaviour; }
+
+    inline void setTaskVisualizer(TaskVisualizer* task_visualizer)
+    { task_visualizer_ = task_visualizer; }
+
+    inline void setGeometricPrimitiveMap(GeometricPrimitiveMap* map)
+    { geometric_primitive_map_ = map; }
+
+    inline void setId(std::size_t id)
+    { id_ = id; }
+
+    inline void setTaskName(const std::string& name)
+    { task_name_ = name; }
+
+    inline void setPriority(unsigned int priority)
+    { priority_ = priority; }
+
+    inline void setVisibility(bool visibility) 
+    { visibility_ = visibility; }
+
+    
+
+
+
+
+
+
     /*!
      * \brief This is called from TaskManager, makes calls to Task::apply()
      *        and TaskBehaviour::apply() to get the new controls.
@@ -216,7 +240,6 @@ namespace hiqp
     )
     {
         apply(kdl_tree, kdl_joint_pos_vel);
-        // The results are stored in protected members e_ and J_
         
         task_behaviour_->apply(e_, e_dot_star_);
 
@@ -226,22 +249,29 @@ namespace hiqp
 
 
 
-    TaskBehaviour*      task_behaviour_; // pointer to the task behaviour
-
-    TaskVisualizer*     task_visualizer_;
-
-    std::size_t         id_; // unique identifier of the task
-
-    std::string         task_name_; // non-unique task name
-
-    unsigned int        priority_;
-
-    bool                visibility_;
 
 
 
+    TaskBehaviour*          task_behaviour_; // pointer to the task behaviour
 
-    friend              TaskManager;
+    TaskVisualizer*         task_visualizer_;
+
+    std::size_t             id_; // unique identifier of the task
+
+    std::string             task_name_; // non-unique task name
+
+    unsigned int            priority_;
+
+    bool                    visibility_;
+
+
+
+
+    
+
+    friend                  TaskManager;
+
+
 
 
 

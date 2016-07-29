@@ -29,13 +29,19 @@
 
 
 #include <hiqp/impl/task_geometric_projection.h>
-#include <hiqp/hiqp_utils.h>
+
+#include <hiqp/geometric_primitives/geometric_point.h>
+#include <hiqp/geometric_primitives/geometric_plane.h>
+
+//#include <hiqp/hiqp_utils.h>
 
 // Orocos KDL Includes
-#include <kdl/treefksolverpos_recursive.hpp>
-#include <kdl/treejnttojacsolver.hpp>
+//#include <kdl/treefksolverpos_recursive.hpp>
+//#include <kdl/treejnttojacsolver.hpp>
 
 #include <iostream>
+#include <string>
+#include <sstream>
 
 
 
@@ -49,174 +55,45 @@ namespace hiqp
 
 
 
-TaskGeometricProjection::TaskGeometricProjection() {}
 
 
-
-
-
-
-int TaskGeometricProjection::init
+template<>
+int TaskGeometricProjection<GeometricPoint, GeometricPlane>::project
 (
-    const std::vector<std::string>& parameters,
-    unsigned int numControls
+	GeometricPoint* point, 
+	GeometricPlane* plane
 )
 {
-	if (parameters.size() != 9)
-		return -1;
 
-	point_frame_id_ = parameters.at(0);
-	p_(0) = std::stod( parameters.at(1) );
-	p_(1) = std::stod( parameters.at(2) );
-	p_(2) = std::stod( parameters.at(3) );
+	std::cout << "inside project()\n";
 
-	plane_frame_id_ = parameters.at(4);
-	n_(0) = std::stod( parameters.at(5) );
-	n_(1) = std::stod( parameters.at(6) );
-	n_(2) = std::stod( parameters.at(7) );
-	d_ = std::stod( parameters.at(8) );
+	KDL::Vector p__ = pose_a_.M * point->getPoint();
 
-	if (getVisibility())
-	{
-		getTaskVisualizer()->createSphere(point_frame_id_, 
-			p_(0), p_(1), p_(2), 0.005, 1.0, 0.0, 0.0, 0.9);
+	KDL::Vector p( pose_a_.p.x() + p__(0), 
+		           pose_a_.p.y() + p__(1), 
+		           pose_a_.p.z() + p__(2) );
 
-		getTaskVisualizer()->createPlane(plane_frame_id_, 
-			n_(0), n_(1), n_(2), d_, 1.0, 0.0, 0.0, 0.9);
-	}
+	KDL::Vector n = pose_b_.M * plane->getNormal();
 
-	e_.resize(1);
-	J_.resize(1, numControls);
-	e_dot_star_.resize(1);
-	task_types_.insert(task_types_.begin(), 1, 0); // a 1-D eq task
-
-	performance_measures_.resize(1);
-
-	std::cout << "TaskGeometricProjection::init finished successfully\n";
-}
-
-
-
-
-
-
-
-int TaskGeometricProjection::apply
-(
-	const KDL::Tree& kdl_tree, 
-	const KDL::JntArrayVel& kdl_joint_pos_vel
-)
-{
-	
-	// Compute the pose of the end-effector
-	KDL::TreeFkSolverPos_recursive fk_solver_pos(kdl_tree);
-
-	KDL::Frame pose;
-
-	int retval = fk_solver_pos.JntToCart(kdl_joint_pos_vel.q, 
-		                                 pose,
-		                                 point_frame_id_);
-
-	if (retval != 0)
-	{
-		std::cerr << "In TaskGeometricProjection::apply : Can't solve position of link "
-			<< "'" << point_frame_id_ << "'" << " in the KDL tree! "
-			<< "KDL::TreeFkSolverPos_recursive::JntToCart return error code "
-			<< "'" << retval << "'\n";
-		return -1;
-	}
-
-	KDL::Vector p__ = pose.M * p_;
-
-	// this gives a vector to the end-effector in root coordinates
-	KDL::Vector p( pose.p.x() + p__(0), 
-		           pose.p.y() + p__(1), 
-		           pose.p.z() + p__(2) );
-
-
-
-
-
-	// Compute the pose of the plane
-	retval = fk_solver_pos.JntToCart(kdl_joint_pos_vel.q, 
-	                                 pose,
-	                                 plane_frame_id_);
-
-	if (retval != 0)
-	{
-		std::cerr << "In TaskGeometricProjection::apply : Can't solve position of link "
-			<< "'" << plane_frame_id_ << "'" << " in the KDL tree! "
-			<< "KDL::TreeFkSolverPos_recursive::JntToCart return error code "
-			<< "'" << retval << "'\n";
-		return -1;
-	}
-
-	// this gives the plane normal in root coordinates
-	KDL::Vector n = pose.M * n_;
-
-	// this gives the offset from the plane to the root origo
-	double d = d_ + KDL::dot(n, pose.p);
-
-
-
-
-
-	// Compute the task jacobian dp/dq in root coordinates
-	KDL::Jacobian jac;
-
-	jac.resize(kdl_joint_pos_vel.q.rows());
-
-	KDL::TreeJntToJacSolver fk_solver_jac(kdl_tree);
-
-	retval = fk_solver_jac.JntToJac(kdl_joint_pos_vel.q,
-		                            jac,
-		                            point_frame_id_);
-
-	//retval = kdl_JntToJac(kdl_tree, kdl_joint_pos_vel, jac, point_frame_id_);
-
-	if (retval != 0)
-	{
-		std::cerr << "In TaskGeometricProjection::apply : Can't solve jacobian of link "
-			<< "'" << point_frame_id_ << "'" << " in the KDL tree! "
-			<< "KDL::TreeJntToJacSolver return error code "
-			<< "'" << retval << "'\n";
-		return -2;
-	}
-
-
-
-
-
-	// Set the task function and jacobian values
+	double d = plane->getOffset() + KDL::dot(n, pose_b_.p);
 
 	e_(0) = KDL::dot(n, p) - d;
 
-	for (int q_nr = 0; q_nr < kdl_joint_pos_vel.q.rows(); ++q_nr)
+	for (int q_nr = 0; q_nr < jacobian_a_.columns(); ++q_nr)
 	{
-		J_(0, q_nr) = n(0) * jac.getColumn(q_nr).vel.x() + 
-		              n(1) * jac.getColumn(q_nr).vel.y() + 
-		              n(2) * jac.getColumn(q_nr).vel.z();      
+		J_(0, q_nr) =   n(0) * jacobian_a_.getColumn(q_nr).vel.x()
+		              + n(1) * jacobian_a_.getColumn(q_nr).vel.y()
+		              + n(2) * jacobian_a_.getColumn(q_nr).vel.z();
 	}
 
-
-
-
-
-    //std::cout << "e = " << e_ << "\n\n";
-    //std::cout << "J = " << J_ << "\n\n";
-
-	return 0;
-}
-
-
-
-
-int TaskGeometricProjection::monitor()
-{
-	performance_measures_.at(0) = e_(0);
+	std::cout << "e = " << e_(0) << "\n";
+	std::cout << "J = " << J_ << "\n";
 	
 	return 0;
+
 }
+
+
 
 
 

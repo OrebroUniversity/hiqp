@@ -32,8 +32,8 @@
 #define HIQP_GEOMETRIC_PRIMITIVE_H
 
 
-#include <hiqp/task_manager.h>
 #include <hiqp/task_visualizer.h>
+
 
 #include <cassert>
 
@@ -43,6 +43,8 @@
 
 namespace hiqp
 {
+
+
 
 
 
@@ -60,13 +62,12 @@ public:
      */
 	GeometricPrimitive
 	(
-		TaskManager* owner,
 		const std::string& name,
 		const std::string& frame_id,
 		bool visible,
 		const std::vector<double>& color
 	)
-	: owner_(owner), name_(name), frame_id_(frame_id), visible_(visible)
+	: name_(name), frame_id_(frame_id), visible_(visible)
 	{
 		assert(color.size() == 4);
 		r_ = color.at(0);
@@ -80,10 +81,14 @@ public:
 	/*!
      * \brief Destructor
      */
-	virtual ~GeometricPrimitive() noexcept = 0;
+	~GeometricPrimitive() noexcept {}
 
 
+	inline std::string getName() { return name_; }
+	inline std::string getFrameId() { return frame_id_; }
+	inline bool isVisible() { return visible_; }
 
+	virtual void draw(TaskVisualizer* visualizer) = 0;
 
 
 
@@ -96,8 +101,6 @@ protected:
 	bool 			visible_;
 
 	double 			r_, g_, b_, a_;
-
-	TaskManager*	owner_;
 
 
 

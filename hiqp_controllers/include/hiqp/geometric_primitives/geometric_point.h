@@ -35,6 +35,8 @@
 
 #include <hiqp/geometric_primitives/geometric_primitive.h>
 
+#include <kdl/frames.hpp>
+
 
 
 
@@ -59,25 +61,18 @@ public:
      */
 	GeometricPoint
 	(
-		TaskManager* owner,
 		const std::string& name,
 		const std::string& frame_id,
 		bool visible,
 		const std::vector<double>& color,
 		const std::vector<std::string>& parameters
 	)
-	: GeometricPrimitive(owner, name, frame_id, visible, color)
+	: GeometricPrimitive(name, frame_id, visible, color)
 	{
 		assert(parameters.size() == 3);
-		x_ = std::stod( parameters.at(0) );
-		y_ = std::stod( parameters.at(1) );
-		z_ = std::stod( parameters.at(2) );
-
-		if (visible)
-		{
-			owner_->getTaskVisualizer()->createSphere(frame_id, 
-				x_, y_, z_, 0.005, r_, g_, b_, a_);
-		}
+		p_(0) = std::stod( parameters.at(0) );
+		p_(1) = std::stod( parameters.at(1) );
+		p_(2) = std::stod( parameters.at(2) );
 	}
 
 
@@ -90,6 +85,20 @@ public:
 
 
 
+	inline const KDL::Vector& getPoint()
+	{ return p_; }
+
+
+	void draw(TaskVisualizer* visualizer)
+	{
+		if (visible_)
+		{
+			visualizer->createSphere(frame_id_, p_(0), p_(1), p_(2), 0.005, 
+				                     r_, g_, b_, a_);
+		}
+	}
+
+
 
 private:
 
@@ -99,9 +108,7 @@ private:
 	GeometricPoint& operator=(const GeometricPoint& other) = delete;
 	GeometricPoint& operator=(GeometricPoint&& other) noexcept = delete;
 
-	double x_;
-	double y_;
-	double z_;
+	KDL::Vector    p_;
 
 
 

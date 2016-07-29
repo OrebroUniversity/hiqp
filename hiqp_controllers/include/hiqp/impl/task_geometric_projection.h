@@ -37,6 +37,7 @@
 
 // STL Includes
 #include <string>
+#include <vector>
 
 
 
@@ -55,6 +56,7 @@ namespace hiqp
  *
  *  It's awesome!
  */  
+template<typename PrimitiveA, typename PrimitiveB>
 class TaskGeometricProjection : public Task
 {
 public:
@@ -133,7 +135,24 @@ private:
 
 
 
+     int project(PrimitiveA* first, PrimitiveB* second);
 
+
+
+
+
+
+     PrimitiveA*              primitive_a_;
+     KDL::Frame               pose_a_;
+     KDL::Jacobian            jacobian_a_;
+
+     PrimitiveB*              primitive_b_;
+     KDL::Frame               pose_b_;
+     KDL::Jacobian            jacobian_b_;
+
+
+
+/*
      // the name of the end-effector link
 	std::string			point_frame_id_;
 
@@ -149,7 +168,7 @@ private:
 
      // the distance to the plane from the origin of the plane frame
 	double 				d_;
-
+*/
 
 
 };
@@ -165,5 +184,7 @@ private:
 
 
 } // namespace hiqp
+
+#include <hiqp/impl/task_geometric_projection__impl.h>
 
 #endif // include guard

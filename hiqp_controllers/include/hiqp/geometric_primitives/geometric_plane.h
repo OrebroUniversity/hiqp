@@ -36,6 +36,8 @@
 
 #include <hiqp/geometric_primitives/geometric_primitive.h>
 
+#include <kdl/frames.hpp>
+
 
 
 
@@ -60,28 +62,19 @@ public:
      */
 	GeometricPlane
 	(
-		TaskManager* owner,
 		const std::string& name,
 		const std::string& frame_id,
 		bool visible,
 		const std::vector<double>& color,
 		const std::vector<std::string>& parameters
 	)
-	: GeometricPrimitive(owner, name, frame_id, visible, color)
+	: GeometricPrimitive(name, frame_id, visible, color)
 	{
-		assert(parameters.size() == 6);
-		x_ = std::stod( parameters.at(0) );
-		y_ = std::stod( parameters.at(1) );
-		z_ = std::stod( parameters.at(2) );
-		nx_ = std::stod( parameters.at(3) );
-		ny_ = std::stod( parameters.at(4) );
-		nz_ = std::stod( parameters.at(5) );
-
-		if (visible)
-		{
-			owner_->getTaskVisualizer()->createPlane(frame_id, 
-				nx_, ny_, nz_, 0, r_, g_, b_, a_);
-		}
+		assert(parameters.size() == 4);
+		n_(0) = std::stod( parameters.at(0) );
+		n_(1) = std::stod( parameters.at(1) );
+		n_(2) = std::stod( parameters.at(2) );
+		d_ = std::stod( parameters.at(3) );
 	}
 
 
@@ -94,6 +87,25 @@ public:
 
 
 
+	inline const KDL::Vector& getNormal()
+	{ return n_; }
+
+	inline double getOffset()
+	{ return d_; }
+
+
+
+	void draw(TaskVisualizer* visualizer)
+	{
+		if (visible_)
+		{
+			visualizer->createPlane(frame_id_, n_(0), n_(1), n_(2), d_, 
+				                    r_, g_, b_, a_);
+		}
+	}
+
+
+
 
 private:
 
@@ -103,12 +115,8 @@ private:
 	GeometricPlane& operator=(const GeometricPlane& other) = delete;
 	GeometricPlane& operator=(GeometricPlane&& other) noexcept = delete;
 
-	double x_;
-	double y_;
-	double z_;
-	double nx_;
-	double ny_;
-	double nz_;
+	KDL::Vector   n_; // the normal vector or the plane
+	double 		  d_;
 
 
 

@@ -39,7 +39,7 @@
 #include <hiqp/hiqp_solver.h>
 #include <hiqp/casadi_solver.h>
 
-#include <hiqp/geometric_primitives/geometric_primitive.h>
+#include <hiqp/geometric_primitives/geometric_primitive_map.h>
 
 // STL Includes
 #include <vector>
@@ -226,7 +226,11 @@ private:
 	TaskManager& operator=(const TaskManager& other) = delete;
 	TaskManager& operator=(TaskManager&& other) noexcept = delete;
 
-     Task* buildTask(const std::string& task_name);
+     Task* buildTask
+     (
+          const std::string& type,
+          const std::vector<std::string>& parameters
+     );
 
      TaskBehaviour* buildTaskBehaviour(const std::string& behaviour_name);
 
@@ -236,15 +240,7 @@ private:
      typedef std::map< std::size_t, Task* >::iterator  TaskMapIterator;
      typedef std::pair< std::size_t, Task* >           TaskMapElement;
 
-     typedef std::map< std::string, GeometricPrimitive* > 
-          GeometricPrimitiveMap;
-
-     typedef std::map< std::string, GeometricPrimitive* >::iterator 
-          GeometricPrimitiveMapIterator;
-
-     typedef std::pair< std::string, GeometricPrimitive* > 
-          GeometricPrimitiveMapElement;
-
+     
 
      TaskMap                                      tasks_;
      std::size_t                                  next_task_id_;
@@ -252,7 +248,7 @@ private:
      std::map< std::size_t, TaskBehaviour* >      task_behaviours_;
      std::size_t                                  next_task_behaviour_id_;
 
-     GeometricPrimitiveMap                        geometric_primitives_map_;
+     GeometricPrimitiveMap*                       geometric_primitive_map_;
 
      TaskVisualizer*                              task_visualizer_;
 

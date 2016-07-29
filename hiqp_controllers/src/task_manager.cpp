@@ -33,8 +33,9 @@
 
 #include <hiqp/hiqp_utils.h>
 
- #include <hiqp/geometric_primitives/geometric_point.h>
- #include <hiqp/geometric_primitives/geometric_plane.h>
+#include <hiqp/geometric_primitives/geometric_primitive_map.h>
+#include <hiqp/geometric_primitives/geometric_point.h>
+#include <hiqp/geometric_primitives/geometric_plane.h>
 
 // STL Includes
 //#include <iostream>
@@ -73,6 +74,7 @@ TaskManager::TaskManager
   task_visualizer_(task_visualizer)
 {
     solver_ = new CasADiSolver();
+    geometric_primitive_map_ = new GeometricPrimitiveMap(task_visualizer_);
 }
 
 
@@ -80,6 +82,7 @@ TaskManager::~TaskManager() noexcept
 {
     // We have memory leaks in tasks_ and task_behaviours_ !!!
     delete solver_;
+    delete geometric_primitive_map_;
 }
 
 
@@ -166,7 +169,7 @@ std::size_t TaskManager::addTask
     else if (behaviour_parameters.size() >= 2)
     {
         behaviour = buildTaskBehaviour(behaviour_parameters.at(0));
-        if (behaviour == NULL)
+        if (behaviour == nullptr)
             return -2;
         behaviour->init(behaviour_parameters);
     }
@@ -180,8 +183,8 @@ std::size_t TaskManager::addTask
     next_task_behaviour_id_++;
 
     // Create and initialize the task
-    Task* task = buildTask(type);
-    if (task == NULL)
+    Task* task = buildTask(type, parameters);
+    if (task == nullptr)
     {
         delete behaviour;
         return -3;
@@ -194,6 +197,7 @@ std::size_t TaskManager::addTask
     task->setTaskName(name);
     task->setPriority(priority);
     task->setVisibility(visibility);
+    task->setGeometricPrimitiveMap(geometric_primitive_map_);
 
     task->init(parameters, numControls_);
 
@@ -239,113 +243,8 @@ int TaskManager::addGeometricPrimitive
 )
 {
 
-
-    /*
-# Available types and parameter list syntaxes
-
-# point:        [x, y, z]
-
-# line_vec:     [x, y, z, nx, ny, nz, l]
-# line_pp:      [x1, y1, z1, x2, y2, z2]
-
-# plane:        [x, y, z, nx, ny, nz]
-
-# box:          [x1, y1, z1, x2, y2, z2]
-# box_rot:      [x1, y1, z1, x2, y2, z2, nx, ny, nz, angle]
-
-# cylinder_vec: [x, y, z, nx, ny, nz, height, radius]
-# cylinder_pp:  [x1, y1, z1, x2, y2, z2, radius]
-
-# sphere:       [x, y, z, radius]
-    */
-
-    // Assert that the name is not already registered
-    assert( 
-        geometric_primitives_map_.find(name) == geometric_primitives_map_.end() 
-    );
-
-
-    GeometricPrimitive* primitive;
-
-
-
-    if (type.compare("point") == 0)
-    {
-        primitive = new GeometricPoint(this, name, frame_id, visible, color, 
-                                       parameters);
-
-
-        
-    }/*
-    else if (type.compare("line_segment_pp") == 0)
-    {
-        primitive = new GeometricLineSegment();
-
-
-        
-    }
-    else if (type.compare("line_segment_vec") == 0)
-    {
-        primitive = new GeometricLineSegment();
-
-
-        
-    }*/
-    else if (type.compare("plane") == 0)
-    {
-        primitive = new GeometricPlane(this, name, frame_id, visible, color, 
-                                       parameters);
-
-
-        
-    }/*
-    else if (type.compare("box") == 0)
-    {
-        primitive = new GeometricBox();
-
-
-        
-    }
-    else if (type.compare("box_rot") == 0)
-    {
-        primitive = new GeometricBox();
-
-
-        
-    }
-    else if (type.compare("cylinder_vec") == 0)
-    {
-        primitive = new GeometricCylinder();
-
-
-        
-    }
-    else if (type.compare("cylinder_pp") == 0)
-    {
-        primitive = new GeometricCylinder();
-
-
-
-    }
-    else if (type.compare("sphere") == 0)
-    {
-        primitive = new GeometricSphere();
-
-
-
-    }*/
-    else
-    {
-
-    }
-
-
-    geometric_primitives_map_.insert( GeometricPrimitiveMapElement
-        (
-            name,
-            primitive
-        )
-    );
+    geometric_primitive_map_->addGeometricPrimitive(
+        name, type, frame_id, visible, color, parameters);
 
     return 0;
 }
@@ -360,13 +259,21 @@ int TaskManager::addGeometricPrimitive
 
 Task* TaskManager::buildTask
 (
-    const std::string& task_name
+    const std::string& type,
+    const std::vector<std::string>& parameters
 )
 {
-    if (task_name.compare("TaskGeometricProjection") != 0)
-        return NULL;
+    if (type.compare("TaskGeometricProjection") == 0)
+    {
+        if (parameters.at(0).compare("point") == 0 && 
+            parameters.at(1).compare("plane") == 0)
+        {
+            return new TaskGeometricProjection<GeometricPoint, GeometricPlane>();
+        }
 
-    return new TaskGeometricProjection();
+    }
+
+    return nullptr;
 }
 
 
@@ -379,7 +286,7 @@ TaskBehaviour* TaskManager::buildTaskBehaviour
 )
 {
     if (behaviour_name.compare("TaskBehFO") != 0)
-        return NULL;
+        return nullptr;
 
     return new TaskBehFO();
 }

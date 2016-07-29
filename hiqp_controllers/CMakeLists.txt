@@ -75,9 +75,11 @@ add_library(${PROJECT_NAME} include/hiqp/hiqp_utils.h
                             include/hiqp/task_behaviour.h
 
                             include/hiqp/impl/task_geometric_projection.h
+                            include/hiqp/impl/task_geometric_projection__impl.h
                             include/hiqp/impl/task_beh_fo.h
 
                             include/hiqp/geometric_primitives/geometric_primitive.h
+                            include/hiqp/geometric_primitives/geometric_primitive_map.h
                             include/hiqp/geometric_primitives/geometric_point.h
                             include/hiqp/geometric_primitives/geometric_plane.h
 
@@ -86,8 +88,11 @@ add_library(${PROJECT_NAME} include/hiqp/hiqp_utils.h
                             src/task_manager.cpp
                             src/task_visualizer.cpp
                             src/casadi_solver.cpp
+
                             src/impl/task_geometric_projection.cpp
                             src/impl/task_beh_fo.cpp
+
+                            src/geometric_primitive_map.cpp
 )
 
 target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} ${orocos_kdl_LIBRARIES} ${CASADI_LIBRARIES} ${GUROBI_LIBS})
