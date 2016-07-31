@@ -37,9 +37,9 @@
 #include <hiqp/task_behaviour.h>
 #include <hiqp/task_visualizer.h>
 #include <hiqp/hiqp_solver.h>
-#include <hiqp/casadi_solver.h>
+#include <hiqp/geometric_primitive_map.h>
 
-#include <hiqp/geometric_primitives/geometric_primitive_map.h>
+#include <hiqp/solvers/casadi_solver.h>
 
 // STL Includes
 #include <vector>
@@ -104,7 +104,7 @@ public:
      * \brief Constructor
      * Constructs my awesome controller
      */
-	TaskManager(TaskVisualizer* task_visualizer);
+	TaskManager(Visualizer* visualizer);
 
 	/*!
      * \brief Destructor
@@ -120,8 +120,8 @@ public:
      inline void setNumControls(unsigned int numControls)
      { numControls_ = numControls; }
 
-     inline TaskVisualizer* getTaskVisualizer()
-     { return task_visualizer_; }
+     //inline TaskVisualizer* getTaskVisualizer()
+     //{ return task_visualizer_; }
 
 
 
@@ -250,7 +250,7 @@ private:
 
      GeometricPrimitiveMap*                       geometric_primitive_map_;
 
-     TaskVisualizer*                              task_visualizer_;
+     Visualizer*                                  visualizer_;
 
      HiQPSolver*                                  solver_;
 

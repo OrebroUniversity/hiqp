@@ -81,15 +81,17 @@ public:
 	/*!
      * \brief Destructor
      */
-	~GeometricPrimitive() noexcept {}
+	virtual ~GeometricPrimitive() noexcept = 0;
 
 
 	inline std::string getName() { return name_; }
 	inline std::string getFrameId() { return frame_id_; }
 	inline bool isVisible() { return visible_; }
 
-	virtual void draw(TaskVisualizer* visualizer) = 0;
-
+	inline double getRedComponent() { return r_; }
+	inline double getGreenComponent() { return g_; }
+	inline double getBlueComponent() { return b_; }
+	inline double getAlphaComponent() { return a_; }
 
 
 protected:

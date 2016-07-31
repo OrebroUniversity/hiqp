@@ -29,8 +29,9 @@
 
 
 // HiQP Includes
-#include <hiqp/casadi_solver.h>
 #include <hiqp/hiqp_utils.h>
+
+#include <hiqp/solvers/casadi_solver.h>
 
 // CasADi Includes
 #include <casadi/casadi.hpp>

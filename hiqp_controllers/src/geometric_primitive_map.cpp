@@ -27,10 +27,7 @@
  */
 
 
-#include <hiqp/geometric_primitives/geometric_primitive_map.h>
-
-#include <hiqp/geometric_primitives/geometric_point.h>
-#include <hiqp/geometric_primitives/geometric_plane.h>
+#include <hiqp/geometric_primitive_map.h>
 
 // STL Includes
 //#include <iostream>
@@ -47,24 +44,24 @@ namespace hiqp {
 
 
 
- /*
+/*
 # Available types and parameter list syntaxes
 
 # point:        [x, y, z]
 
-# line_vec:     [x, y, z, nx, ny, nz, l]
-# line_pp:      [x1, y1, z1, x2, y2, z2]
+# line:         [x,   y,  z, nx, ny, nz, l]
+# line:         [x1, y1, z1, x2, y2, z2]
 
 # plane:        [x, y, z, nx, ny, nz]
 
 # box:          [x1, y1, z1, x2, y2, z2]
-# box_rot:      [x1, y1, z1, x2, y2, z2, nx, ny, nz, angle]
+# box:          [x1, y1, z1, x2, y2, z2, nx, ny, nz, angle]
 
-# cylinder_vec: [x, y, z, nx, ny, nz, height, radius]
-# cylinder_pp:  [x1, y1, z1, x2, y2, z2, radius]
+# cylinder:     [nx, ny, nz,  x,  y,  z, height, radius]
+# cylinder:     [x1, y1, z1, x2, y2, z2, radius]
 
 # sphere:       [x, y, z, radius]
-    */
+*/
 
 
 int GeometricPrimitiveMap::addGeometricPrimitive
@@ -85,90 +82,77 @@ int GeometricPrimitiveMap::addGeometricPrimitive
         GeometricPoint* point = new GeometricPoint(
             name, frame_id, visible, color, parameters);
 
-        point_map_.insert( std::pair< std::string, GeometricPoint* >
-            (
-                name,
-                point
-            )
-        );
+        point_map_.insert( 
+            std::pair< std::string, GeometricPoint* >( name, point ) );
 
-        point->draw(visualizer_);
+        visualizer_->add(point);
 
-
-        
-    }/*
-    else if (type.compare("line_segment_pp") == 0)
+    }
+    else if (type.compare("line") == 0)
     {
-        primitive = new GeometricLineSegment();
+        assert( line_map_.find(name) == line_map_.end() );
 
+        GeometricLineSegment* line = new GeometricLineSegment(
+            name, frame_id, visible, color, parameters);
 
+        line_map_.insert( 
+            std::pair< std::string, GeometricLineSegment* >( name, line ) );
+
+        visualizer_->add(line);
         
     }
-    else if (type.compare("line_segment_vec") == 0)
-    {
-        primitive = new GeometricLineSegment();
-
-
-        
-    }*/
     else if (type.compare("plane") == 0)
     {
-
         assert( plane_map_.find(name) == plane_map_.end() );
 
         GeometricPlane* plane = new GeometricPlane(
             name, frame_id, visible, color, parameters);
 
-        plane_map_.insert( std::pair< std::string, GeometricPlane* >
-            (
-                name,
-                plane
-            )
-        );
+        plane_map_.insert( 
+            std::pair< std::string, GeometricPlane* > ( name, plane ) );
 
-        plane->draw(visualizer_);
+        visualizer_->add(plane);
 
-
-        
-    }/*
+    }
     else if (type.compare("box") == 0)
     {
-        primitive = new GeometricBox();
+        assert( box_map_.find(name) == box_map_.end() );
 
+        GeometricBox* box = new GeometricBox(
+            name, frame_id, visible, color, parameters);
 
-        
+        box_map_.insert( 
+            std::pair< std::string, GeometricBox* > ( name, box ) );
+
+        visualizer_->add(box);
     }
-    else if (type.compare("box_rot") == 0)
+    else if (type.compare("cylinder") == 0)
     {
-        primitive = new GeometricBox();
+        assert( cylinder_map_.find(name) == cylinder_map_.end() );
 
+        GeometricCylinder* cylinder = new GeometricCylinder(
+            name, frame_id, visible, color, parameters);
 
-        
-    }
-    else if (type.compare("cylinder_vec") == 0)
-    {
-        primitive = new GeometricCylinder();
+        cylinder_map_.insert( 
+            std::pair< std::string, GeometricCylinder* > ( name, cylinder ) );
 
-
-        
-    }
-    else if (type.compare("cylinder_pp") == 0)
-    {
-        primitive = new GeometricCylinder();
-
-
-
+        visualizer_->add(cylinder);
     }
     else if (type.compare("sphere") == 0)
     {
-        primitive = new GeometricSphere();
+        assert( sphere_map_.find(name) == sphere_map_.end() );
 
+        GeometricSphere* sphere = new GeometricSphere(
+            name, frame_id, visible, color, parameters);
 
+        sphere_map_.insert( 
+            std::pair< std::string, GeometricSphere* > ( name, sphere ) );
 
-    }*/
+        visualizer_->add(sphere);
+    }
     else
     {
-
+        std::cerr << "ERROR: Couldn't parse geometric type '" << type << "'!\n";
     }
 
     return 0;
@@ -185,7 +169,8 @@ int GeometricPrimitiveMap::addGeometricPrimitive
 
 
 template<>
-GeometricPoint* GeometricPrimitiveMap::getGeometricPrimitive<GeometricPoint>
+GeometricPoint* 
+GeometricPrimitiveMap::getGeometricPrimitive<GeometricPoint>
 (
 	const std::string& name
 )
@@ -199,8 +184,29 @@ GeometricPoint* GeometricPrimitiveMap::getGeometricPrimitive<GeometricPoint>
 
 
 
+
+
 template<>
-GeometricPlane* GeometricPrimitiveMap::getGeometricPrimitive<GeometricPlane>
+GeometricLineSegment* 
+GeometricPrimitiveMap::getGeometricPrimitive<GeometricLineSegment>
+(
+    const std::string& name
+)
+{
+    std::map< std::string, GeometricLineSegment* >::iterator it = 
+        line_map_.find(name);
+
+    if (it  == line_map_.end())   return nullptr;
+    else                          return it->second;
+}
+
+
+
+
+
+template<>
+GeometricPlane* 
+GeometricPrimitiveMap::getGeometricPrimitive<GeometricPlane>
 (
     const std::string& name
 )
@@ -210,6 +216,60 @@ GeometricPlane* GeometricPrimitiveMap::getGeometricPrimitive<GeometricPlane>
 
     if (it  == plane_map_.end())   return nullptr;
     else                           return it->second;
+}
+
+
+
+
+
+template<>
+GeometricBox* 
+GeometricPrimitiveMap::getGeometricPrimitive<GeometricBox>
+(
+    const std::string& name
+)
+{
+    std::map< std::string, GeometricBox* >::iterator it = 
+        box_map_.find(name);
+
+    if (it  == box_map_.end())     return nullptr;
+    else                           return it->second;
+}
+
+
+
+
+
+template<>
+GeometricCylinder* 
+GeometricPrimitiveMap::getGeometricPrimitive<GeometricCylinder>
+(
+    const std::string& name
+)
+{
+    std::map< std::string, GeometricCylinder* >::iterator it = 
+        cylinder_map_.find(name);
+
+    if (it  == cylinder_map_.end())     return nullptr;
+    else                                return it->second;
+}
+
+
+
+
+
+template<>
+GeometricSphere* 
+GeometricPrimitiveMap::getGeometricPrimitive<GeometricSphere>
+(
+    const std::string& name
+)
+{
+    std::map< std::string, GeometricSphere* >::iterator it = 
+        sphere_map_.find(name);
+
+    if (it  == sphere_map_.end())       return nullptr;
+    else                                return it->second;
 }
 
 

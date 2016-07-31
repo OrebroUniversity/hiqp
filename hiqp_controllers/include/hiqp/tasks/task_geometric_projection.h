@@ -185,6 +185,6 @@ private:
 
 } // namespace hiqp
 
-#include <hiqp/impl/task_geometric_projection__impl.h>
+#include <hiqp/tasks/task_geometric_projection__impl.h>
 
 #endif // include guard

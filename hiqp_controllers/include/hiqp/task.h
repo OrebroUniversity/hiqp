@@ -33,8 +33,8 @@
 
 // HiQP Includes
 #include <hiqp/task_behaviour.h>
-#include <hiqp/task_visualizer.h>
- #include <hiqp/geometric_primitives/geometric_primitive_map.h>
+#include <hiqp/visualizer.h>
+#include <hiqp/geometric_primitive_map.h>
 
 // STL Includes
 #include <vector>
@@ -154,8 +154,8 @@ namespace hiqp
 
     
 
-    TaskVisualizer* getTaskVisualizer()
-    { return task_visualizer_; }
+    Visualizer* getVisualizer()
+    { return visualizer_; }
 
     GeometricPrimitiveMap* getGeometricPrimitiveMap()
     { return geometric_primitive_map_; }
@@ -202,8 +202,8 @@ namespace hiqp
     inline void setTaskBehaviour(TaskBehaviour* task_behaviour)
     { task_behaviour_ = task_behaviour; }
 
-    inline void setTaskVisualizer(TaskVisualizer* task_visualizer)
-    { task_visualizer_ = task_visualizer; }
+    inline void setVisualizer(Visualizer* visualizer)
+    { visualizer_ = visualizer; }
 
     inline void setGeometricPrimitiveMap(GeometricPrimitiveMap* map)
     { geometric_primitive_map_ = map; }
@@ -254,7 +254,7 @@ namespace hiqp
 
     TaskBehaviour*          task_behaviour_; // pointer to the task behaviour
 
-    TaskVisualizer*         task_visualizer_;
+    Visualizer*             visualizer_;
 
     std::size_t             id_; // unique identifier of the task
 

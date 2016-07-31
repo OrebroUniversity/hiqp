@@ -18,7 +18,7 @@
 
 
 /*!
- * \file   geometric_point.h
+ * \file   geometric_sphere.h
  * \Author Marcus A Johansson (marcus.adam.johansson@gmail.com)
  * \date   July, 2016
  * \brief  Brief description of file.
@@ -28,8 +28,8 @@
 
 
 
-#ifndef HIQP_GEOMETRIC_POINT_H
-#define HIQP_GEOMETRIC_POINT_H
+#ifndef HIQP_GEOMETRIC_SPHERE_H
+#define HIQP_GEOMETRIC_SPHERE_H
 
 
 
@@ -48,17 +48,17 @@ namespace hiqp
 
 
 /*!
- * \class GeometricPoint
+ * \class GeometricSphere
  * \brief 
  */  
-class GeometricPoint : public GeometricPrimitive
+class GeometricSphere : public GeometricPrimitive
 {
 public:
 
 	/*!
      * \brief Constructor
      */
-	GeometricPoint
+	GeometricSphere
 	(
 		const std::string& name,
 		const std::string& frame_id,
@@ -68,10 +68,11 @@ public:
 	)
 	: GeometricPrimitive(name, frame_id, visible, color)
 	{
-		assert(parameters.size() == 3);
+		assert(parameters.size() == 4);
 		p_(0) = std::stod( parameters.at(0) );
 		p_(1) = std::stod( parameters.at(1) );
 		p_(2) = std::stod( parameters.at(2) );
+		radius_ = std::stod( parameters.at(3) );
 	}
 
 
@@ -79,12 +80,15 @@ public:
 	/*!
      * \brief Destructor
      */
-	~GeometricPoint() noexcept {}
+	~GeometricSphere() noexcept {}
 
 
 
 	inline const KDL::Vector& getPoint()
 	{ return p_; }
+
+	inline double getRadius()
+	{ return radius_; }
 
 	inline double getX() { return p_(0); }
 	inline double getY() { return p_(1); }
@@ -92,21 +96,24 @@ public:
 
 
 
+
 protected:
 
-	KDL::Vector    p_;
+	KDL::Vector    p_; // the offset of the sphere
+
+	double         radius_; // the radius of the sphere
+
+
 
 
 
 private:
 
 	// No copying of this class is allowed !
-	GeometricPoint(const GeometricPoint& other) = delete;
-	GeometricPoint(GeometricPoint&& other) = delete;
-	GeometricPoint& operator=(const GeometricPoint& other) = delete;
-	GeometricPoint& operator=(GeometricPoint&& other) noexcept = delete;
-
-
+	GeometricSphere(const GeometricSphere& other) = delete;
+	GeometricSphere(GeometricSphere&& other) = delete;
+	GeometricSphere& operator=(const GeometricSphere& other) = delete;
+	GeometricSphere& operator=(GeometricSphere&& other) noexcept = delete;
 
 };
 

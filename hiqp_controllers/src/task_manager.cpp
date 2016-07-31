@@ -27,13 +27,13 @@
  */
 
 #include <hiqp/task_manager.h>
-#include <hiqp/impl/task_geometric_projection.h>
 #include <hiqp/task_behaviour.h>
-#include <hiqp/impl/task_beh_fo.h>
-
 #include <hiqp/hiqp_utils.h>
+#include <hiqp/geometric_primitive_map.h>
 
-#include <hiqp/geometric_primitives/geometric_primitive_map.h>
+#include <hiqp/tasks/task_geometric_projection.h>
+#include <hiqp/tasks/task_beh_fo.h>
+
 #include <hiqp/geometric_primitives/geometric_point.h>
 #include <hiqp/geometric_primitives/geometric_plane.h>
 
@@ -67,14 +67,14 @@ namespace hiqp {
 
 TaskManager::TaskManager
 (
-    TaskVisualizer* task_visualizer
+    Visualizer* visualizer
 )
 : next_task_id_(0), 
   next_task_behaviour_id_(0),
-  task_visualizer_(task_visualizer)
+  visualizer_(visualizer)
 {
     solver_ = new CasADiSolver();
-    geometric_primitive_map_ = new GeometricPrimitiveMap(task_visualizer_);
+    geometric_primitive_map_ = new GeometricPrimitiveMap(visualizer_);
 }
 
 
@@ -115,7 +115,7 @@ bool TaskManager::getKinematicControls
 
     solver_->solve(controls);
 
-    task_visualizer_->redraw();
+    //task_visualizer_->redraw();
 
     return true;
 }
@@ -192,7 +192,7 @@ std::size_t TaskManager::addTask
 
     // Initialize the task
     task->setTaskBehaviour(behaviour);
-    task->setTaskVisualizer(task_visualizer_);
+    task->setVisualizer(visualizer_);
     task->setId(next_task_id_);
     task->setTaskName(name);
     task->setPriority(priority);

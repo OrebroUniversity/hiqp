@@ -32,8 +32,14 @@
 #define HIQP_GEOMETRIC_PRIMITIVE_MAP_H
 
 
+#include <hiqp/visualizer.h>
+
 #include <hiqp/geometric_primitives/geometric_point.h>
+#include <hiqp/geometric_primitives/geometric_line_segment.h>
 #include <hiqp/geometric_primitives/geometric_plane.h>
+#include <hiqp/geometric_primitives/geometric_box.h>
+#include <hiqp/geometric_primitives/geometric_cylinder.h>
+#include <hiqp/geometric_primitives/geometric_sphere.h>
 
 
 
@@ -57,7 +63,7 @@ class GeometricPrimitiveMap
 
 public:
 
-	GeometricPrimitiveMap(TaskVisualizer* visualizer)
+	GeometricPrimitiveMap(Visualizer* visualizer)
 	: visualizer_(visualizer)
 	{}
 
@@ -93,9 +99,16 @@ private:
 
 
 	std::map< std::string, GeometricPoint* > 		point_map_;
+	std::map< std::string, GeometricLineSegment* > 	line_map_;
 	std::map< std::string, GeometricPlane* > 		plane_map_;
+	std::map< std::string, GeometricBox* > 			box_map_;
+	std::map< std::string, GeometricCylinder* > 	cylinder_map_;
+	std::map< std::string, GeometricSphere* > 		sphere_map_;
 
-	TaskVisualizer* 								visualizer_;
+
+
+
+	Visualizer* 								    visualizer_;
 
 
 };

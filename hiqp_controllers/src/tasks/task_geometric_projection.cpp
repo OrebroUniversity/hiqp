@@ -28,7 +28,7 @@
 
 
 
-#include <hiqp/impl/task_geometric_projection.h>
+#include <hiqp/tasks/task_geometric_projection.h>
 
 #include <hiqp/geometric_primitives/geometric_point.h>
 #include <hiqp/geometric_primitives/geometric_plane.h>

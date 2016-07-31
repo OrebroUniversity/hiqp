@@ -71,9 +71,13 @@ public:
 	: GeometricPrimitive(name, frame_id, visible, color)
 	{
 		assert(parameters.size() == 4);
+
 		n_(0) = std::stod( parameters.at(0) );
 		n_(1) = std::stod( parameters.at(1) );
 		n_(2) = std::stod( parameters.at(2) );
+
+		n_.Normalize();
+
 		d_ = std::stod( parameters.at(3) );
 	}
 
@@ -93,16 +97,17 @@ public:
 	inline double getOffset()
 	{ return d_; }
 
+	inline double getNormalX() { return n_(0); }
+	inline double getNormalY() { return n_(1); }
+	inline double getNormalZ() { return n_(2); }
 
 
-	void draw(TaskVisualizer* visualizer)
-	{
-		if (visible_)
-		{
-			visualizer->createPlane(frame_id_, n_(0), n_(1), n_(2), d_, 
-				                    r_, g_, b_, a_);
-		}
-	}
+protected:
+
+	KDL::Vector   n_; // the normal vector or the plane
+	
+	double 		  d_; // the offset in the normal direction
+
 
 
 
@@ -114,13 +119,6 @@ private:
 	GeometricPlane(GeometricPlane&& other) = delete;
 	GeometricPlane& operator=(const GeometricPlane& other) = delete;
 	GeometricPlane& operator=(GeometricPlane&& other) noexcept = delete;
-
-	KDL::Vector   n_; // the normal vector or the plane
-	double 		  d_;
-
-
-
-
 
 
 };

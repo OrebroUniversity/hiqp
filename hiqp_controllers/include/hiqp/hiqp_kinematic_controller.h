@@ -60,6 +60,7 @@
 
 // HiQP Includes
 #include <hiqp/task_manager.h>
+#include <hiqp/ros_visualizer.h>
 
 #include <hiqp_msgs_srvs/AddTask.h>
 #include <hiqp_msgs_srvs/RemoveTask.h>
@@ -246,7 +247,7 @@ private:
      JointHandleMap                                    joint_handles_map_;
      std::mutex                                        handles_mutex_;
 
-     TaskVisualizer                                    task_visualizer_;
+     ROSVisualizer                                     ros_visualizer_;
      TaskManager                                       task_manager_;
 
      KDL::Tree                                         kdl_tree_;

@@ -69,30 +69,38 @@ add_library(${PROJECT_NAME} include/hiqp/hiqp_utils.h
                             include/hiqp/hiqp_kinematic_controller.h
                             include/hiqp/task_manager.h
                             include/hiqp/task_visualizer.h
+                            include/hiqp/visualizer.h
+                            include/hiqp/ros_visualizer.h
                             include/hiqp/hiqp_solver.h
-                            include/hiqp/casadi_solver.h
                             include/hiqp/task.h
                             include/hiqp/task_behaviour.h
+                            include/hiqp/geometric_primitive_map.h
 
-                            include/hiqp/impl/task_geometric_projection.h
-                            include/hiqp/impl/task_geometric_projection__impl.h
-                            include/hiqp/impl/task_beh_fo.h
+                            include/hiqp/solvers/casadi_solver.h
+
+                            include/hiqp/tasks/task_geometric_projection.h
+                            include/hiqp/tasks/task_geometric_projection__impl.h
+                            include/hiqp/tasks/task_beh_fo.h
 
                             include/hiqp/geometric_primitives/geometric_primitive.h
-                            include/hiqp/geometric_primitives/geometric_primitive_map.h
                             include/hiqp/geometric_primitives/geometric_point.h
+                            include/hiqp/geometric_primitives/geometric_line_segment.h
                             include/hiqp/geometric_primitives/geometric_plane.h
+                            include/hiqp/geometric_primitives/geometric_box.h
+                            include/hiqp/geometric_primitives/geometric_cylinder.h
+                            include/hiqp/geometric_primitives/geometric_sphere.h
 
                             src/hiqp_utils.cpp
                             src/hiqp_kinematic_controller.cpp
                             src/task_manager.cpp
                             src/task_visualizer.cpp
-                            src/casadi_solver.cpp
-
-                            src/impl/task_geometric_projection.cpp
-                            src/impl/task_beh_fo.cpp
-
+                            src/ros_visualizer.cpp
                             src/geometric_primitive_map.cpp
+
+                            src/solvers/casadi_solver.cpp
+
+                            src/tasks/task_geometric_projection.cpp
+                            src/tasks/task_beh_fo.cpp
 )
 
 target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} ${orocos_kdl_LIBRARIES} ${CASADI_LIBRARIES} ${GUROBI_LIBS})
