@@ -18,7 +18,7 @@
 
 
 /*!
- * \file   task_jnt_limit.h
+ * \file   task_jnt_config.h
  * \Author Marcus A Johansson (marcus.adam.johansson@gmail.com)
  * \date   July, 2016
  * \brief  Brief description of file.
@@ -28,8 +28,8 @@
 
 
 
-#ifndef HIQP_TASK_JNT_LIMIT_H
-#define HIQP_TASK_JNT_LIMIT_H
+#ifndef HIQP_TASK_JNT_CONFIG_H
+#define HIQP_TASK_JNT_CONFIG_H
 
 
 // HiQP Includes
@@ -53,13 +53,13 @@ namespace hiqp
 
 
 /*!
- * \class TaskJntLimit
+ * \class TaskJntConfig
  * \brief Represents a task that limits joint positions/velocities/accelerations
  *
  *  The type of limitation (pos/vel/acc) is given as a parameter to the task
  *  along with all lower and upper bounds for each joint.
  */	
-class TaskJntLimit : public Task
+class TaskJntConfig : public Task
 {
 
 public:
@@ -68,7 +68,7 @@ public:
      * \brief Constructor
      * Constructs my awesome task
      */
-	TaskJntLimit();
+	TaskJntConfig();
 
 
 
@@ -77,7 +77,7 @@ public:
      * \brief Destructor
      * Destructs my awesome task
      */
-	~TaskJntLimit() noexcept {}
+	~TaskJntConfig() noexcept {}
 
 
 
@@ -117,10 +117,10 @@ public:
 private:
 
 	// No copying of this class is allowed !
-	TaskJntLimit(const TaskJntLimit& other) = delete;
-	TaskJntLimit(TaskJntLimit&& other) = delete;
-	TaskJntLimit& operator=(const TaskJntLimit& other) = delete;
-	TaskJntLimit& operator=(TaskJntLimit&& other) noexcept = delete;
+	TaskJntConfig(const TaskJntConfig& other) = delete;
+	TaskJntConfig(TaskJntConfig&& other) = delete;
+	TaskJntConfig& operator=(const TaskJntConfig& other) = delete;
+	TaskJntConfig& operator=(TaskJntConfig&& other) noexcept = delete;
 
 	enum LimitationType {kPos = 0, kVel = 1, kAcc = 2};
 

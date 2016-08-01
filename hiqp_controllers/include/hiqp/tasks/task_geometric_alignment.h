@@ -18,7 +18,7 @@
 
 
 /*!
- * \file   task_jnt_limit.h
+ * \file   task_geometric_alignment.h
  * \Author Marcus A Johansson (marcus.adam.johansson@gmail.com)
  * \date   July, 2016
  * \brief  Brief description of file.
@@ -28,8 +28,8 @@
 
 
 
-#ifndef HIQP_TASK_JNT_LIMIT_H
-#define HIQP_TASK_JNT_LIMIT_H
+#ifndef HIQP_TASK_GEOMETRIC_ALIGNMENT_H
+#define HIQP_TASK_GEOMETRIC_ALIGNMENT_H
 
 
 // HiQP Includes
@@ -37,6 +37,7 @@
 
 // STL Includes
 #include <string>
+#include <vector>
 
 
 
@@ -49,41 +50,39 @@ namespace hiqp
 
 
 
-
-
-
 /*!
- * \class TaskJntLimit
- * \brief Represents a task that limits joint positions/velocities/accelerations
+ * \class TaskGeometricProjection
+ * \brief 
  *
- *  The type of limitation (pos/vel/acc) is given as a parameter to the task
- *  along with all lower and upper bounds for each joint.
- */	
-class TaskJntLimit : public Task
+ *  It's awesome!
+ */  
+template<typename PrimitiveA, typename PrimitiveB>
+class TaskGeometricAlignment : public TaskFunction
 {
-
 public:
+
+
+
 
 	/*!
      * \brief Constructor
-     * Constructs my awesome task
      */
-	TaskJntLimit();
+	TaskGeometricAlignment();
 
 
 
 
 	/*!
      * \brief Destructor
-     * Destructs my awesome task
      */
-	~TaskJntLimit() noexcept {}
+	~TaskGeometricAlignment() noexcept {}
+
 
 
 
 
 	/*!
-     * \brief <i>Pure virtual</i>. Initializes the task
+     * \brief Initializes the task
      *
      * \return 0 upon success
      */
@@ -97,8 +96,7 @@ public:
 
 
 	/*!
-     * \brief <i>Pure virtual</i>. Calculates the task function and task 
-     *        jacobian values.
+     * \brief Calculates the task function and task jacobian values.
      *
      * \param kdl_tree : reference to the kinematic dynamic tree of the robot
      * \param joints_pos_vel : reference to the current joint positions and 
@@ -114,17 +112,25 @@ public:
 
 
 
+
+     /*!
+     * \brief Computes all performance measures used when monitoring this task.
+     *
+     * \return 0 if the calculation was successful
+     */
+     int monitor();
+
+
+
 private:
 
 	// No copying of this class is allowed !
-	TaskJntLimit(const TaskJntLimit& other) = delete;
-	TaskJntLimit(TaskJntLimit&& other) = delete;
-	TaskJntLimit& operator=(const TaskJntLimit& other) = delete;
-	TaskJntLimit& operator=(TaskJntLimit&& other) noexcept = delete;
+	TaskGeometricAlignment(const TaskGeometricAlignment& other) = delete;
+	TaskGeometricAlignment(TaskGeometricAlignment&& other) = delete;
+	TaskGeometricAlignment& operator=(const TaskGeometricAlignment& other) = delete;
+	TaskGeometricAlignment& operator=(TaskGeometricAlignment&& other) noexcept = delete;
 
-	enum LimitationType {kPos = 0, kVel = 1, kAcc = 2};
 
-	
 
 
 };
@@ -134,6 +140,13 @@ private:
 
 
 
+
+
+
+
+
 } // namespace hiqp
+
+//#include <hiqp/tasks/task_geometric_projection__impl.h>
 
 #endif // include guard

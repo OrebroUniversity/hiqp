@@ -18,7 +18,7 @@
 
 
 /*!
- * \file   task.h
+ * \file   task_function.h
  * \Author Marcus A Johansson (marcus.adam.johansson@gmail.com)
  * \date   July, 2016
  * \brief  Brief description of file.
@@ -28,11 +28,11 @@
 
 
 
-#ifndef HIQP_TASK_H
-#define HIQP_TASK_H
+#ifndef HIQP_TASK_FUNCTION_H
+#define HIQP_TASK_FUNCTION_H
 
 // HiQP Includes
-#include <hiqp/task_behaviour.h>
+#include <hiqp/task_dynamics.h>
 #include <hiqp/visualizer.h>
 #include <hiqp/geometric_primitive_map.h>
 
@@ -60,7 +60,7 @@ namespace hiqp
 
     class TaskManager; // see task_manager.h for the definition
 
-    class Task
+    class TaskFunction
     {
     public:
 
@@ -68,7 +68,7 @@ namespace hiqp
      * \brief Constructor
      * Constructs my awesome task
      */
-    Task() {}
+    TaskFunction() {}
 
 
 
@@ -76,7 +76,7 @@ namespace hiqp
      * \brief Destructor
      * Destructs my awesome task
      */
-    ~Task() noexcept {}
+    ~TaskFunction() noexcept {}
 
 
 
@@ -189,18 +189,18 @@ namespace hiqp
     private:
 
 	// No copying of this class is allowed !
-    Task(const Task& other) = delete;
-    Task(Task&& other) = delete;
-    Task& operator=(const Task& other) = delete;
-    Task& operator=(Task&& other) noexcept = delete;
+    TaskFunction(const TaskFunction& other) = delete;
+    TaskFunction(TaskFunction&& other) = delete;
+    TaskFunction& operator=(const TaskFunction& other) = delete;
+    TaskFunction& operator=(TaskFunction&& other) noexcept = delete;
 
 
 
 
 
 
-    inline void setTaskBehaviour(TaskBehaviour* task_behaviour)
-    { task_behaviour_ = task_behaviour; }
+    inline void setTaskDynamics(TaskDynamics* task_dynamics)
+    { task_dynamics_ = task_dynamics; }
 
     inline void setVisualizer(Visualizer* visualizer)
     { visualizer_ = visualizer; }
@@ -252,7 +252,7 @@ namespace hiqp
 
 
 
-    TaskBehaviour*          task_behaviour_; // pointer to the task behaviour
+    TaskDynamics*          task_dynamics_; // pointer to the task behaviour
 
     Visualizer*             visualizer_;
 
