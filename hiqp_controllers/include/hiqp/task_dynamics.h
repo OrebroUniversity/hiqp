@@ -18,7 +18,7 @@
 
 
 /*!
- * \file   task_behaviour.h
+ * \file   task_dynamics.h
  * \Author Marcus A Johansson (marcus.adam.johansson@gmail.com)
  * \date   July, 2016
  * \brief  Brief description of file.
@@ -28,8 +28,8 @@
 
 
 
-#ifndef HIQP_TASK_BEHAVIOUR_H
-#define HIQP_TASK_BEHAVIOUR_H
+#ifndef HIQP_TASK_DYNAIMCS_H
+#define HIQP_TASK_DYNAMICS_H
 
 
 
@@ -52,12 +52,12 @@ namespace hiqp
 
 
 
-class TaskBehaviour
+class TaskDynamics
 {
 public:
 
-	TaskBehaviour() {}
-	~TaskBehaviour() noexcept {}
+	TaskDynamics() {}
+	~TaskDynamics() noexcept {}
 
 	virtual int init(const std::vector<std::string>& parameters) = 0;
 
@@ -72,10 +72,10 @@ public:
 private:
 
 	// No copying of this class is allowed !
-	TaskBehaviour(const TaskBehaviour& other) = delete;
-	TaskBehaviour(TaskBehaviour&& other) = delete;
-	TaskBehaviour& operator=(const TaskBehaviour& other) = delete;
-	TaskBehaviour& operator=(TaskBehaviour&& other) noexcept = delete;
+	TaskDynamics(const TaskDynamics& other) = delete;
+	TaskDynamics(TaskDynamics&& other) = delete;
+	TaskDynamics& operator=(const TaskDynamics& other) = delete;
+	TaskDynamics& operator=(TaskDynamics&& other) noexcept = delete;
 
 };
 

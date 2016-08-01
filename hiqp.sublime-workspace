@@ -164,6 +164,7 @@
 	"buffers":
 	[
 		{
+<<<<<<< HEAD
 			"file": "hiqp_controllers/include/hiqp/ros_visualizer.h",
 			"settings":
 			{
@@ -216,6 +217,12 @@
 			"settings":
 			{
 				"buffer_size": 4181,
+=======
+			"file": "hiqp_controllers/src/tasks/task_geometric_projection.cpp",
+			"settings":
+			{
+				"buffer_size": 5974,
+>>>>>>> aef85a0dfcf4d002dc5aaa86125896b88a09d4e3
 				"line_ending": "Unix"
 			}
 		}
@@ -252,6 +259,7 @@
 	},
 	"expanded_folders":
 	[
+<<<<<<< HEAD
 		"/home/neckutrek/dev/indigo_ws/src/hiqp",
 		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers",
 		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/include",
@@ -275,6 +283,26 @@
 		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/include/hiqp/geometric_primitives/geometric_box.h",
 		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/include/hiqp/ros_visualizer.h",
 		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/include/hiqp/geometric_primitive_map.h",
+=======
+		"/Users/neckutrek/Documents/exjobb_aass/hiqp",
+		"/Users/neckutrek/Documents/exjobb_aass/hiqp/hiqp_controllers",
+		"/Users/neckutrek/Documents/exjobb_aass/hiqp/hiqp_controllers/include",
+		"/Users/neckutrek/Documents/exjobb_aass/hiqp/hiqp_controllers/include/hiqp",
+		"/Users/neckutrek/Documents/exjobb_aass/hiqp/hiqp_controllers/include/hiqp/geometric_primitives",
+		"/Users/neckutrek/Documents/exjobb_aass/hiqp/hiqp_controllers/include/hiqp/tasks",
+		"/Users/neckutrek/Documents/exjobb_aass/hiqp/hiqp_controllers/src",
+		"/Users/neckutrek/Documents/exjobb_aass/hiqp/hiqp_controllers/src/tasks",
+		"/Users/neckutrek/Documents/exjobb_aass/hiqp/hiqp_msgs_srvs"
+	],
+	"file_history":
+	[
+		"/Users/neckutrek/Documents/exjobb_aass/hiqp/hiqp_controllers/src/geometric_primitive_map.cpp",
+		"/Users/neckutrek/Documents/exjobb_aass/hiqp/hiqp_controllers/src/task_manager.cpp",
+		"/Users/neckutrek/Documents/exjobb_aass/hiqp/hiqp_controllers/servicecalls/add_geometric_primitives.sh",
+		"/Users/neckutrek/Documents/exjobb_aass/hiqp/hiqp_controllers/src/impl/task_geometric_projection.cpp",
+		"/Users/neckutrek/Documents/exjobb_aass/hiqp/hiqp_controllers/include/hiqp/impl/task_geometric_projection__impl.h",
+		"/Users/neckutrek/Documents/exjobb_aass/hiqp/hiqp_controllers/include/hiqp/geometric_primitives/geometric_primitive_map.h",
+>>>>>>> aef85a0dfcf4d002dc5aaa86125896b88a09d4e3
 		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/src/task_manager.cpp",
 		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/include/hiqp/task.h",
 		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/include/hiqp/task_manager.h",
@@ -393,7 +421,20 @@
 		"/home/neckutrek/dev/indigo_ws/src/gazebo_ros_demos/rrbot_description/urdf/rrbot.xacro",
 		"/home/neckutrek/dev/indigo_ws/src/gazebo_ros_demos/rrbot_description/launch/rrbot_rviz.launch",
 		"/home/neckutrek/dev/indigo_ws/src/gazebo_ros_demos/rrbot_description/launch/rrbot.rviz",
+<<<<<<< HEAD
 		"/home/neckutrek/dev/indigo_ws/src/myfirstcontroller/myrobot_description/launch/myrobot.rviz"
+=======
+		"/home/neckutrek/dev/indigo_ws/src/myfirstcontroller/myrobot_description/launch/myrobot.rviz",
+		"/home/neckutrek/dev/indigo_ws/src/yumi/yumi_description/launch/yumi.rviz",
+		"/home/neckutrek/dev/indigo_ws/src/myfirstcontroller/CMakeLists.txt",
+		"/home/neckutrek/dev/indigo_ws/src/myfirstcontroller/robot_description/urdf/myrobot.xacro",
+		"/home/neckutrek/dev/indigo_ws/src/myfirstcontroller/robot_description/launch/myrobot_rviz.launch",
+		"/home/neckutrek/dev/indigo_ws/src/myfirstcontroller/robot_description/urdf/materials.xacro",
+		"/home/neckutrek/dev/indigo_ws/src/yumi/yumi_description/urdf/yumi.xacro",
+		"/home/neckutrek/dev/indigo_ws/src/gazebo_ros_demos/rrbot_description/urdf/rrbot.gazebo",
+		"/home/neckutrek/dev/playground/twotasks.cpp",
+		"/home/neckutrek/dev/indigo_ws/src/gazebo_ros_demos/rrbot_description/urdf/materials.xacro"
+>>>>>>> aef85a0dfcf4d002dc5aaa86125896b88a09d4e3
 	],
 	"find":
 	{
@@ -457,22 +498,35 @@
 	"groups":
 	[
 		{
+<<<<<<< HEAD
 			"selected": 1,
+=======
+			"selected": 0,
+>>>>>>> aef85a0dfcf4d002dc5aaa86125896b88a09d4e3
 			"sheets":
 			[
 				{
 					"buffer": 0,
+<<<<<<< HEAD
 					"file": "hiqp_controllers/include/hiqp/ros_visualizer.h",
 					"semi_transient": false,
 					"settings":
 					{
 						"buffer_size": 2833,
+=======
+					"file": "hiqp_controllers/src/tasks/task_geometric_projection.cpp",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 5974,
+>>>>>>> aef85a0dfcf4d002dc5aaa86125896b88a09d4e3
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
+<<<<<<< HEAD
 								2518,
 								2518
 							]
@@ -592,6 +646,10 @@
 							[
 								0,
 								0
+=======
+								985,
+								985
+>>>>>>> aef85a0dfcf4d002dc5aaa86125896b88a09d4e3
 							]
 						],
 						"settings":
@@ -599,6 +657,7 @@
 							"syntax": "Packages/ShellScript/Shell-Unix-Generic.sublime-syntax"
 						},
 						"translation.x": 0.0,
+<<<<<<< HEAD
 						"translation.y": 273.0,
 						"zoom_level": 1.0
 					},
@@ -628,6 +687,9 @@
 						},
 						"translation.x": 0.0,
 						"translation.y": 0.0,
+=======
+						"translation.y": 3652.0,
+>>>>>>> aef85a0dfcf4d002dc5aaa86125896b88a09d4e3
 						"zoom_level": 1.0
 					},
 					"stack_index": 4,
@@ -742,7 +804,11 @@
 	"show_open_files": false,
 	"show_tabs": true,
 	"side_bar_visible": true,
+<<<<<<< HEAD
 	"side_bar_width": 398.0,
+=======
+	"side_bar_width": 304.0,
+>>>>>>> aef85a0dfcf4d002dc5aaa86125896b88a09d4e3
 	"status_bar_visible": true,
 	"template_settings":
 	{
