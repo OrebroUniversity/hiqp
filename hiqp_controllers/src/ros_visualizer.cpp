@@ -156,13 +156,28 @@ int ROSVisualizer::apply
     marker.pose.position.z += line->getDirectionZ() * length/2;
     
 
-    double alpha = std::acos( line->getDirectionZ() );
+    double l = std::sqrt(3);
+    
+    double v1 = line->getDirectionX();
+    double v2 = line->getDirectionY();
+    double v3 = line->getDirectionZ();
+
+    double arg = (v1 + v2 + v3) / l;
+    double alpha = std::acos( arg );
     double s = std::sin( alpha/2 );
 
-    double x = - line->getDirectionY() * s;
-    double y = + line->getDirectionX() * s;
-    double z = 0;
+    double x = (v3-v2) * s / l;
+    double y = (v1-v3) * s / l;
+    double z = (v2-v1) * s / l;
     double w = std::cos( alpha/2 );
+
+    std::cout << "l = " << l << "\n";
+    std::cout << "v1 = " << v1 << "\n";
+    std::cout << "v2 = " << v2 << "\n";
+    std::cout << "v3 = " << v3 << "\n";
+    std::cout << "arg = " << arg << "\n";
+    std::cout << "alpha = " << alpha << "\n";
+    std::cout << "s = " << s << "\n";
     
 
     // take the cross-product between the z-axis and the directional vector
