@@ -32,6 +32,7 @@
 #define HIQP_TASK_DYNAMICS_H
 
 
+//#include <hiqp/task_factory.h>
 
 // STL Includes
 #include <vector>
@@ -50,7 +51,7 @@ namespace hiqp
 
 
 
-
+class TaskFactory;
 
 class TaskDynamics
 {
@@ -76,6 +77,8 @@ private:
 	TaskDynamics(TaskDynamics&& other) = delete;
 	TaskDynamics& operator=(const TaskDynamics& other) = delete;
 	TaskDynamics& operator=(TaskDynamics&& other) noexcept = delete;
+
+	friend TaskFactory;
 
 };
 

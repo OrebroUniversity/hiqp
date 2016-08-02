@@ -35,6 +35,7 @@
 // HiQP Includes
 #include <hiqp/task_function.h>
 #include <hiqp/task_dynamics.h>
+#include <hiqp/task_factory.h>
 #include <hiqp/visualizer.h>
 #include <hiqp/hiqp_solver.h>
 #include <hiqp/geometric_primitive_map.h>
@@ -117,8 +118,8 @@ public:
 
 
 
-     inline void setNumControls(unsigned int numControls)
-     { numControls_ = numControls; }
+     inline void setNumControls(unsigned int num_controls)
+     { num_controls_ = num_controls; }
 
      //inline TaskVisualizer* getTaskVisualizer()
      //{ return task_visualizer_; }
@@ -251,13 +252,15 @@ private:
      std::map< std::size_t, TaskDynamics* >       task_dynamics_;
      std::size_t                                  next_task_dynamics_id_;
 
+     TaskFactory*                                 task_factory_;
+
      GeometricPrimitiveMap*                       geometric_primitive_map_;
 
      Visualizer*                                  visualizer_;
 
      HiQPSolver*                                  solver_;
 
-     unsigned int                                 numControls_;
+     unsigned int                                 num_controls_;
 
 };
 

@@ -73,6 +73,7 @@ add_library(${PROJECT_NAME} include/hiqp/geometric_primitive_map.h
                             include/hiqp/ros_visualizer.h
                             include/hiqp/task_dynamics.h
                             include/hiqp/task_function.h
+                            include/hiqp/task_factory.h
                             include/hiqp/task_manager.h
                             include/hiqp/visualizer.h
 
@@ -99,6 +100,7 @@ add_library(${PROJECT_NAME} include/hiqp/geometric_primitive_map.h
                             src/hiqp_utils.cpp
                             src/ros_kinematics_controller.cpp
                             src/ros_visualizer.cpp
+                            src/task_factory.cpp
                             src/task_manager.cpp
 
                             src/solvers/casadi_solver.cpp

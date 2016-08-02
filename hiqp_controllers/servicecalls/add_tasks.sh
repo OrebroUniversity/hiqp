@@ -5,3 +5,11 @@ behaviour: ['TaskBehFO', '10']
 priority: 1
 visibility: 0
 parameters: ['point', 'plane', 'mypoint = myplane']"
+
+rosservice call /yumi/hiqp_kinematic_controller/addTask \
+"name: 'mytask'
+type: 'MyOwnTaskFunction'
+behaviour: ['TaskBehFO', '10']
+priority: 1
+visibility: 0
+parameters: ['point', 'plane', 'mypoint = myplane']"

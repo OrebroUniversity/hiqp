@@ -73,15 +73,21 @@ TaskManager::TaskManager
   visualizer_(visualizer)
 {
     solver_ = new CasADiSolver();
+
     geometric_primitive_map_ = new GeometricPrimitiveMap(visualizer_);
+
+    task_factory_ = new TaskFactory(
+        geometric_primitive_map_, visualizer_, num_controls_);
 }
 
 
 TaskManager::~TaskManager() noexcept
 {
     // We have memory leaks in tasks_ and task_behaviours_ !!!
+
     delete solver_;
     delete geometric_primitive_map_;
+    delete task_factory_;
 }
 
 
@@ -157,55 +163,43 @@ std::size_t TaskManager::addTask
 )
 {
 
-
-    // Create the task behaviour
     TaskDynamics* dynamics = nullptr;
-    if (behaviour_parameters.size() == 1 && behaviour_parameters.at(0).compare("NA") == 0)
+    TaskFunction* function = nullptr;
+
+    if (behaviour_parameters.size() == 1 && 
+        behaviour_parameters.at(0).compare("NA") == 0)
     {
-        dynamics = buildTaskDynamics("DynamicsFirstOrder");
-        dynamics->init( {"DynamicsFirstOrder", "1.0"} );
+        dynamics = task_factory_->buildTaskDynamics( 
+            {"DynamicsFirstOrder", "1.0"} );
     }
     else if (behaviour_parameters.size() >= 2)
     {
-        dynamics = buildTaskDynamics(behaviour_parameters.at(0));
+        dynamics = task_factory_->buildTaskDynamics(behaviour_parameters);
         if (dynamics == nullptr)
             return -2;
-        dynamics->init(behaviour_parameters);
     }
     else
     {
         return -1;
     }
 
-    // Add the task dynamics to the behaviours map
     task_dynamics_[next_task_dynamics_id_] = dynamics;
     next_task_dynamics_id_++;
 
-    // Create and initialize the task
-    TaskFunction* task = buildTaskFunction(type, parameters);
-    if (task == nullptr)
+    function = task_factory_->buildTaskFunction(
+        name, next_task_id_, type, priority, visibility, parameters, dynamics);
+
+    if (function == nullptr)
     {
         delete dynamics;
         return -3;
     }
 
-    // Initialize the task
-    task->setTaskDynamics(dynamics);
-    task->setVisualizer(visualizer_);
-    task->setId(next_task_id_);
-    task->setTaskName(name);
-    task->setPriority(priority);
-    task->setVisibility(visibility);
-    task->setGeometricPrimitiveMap(geometric_primitive_map_);
+    assert(function->e_.rows() == function->J_.rows());
+    assert(function->e_.rows() == function->e_dot_star_.rows());
+    assert(function->e_.rows() == function->task_types_.size());
 
-    task->init(parameters, numControls_);
-
-    assert(task->e_.rows() == task->J_.rows());
-    assert(task->e_.rows() == task->e_dot_star_.rows());
-    assert(task->e_.rows() == task->task_types_.size());
-
-    // Add the task to the tasks map
-    tasks_.insert( TaskMapElement(next_task_id_, task) );
+    tasks_.insert( TaskMapElement(next_task_id_, function) );
     next_task_id_++;
 
     return next_task_id_-1;
