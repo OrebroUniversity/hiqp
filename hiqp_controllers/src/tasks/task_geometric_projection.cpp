@@ -84,7 +84,7 @@ int TaskGeometricProjection<GeometricPoint, GeometricPoint>::project
 
 	KDL::Vector d = p2 - p1;
 
-	e_(0) = KDL::dot(d, d);
+	e_(0) = -d.Norm();
 
 	std::cout << "p1 = " << p1 << "\n";
 	std::cout << "p2 = " << p2 << "\n";
@@ -93,9 +93,12 @@ int TaskGeometricProjection<GeometricPoint, GeometricPoint>::project
 
 	for (int q_nr = 0; q_nr < jacobian_a_.columns(); ++q_nr)
 	{
-		J_(0, q_nr) =   jacobian_a_.getColumn(q_nr).vel.x()
-		              + jacobian_a_.getColumn(q_nr).vel.y()
-		              + jacobian_a_.getColumn(q_nr).vel.z();
+		J_(0, q_nr) =   jacobian_b_.getColumn(q_nr).vel.x()
+		              + jacobian_b_.getColumn(q_nr).vel.y()
+		              + jacobian_b_.getColumn(q_nr).vel.z()
+		              - jacobian_a_.getColumn(q_nr).vel.x()
+		              - jacobian_a_.getColumn(q_nr).vel.y()
+		              - jacobian_a_.getColumn(q_nr).vel.z();
 	}
 	
 	return 0;
