@@ -32,8 +32,6 @@
 #define HIQP_TASK_DYNAMICS_H
 
 
-//#include <hiqp/task_factory.h>
-
 // STL Includes
 #include <vector>
 

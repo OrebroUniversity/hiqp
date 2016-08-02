@@ -32,7 +32,6 @@
 #define HIQP_TASK_FUNCTION_H
 
 // HiQP Includes
-//#include <hiqp/task_factory.h>
 #include <hiqp/task_dynamics.h>
 #include <hiqp/visualizer.h>
 #include <hiqp/geometric_primitive_map.h>

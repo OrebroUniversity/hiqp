@@ -178,7 +178,7 @@ Visualization Manager:
       Visual Enabled: true
     - Class: rviz/Marker
       Enabled: true
-      Marker Topic: /yumi/hiqp_kinematic_controller/visualization_marker
+      Marker Topic: /yumi/hiqp_kinematics_controller/visualization_marker
       Name: Tasks
       Namespaces:
         "": true

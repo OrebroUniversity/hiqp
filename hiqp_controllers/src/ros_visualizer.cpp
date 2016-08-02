@@ -35,6 +35,8 @@
 #include <visualization_msgs/Marker.h>
 #include <visualization_msgs/MarkerArray.h>
 
+#include <Eigen/Dense>
+
 
 
 
@@ -145,49 +147,31 @@ int ROSVisualizer::apply
     marker.type = visualization_msgs::Marker::CYLINDER;
     marker.action = action; 
 
-    marker.pose.position.x = line->getOffsetX();
-    marker.pose.position.y = line->getOffsetY();
-    marker.pose.position.z = line->getOffsetZ();
-
-    //double length = (line->isInfinite() ? kInfiniteLength : line->getLength());
     double length = kInfiniteLength;
 
-    marker.pose.position.x += line->getDirectionX() * length/2;
-    marker.pose.position.y += line->getDirectionY() * length/2;
-    marker.pose.position.z += line->getDirectionZ() * length/2;
-    
-
-    double l = std::sqrt(3);
-    
     double v1 = line->getDirectionX();
     double v2 = line->getDirectionY();
     double v3 = line->getDirectionZ();
 
-    double arg = (v1 + v2 + v3) / l;
-    double alpha = std::acos( arg );
-    double s = std::sin( alpha/2 );
+    double p1 = line->getOffsetX() + v1 * length/2;
+    double p2 = line->getOffsetY() + v2 * length/2;
+    double p3 = line->getOffsetZ() + v3 * length/2;
 
-    double x = (v3-v2) * s / l;
-    double y = (v1-v3) * s / l;
-    double z = (v2-v1) * s / l;
-    double w = std::cos( alpha/2 );
+    Eigen::Vector3d v;
+    v << v1, v2, v3;
 
-    std::cout << "l = " << l << "\n";
-    std::cout << "v1 = " << v1 << "\n";
-    std::cout << "v2 = " << v2 << "\n";
-    std::cout << "v3 = " << v3 << "\n";
-    std::cout << "arg = " << arg << "\n";
-    std::cout << "alpha = " << alpha << "\n";
-    std::cout << "s = " << s << "\n";
-    
+    // Quaternion that aligns the z-axis with the line direction
+    Eigen::Quaterniond q;
+    q.setFromTwoVectors(Eigen::Vector3d::UnitZ(), v);
 
-    // take the cross-product between the z-axis and the directional vector
-    // w is the angle between those two vectors
-    marker.pose.orientation.x = x;
-    marker.pose.orientation.y = y;
-    marker.pose.orientation.z = z;
-    marker.pose.orientation.w = w;
+    marker.pose.position.x = p1;
+    marker.pose.position.y = p2;
+    marker.pose.position.z = p3;
 
+    marker.pose.orientation.x = q.x();
+    marker.pose.orientation.y = q.y();
+    marker.pose.orientation.z = q.z();
+    marker.pose.orientation.w = q.w();
     
     marker.scale.x = 2*kLineRadius;
     marker.scale.y = 2*kLineRadius;
@@ -200,16 +184,16 @@ int ROSVisualizer::apply
 
     marker.lifetime = ros::Duration(0);
 
-    std::cout << "Marker line: x = " << marker.pose.position.x << "\n"
-              << "             y = " << marker.pose.position.y << "\n"
-              << "             z = " << marker.pose.position.z << "\n"
-              << "         rot x = " << marker.pose.orientation.x << "\n"
-              << "         rot y = " << marker.pose.orientation.y << "\n"
-              << "         rot z = " << marker.pose.orientation.z << "\n"
-              << "         rot w = " << marker.pose.orientation.w << "\n"
-              << "         sca x = " << marker.scale.x << "\n"
-              << "         sca y = " << marker.scale.y << "\n"
-              << "         sca z = " << marker.scale.z << "\n";
+    // std::cout << "Marker line: x = " << marker.pose.position.x << "\n"
+    //           << "             y = " << marker.pose.position.y << "\n"
+    //           << "             z = " << marker.pose.position.z << "\n"
+    //           << "         rot x = " << marker.pose.orientation.x << "\n"
+    //           << "         rot y = " << marker.pose.orientation.y << "\n"
+    //           << "         rot z = " << marker.pose.orientation.z << "\n"
+    //           << "         rot w = " << marker.pose.orientation.w << "\n"
+    //           << "         sca x = " << marker.scale.x << "\n"
+    //           << "         sca y = " << marker.scale.y << "\n"
+    //           << "         sca z = " << marker.scale.z << "\n";
 
     marker_pub_.publish(marker);
 
