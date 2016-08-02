@@ -34,7 +34,7 @@
 
 
 #include <hiqp/geometric_primitives/geometric_point.h>
-#include <hiqp/geometric_primitives/geometric_line_segment.h>
+#include <hiqp/geometric_primitives/geometric_line.h>
 #include <hiqp/geometric_primitives/geometric_plane.h>
 #include <hiqp/geometric_primitives/geometric_box.h>
 #include <hiqp/geometric_primitives/geometric_cylinder.h>
@@ -61,14 +61,14 @@ public:
 	~Visualizer() noexcept {}
 
 	virtual int add(GeometricPoint* point) = 0;
-	virtual int add(GeometricLineSegment* line) = 0;
+	virtual int add(GeometricLine* line) = 0;
 	virtual int add(GeometricPlane* plane) = 0;
 	virtual int add(GeometricBox* box) = 0;
 	virtual int add(GeometricCylinder* cylinder) = 0;
 	virtual int add(GeometricSphere* sphere) = 0;
 
 	virtual void update(int id, GeometricPoint* point) = 0;
-	virtual void update(int id, GeometricLineSegment* line) = 0;
+	virtual void update(int id, GeometricLine* line) = 0;
 	virtual void update(int id, GeometricPlane* plane) = 0;
 	virtual void update(int id, GeometricBox* box) = 0;
 	virtual void update(int id, GeometricCylinder* cylinder) = 0;

@@ -27,12 +27,11 @@
  */
 
 #include <hiqp/task_manager.h>
-#include <hiqp/task_behaviour.h>
+ 
 #include <hiqp/hiqp_utils.h>
-#include <hiqp/geometric_primitive_map.h>
 
 #include <hiqp/tasks/task_geometric_projection.h>
-#include <hiqp/tasks/task_beh_fo.h>
+#include <hiqp/tasks/dynamics_first_order.h>
 
 #include <hiqp/geometric_primitives/geometric_point.h>
 #include <hiqp/geometric_primitives/geometric_plane.h>
@@ -70,7 +69,7 @@ TaskManager::TaskManager
     Visualizer* visualizer
 )
 : next_task_id_(0), 
-  next_task_behaviour_id_(0),
+  next_task_dynamics_id_(0),
   visualizer_(visualizer)
 {
     solver_ = new CasADiSolver();
@@ -160,38 +159,38 @@ std::size_t TaskManager::addTask
 
 
     // Create the task behaviour
-    TaskBehaviour* behaviour = nullptr;
+    TaskDynamics* dynamics = nullptr;
     if (behaviour_parameters.size() == 1 && behaviour_parameters.at(0).compare("NA") == 0)
     {
-        behaviour = buildTaskBehaviour("TaskBehFO");
-        behaviour->init( {"TaskBehFO", "1.0"} );
+        dynamics = buildTaskDynamics("DynamicsFirstOrder");
+        dynamics->init( {"DynamicsFirstOrder", "1.0"} );
     }
     else if (behaviour_parameters.size() >= 2)
     {
-        behaviour = buildTaskBehaviour(behaviour_parameters.at(0));
-        if (behaviour == nullptr)
+        dynamics = buildTaskDynamics(behaviour_parameters.at(0));
+        if (dynamics == nullptr)
             return -2;
-        behaviour->init(behaviour_parameters);
+        dynamics->init(behaviour_parameters);
     }
     else
     {
         return -1;
     }
 
-    // Add the task behaviour to the behaviours map
-    task_behaviours_[next_task_behaviour_id_] = behaviour;
-    next_task_behaviour_id_++;
+    // Add the task dynamics to the behaviours map
+    task_dynamics_[next_task_dynamics_id_] = dynamics;
+    next_task_dynamics_id_++;
 
     // Create and initialize the task
-    Task* task = buildTask(type, parameters);
+    TaskFunction* task = buildTaskFunction(type, parameters);
     if (task == nullptr)
     {
-        delete behaviour;
+        delete dynamics;
         return -3;
     }
 
     // Initialize the task
-    task->setTaskBehaviour(behaviour);
+    task->setTaskDynamics(dynamics);
     task->setVisualizer(visualizer_);
     task->setId(next_task_id_);
     task->setTaskName(name);
@@ -257,7 +256,7 @@ int TaskManager::addGeometricPrimitive
 
 
 
-Task* TaskManager::buildTask
+TaskFunction* TaskManager::buildTaskFunction
 (
     const std::string& type,
     const std::vector<std::string>& parameters
@@ -280,15 +279,15 @@ Task* TaskManager::buildTask
 
 
 
-TaskBehaviour* TaskManager::buildTaskBehaviour
+TaskDynamics* TaskManager::buildTaskDynamics
 (
     const std::string& behaviour_name
 )
 {
-    if (behaviour_name.compare("TaskBehFO") != 0)
+    if (behaviour_name.compare("DynamicsFirstOrder") != 0)
         return nullptr;
 
-    return new TaskBehFO();
+    return new DynamicsFirstOrder();
 }
 
 

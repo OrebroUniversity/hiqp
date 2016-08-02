@@ -31,14 +31,9 @@
 #ifndef HIQP_GEOMETRIC_PRIMITIVE_H
 #define HIQP_GEOMETRIC_PRIMITIVE_H
 
-
-#include <hiqp/task_visualizer.h>
-
-
+#include <string>
+#include <vector>
 #include <cassert>
-
-
-
 
 
 namespace hiqp
@@ -117,18 +112,7 @@ private:
 	GeometricPrimitive& operator=(const GeometricPrimitive& other) = delete;
 	GeometricPrimitive& operator=(GeometricPrimitive&& other) noexcept = delete;
 
-	
-
-
-
-
-
 };
-
-
-
-
-
 
 
 

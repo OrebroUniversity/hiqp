@@ -2,8 +2,8 @@ yumi:
   joint_state_controller:
       type: joint_state_controller/JointStateController
       publish_rate: 50  
-  hiqp_kinematic_controller:
-    type: hiqp_controllers/HiQPKinematicController
+  hiqp_kinematics_controller:
+    type: hiqp_controllers/ROSKinematicsController
     joints:
       - yumi_joint_1_r
       - yumi_joint_2_r

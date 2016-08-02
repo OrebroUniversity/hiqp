@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <launch>
 
-  <arg name="controllers" default="joint_state_controller hiqp_kinematic_controller"/>
+  <arg name="controllers" default="joint_state_controller hiqp_kinematics_controller"/>
 
 
 

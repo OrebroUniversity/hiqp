@@ -33,9 +33,9 @@
 #define HIQP_TASK_MANAGER_H
 
 // HiQP Includes
-#include <hiqp/task.h>
-#include <hiqp/task_behaviour.h>
-#include <hiqp/task_visualizer.h>
+#include <hiqp/task_function.h>
+#include <hiqp/task_dynamics.h>
+#include <hiqp/visualizer.h>
 #include <hiqp/hiqp_solver.h>
 #include <hiqp/geometric_primitive_map.h>
 
@@ -226,27 +226,30 @@ private:
 	TaskManager& operator=(const TaskManager& other) = delete;
 	TaskManager& operator=(TaskManager&& other) noexcept = delete;
 
-     Task* buildTask
+     TaskFunction* buildTaskFunction
      (
           const std::string& type,
           const std::vector<std::string>& parameters
      );
 
-     TaskBehaviour* buildTaskBehaviour(const std::string& behaviour_name);
+     TaskDynamics* buildTaskDynamics
+     (
+          const std::string& behaviour_name
+     );
 
 
 
-     typedef std::map< std::size_t, Task* >            TaskMap;
-     typedef std::map< std::size_t, Task* >::iterator  TaskMapIterator;
-     typedef std::pair< std::size_t, Task* >           TaskMapElement;
+     typedef std::map< std::size_t, TaskFunction* >            TaskMap;
+     typedef std::map< std::size_t, TaskFunction* >::iterator  TaskMapIterator;
+     typedef std::pair< std::size_t, TaskFunction* >           TaskMapElement;
 
      
 
      TaskMap                                      tasks_;
      std::size_t                                  next_task_id_;
 
-     std::map< std::size_t, TaskBehaviour* >      task_behaviours_;
-     std::size_t                                  next_task_behaviour_id_;
+     std::map< std::size_t, TaskDynamics* >       task_dynamics_;
+     std::size_t                                  next_task_dynamics_id_;
 
      GeometricPrimitiveMap*                       geometric_primitive_map_;
 

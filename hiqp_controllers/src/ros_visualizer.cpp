@@ -131,7 +131,7 @@ int ROSVisualizer::apply
 int ROSVisualizer::apply
 (
 	int id,
-	GeometricLineSegment* line,
+	GeometricLine* line,
 	int action
 )
 {
@@ -149,7 +149,8 @@ int ROSVisualizer::apply
     marker.pose.position.y = line->getOffsetY();
     marker.pose.position.z = line->getOffsetZ();
 
-    double length = (line->isInfinite() ? kInfiniteLength : line->getLength());
+    //double length = (line->isInfinite() ? kInfiniteLength : line->getLength());
+    double length = kInfiniteLength;
 
     marker.pose.position.x += line->getDirectionX() * length/2;
     marker.pose.position.y += line->getDirectionY() * length/2;
@@ -456,7 +457,10 @@ int ROSVisualizer::apply
 // 																			  //
 ////////////////////////////////////////////////////////////////////////////////
 
-int ROSVisualizer::add(GeometricPoint* point)
+int ROSVisualizer::add
+(
+    GeometricPoint* point
+)
 {
 	return apply(0, point, visualization_msgs::Marker::ADD);
 }
@@ -465,7 +469,10 @@ int ROSVisualizer::add(GeometricPoint* point)
 
 
 
-int ROSVisualizer::add(GeometricLineSegment* line)
+int ROSVisualizer::add
+(
+    GeometricLine* line
+)
 {
 	return apply(0, line, visualization_msgs::Marker::ADD);
 }
@@ -474,7 +481,10 @@ int ROSVisualizer::add(GeometricLineSegment* line)
 
 
 
-int ROSVisualizer::add(GeometricPlane* plane)
+int ROSVisualizer::add
+(
+    GeometricPlane* plane
+)
 {
 	return apply(0, plane, visualization_msgs::Marker::ADD);
 }
@@ -483,7 +493,10 @@ int ROSVisualizer::add(GeometricPlane* plane)
 
 
 
-int ROSVisualizer::add(GeometricBox* box)
+int ROSVisualizer::add
+(
+    GeometricBox* box
+)
 {
 	return apply(0, box, visualization_msgs::Marker::ADD);
 }
@@ -492,7 +505,10 @@ int ROSVisualizer::add(GeometricBox* box)
 
 
 
-int ROSVisualizer::add(GeometricCylinder* cylinder)
+int ROSVisualizer::add
+(
+    GeometricCylinder* cylinder
+)
 {
 	return apply(0, cylinder, visualization_msgs::Marker::ADD);
 }
@@ -501,7 +517,10 @@ int ROSVisualizer::add(GeometricCylinder* cylinder)
 
 
 
-int ROSVisualizer::add(GeometricSphere* sphere)
+int ROSVisualizer::add
+(
+    GeometricSphere* sphere
+)
 {
 	return apply(0, sphere, visualization_msgs::Marker::ADD);
 }
@@ -532,7 +551,7 @@ void ROSVisualizer::update
 void ROSVisualizer::update
 (
 	int id, 
-	GeometricLineSegment* line
+	GeometricLine* line
 )
 {
 	apply(id, line, visualization_msgs::Marker::MODIFY);

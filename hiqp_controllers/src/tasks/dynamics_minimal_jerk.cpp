@@ -18,7 +18,7 @@
 
 
 /*!
- * \file   task_beh_fo.cpp
+ * \file   dynamics_minimal_jerk.cpp
  * \Author Marcus A Johansson (marcus.adam.johansson@gmail.com)
  * \date   July, 2016
  * \brief  Brief description of file.
@@ -29,7 +29,7 @@
 
 #include <hiqp/hiqp_utils.h>
 
-#include <hiqp/tasks/task_beh_fo.h>
+#include <hiqp/tasks/dynamics_minimal_jerk.h>
 
 
 
@@ -48,16 +48,11 @@ namespace hiqp
 
 
 
-int TaskBehFO::init
+int DynamicsMinimalJerk::init
 (
     const std::vector<std::string>& parameters
 )
 {
-    if (parameters.size() != 2)
-        return -1;
-
-    lambda_ = std::stod( parameters.at(1) );
-    
     return 0;
 }
 
@@ -67,16 +62,12 @@ int TaskBehFO::init
 
 
 
-int TaskBehFO::apply
+int DynamicsMinimalJerk::apply
 (
 	const Eigen::VectorXd& e,
 	Eigen::VectorXd& e_dot_star
 )
 {
-	e_dot_star = -lambda_ * e;
-
-	//std::cout << "e_dot_star = " << e_dot_star << "\n\n";
-
 	return 0;
 }
 

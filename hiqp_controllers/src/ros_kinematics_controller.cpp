@@ -18,7 +18,7 @@
 
 
 /*!
- * \file   hiqp_kinematic_controller.cpp
+ * \file   ros_kinematics_controller.cpp
  * \Author Marcus A Johansson (marcus.adam.johansson@gmail.com)
  * \date   July, 2016
  * \brief  Brief description of file.
@@ -28,7 +28,7 @@
 
 
 
-#include <hiqp/hiqp_kinematic_controller.h>
+#include <hiqp/ros_kinematics_controller.h>
 #include <hiqp/hiqp_utils.h>
 
 #include <hiqp_msgs_srvs/PerfMeasMsg.h>
@@ -52,7 +52,7 @@ namespace hiqp
 
 
 
-HiQPKinematicController::HiQPKinematicController()
+ROSKinematicsController::ROSKinematicsController()
 : is_active_(true), monitoring_active_(false), task_manager_(&ros_visualizer_)
 {
 }
@@ -66,7 +66,7 @@ HiQPKinematicController::HiQPKinematicController()
 
 
 
-HiQPKinematicController::~HiQPKinematicController() noexcept
+ROSKinematicsController::~ROSKinematicsController() noexcept
 {
 }
 
@@ -79,7 +79,7 @@ HiQPKinematicController::~HiQPKinematicController() noexcept
 
 
 
-bool HiQPKinematicController::init
+bool ROSKinematicsController::init
 (
 	hardware_interface::VelocityJointInterface *hw, 
 	ros::NodeHandle &controller_nh
@@ -96,7 +96,7 @@ bool HiQPKinematicController::init
 	std::vector< std::string > joint_names;
 	if (!controller_nh.getParam(param_name, joint_names))
     {
-        ROS_ERROR_STREAM("In HiQPKinematicController: Call to getParam('" 
+        ROS_ERROR_STREAM("In ROSKinematicsController: Call to getParam('" 
         	<< param_name 
         	<< "') in namespace '" 
         	<< controller_nh.getNamespace() 
@@ -111,7 +111,7 @@ bool HiQPKinematicController::init
 	XmlRpc::XmlRpcValue task_monitoring;
 	if (!controller_nh.getParam("task_monitoring", task_monitoring))
     {
-        ROS_ERROR_STREAM("In HiQPKinematicController: Call to getParam('" 
+        ROS_ERROR_STREAM("In ROSKinematicsController: Call to getParam('" 
         	<< "task_monitoring" 
         	<< "') in namespace '" 
         	<< controller_nh.getNamespace() 
@@ -137,7 +137,7 @@ bool HiQPKinematicController::init
     }
     else
     {
-        ROS_ERROR_STREAM("In HiQPKinematicController: Could not find"
+        ROS_ERROR_STREAM("In ROSKinematicsController: Could not find"
         	<< " parameter 'robot_description' on the parameter server.");
         return false;
     }
@@ -174,7 +174,7 @@ bool HiQPKinematicController::init
 	unsigned int n_kdl_joints = kdl_tree_.getNrOfJoints();
 	if (n_joint_names > n_kdl_joints)
 	{
-		ROS_ERROR_STREAM("In HiQPKinematicController: The .yaml file"
+		ROS_ERROR_STREAM("In ROSKinematicsController: The .yaml file"
 			<< " includes more joint names than specified in the .urdf file."
 			<< " Could not succeffully initialize controller. Aborting!\n");
 		return false;
@@ -190,21 +190,21 @@ bool HiQPKinematicController::init
 	add_task_service_ = controller_nh_.advertiseService
 	(
 		"addTask",
-		&HiQPKinematicController::addTask,
+		&ROSKinematicsController::addTask,
 		this
 	);
 
 	remove_task_service_ = controller_nh_.advertiseService
 	(
 		"removeTask",
-		&HiQPKinematicController::removeTask,
+		&ROSKinematicsController::removeTask,
 		this
 	);
 
 	add_geomprim_service_ = controller_nh_.advertiseService
 	(
 		"addGeomPrim",
-		&HiQPKinematicController::addGeometricPrimitive,
+		&ROSKinematicsController::addGeometricPrimitive,
 		this
 	);
 
@@ -223,7 +223,7 @@ bool HiQPKinematicController::init
 
 
 
-void HiQPKinematicController::starting
+void ROSKinematicsController::starting
 (
 	const ros::Time& time
 )
@@ -238,7 +238,7 @@ void HiQPKinematicController::starting
 
 
 
-void HiQPKinematicController::update
+void ROSKinematicsController::update
 (
 	const ros::Time& time, 
 	const ros::Duration& period
@@ -351,7 +351,7 @@ void HiQPKinematicController::update
 
 
 
-void HiQPKinematicController::stopping
+void ROSKinematicsController::stopping
 (
 	const ros::Time& time
 )
@@ -363,7 +363,7 @@ void HiQPKinematicController::stopping
 
 
 
-bool HiQPKinematicController::addTask
+bool ROSKinematicsController::addTask
 (
 	hiqp_msgs_srvs::AddTask::Request& req, 
     hiqp_msgs_srvs::AddTask::Response& res
@@ -387,7 +387,7 @@ bool HiQPKinematicController::addTask
 }
 
 
-bool HiQPKinematicController::removeTask
+bool ROSKinematicsController::removeTask
 (
 	hiqp_msgs_srvs::RemoveTask::Request& req, 
     hiqp_msgs_srvs::RemoveTask::Response& res
@@ -410,7 +410,7 @@ bool HiQPKinematicController::removeTask
 }
 
 
-bool HiQPKinematicController::addGeometricPrimitive
+bool ROSKinematicsController::addGeometricPrimitive
 (
     hiqp_msgs_srvs::AddGeometricPrimitive::Request& req, 
     hiqp_msgs_srvs::AddGeometricPrimitive::Response& res
@@ -463,8 +463,8 @@ bool HiQPKinematicController::addGeometricPrimitive
 
 
 
-} // namespace HiQPKinematicController
+} // namespace hiqp
 
 
 // make the controller available to the library loader
-PLUGINLIB_EXPORT_CLASS(hiqp::HiQPKinematicController, controller_interface::ControllerBase)
+PLUGINLIB_EXPORT_CLASS(hiqp::ROSKinematicsController, controller_interface::ControllerBase)

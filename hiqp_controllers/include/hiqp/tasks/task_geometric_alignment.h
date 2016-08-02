@@ -33,7 +33,7 @@
 
 
 // HiQP Includes
-#include <hiqp/task.h>
+#include <hiqp/task_function.h>
 
 // STL Includes
 #include <string>
@@ -67,7 +67,7 @@ public:
 	/*!
      * \brief Constructor
      */
-	TaskGeometricAlignment();
+	TaskGeometricAlignment() {}
 
 
 
@@ -90,7 +90,10 @@ public:
      (
           const std::vector<std::string>& parameters,
           unsigned int numControls
-     );
+     )
+     {
+          return 0;
+     }
 
 
 
@@ -108,7 +111,10 @@ public:
 	(
 		const KDL::Tree& kdl_tree, 
 		const KDL::JntArrayVel& kdl_joint_pos_vel
-	);
+	)
+     {
+          return 0;
+     }
 
 
 
@@ -118,7 +124,10 @@ public:
      *
      * \return 0 if the calculation was successful
      */
-     int monitor();
+     int monitor()
+     {
+          return 0;
+     }
 
 
 
@@ -130,7 +139,13 @@ private:
 	TaskGeometricAlignment& operator=(const TaskGeometricAlignment& other) = delete;
 	TaskGeometricAlignment& operator=(TaskGeometricAlignment&& other) noexcept = delete;
 
+     PrimitiveA*              primitive_a_;
+     KDL::Frame               pose_a_;
+     KDL::Jacobian            jacobian_a_;
 
+     PrimitiveB*              primitive_b_;
+     KDL::Frame               pose_b_;
+     KDL::Jacobian            jacobian_b_;
 
 
 };

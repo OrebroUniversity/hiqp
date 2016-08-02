@@ -65,42 +65,46 @@ include_directories(${GUROBI_INCLUDE_DIR})
 
 link_directories(${GUROBI_LIB_DIR})
 
-add_library(${PROJECT_NAME} include/hiqp/hiqp_utils.h
-                            include/hiqp/hiqp_kinematic_controller.h
-                            include/hiqp/task_manager.h
-                            include/hiqp/task_visualizer.h
-                            include/hiqp/visualizer.h
-                            include/hiqp/ros_visualizer.h
+add_library(${PROJECT_NAME} include/hiqp/geometric_primitive_map.h
                             include/hiqp/hiqp_solver.h
-                            include/hiqp/task.h
-                            include/hiqp/task_behaviour.h
-                            include/hiqp/geometric_primitive_map.h
+                            include/hiqp/hiqp_utils.h
+                            include/hiqp/ros_dynamics_controller.h
+                            include/hiqp/ros_kinematics_controller.h
+                            include/hiqp/ros_visualizer.h
+                            include/hiqp/task_dynamics.h
+                            include/hiqp/task_function.h
+                            include/hiqp/task_manager.h
+                            include/hiqp/visualizer.h
+
+                            include/hiqp/geometric_primitives/geometric_box.h
+                            include/hiqp/geometric_primitives/geometric_cylinder.h
+                            include/hiqp/geometric_primitives/geometric_line.h
+                            include/hiqp/geometric_primitives/geometric_plane.h
+                            include/hiqp/geometric_primitives/geometric_point.h
+                            include/hiqp/geometric_primitives/geometric_primitive.h
+                            include/hiqp/geometric_primitives/geometric_sphere.h
 
                             include/hiqp/solvers/casadi_solver.h
 
+                            include/hiqp/tasks/dynamics_first_order.h
+                            include/hiqp/tasks/dynamics_minimal_jerk.h
+                            include/hiqp/tasks/task_geometric_alignment.h
                             include/hiqp/tasks/task_geometric_projection.h
                             include/hiqp/tasks/task_geometric_projection__impl.h
-                            include/hiqp/tasks/task_beh_fo.h
+                            include/hiqp/tasks/task_jnt_config.h
+                            include/hiqp/tasks/task_jnt_limit.h
 
-                            include/hiqp/geometric_primitives/geometric_primitive.h
-                            include/hiqp/geometric_primitives/geometric_point.h
-                            include/hiqp/geometric_primitives/geometric_line_segment.h
-                            include/hiqp/geometric_primitives/geometric_plane.h
-                            include/hiqp/geometric_primitives/geometric_box.h
-                            include/hiqp/geometric_primitives/geometric_cylinder.h
-                            include/hiqp/geometric_primitives/geometric_sphere.h
 
-                            src/hiqp_utils.cpp
-                            src/hiqp_kinematic_controller.cpp
-                            src/task_manager.cpp
-                            src/task_visualizer.cpp
-                            src/ros_visualizer.cpp
                             src/geometric_primitive_map.cpp
+                            src/hiqp_utils.cpp
+                            src/ros_kinematics_controller.cpp
+                            src/ros_visualizer.cpp
+                            src/task_manager.cpp
 
                             src/solvers/casadi_solver.cpp
 
+                            src/tasks/dynamics_first_order.cpp
                             src/tasks/task_geometric_projection.cpp
-                            src/tasks/task_beh_fo.cpp
 )
 
 target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} ${orocos_kdl_LIBRARIES} ${CASADI_LIBRARIES} ${GUROBI_LIBS})

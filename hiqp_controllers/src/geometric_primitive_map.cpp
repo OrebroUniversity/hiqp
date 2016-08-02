@@ -30,7 +30,7 @@
 #include <hiqp/geometric_primitive_map.h>
 
 // STL Includes
-//#include <iostream>
+#include <iostream>
 #include <cassert>
 
 
@@ -49,8 +49,7 @@ namespace hiqp {
 
 # point:        [x, y, z]
 
-# line:         [x,   y,  z, nx, ny, nz, l]
-# line:         [x1, y1, z1, x2, y2, z2]
+# line:         [nx, ny, nz x,   y,  z]
 
 # plane:        [x, y, z, nx, ny, nz]
 
@@ -92,11 +91,11 @@ int GeometricPrimitiveMap::addGeometricPrimitive
     {
         assert( line_map_.find(name) == line_map_.end() );
 
-        GeometricLineSegment* line = new GeometricLineSegment(
+        GeometricLine* line = new GeometricLine(
             name, frame_id, visible, color, parameters);
 
         line_map_.insert( 
-            std::pair< std::string, GeometricLineSegment* >( name, line ) );
+            std::pair< std::string, GeometricLine* >( name, line ) );
 
         visualizer_->add(line);
         
@@ -187,13 +186,13 @@ GeometricPrimitiveMap::getGeometricPrimitive<GeometricPoint>
 
 
 template<>
-GeometricLineSegment* 
-GeometricPrimitiveMap::getGeometricPrimitive<GeometricLineSegment>
+GeometricLine* 
+GeometricPrimitiveMap::getGeometricPrimitive<GeometricLine>
 (
     const std::string& name
 )
 {
-    std::map< std::string, GeometricLineSegment* >::iterator it = 
+    std::map< std::string, GeometricLine* >::iterator it = 
         line_map_.find(name);
 
     if (it  == line_map_.end())   return nullptr;

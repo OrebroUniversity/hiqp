@@ -64,14 +64,14 @@ public:
 
 
 	int add(GeometricPoint* point);
-	int add(GeometricLineSegment* line);
+	int add(GeometricLine* line);
 	int add(GeometricPlane* plane);
 	int add(GeometricBox* box);
 	int add(GeometricCylinder* cylinder);
 	int add(GeometricSphere* sphere);
 
 	void update(int id, GeometricPoint* point);
-	void update(int id, GeometricLineSegment* line);
+	void update(int id, GeometricLine* line);
 	void update(int id, GeometricPlane* plane);
 	void update(int id, GeometricBox* box);
 	void update(int id, GeometricCylinder* cylinder);
@@ -88,7 +88,7 @@ private:
 	ROSVisualizer& operator=(ROSVisualizer&& other) noexcept = delete;
 
 	int apply(int id, GeometricPoint* point, int action);
-	int apply(int id, GeometricLineSegment* line, int action);
+	int apply(int id, GeometricLine* line, int action);
 	int apply(int id, GeometricPlane* plane, int action);
 	int apply(int id, GeometricBox* box, int action);
 	int apply(int id, GeometricCylinder* cylinder, int action);

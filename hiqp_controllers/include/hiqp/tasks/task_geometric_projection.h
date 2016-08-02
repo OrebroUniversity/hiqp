@@ -33,7 +33,7 @@
 
 
 // HiQP Includes
-#include <hiqp/task.h>
+#include <hiqp/task_function.h>
 
 // STL Includes
 #include <string>
@@ -57,7 +57,7 @@ namespace hiqp
  *  It's awesome!
  */  
 template<typename PrimitiveA, typename PrimitiveB>
-class TaskGeometricProjection : public Task
+class TaskGeometricProjection : public TaskFunction
 {
 public:
 

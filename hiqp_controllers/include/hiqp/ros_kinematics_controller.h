@@ -18,7 +18,7 @@
 
 
 /*!
- * \file   ros_kinematic_controller.h
+ * \file   ros_kinematics_controller.h
  * \Author Marcus A Johansson (marcus.adam.johansson@gmail.com)
  * \date   July, 2016
  * \brief  Brief description of file.
@@ -28,8 +28,8 @@
 
 
 
-#ifndef HIQP_ROS_KINEMATIC_CONTROLLER_H
-#define HIQP_ROS_KINEMATIC_CONTROLLER_H
+#ifndef HIQP_ROS_KINEMATICS_CONTROLLER_H
+#define HIQP_ROS_KINEMATICS_CONTROLLER_H
 
 
 // STL Includes
@@ -99,7 +99,7 @@ JointVelocityInterface;
  *
  *  It's awesome!
  */	
-class ROSKinematicController : public JointVelocityController
+class ROSKinematicsController : public JointVelocityController
 {
 public:
 
@@ -107,13 +107,13 @@ public:
      * \brief Constructor
      * Constructs my awesome controller
      */
-	ROSKinematicController();
+	ROSKinematicsController();
 
 	/*!
      * \brief Destructor
      * Destructs my awesome controller :(
      */
-	~ROSKinematicController() noexcept;
+	~ROSKinematicsController() noexcept;
 	
 
 	/*!
@@ -181,10 +181,10 @@ public:
 private:
 
 	// No copying of this class is allowed !
-	ROSKinematicController(const ROSKinematicController& other) = delete;
-	ROSKinematicController(ROSKinematicController&& other) = delete;
-	ROSKinematicController& operator=(const ROSKinematicController& other) = delete;
-	ROSKinematicController& operator=(ROSKinematicController&& other) noexcept = delete;
+	ROSKinematicsController(const ROSKinematicsController& other) = delete;
+	ROSKinematicsController(ROSKinematicsController&& other) = delete;
+	ROSKinematicsController& operator=(const ROSKinematicsController& other) = delete;
+	ROSKinematicsController& operator=(ROSKinematicsController&& other) noexcept = delete;
 
 
 

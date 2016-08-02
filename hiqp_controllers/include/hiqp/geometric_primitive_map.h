@@ -35,12 +35,13 @@
 #include <hiqp/visualizer.h>
 
 #include <hiqp/geometric_primitives/geometric_point.h>
-#include <hiqp/geometric_primitives/geometric_line_segment.h>
+#include <hiqp/geometric_primitives/geometric_line.h>
 #include <hiqp/geometric_primitives/geometric_plane.h>
 #include <hiqp/geometric_primitives/geometric_box.h>
 #include <hiqp/geometric_primitives/geometric_cylinder.h>
 #include <hiqp/geometric_primitives/geometric_sphere.h>
 
+#include <map>
 
 
 
@@ -99,7 +100,7 @@ private:
 
 
 	std::map< std::string, GeometricPoint* > 		point_map_;
-	std::map< std::string, GeometricLineSegment* > 	line_map_;
+	std::map< std::string, GeometricLine* > 	    line_map_;
 	std::map< std::string, GeometricPlane* > 		plane_map_;
 	std::map< std::string, GeometricBox* > 			box_map_;
 	std::map< std::string, GeometricCylinder* > 	cylinder_map_;

@@ -36,6 +36,8 @@
 #include <kdl/treefksolverpos_recursive.hpp>
 #include <kdl/treejnttojacsolver.hpp>
 
+#include <sstream>
+#include <iterator>
 
 
 

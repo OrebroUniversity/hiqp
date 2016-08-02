@@ -31,7 +31,7 @@
 #include <hiqp/tasks/task_geometric_projection.h>
 
 #include <hiqp/geometric_primitives/geometric_point.h>
-#include <hiqp/geometric_primitives/geometric_line_segmenr.h>
+#include <hiqp/geometric_primitives/geometric_line.h>
 #include <hiqp/geometric_primitives/geometric_plane.h>
 #include <hiqp/geometric_primitives/geometric_box.h>
 #include <hiqp/geometric_primitives/geometric_cylinder.h>
@@ -101,10 +101,10 @@ int TaskGeometricProjection<GeometricPoint, GeometricPoint>::project
 
 
 template<>
-int TaskGeometricProjection<GeometricPoint, GeometricLineSegment>::project
+int TaskGeometricProjection<GeometricPoint, GeometricLine>::project
 (
 	GeometricPoint* point, 
-	GeometricLineSegment* line
+	GeometricLine* line
 )
 {
 
@@ -114,7 +114,7 @@ int TaskGeometricProjection<GeometricPoint, GeometricLineSegment>::project
 		           pose_a_.p.y() + p__(1), 
 		           pose_a_.p.z() + p__(2) );
 
-	KDL::Vector n = pose_b_.M * line->getNormal();
+	KDL::Vector n = pose_b_.M * line->getDirection();
 	KDL::Vector d = pose_b_.M * line->getOffset();
 
 	KDL::Vector p_tilde = p - d;
@@ -156,7 +156,7 @@ int TaskGeometricProjection<GeometricPoint, GeometricPlane>::project
 
 	KDL::Vector n = pose_b_.M * plane->getNormal();
 
-	double d = pose_b_.M * plane->getOffset() + KDL::dot(n, pose_b_.p);
+	double d = plane->getOffset() + KDL::dot(n, pose_b_.p);
 
 	e_(0) = KDL::dot(n, p) - d;
 
@@ -184,7 +184,7 @@ int TaskGeometricProjection<GeometricPoint, GeometricBox>::project
 	GeometricBox* box
 )
 {
-
+/*
 	KDL::Vector p__ = pose_a_.M * point->getPoint();
 
 	KDL::Vector p( pose_a_.p.x() + p__(0), 
@@ -205,7 +205,7 @@ int TaskGeometricProjection<GeometricPoint, GeometricBox>::project
 		              + jacobian_a_.getColumn(q_nr).vel.y()
 		              + jacobian_a_.getColumn(q_nr).vel.z();
 	}
-	
+	*/
 	return 0;
 
 }
@@ -223,7 +223,7 @@ int TaskGeometricProjection<GeometricPoint, GeometricCylinder>::project
 	GeometricCylinder* cylinder
 )
 {
-
+/*
 	KDL::Vector p__ = pose_a_.M * point->getPoint();
 
 	KDL::Vector p( pose_a_.p.x() + p__(0), 
@@ -244,7 +244,7 @@ int TaskGeometricProjection<GeometricPoint, GeometricCylinder>::project
 		              + jacobian_a_.getColumn(q_nr).vel.y()
 		              + jacobian_a_.getColumn(q_nr).vel.z();
 	}
-	
+	*/
 	return 0;
 
 }
@@ -262,7 +262,7 @@ int TaskGeometricProjection<GeometricPoint, GeometricSphere>::project
 	GeometricSphere* sphere
 )
 {
-
+/*
 	KDL::Vector p__ = pose_a_.M * point->getPoint();
 
 	KDL::Vector p( pose_a_.p.x() + p__(0), 
@@ -279,7 +279,7 @@ int TaskGeometricProjection<GeometricPoint, GeometricSphere>::project
 		              + jacobian_a_.getColumn(q_nr).vel.y()
 		              + jacobian_a_.getColumn(q_nr).vel.z();
 	}
-	
+	*/
 	return 0;
 
 }

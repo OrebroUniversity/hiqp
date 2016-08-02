@@ -33,7 +33,7 @@
 
 
 // HiQP Includes
-#include <hiqp/task.h>
+#include <hiqp/task_function.h>
 
 // STL Includes
 #include <string>
@@ -59,7 +59,7 @@ namespace hiqp
  *  The type of limitation (pos/vel/acc) is given as a parameter to the task
  *  along with all lower and upper bounds for each joint.
  */	
-class TaskJntLimit : public Task
+class TaskJntLimit : public TaskFunction
 {
 
 public:

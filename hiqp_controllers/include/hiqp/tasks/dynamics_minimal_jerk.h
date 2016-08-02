@@ -17,9 +17,10 @@
 
 
 
+
 /*!
- * \file   task_dynamics.h
- * \Author Marcus A Johansson (marcus.adam.johansson@gmail.com)
+ * \file   dynamics_minimal_jerk.h
+ * \author Marcus A Johansson (marcus.adam.johansson@gmail.com)
  * \date   July, 2016
  * \brief  Brief description of file.
  *
@@ -28,57 +29,53 @@
 
 
 
-#ifndef HIQP_TASK_DYNAMICS_H
-#define HIQP_TASK_DYNAMICS_H
+#ifndef HIQP_DYNAMICS_MINIMAL_JERK_H
+#define HIQP_DYNAMICS_MINIMAL_JERK_H
 
-
-
-// STL Includes
-#include <vector>
-
-// Eigen Includes
-#include <Eigen/Dense>
-
-
+// HiQP Includes
+#include <hiqp/task_dynamics.h>
 
 
 
 namespace hiqp
 {
-	
 
 
 
 
 
 
-class TaskDynamics
+/*!
+ * \class DynamicsFirstOrder
+ * \brief A general first-order task dynamics implementation that enforces an 
+ *        exponential decay of the task function value
+ */	
+class DynamicsMinimalJerk : public TaskDynamics
 {
 public:
 
-	TaskDynamics() {}
-	~TaskDynamics() noexcept {}
+	DynamicsMinimalJerk() {}
 
-	virtual int init(const std::vector<std::string>& parameters) = 0;
+	~DynamicsMinimalJerk() noexcept {}
 
-	virtual int apply
+	int init(const std::vector<std::string>& parameters);
+
+	int apply
 	(
 		const Eigen::VectorXd& e,
 		Eigen::VectorXd& e_dot_star
-	) = 0;
-
-
+	);
 
 private:
 
 	// No copying of this class is allowed !
-	TaskDynamics(const TaskDynamics& other) = delete;
-	TaskDynamics(TaskDynamics&& other) = delete;
-	TaskDynamics& operator=(const TaskDynamics& other) = delete;
-	TaskDynamics& operator=(TaskDynamics&& other) noexcept = delete;
+	DynamicsMinimalJerk(const DynamicsMinimalJerk& other) = delete;
+	DynamicsMinimalJerk(DynamicsMinimalJerk&& other) = delete;
+	DynamicsMinimalJerk& operator=(const DynamicsMinimalJerk& other) = delete;
+	DynamicsMinimalJerk& operator=(DynamicsMinimalJerk&& other) noexcept = delete;
+
 
 };
-
 
 
 

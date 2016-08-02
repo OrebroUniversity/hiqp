@@ -18,7 +18,7 @@
 
 
 /*!
- * \file   geometric_line_segment.h
+ * \file   geometric_line.h
  * \Author Marcus A Johansson (marcus.adam.johansson@gmail.com)
  * \date   July, 2016
  * \brief  Brief description of file.
@@ -28,8 +28,8 @@
 
 
 
-#ifndef HIQP_GEOMETRIC_LINE_SEGMENT_H
-#define HIQP_GEOMETRIC_LINE_SEGMENT_H
+#ifndef HIQP_GEOMETRIC_LINE_H
+#define HIQP_GEOMETRIC_LINE_H
 
 
 
@@ -53,17 +53,16 @@ namespace hiqp
  * \brief 
  * 
  * The parameter interface for this primitive is:
- * line:         [nx, ny, nz,  x,  y,  z, l]
- * line:         [x1, y1, z1, x2, y2, z2]
+ * line:         [nx, ny, nz,  x,  y,  z]
  */  
-class GeometricLineSegment : public GeometricPrimitive
+class GeometricLine : public GeometricPrimitive
 {
 public:
 
 	/*!
      * \brief Constructor
      */
-	GeometricLineSegment
+	GeometricLine
 	(
 		const std::string& name,
 		const std::string& frame_id,
@@ -74,11 +73,10 @@ public:
 	: GeometricPrimitive(name, frame_id, visible, color)
 	{
 		int size = parameters.size();
-		assert(size == 6 || size == 7);
+		assert(size == 6);
 
-		// parameters: ['1', '0', '0', '0', '0.1', '0', 'Inf']"
-		if (size == 7)
-		{
+		//if (size == 7)
+		//{
 			v_(0) = std::stod( parameters.at(0) );
 			v_(1) = std::stod( parameters.at(1) );
 			v_(2) = std::stod( parameters.at(2) );
@@ -89,6 +87,8 @@ public:
 			p_(1) = std::stod( parameters.at(4) );
 			p_(2) = std::stod( parameters.at(5) );
 
+			l_ = -1; // infinitely long line
+/*
 			std::string length = parameters.at(6);
 			if (length.compare("INF")==0 || 
 				length.compare("Inf")==0 || 
@@ -100,6 +100,7 @@ public:
 			{
 				l_ = std::stod( length );
 			}
+			/*
 		}
 		else
 		{
@@ -117,12 +118,7 @@ public:
 			l_ = v_.Norm();
 			v_.Normalize();
 		}
-
-		std::cout << "v_ = " << v_(0) << ", " << v_(1) << ", " << v_(2) << "\n";
-		std::cout << "p_ = " << p_(0) << ", " << p_(1) << ", " << p_(2) << "\n";
-		std::cout << "l_ = " << l_ <<"\n";
-
-		
+		*/
 	}
 
 
@@ -130,7 +126,7 @@ public:
 	/*!
      * \brief Destructor
      */
-	~GeometricLineSegment() noexcept {}
+	~GeometricLine() noexcept {}
 
 	inline const KDL::Vector& getDirection()
 	{ return v_; }
@@ -138,8 +134,7 @@ public:
 	inline const KDL::Vector& getOffset()
 	{ return p_; }
 
-	inline double getLength()
-	{ return l_; }
+	// inline double getLength() { return l_; }
 
 	inline bool isInfinite()
 	{ return (l_ < 0); }
@@ -167,10 +162,10 @@ protected:
 private:
 
 	// No copying of this class is allowed !
-	GeometricLineSegment(const GeometricLineSegment& other) = delete;
-	GeometricLineSegment(GeometricLineSegment&& other) = delete;
-	GeometricLineSegment& operator=(const GeometricLineSegment& other) = delete;
-	GeometricLineSegment& operator=(GeometricLineSegment&& other) noexcept = delete;
+	GeometricLine(const GeometricLine& other) = delete;
+	GeometricLine(GeometricLine&& other) = delete;
+	GeometricLine& operator=(const GeometricLine& other) = delete;
+	GeometricLine& operator=(GeometricLine&& other) noexcept = delete;
 
 
 };

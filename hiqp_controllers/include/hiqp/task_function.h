@@ -241,7 +241,7 @@ namespace hiqp
     {
         apply(kdl_tree, kdl_joint_pos_vel);
         
-        task_behaviour_->apply(e_, e_dot_star_);
+        task_dynamics_->apply(e_, e_dot_star_);
 
         return 0;
     }
@@ -252,7 +252,7 @@ namespace hiqp
 
 
 
-    TaskDynamics*          task_dynamics_; // pointer to the task behaviour
+    TaskDynamics*           task_dynamics_; // pointer to the task behaviour
 
     Visualizer*             visualizer_;
 
