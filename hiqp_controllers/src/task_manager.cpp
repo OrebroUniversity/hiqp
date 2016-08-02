@@ -131,6 +131,8 @@ bool TaskManager::getKinematicControls
 
     solver_->solve(controls);
 
+    geometric_primitive_map_->redrawAllPrimitives();
+
     return true;
 }
 

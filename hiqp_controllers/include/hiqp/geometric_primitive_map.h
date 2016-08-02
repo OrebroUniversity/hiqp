@@ -84,6 +84,8 @@ public:
 	template<typename PrimitiveType>
 	PrimitiveType* getGeometricPrimitive(const std::string& name);
 
+	void redrawAllPrimitives();
+
 
 
 

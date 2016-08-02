@@ -75,11 +75,14 @@ void printChildrenToOstream
 	return;
 }
 
+
+
+
 std::ostream& operator<<
 (
 	std::ostream& os, 
 	const KDL::Tree& kdl_tree
-	)
+)
 {
 	KDL::SegmentMap::const_iterator root_segment = kdl_tree.getRootSegment();
 	os << "nr of joints: " << kdl_tree.getNrOfJoints() << "\n";
@@ -101,6 +104,25 @@ for (auto&& it : segmap)
 return os;
 */
 }
+
+
+
+
+
+
+
+std::ostream& operator<<
+(
+	std::ostream& os, 
+	const KDL::Vector& kdl_vector
+)
+{
+	os << "[" << kdl_vector(0) << ", "
+	          << kdl_vector(1) << ", "
+	          << kdl_vector(2) << "]";
+	return os;
+}
+
 
 
 

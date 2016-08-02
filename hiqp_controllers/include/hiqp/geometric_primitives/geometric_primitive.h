@@ -79,6 +79,9 @@ public:
 	virtual ~GeometricPrimitive() noexcept = 0;
 
 
+	inline void setId(unsigned int id) { id_ = id; }
+	inline unsigned int getId() { return id_; }
+
 	inline std::string getName() { return name_; }
 	inline std::string getFrameId() { return frame_id_; }
 	inline bool isVisible() { return visible_; }
@@ -96,6 +99,8 @@ protected:
 	std::string 	frame_id_;
 
 	bool 			visible_;
+
+	unsigned int    id_;
 
 	double 			r_, g_, b_, a_;
 

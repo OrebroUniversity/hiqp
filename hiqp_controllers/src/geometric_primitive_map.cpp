@@ -84,7 +84,8 @@ int GeometricPrimitiveMap::addGeometricPrimitive
         point_map_.insert( 
             std::pair< std::string, GeometricPoint* >( name, point ) );
 
-        visualizer_->add(point);
+        unsigned int id = visualizer_->add(point);
+        point->setId(id);
 
     }
     else if (type.compare("line") == 0)
@@ -97,7 +98,8 @@ int GeometricPrimitiveMap::addGeometricPrimitive
         line_map_.insert( 
             std::pair< std::string, GeometricLine* >( name, line ) );
 
-        visualizer_->add(line);
+        unsigned int id = visualizer_->add(line);
+        line->setId(id);
         
     }
     else if (type.compare("plane") == 0)
@@ -110,7 +112,8 @@ int GeometricPrimitiveMap::addGeometricPrimitive
         plane_map_.insert( 
             std::pair< std::string, GeometricPlane* > ( name, plane ) );
 
-        visualizer_->add(plane);
+        unsigned int id = visualizer_->add(plane);
+        plane->setId(id);
 
     }
     else if (type.compare("box") == 0)
@@ -123,7 +126,8 @@ int GeometricPrimitiveMap::addGeometricPrimitive
         box_map_.insert( 
             std::pair< std::string, GeometricBox* > ( name, box ) );
 
-        visualizer_->add(box);
+        unsigned int id = visualizer_->add(box);
+        box->setId(id);
     }
     else if (type.compare("cylinder") == 0)
     {
@@ -135,7 +139,8 @@ int GeometricPrimitiveMap::addGeometricPrimitive
         cylinder_map_.insert( 
             std::pair< std::string, GeometricCylinder* > ( name, cylinder ) );
 
-        visualizer_->add(cylinder);
+        unsigned int id = visualizer_->add(cylinder);
+        cylinder->setId(id);
     }
     else if (type.compare("sphere") == 0)
     {
@@ -147,7 +152,8 @@ int GeometricPrimitiveMap::addGeometricPrimitive
         sphere_map_.insert( 
             std::pair< std::string, GeometricSphere* > ( name, sphere ) );
 
-        visualizer_->add(sphere);
+        unsigned int id = visualizer_->add(sphere);
+        sphere->setId(id);
     }
     else
     {
@@ -156,6 +162,82 @@ int GeometricPrimitiveMap::addGeometricPrimitive
 
     return 0;
 
+}
+
+
+
+
+void GeometricPrimitiveMap::redrawAllPrimitives()
+{
+    {
+        std::map< std::string, GeometricPoint* >::iterator it;
+        it = point_map_.begin();
+        while (it != point_map_.end())
+        {
+            visualizer_->update(it->second->getId(), it->second);
+            ++it;
+        }
+    }
+
+
+
+    {
+        std::map< std::string, GeometricLine* >::iterator it;
+        it = line_map_.begin();
+        while (it != line_map_.end())
+        {
+            visualizer_->update(it->second->getId(), it->second);
+            ++it;
+        }
+    }
+
+
+
+    {
+        std::map< std::string, GeometricPlane* >::iterator it;
+        it = plane_map_.begin();
+        while (it != plane_map_.end())
+        {
+            visualizer_->update(it->second->getId(), it->second);
+            ++it;
+        }
+    }
+
+
+
+    {
+        std::map< std::string, GeometricBox* >::iterator it;
+        it = box_map_.begin();
+        while (it != box_map_.end())
+        {
+            visualizer_->update(it->second->getId(), it->second);
+            ++it;
+        }
+    }
+
+
+
+    {
+        std::map< std::string, GeometricCylinder* >::iterator it;
+        it = cylinder_map_.begin();
+        while (it != cylinder_map_.end())
+        {
+            visualizer_->update(it->second->getId(), it->second);
+            ++it;
+        }
+    }
+
+
+
+    {
+        std::map< std::string, GeometricSphere* >::iterator it;
+        it = sphere_map_.begin();
+        while (it != sphere_map_.end())
+        {
+            visualizer_->update(it->second->getId(), it->second);
+            ++it;
+        }
+    }
 }
 
 

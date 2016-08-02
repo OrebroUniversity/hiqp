@@ -35,6 +35,7 @@
 #include <iostream>
 
 // Orocos KDL Includes
+#include <kdl/frames.hpp>
 #include <kdl/tree.hpp>
 #include <kdl/framevel.hpp>
 #include <kdl/jntarray.hpp>
@@ -52,6 +53,7 @@
 namespace hiqp
 {
 
+std::ostream& operator<<(std::ostream& os, const KDL::Vector& kdl_vector);
 std::ostream& operator<<(std::ostream& os, const KDL::Tree& kdl_tree);
 std::ostream& operator<<(std::ostream& os, const KDL::FrameVel& kdl_frame_vel);
 std::ostream& operator<<(std::ostream& os, const KDL::JntArrayVel& kdl_joints_vel);

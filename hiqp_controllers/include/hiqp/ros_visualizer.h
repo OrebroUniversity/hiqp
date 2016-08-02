@@ -94,6 +94,8 @@ private:
 	int apply(int id, GeometricCylinder* cylinder, int action);
 	int apply(int id, GeometricSphere* sphere, int action);
 
+	enum {ACTION_ADD = 0, ACTION_MODIFY = 1};
+
 	const std::string 					kNamespace = "/yumi";
 	const double 						kInfiniteLength = 10;
 	const double 						kPointRadius    = 0.003;

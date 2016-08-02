@@ -88,10 +88,10 @@ int ROSVisualizer::apply
 	marker.header.frame_id = "/" + point->getFrameId();
     marker.header.stamp = ros::Time::now();
     marker.ns = kNamespace;
-    if (action == visualization_msgs::Marker::ADD)  marker.id = next_id_;
-    else                                            marker.id = id;
+    if (action == ACTION_ADD)  marker.id = next_id_;
+    else                       marker.id = id;
     marker.type = visualization_msgs::Marker::SPHERE;
-    marker.action = action; 
+    marker.action = visualization_msgs::Marker::ADD; 
 
     marker.pose.position.x = point->getX();
     marker.pose.position.y = point->getY();
@@ -115,7 +115,7 @@ int ROSVisualizer::apply
 
     marker_pub_.publish(marker);
 
-    if (action == visualization_msgs::Marker::ADD)
+    if (action == ACTION_ADD)
     {
     	next_id_++;
     	return next_id_-1;
@@ -142,10 +142,10 @@ int ROSVisualizer::apply
 	marker.header.frame_id = "/" + line->getFrameId();
     marker.header.stamp = ros::Time::now();
     marker.ns = kNamespace;
-    if (action == visualization_msgs::Marker::ADD)  marker.id = next_id_;
-    else                                            marker.id = id;
+    if (action == ACTION_ADD)  marker.id = next_id_;
+    else                       marker.id = id;
     marker.type = visualization_msgs::Marker::CYLINDER;
-    marker.action = action; 
+    marker.action = visualization_msgs::Marker::ADD; 
 
     double length = kInfiniteLength;
 
@@ -178,7 +178,7 @@ int ROSVisualizer::apply
 
     marker_pub_.publish(marker);
 
-    if (action == visualization_msgs::Marker::ADD)
+    if (action == ACTION_ADD)
     {
     	next_id_++;
     	return next_id_-1;
@@ -205,10 +205,10 @@ int ROSVisualizer::apply
 	marker.header.frame_id = "/" + plane->getFrameId();
     marker.header.stamp = ros::Time::now();
     marker.ns = kNamespace;
-    if (action == visualization_msgs::Marker::ADD)  marker.id = next_id_;
-    else                                            marker.id = id;
+    if (action == ACTION_ADD)  marker.id = next_id_;
+    else                       marker.id = id;
     marker.type = visualization_msgs::Marker::CYLINDER;
-    marker.action = action; 
+    marker.action = visualization_msgs::Marker::ADD; 
 
     Eigen::Vector3d v = plane->getNormalEigen();
     Eigen::Vector3d p = plane->getOffset() * v;
@@ -239,7 +239,7 @@ int ROSVisualizer::apply
 
     marker_pub_.publish(marker);
 
-    if (action == visualization_msgs::Marker::ADD)
+    if (action == ACTION_ADD)
     {
     	next_id_++;
     	return next_id_-1;
@@ -272,10 +272,10 @@ int ROSVisualizer::apply
 	marker.header.frame_id = "/" + box->getFrameId();
     marker.header.stamp = ros::Time::now();
     marker.ns = kNamespace;
-    if (action == visualization_msgs::Marker::ADD)  marker.id = next_id_;
-    else                                            marker.id = id;
+    if (action == ACTION_ADD)  marker.id = next_id_;
+    else                       marker.id = id;
     marker.type = visualization_msgs::Marker::CUBE;
-    marker.action = action; 
+    marker.action = visualization_msgs::Marker::ADD; 
 
 
 
@@ -335,7 +335,7 @@ int ROSVisualizer::apply
     apply(0, line, visualization_msgs::Marker::ADD);
 */
 
-    if (action == visualization_msgs::Marker::ADD)
+    if (action == ACTION_ADD)
     {
     	next_id_++;
     	return next_id_-1;
@@ -362,10 +362,10 @@ int ROSVisualizer::apply
 	marker.header.frame_id = "/" + cylinder->getFrameId();
     marker.header.stamp = ros::Time::now();
     marker.ns = kNamespace;
-    if (action == visualization_msgs::Marker::ADD)  marker.id = next_id_;
-    else                                            marker.id = id;
+    if (action == ACTION_ADD)  marker.id = next_id_;
+    else                       marker.id = id;
     marker.type = visualization_msgs::Marker::CYLINDER;
-    marker.action = action; 
+    marker.action = visualization_msgs::Marker::ADD; 
 
     double height = (cylinder->isInfinite() ? kInfiniteLength 
                                             : cylinder->getHeight());
@@ -399,7 +399,7 @@ int ROSVisualizer::apply
 
     marker_pub_.publish(marker);
 
-    if (action == visualization_msgs::Marker::ADD)
+    if (action == ACTION_ADD)
     {
     	next_id_++;
     	return next_id_-1;
@@ -426,10 +426,10 @@ int ROSVisualizer::apply
 	marker.header.frame_id = "/" + sphere->getFrameId();
     marker.header.stamp = ros::Time::now();
     marker.ns = kNamespace;
-    if (action == visualization_msgs::Marker::ADD)  marker.id = next_id_;
-    else                                            marker.id = id;
+    if (action == ACTION_ADD)  marker.id = next_id_;
+    else                       marker.id = id;
     marker.type = visualization_msgs::Marker::SPHERE;
-    marker.action = action; 
+    marker.action = visualization_msgs::Marker::ADD; 
 
     marker.pose.position.x = sphere->getX();
     marker.pose.position.y = sphere->getY();
@@ -453,7 +453,7 @@ int ROSVisualizer::apply
 
     marker_pub_.publish(marker);
 
-    if (action == visualization_msgs::Marker::ADD)
+    if (action == ACTION_ADD)
     {
     	next_id_++;
     	return next_id_-1;
@@ -479,7 +479,7 @@ int ROSVisualizer::add
     GeometricPoint* point
 )
 {
-	return apply(0, point, visualization_msgs::Marker::ADD);
+	return apply(0, point, ACTION_ADD);
 }
 
 
@@ -491,7 +491,7 @@ int ROSVisualizer::add
     GeometricLine* line
 )
 {
-	return apply(0, line, visualization_msgs::Marker::ADD);
+	return apply(0, line, ACTION_ADD);
 }
 
 
@@ -503,7 +503,7 @@ int ROSVisualizer::add
     GeometricPlane* plane
 )
 {
-	return apply(0, plane, visualization_msgs::Marker::ADD);
+	return apply(0, plane, ACTION_ADD);
 }
 
 
@@ -515,7 +515,7 @@ int ROSVisualizer::add
     GeometricBox* box
 )
 {
-	return apply(0, box, visualization_msgs::Marker::ADD);
+	return apply(0, box, ACTION_ADD);
 }
 
 
@@ -527,7 +527,7 @@ int ROSVisualizer::add
     GeometricCylinder* cylinder
 )
 {
-	return apply(0, cylinder, visualization_msgs::Marker::ADD);
+	return apply(0, cylinder, ACTION_ADD);
 }
 
 
@@ -539,7 +539,7 @@ int ROSVisualizer::add
     GeometricSphere* sphere
 )
 {
-	return apply(0, sphere, visualization_msgs::Marker::ADD);
+	return apply(0, sphere, ACTION_ADD);
 }
 
 
@@ -558,7 +558,7 @@ void ROSVisualizer::update
 	GeometricPoint* point
 )
 {
-	apply(id, point, visualization_msgs::Marker::MODIFY);
+	apply(id, point, ACTION_MODIFY);
 }
 
 
@@ -571,7 +571,7 @@ void ROSVisualizer::update
 	GeometricLine* line
 )
 {
-	apply(id, line, visualization_msgs::Marker::MODIFY);
+	apply(id, line, ACTION_MODIFY);
 }
 
 
@@ -584,7 +584,7 @@ void ROSVisualizer::update
 	GeometricPlane* plane
 )
 {
-	apply(id, plane, visualization_msgs::Marker::MODIFY);
+	apply(id, plane, ACTION_MODIFY);
 }
 
 
@@ -597,7 +597,7 @@ void ROSVisualizer::update
 	GeometricBox* box
 )
 {
-	apply(id, box, visualization_msgs::Marker::MODIFY);
+	apply(id, box, ACTION_MODIFY);
 }
 
 
@@ -610,7 +610,7 @@ void ROSVisualizer::update
 	GeometricCylinder* cylinder
 )
 {
-	apply(id, cylinder, visualization_msgs::Marker::MODIFY);
+	apply(id, cylinder, ACTION_MODIFY);
 }
 
 
@@ -623,7 +623,7 @@ void ROSVisualizer::update
 	GeometricSphere* sphere
 )
 {
-	apply(id, sphere, visualization_msgs::Marker::MODIFY);
+	apply(id, sphere, ACTION_MODIFY);
 }
 
 
