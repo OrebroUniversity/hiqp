@@ -40,6 +40,23 @@ namespace hiqp {
 
 
 
+void TaskFactory::init
+(
+    GeometricPrimitiveMap* geometric_primitive_map,
+    Visualizer* visualizer,
+    unsigned int num_controls
+)
+{ 
+    geometric_primitive_map_ = geometric_primitive_map; 
+    visualizer_ = visualizer;
+    num_controls_ = num_controls;
+}
+
+
+
+
+
+
 TaskFunction* TaskFactory::buildTaskFunction
 (
 	const std::string& name,
@@ -56,7 +73,12 @@ TaskFunction* TaskFactory::buildTaskFunction
 	if (type.compare("TaskGeometricProjection") == 0)
     {
         if (parameters.at(0).compare("point") == 0 && 
-            parameters.at(1).compare("plane") == 0)
+            parameters.at(1).compare("point") == 0)
+        {
+            function = new TaskGeometricProjection<GeometricPoint, GeometricPoint>();
+        }
+        else if (parameters.at(0).compare("point") == 0 && 
+                 parameters.at(1).compare("plane") == 0)
         {
             function = new TaskGeometricProjection<GeometricPoint, GeometricPlane>();
         }

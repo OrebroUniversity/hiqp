@@ -54,8 +54,21 @@ namespace hiqp
 
 
 
+// For debugging purposes
+std::ostream& operator<<(std::ostream& os, const HiQPStage& stage)
+{
+	os << "rows:        " << stage.nRows << "\n"
+	   << "e_dot_star_: " << stage.e_dot_star_ << "\n"
+	   << "J_:          " << stage.J_ << "\n"
+	   << "signs_:      " << "[";
 
+	for (int i : stage.constraint_signs_)
+		os << i << ", ";
 
+	os << "]\n";
+	
+	return os;
+}
 
 
 const double kDampingFactor = 1e-5; // dont set to zero!

@@ -68,8 +68,6 @@ struct HiQPStage
 
 
 
-
-
 class HiQPSolver
 {
 

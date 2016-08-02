@@ -76,8 +76,7 @@ TaskManager::TaskManager
 
     geometric_primitive_map_ = new GeometricPrimitiveMap(visualizer_);
 
-    task_factory_ = new TaskFactory(
-        geometric_primitive_map_, visualizer_, num_controls_);
+    task_factory_ = new TaskFactory();
 }
 
 
@@ -88,6 +87,18 @@ TaskManager::~TaskManager() noexcept
     delete solver_;
     delete geometric_primitive_map_;
     delete task_factory_;
+}
+
+
+
+
+void TaskManager::init
+(
+    unsigned int num_controls
+)
+{ 
+    num_controls_ = num_controls; 
+    task_factory_->init(geometric_primitive_map_, visualizer_, num_controls_);
 }
 
 
@@ -119,8 +130,6 @@ bool TaskManager::getKinematicControls
     }
 
     solver_->solve(controls);
-
-    //task_visualizer_->redraw();
 
     return true;
 }
@@ -176,7 +185,9 @@ std::size_t TaskManager::addTask
     {
         dynamics = task_factory_->buildTaskDynamics(behaviour_parameters);
         if (dynamics == nullptr)
+        {
             return -2;
+        }
     }
     else
     {

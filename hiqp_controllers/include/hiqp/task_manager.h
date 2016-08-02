@@ -118,8 +118,7 @@ public:
 
 
 
-     inline void setNumControls(unsigned int num_controls)
-     { num_controls_ = num_controls; }
+     void init(unsigned int num_controls);
 
      //inline TaskVisualizer* getTaskVisualizer()
      //{ return task_visualizer_; }

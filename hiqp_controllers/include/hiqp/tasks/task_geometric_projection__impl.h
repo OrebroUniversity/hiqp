@@ -64,7 +64,7 @@ template<typename PrimitiveA, typename PrimitiveB>
 int TaskGeometricProjection<PrimitiveA, PrimitiveB>::init
 (
     const std::vector<std::string>& parameters,
-    unsigned int numControls
+    unsigned int num_controls
 )
 {
 
@@ -80,7 +80,7 @@ int TaskGeometricProjection<PrimitiveA, PrimitiveB>::init
 		return -2;
 
 	e_.resize(1);
-	J_.resize(1, numControls);
+	J_.resize(1, num_controls);
 	e_dot_star_.resize(1);
 	performance_measures_.resize(1);
 

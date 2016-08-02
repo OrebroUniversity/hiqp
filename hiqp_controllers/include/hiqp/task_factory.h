@@ -78,16 +78,14 @@ public:
      * \brief Constructor
      * Constructs my awesome controller
      */
-	TaskFactory
+    TaskFactory() {}
+
+	void init
 	(
 		GeometricPrimitiveMap* geometric_primitive_map,
 		Visualizer* visualizer,
 		unsigned int num_controls
-	) 
-	: geometric_primitive_map_(geometric_primitive_map), 
-	  visualizer_(visualizer),
-	  num_controls_(num_controls)
-	{}
+	);
 
 
 

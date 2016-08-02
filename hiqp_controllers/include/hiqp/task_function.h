@@ -242,7 +242,7 @@ namespace hiqp
     )
     {
         apply(kdl_tree, kdl_joint_pos_vel);
-        
+
         task_dynamics_->apply(e_, e_dot_star_);
 
         return 0;

@@ -68,6 +68,7 @@ int TaskGeometricProjection<GeometricPoint, GeometricPoint>::project
 	GeometricPoint* point2
 )
 {
+	std::cout << "I'm here!\n";
 
 	KDL::Vector p1__ = pose_a_.M * point1->getPointKDL();
 
@@ -87,9 +88,9 @@ int TaskGeometricProjection<GeometricPoint, GeometricPoint>::project
 
 	for (int q_nr = 0; q_nr < jacobian_a_.columns(); ++q_nr)
 	{
-		J_(0, q_nr) =   jacobian_a_.getColumn(q_nr).vel.x()
-		              + jacobian_a_.getColumn(q_nr).vel.y()
-		              + jacobian_a_.getColumn(q_nr).vel.z();
+		J_(0, q_nr) = 0;//  jacobian_a_.getColumn(q_nr).vel.x()
+		              //+ jacobian_a_.getColumn(q_nr).vel.y()
+		              //+ jacobian_a_.getColumn(q_nr).vel.z();
 	}
 	
 	return 0;
