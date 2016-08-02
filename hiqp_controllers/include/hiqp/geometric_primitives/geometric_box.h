@@ -38,7 +38,7 @@
 
 #include <kdl/frames.hpp>
 
-
+#include <Eigen/Dense>
 
 
 
@@ -77,29 +77,35 @@ public:
 		int size = parameters.size();
 		assert(size == 10);
 
-		c_(0) = std::stod( parameters.at(0) );
-		c_(1) = std::stod( parameters.at(1) );
-		c_(2) = std::stod( parameters.at(2) );
+		kdl_c_(0) = std::stod( parameters.at(0) );
+		kdl_c_(1) = std::stod( parameters.at(1) );
+		kdl_c_(2) = std::stod( parameters.at(2) );
 
-		dim_(0) = std::stod( parameters.at(3) );
-		dim_(1) = std::stod( parameters.at(4) );
-		dim_(2) = std::stod( parameters.at(5) );
+		kdl_dim_(0) = std::stod( parameters.at(3) );
+		kdl_dim_(1) = std::stod( parameters.at(4) );
+		kdl_dim_(2) = std::stod( parameters.at(5) );
 
-		n_up_(0) = std::stod( parameters.at(6) );
-		n_up_(1) = std::stod( parameters.at(7) );
-		n_up_(2) = std::stod( parameters.at(8) );
-		n_up_.Normalize();
+		kdl_n_up_(0) = std::stod( parameters.at(6) );
+		kdl_n_up_(1) = std::stod( parameters.at(7) );
+		kdl_n_up_(2) = std::stod( parameters.at(8) );
+		kdl_n_up_.Normalize();
 		
 		a_ = std::stod( parameters.at(9) );
 		
 
 		// Calculate the normal of the left side of the box
 
-		KDL::Vector left = KDL::Vector(0, 0, 1) * n_up_;
+		KDL::Vector left = KDL::Vector(0, 0, 1) * kdl_n_up_;
 		
-		KDL::Vector back = n_up_ * left;
+		KDL::Vector back = kdl_n_up_ * left;
 
-		n_left_ = std::cos(a_) * left + std::sin(a_) * back;
+		kdl_n_left_ = std::cos(a_) * left + std::sin(a_) * back;
+
+
+		eigen_c_ << kdl_c_(0), kdl_c_(1), kdl_c_(2);
+		eigen_dim_ << kdl_dim_(0), kdl_dim_(1), kdl_dim_(2);
+		eigen_n_up_ << kdl_n_up_(0), kdl_n_up_(1), kdl_n_up_(2);
+		eigen_n_left_ << kdl_n_left_(0), kdl_n_left_(1), kdl_n_left_(2);
 	}
 
 
@@ -109,32 +115,36 @@ public:
      */
 	~GeometricBox() noexcept {}
 
-	inline const KDL::Vector& getCentrum() { return c_; }
+	inline const KDL::Vector&     getCentrumKDL() { return kdl_c_; }
+	inline const Eigen::Vector3d& getCentrumEigen() { return eigen_c_; }
 
-	inline const KDL::Vector& getDimensions() { return dim_; }
+	inline const KDL::Vector&     getDimensionsKDL() { return kdl_dim_; }
+	inline const Eigen::Vector3d& getDimensionsEigen() { return eigen_dim_; }
 
-	inline const KDL::Vector& getNormalUp() { return n_up_; }
+	inline const KDL::Vector&     getNormalUpKDL() { return kdl_n_up_; }
+	inline const Eigen::Vector3d& getNormalUpEigen() { return eigen_n_up_; }
 
-	inline const KDL::Vector& getNormalLeft() { return n_left_; }
+	inline const KDL::Vector&     getNormalLeftKDL() { return kdl_n_left_; }
+	inline const Eigen::Vector3d& getNormalLeftEigen() { return eigen_n_left_; }
 
 	inline double getRotationAngle() { return a_; }
 
 
-	inline double getCenterX() { return c_(0); }
-	inline double getCenterY() { return c_(1); }
-	inline double getCenterZ() { return c_(2); }
+	inline double getCenterX() { return kdl_c_(0); }
+	inline double getCenterY() { return kdl_c_(1); }
+	inline double getCenterZ() { return kdl_c_(2); }
 
-	inline double getDimX() { return dim_(0); }
-	inline double getDimY() { return dim_(1); }
-	inline double getDimZ() { return dim_(2); }
+	inline double getDimX() { return kdl_dim_(0); }
+	inline double getDimY() { return kdl_dim_(1); }
+	inline double getDimZ() { return kdl_dim_(2); }
 
-	inline double getNormalUpX() { return n_up_(0); }
-	inline double getNormalUpY() { return n_up_(1); }
-	inline double getNormalUpZ() { return n_up_(2); }
+	inline double getNormalUpX() { return kdl_n_up_(0); }
+	inline double getNormalUpY() { return kdl_n_up_(1); }
+	inline double getNormalUpZ() { return kdl_n_up_(2); }
 
-	inline double getNormalLeftX() { return n_left_(0); }
-	inline double getNormalLeftY() { return n_left_(1); }
-	inline double getNormalLeftZ() { return n_left_(2); }
+	inline double getNormalLeftX() { return kdl_n_left_(0); }
+	inline double getNormalLeftY() { return kdl_n_left_(1); }
+	inline double getNormalLeftZ() { return kdl_n_left_(2); }
 
 	
 
@@ -142,17 +152,21 @@ public:
 
 protected:
 
-	KDL::Vector   c_; // the geometrical cetrum of the box
+	KDL::Vector      kdl_c_; // the geometrical cetrum of the box
+	Eigen::Vector3d  eigen_c_;
 
-	KDL::Vector   dim_; // the dimensions of the box
-
-
-	KDL::Vector   n_up_; // the normal vector of the top plane of the box
-
-	KDL::Vector   n_left_; // the normal vector of the left plane of the box
+	KDL::Vector      kdl_dim_; // the dimensions of the box
+	Eigen::Vector3d  eigen_dim_;
 
 
-	double        a_; // the angle of rotation around the normal-up-vector
+	KDL::Vector      kdl_n_up_; // the normal vector of the top plane of the box
+	Eigen::Vector3d  eigen_n_up_;
+
+	KDL::Vector      kdl_n_left_; // the normal vector of the left plane of the box
+	Eigen::Vector3d  eigen_n_left_;
+
+
+	double           a_; // the angle of rotation around the normal-up-vector
 
 
 

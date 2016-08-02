@@ -37,7 +37,7 @@
 
 #include <kdl/frames.hpp>
 
-
+#include <Eigen/Dense>
 
 
 
@@ -69,10 +69,12 @@ public:
 	: GeometricPrimitive(name, frame_id, visible, color)
 	{
 		assert(parameters.size() == 4);
-		p_(0) = std::stod( parameters.at(0) );
-		p_(1) = std::stod( parameters.at(1) );
-		p_(2) = std::stod( parameters.at(2) );
+		kdl_p_(0) = std::stod( parameters.at(0) );
+		kdl_p_(1) = std::stod( parameters.at(1) );
+		kdl_p_(2) = std::stod( parameters.at(2) );
 		radius_ = std::stod( parameters.at(3) );
+
+		eigen_p_ << kdl_p_(0), kdl_p_(1), kdl_p_(2);
 	}
 
 
@@ -84,24 +86,24 @@ public:
 
 
 
-	inline const KDL::Vector& getPoint()
-	{ return p_; }
+	inline const KDL::Vector&     getCentrumKDL() { return kdl_p_; }
+	inline const Eigen::Vector3d& getCentrumEigen() { return eigen_p_; }
 
-	inline double getRadius()
-	{ return radius_; }
+	inline double getRadius() { return radius_; }
 
-	inline double getX() { return p_(0); }
-	inline double getY() { return p_(1); }
-	inline double getZ() { return p_(2); }
+	inline double getX() { return kdl_p_(0); }
+	inline double getY() { return kdl_p_(1); }
+	inline double getZ() { return kdl_p_(2); }
 
 
 
 
 protected:
 
-	KDL::Vector    p_; // the offset of the sphere
+	KDL::Vector      kdl_p_; // the offset of the sphere
+	Eigen::Vector3d  eigen_p_;
 
-	double         radius_; // the radius of the sphere
+	double           radius_; // the radius of the sphere
 
 
 

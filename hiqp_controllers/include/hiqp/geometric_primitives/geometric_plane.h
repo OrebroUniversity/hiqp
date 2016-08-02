@@ -72,11 +72,13 @@ public:
 	{
 		assert(parameters.size() == 4);
 
-		n_(0) = std::stod( parameters.at(0) );
-		n_(1) = std::stod( parameters.at(1) );
-		n_(2) = std::stod( parameters.at(2) );
+		kdl_n_(0) = std::stod( parameters.at(0) );
+		kdl_n_(1) = std::stod( parameters.at(1) );
+		kdl_n_(2) = std::stod( parameters.at(2) );
 
-		n_.Normalize();
+		kdl_n_.Normalize();
+
+		eigen_n_ << kdl_n_(0), kdl_n_(1), kdl_n_(2);
 
 		d_ = std::stod( parameters.at(3) );
 	}
@@ -91,20 +93,21 @@ public:
 
 
 
-	inline const KDL::Vector& getNormal()
-	{ return n_; }
+	inline const KDL::Vector&      getNormalKDL()    { return kdl_n_; }
 
-	inline double getOffset()
-	{ return d_; }
+	inline const Eigen::Vector3d&  getNormalEigen()  { return eigen_n_; }
 
-	inline double getNormalX() { return n_(0); }
-	inline double getNormalY() { return n_(1); }
-	inline double getNormalZ() { return n_(2); }
+	inline double getOffset() { return d_; }
+
+	inline double getNormalX() { return kdl_n_(0); }
+	inline double getNormalY() { return kdl_n_(1); }
+	inline double getNormalZ() { return kdl_n_(2); }
 
 
 protected:
 
-	KDL::Vector   n_; // the normal vector or the plane
+	KDL::Vector      kdl_n_; // the normal vector or the plane
+	Eigen::Vector3d  eigen_n_;
 	
 	double 		  d_; // the offset in the normal direction
 

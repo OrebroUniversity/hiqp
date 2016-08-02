@@ -69,13 +69,13 @@ int TaskGeometricProjection<GeometricPoint, GeometricPoint>::project
 )
 {
 
-	KDL::Vector p1__ = pose_a_.M * point1->getPoint();
+	KDL::Vector p1__ = pose_a_.M * point1->getPointKDL();
 
 	KDL::Vector p1( pose_a_.p.x() + p1__(0), 
 		            pose_a_.p.y() + p1__(1), 
 		            pose_a_.p.z() + p1__(2) );
 
-	KDL::Vector p2__ = pose_b_.M * point2->getPoint();
+	KDL::Vector p2__ = pose_b_.M * point2->getPointKDL();
 
 	KDL::Vector p2( pose_b_.p.x() + p2__(0), 
 		            pose_b_.p.y() + p2__(1), 
@@ -108,14 +108,14 @@ int TaskGeometricProjection<GeometricPoint, GeometricLine>::project
 )
 {
 
-	KDL::Vector p__ = pose_a_.M * point->getPoint();
+	KDL::Vector p__ = pose_a_.M * point->getPointKDL();
 
 	KDL::Vector p( pose_a_.p.x() + p__(0), 
 		           pose_a_.p.y() + p__(1), 
 		           pose_a_.p.z() + p__(2) );
 
-	KDL::Vector n = pose_b_.M * line->getDirection();
-	KDL::Vector d = pose_b_.M * line->getOffset();
+	KDL::Vector n = pose_b_.M * line->getDirectionKDL();
+	KDL::Vector d = pose_b_.M * line->getOffsetKDL();
 
 	KDL::Vector p_tilde = p - d;
 
@@ -148,13 +148,13 @@ int TaskGeometricProjection<GeometricPoint, GeometricPlane>::project
 )
 {
 
-	KDL::Vector p__ = pose_a_.M * point->getPoint();
+	KDL::Vector p__ = pose_a_.M * point->getPointKDL();
 
 	KDL::Vector p( pose_a_.p.x() + p__(0), 
 		           pose_a_.p.y() + p__(1), 
 		           pose_a_.p.z() + p__(2) );
 
-	KDL::Vector n = pose_b_.M * plane->getNormal();
+	KDL::Vector n = pose_b_.M * plane->getNormalKDL();
 
 	double d = plane->getOffset() + KDL::dot(n, pose_b_.p);
 

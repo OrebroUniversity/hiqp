@@ -149,24 +149,16 @@ int ROSVisualizer::apply
 
     double length = kInfiniteLength;
 
-    double v1 = line->getDirectionX();
-    double v2 = line->getDirectionY();
-    double v3 = line->getDirectionZ();
-
-    double p1 = line->getOffsetX() + v1 * length/2;
-    double p2 = line->getOffsetY() + v2 * length/2;
-    double p3 = line->getOffsetZ() + v3 * length/2;
-
-    Eigen::Vector3d v;
-    v << v1, v2, v3;
+    Eigen::Vector3d v = line->getDirectionEigen();
+    Eigen::Vector3d p = line->getOffsetEigen() + v * length/2;
 
     // Quaternion that aligns the z-axis with the line direction
     Eigen::Quaterniond q;
     q.setFromTwoVectors(Eigen::Vector3d::UnitZ(), v);
 
-    marker.pose.position.x = p1;
-    marker.pose.position.y = p2;
-    marker.pose.position.z = p3;
+    marker.pose.position.x = p(0);
+    marker.pose.position.y = p(1);
+    marker.pose.position.z = p(2);
 
     marker.pose.orientation.x = q.x();
     marker.pose.orientation.y = q.y();
@@ -183,17 +175,6 @@ int ROSVisualizer::apply
     marker.color.a = line->getAlphaComponent();
 
     marker.lifetime = ros::Duration(0);
-
-    // std::cout << "Marker line: x = " << marker.pose.position.x << "\n"
-    //           << "             y = " << marker.pose.position.y << "\n"
-    //           << "             z = " << marker.pose.position.z << "\n"
-    //           << "         rot x = " << marker.pose.orientation.x << "\n"
-    //           << "         rot y = " << marker.pose.orientation.y << "\n"
-    //           << "         rot z = " << marker.pose.orientation.z << "\n"
-    //           << "         rot w = " << marker.pose.orientation.w << "\n"
-    //           << "         sca x = " << marker.scale.x << "\n"
-    //           << "         sca y = " << marker.scale.y << "\n"
-    //           << "         sca z = " << marker.scale.z << "\n";
 
     marker_pub_.publish(marker);
 
@@ -229,24 +210,16 @@ int ROSVisualizer::apply
     marker.type = visualization_msgs::Marker::CYLINDER;
     marker.action = action; 
 
-    double v1 = plane->getNormalX();
-    double v2 = plane->getNormalY();
-    double v3 = plane->getNormalZ();
-
-    double p1 = plane->getOffset() * v1;
-    double p2 = plane->getOffset() * v2;
-    double p3 = plane->getOffset() * v3;
-
-    Eigen::Vector3d v;
-    v << v1, v2, v3;
+    Eigen::Vector3d v = plane->getNormalEigen();
+    Eigen::Vector3d p = plane->getOffset() * v;
 
     // Quaternion that aligns the z-axis with the line direction
     Eigen::Quaterniond q;
     q.setFromTwoVectors(Eigen::Vector3d::UnitZ(), v);
 
-    marker.pose.position.x = p1;
-    marker.pose.position.y = p2;
-    marker.pose.position.z = p3;
+    marker.pose.position.x = p(0);
+    marker.pose.position.y = p(1);
+    marker.pose.position.z = p(2);
 
     marker.pose.orientation.x = q.x();
     marker.pose.orientation.y = q.y();
@@ -304,37 +277,18 @@ int ROSVisualizer::apply
     marker.type = visualization_msgs::Marker::CUBE;
     marker.action = action; 
 
-    double p1 = box->getCenterX();
-    double p2 = box->getCenterY();
-    double p3 = box->getCenterZ();
-
-    double nu1 = box->getNormalUpX();
-    double nu2 = box->getNormalUpY();
-    double nu3 = box->getNormalUpZ();
-
-    double nl1 = box->getNormalLeftX();
-    double nl2 = box->getNormalLeftY();
-    double nl3 = box->getNormalLeftZ();
-    
-
-    marker.pose.position.x = box->getCenterX();
-    marker.pose.position.y = box->getCenterY();
-    marker.pose.position.z = box->getCenterZ();
 
 
 
-
-    Eigen::Vector3d nu;
-    nu << nu1, nu2, nu3;
-
-    Eigen::Vector3d nl;
-    nl << nl1, nl2, nl3;
+    Eigen::Vector3d p = box->getCentrumEigen();
+    Eigen::Vector3d nu = box->getNormalUpEigen();
+    Eigen::Vector3d nl = box->getNormalLeftEigen();
 
     // Quaternion that aligns the x-axis with the normal of the upper side
     // projected on the x-y plane
     Eigen::Quaterniond q1;
     Eigen::Vector3d nu_xy;
-    nu_xy << nu1, nu2, 0;
+    nu_xy << nu(0), nu(1), 0;
     q1.setFromTwoVectors(Eigen::Vector3d::UnitX(), nu_xy);
 
     // Quaternion that aligns the z-axis with the normal of the upper side
@@ -349,6 +303,11 @@ int ROSVisualizer::apply
     Eigen::Quaterniond q = q1 * q2 * q3;
 
 
+
+
+    marker.pose.position.x = p(0);
+    marker.pose.position.y = p(1);
+    marker.pose.position.z = p(2);
 
     marker.pose.orientation.x = q.x();
     marker.pose.orientation.y = q.y();
@@ -368,7 +327,6 @@ int ROSVisualizer::apply
 
     marker_pub_.publish(marker);
 
-    std::cout << "here\n";
 /*
     // For debugging purposes
     GeometricLine* line = new GeometricLine(
@@ -376,9 +334,6 @@ int ROSVisualizer::apply
         {dtostr(p1),dtostr(p2),dtostr(p3),dtostr(nl1),dtostr(nl2),dtostr(nl3)});
     apply(0, line, visualization_msgs::Marker::ADD);
 */
-std::cout << "and here\n";
-
-
 
     if (action == visualization_msgs::Marker::ADD)
     {
@@ -415,24 +370,16 @@ int ROSVisualizer::apply
     double height = (cylinder->isInfinite() ? kInfiniteLength 
                                             : cylinder->getHeight());
 
-    double v1 = cylinder->getDirectionX();
-    double v2 = cylinder->getDirectionY();
-    double v3 = cylinder->getDirectionZ();
-
-    double p1 = cylinder->getOffsetX() + v1 * height/2;
-    double p2 = cylinder->getOffsetY() + v2 * height/2;
-    double p3 = cylinder->getOffsetZ() + v3 * height/2;
-
-    Eigen::Vector3d v;
-    v << v1, v2, v3;
+    Eigen::Vector3d v = cylinder->getDirectionEigen();
+    Eigen::Vector3d p = cylinder->getOffsetEigen() + v*height/2;
 
     // Quaternion that aligns the z-axis with the line direction
     Eigen::Quaterniond q;
     q.setFromTwoVectors(Eigen::Vector3d::UnitZ(), v);
 
-    marker.pose.position.x = p1;
-    marker.pose.position.y = p2;
-    marker.pose.position.z = p3;
+    marker.pose.position.x = p(0);
+    marker.pose.position.y = p(1);
+    marker.pose.position.z = p(2);
 
     marker.pose.orientation.x = q.x();
     marker.pose.orientation.y = q.y();

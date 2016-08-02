@@ -37,6 +37,7 @@
 
 #include <kdl/frames.hpp>
 
+#include <Eigen/Dense>
 
 
 
@@ -69,9 +70,12 @@ public:
 	: GeometricPrimitive(name, frame_id, visible, color)
 	{
 		assert(parameters.size() == 3);
-		p_(0) = std::stod( parameters.at(0) );
-		p_(1) = std::stod( parameters.at(1) );
-		p_(2) = std::stod( parameters.at(2) );
+
+		kdl_p_(0) = std::stod( parameters.at(0) );
+		kdl_p_(1) = std::stod( parameters.at(1) );
+		kdl_p_(2) = std::stod( parameters.at(2) );
+
+		eigen_p_ << kdl_p_(0), kdl_p_(1), kdl_p_(2);
 	}
 
 
@@ -83,18 +87,23 @@ public:
 
 
 
-	inline const KDL::Vector& getPoint()
-	{ return p_; }
+	inline const KDL::Vector&       getPointKDL() 
+	{ return kdl_p_; }
 
-	inline double getX() { return p_(0); }
-	inline double getY() { return p_(1); }
-	inline double getZ() { return p_(2); }
+	inline const Eigen::Vector3d&   getPointEigen() 
+	{ return eigen_p_; }
+
+
+	inline double getX() { return kdl_p_(0); }
+	inline double getY() { return kdl_p_(1); }
+	inline double getZ() { return kdl_p_(2); }
 
 
 
 protected:
 
-	KDL::Vector    p_;
+	KDL::Vector    		kdl_p_;
+	Eigen::Vector3d		eigen_p_;
 
 
 

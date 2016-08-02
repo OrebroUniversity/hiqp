@@ -38,6 +38,7 @@
 
 #include <kdl/frames.hpp>
 
+#include <Eigen/Dense>
 
 
 
@@ -75,50 +76,20 @@ public:
 		int size = parameters.size();
 		assert(size == 6);
 
-		//if (size == 7)
-		//{
-			v_(0) = std::stod( parameters.at(0) );
-			v_(1) = std::stod( parameters.at(1) );
-			v_(2) = std::stod( parameters.at(2) );
-			
-			v_.Normalize();
-			
-			p_(0) = std::stod( parameters.at(3) );
-			p_(1) = std::stod( parameters.at(4) );
-			p_(2) = std::stod( parameters.at(5) );
+		kdl_v_(0) = std::stod( parameters.at(0) );
+		kdl_v_(1) = std::stod( parameters.at(1) );
+		kdl_v_(2) = std::stod( parameters.at(2) );
+		
+		kdl_v_.Normalize();
+		
+		kdl_p_(0) = std::stod( parameters.at(3) );
+		kdl_p_(1) = std::stod( parameters.at(4) );
+		kdl_p_(2) = std::stod( parameters.at(5) );
 
-			l_ = -1; // infinitely long line
-/*
-			std::string length = parameters.at(6);
-			if (length.compare("INF")==0 || 
-				length.compare("Inf")==0 || 
-				length.compare("inf")==0)
-			{
-				l_ = -1;
-			}
-			else
-			{
-				l_ = std::stod( length );
-			}
-			/*
-		}
-		else
-		{
-			v_(0) =   std::stod( parameters.at(3) )
-			        - std::stod( parameters.at(0) );
-			v_(1) =   std::stod( parameters.at(4) )
-			        - std::stod( parameters.at(1) );
-			v_(2) =   std::stod( parameters.at(5) )
-			        - std::stod( parameters.at(2) );
+		l_ = -1; // infinitely long line
 
-			p_(0) = std::stod( parameters.at(0) );
-			p_(1) = std::stod( parameters.at(1) );
-			p_(2) = std::stod( parameters.at(2) );
-
-			l_ = v_.Norm();
-			v_.Normalize();
-		}
-		*/
+		eigen_v_ << kdl_v_(0), kdl_v_(1), kdl_v_(2);
+		eigen_p_ << kdl_p_(0), kdl_p_(1), kdl_p_(2);
 	}
 
 
@@ -128,34 +99,36 @@ public:
      */
 	~GeometricLine() noexcept {}
 
-	inline const KDL::Vector& getDirection()
-	{ return v_; }
+	inline const KDL::Vector&      getDirectionKDL()    { return kdl_v_; }
+	inline const Eigen::Vector3d&  getDirectionEigen()  { return eigen_v_; }
 
-	inline const KDL::Vector& getOffset()
-	{ return p_; }
+	inline const KDL::Vector&      getOffsetKDL()    { return kdl_p_; }
+	inline const Eigen::Vector3d&  getOffsetEigen()  { return eigen_p_; }
 
 	// inline double getLength() { return l_; }
 
 	inline bool isInfinite()
 	{ return (l_ < 0); }
 
-	inline double getDirectionX() { return v_(0); }
-	inline double getDirectionY() { return v_(1); }
-	inline double getDirectionZ() { return v_(2); }
+	inline double getDirectionX() { return kdl_v_(0); }
+	inline double getDirectionY() { return kdl_v_(1); }
+	inline double getDirectionZ() { return kdl_v_(2); }
 
-	inline double getOffsetX() { return p_(0); }
-	inline double getOffsetY() { return p_(1); }
-	inline double getOffsetZ() { return p_(2); }
+	inline double getOffsetX() { return kdl_p_(0); }
+	inline double getOffsetY() { return kdl_p_(1); }
+	inline double getOffsetZ() { return kdl_p_(2); }
 
 
 protected:
 
-	KDL::Vector   v_; // the directional vector of the line
+	KDL::Vector      kdl_v_; // the directional vector of the line
+	Eigen::Vector3d  eigen_v_;
 
-	KDL::Vector   p_; // the offset
+	KDL::Vector      kdl_p_; // the offset
+	Eigen::Vector3d  eigen_p_;
 
-	double 		  l_; // the length of the line segment, 
-	                  // negative if the line is infinite
+	double 		     l_; // the length of the line segment, 
+	                     // negative if the line is infinite
 
 
 
