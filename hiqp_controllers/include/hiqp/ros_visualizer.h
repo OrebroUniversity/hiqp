@@ -95,7 +95,7 @@ private:
 	int apply(int id, GeometricSphere* sphere, int action);
 
 	const std::string 					kNamespace = "/yumi";
-	const double 						kInfiniteLength = 3;
+	const double 						kInfiniteLength = 10;
 	const double 						kPointRadius    = 0.003;
 	const double 						kLineRadius     = 0.003;
 	const double 						kPlaneThickness = 0.001;

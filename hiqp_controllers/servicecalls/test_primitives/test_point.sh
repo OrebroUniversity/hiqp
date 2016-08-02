@@ -11,7 +11,7 @@
 # sphere:       [x, y, z, radius]
 #
 
-rosservice call /yumi/hiqp_kinematic_controller/addGeomPrim \
+rosservice call /yumi/hiqp_kinematics_controller/addGeomPrim \
 "name: 'mypoint1'
 type: 'point'
 frame_id: 'yumi_body'
@@ -19,7 +19,7 @@ visible: true
 color: [0.9, 0.0, 0.0, 0.9]
 parameters: ['0.5', '0', '0']"
 
-rosservice call /yumi/hiqp_kinematic_controller/addGeomPrim \
+rosservice call /yumi/hiqp_kinematics_controller/addGeomPrim \
 "name: 'mypoint2'
 type: 'point'
 frame_id: 'yumi_body'
@@ -27,7 +27,7 @@ visible: true
 color: [0.0, 0.9, 0.0, 0.9]
 parameters: ['0', '0.5', '0']"
 
-rosservice call /yumi/hiqp_kinematic_controller/addGeomPrim \
+rosservice call /yumi/hiqp_kinematics_controller/addGeomPrim \
 "name: 'mypoint3'
 type: 'point'
 frame_id: 'yumi_body'
@@ -38,7 +38,7 @@ parameters: ['0', '0', '0.5']"
 
 
 
-rosservice call /yumi/hiqp_kinematic_controller/addGeomPrim \
+rosservice call /yumi/hiqp_kinematics_controller/addGeomPrim \
 "name: 'mypoint4'
 type: 'point'
 frame_id: 'yumi_body'
@@ -46,7 +46,7 @@ visible: true
 color: [0.9, 0.0, 0.0, 0.9]
 parameters: ['-0.5', '0', '0']"
 
-rosservice call /yumi/hiqp_kinematic_controller/addGeomPrim \
+rosservice call /yumi/hiqp_kinematics_controller/addGeomPrim \
 "name: 'mypoint5'
 type: 'point'
 frame_id: 'yumi_body'
@@ -54,7 +54,7 @@ visible: true
 color: [0.0, 0.9, 0.0, 0.9]
 parameters: ['0', '-0.5', '0']"
 
-rosservice call /yumi/hiqp_kinematic_controller/addGeomPrim \
+rosservice call /yumi/hiqp_kinematics_controller/addGeomPrim \
 "name: 'mypoint6'
 type: 'point'
 frame_id: 'yumi_body'

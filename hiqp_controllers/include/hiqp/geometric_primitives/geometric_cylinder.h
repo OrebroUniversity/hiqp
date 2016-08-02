@@ -53,8 +53,7 @@ namespace hiqp
  * \brief 
  *
  * The parameter interface for this primitive is:
- * cylinder:     [nx, ny, nz,  x,  y,  z, height, radius]
- * cylinder:     [x1, y1, z1, x2, y2, z2, radius]
+ * cylinder:     [nx, ny, nz,  x,  y,  z, radius, height]
  */  
 class GeometricCylinder : public GeometricPrimitive
 {
@@ -74,8 +73,9 @@ public:
 	: GeometricPrimitive(name, frame_id, visible, color)
 	{
 		int size = parameters.size();
-		assert(size == 7 || size == 8);
+		assert(size == 8);
 
+		/*
 		if (size == 7)
 		{
 			v_(0) =   std::stod( parameters.at(3) )
@@ -96,6 +96,7 @@ public:
 		}
 		else 
 		{
+			*/
 			v_(0) = std::stod( parameters.at(0) );
 			v_(1) = std::stod( parameters.at(1) );
 			v_(2) = std::stod( parameters.at(2) );
@@ -105,7 +106,9 @@ public:
 			p_(1) = std::stod( parameters.at(4) );
 			p_(2) = std::stod( parameters.at(5) );
 
-			std::string height = parameters.at(6);
+			radius_ = std::stod( parameters.at(6) );
+
+			std::string height = parameters.at(7);
 			if (height.compare("INF")==0 || 
 				height.compare("Inf")==0 || 
 				height.compare("inf")==0)
@@ -117,8 +120,8 @@ public:
 				h_ = std::stod( height );
 			}
 
-			radius_ = std::stod( parameters.at(7) );
-		}
+			
+		//}
 
 		
 	}

@@ -226,20 +226,35 @@ int ROSVisualizer::apply
     marker.ns = kNamespace;
     if (action == visualization_msgs::Marker::ADD)  marker.id = next_id_;
     else                                            marker.id = id;
-    marker.type = visualization_msgs::Marker::CUBE;
+    marker.type = visualization_msgs::Marker::CYLINDER;
     marker.action = action; 
 
-    marker.pose.position.x = plane->getOffset();
-    marker.pose.position.y = plane->getOffset();
-    marker.pose.position.z = plane->getOffset();
+    double v1 = plane->getNormalX();
+    double v2 = plane->getNormalY();
+    double v3 = plane->getNormalZ();
 
-    marker.pose.orientation.x = plane->getNormalX();
-    marker.pose.orientation.y = plane->getNormalY();
-    marker.pose.orientation.z = plane->getNormalZ();
-    marker.pose.orientation.w = 1.0;
+    double p1 = plane->getOffset() * v1;
+    double p2 = plane->getOffset() * v2;
+    double p3 = plane->getOffset() * v3;
 
-    marker.scale.x = kInfiniteLength/2;
-    marker.scale.y = kInfiniteLength/2;
+    Eigen::Vector3d v;
+    v << v1, v2, v3;
+
+    // Quaternion that aligns the z-axis with the line direction
+    Eigen::Quaterniond q;
+    q.setFromTwoVectors(Eigen::Vector3d::UnitZ(), v);
+
+    marker.pose.position.x = p1;
+    marker.pose.position.y = p2;
+    marker.pose.position.z = p3;
+
+    marker.pose.orientation.x = q.x();
+    marker.pose.orientation.y = q.y();
+    marker.pose.orientation.z = q.z();
+    marker.pose.orientation.w = q.w();
+
+    marker.scale.x = kInfiniteLength;
+    marker.scale.y = kInfiniteLength;
     marker.scale.z = kPlaneThickness;
 
     marker.color.r = plane->getRedComponent();
@@ -263,8 +278,14 @@ int ROSVisualizer::apply
 }
 
 
-
-
+#include <sstream>
+std::string dtostr(double d)
+{
+    std::ostringstream strs;
+    strs << d;
+    std::string str = strs.str();
+    return str;
+}
 
 int ROSVisualizer::apply
 (
@@ -283,14 +304,56 @@ int ROSVisualizer::apply
     marker.type = visualization_msgs::Marker::CUBE;
     marker.action = action; 
 
+    double p1 = box->getCenterX();
+    double p2 = box->getCenterY();
+    double p3 = box->getCenterZ();
+
+    double nu1 = box->getNormalUpX();
+    double nu2 = box->getNormalUpY();
+    double nu3 = box->getNormalUpZ();
+
+    double nl1 = box->getNormalLeftX();
+    double nl2 = box->getNormalLeftY();
+    double nl3 = box->getNormalLeftZ();
+    
+
     marker.pose.position.x = box->getCenterX();
     marker.pose.position.y = box->getCenterY();
     marker.pose.position.z = box->getCenterZ();
 
-    marker.pose.orientation.x = box->getRotationX();
-    marker.pose.orientation.y = box->getRotationY();
-    marker.pose.orientation.z = box->getRotationZ();
-    marker.pose.orientation.w = box->getRotationAngle();
+
+
+
+    Eigen::Vector3d nu;
+    nu << nu1, nu2, nu3;
+
+    Eigen::Vector3d nl;
+    nl << nl1, nl2, nl3;
+
+    // Quaternion that aligns the x-axis with the normal of the upper side
+    // projected on the x-y plane
+    Eigen::Quaterniond q1;
+    Eigen::Vector3d nu_xy;
+    nu_xy << nu1, nu2, 0;
+    q1.setFromTwoVectors(Eigen::Vector3d::UnitX(), nu_xy);
+
+    // Quaternion that aligns the z-axis with the normal of the upper side
+    Eigen::Quaterniond q2;
+    q2.setFromTwoVectors(Eigen::Vector3d::UnitZ(), nu);
+
+    // Rotate around the normal upper side vector
+    Eigen::Vector3d left = Eigen::Vector3d::UnitZ().cross(nu);
+    Eigen::Quaterniond q3;
+    q3.setFromTwoVectors(left, nl);
+
+    Eigen::Quaterniond q = q1 * q2 * q3;
+
+
+
+    marker.pose.orientation.x = q.x();
+    marker.pose.orientation.y = q.y();
+    marker.pose.orientation.z = q.z();
+    marker.pose.orientation.w = q.w();
 
     marker.scale.x = box->getDimX();
     marker.scale.y = box->getDimY();
@@ -304,6 +367,18 @@ int ROSVisualizer::apply
     marker.lifetime = ros::Duration(0); // forever
 
     marker_pub_.publish(marker);
+
+    std::cout << "here\n";
+/*
+    // For debugging purposes
+    GeometricLine* line = new GeometricLine(
+        "noname",  box->getFrameId(), true, {1,0,0,1},
+        {dtostr(p1),dtostr(p2),dtostr(p3),dtostr(nl1),dtostr(nl2),dtostr(nl3)});
+    apply(0, line, visualization_msgs::Marker::ADD);
+*/
+std::cout << "and here\n";
+
+
 
     if (action == visualization_msgs::Marker::ADD)
     {
@@ -337,25 +412,36 @@ int ROSVisualizer::apply
     marker.type = visualization_msgs::Marker::CYLINDER;
     marker.action = action; 
 
-    marker.pose.position.x = cylinder->getOffsetX();
-    marker.pose.position.y = cylinder->getOffsetY();
-    marker.pose.position.z = cylinder->getOffsetZ();
-    if (cylinder->isInfinite())  
-    {
-    	marker.pose.position.x -= cylinder->getDirectionX() * kInfiniteLength/2;
-    	marker.pose.position.y -= cylinder->getDirectionY() * kInfiniteLength/2;
-    	marker.pose.position.z -= cylinder->getDirectionZ() * kInfiniteLength/2;
-	}
+    double height = (cylinder->isInfinite() ? kInfiniteLength 
+                                            : cylinder->getHeight());
 
-    marker.pose.orientation.x = cylinder->getDirectionX();
-    marker.pose.orientation.y = cylinder->getDirectionY();
-    marker.pose.orientation.z = cylinder->getDirectionZ();
-    marker.pose.orientation.w = 1.0;
+    double v1 = cylinder->getDirectionX();
+    double v2 = cylinder->getDirectionY();
+    double v3 = cylinder->getDirectionZ();
 
-    if (cylinder->isInfinite())  marker.scale.x = kInfiniteLength;
-    else                     marker.scale.x = cylinder->getHeight();
+    double p1 = cylinder->getOffsetX() + v1 * height/2;
+    double p2 = cylinder->getOffsetY() + v2 * height/2;
+    double p3 = cylinder->getOffsetZ() + v3 * height/2;
+
+    Eigen::Vector3d v;
+    v << v1, v2, v3;
+
+    // Quaternion that aligns the z-axis with the line direction
+    Eigen::Quaterniond q;
+    q.setFromTwoVectors(Eigen::Vector3d::UnitZ(), v);
+
+    marker.pose.position.x = p1;
+    marker.pose.position.y = p2;
+    marker.pose.position.z = p3;
+
+    marker.pose.orientation.x = q.x();
+    marker.pose.orientation.y = q.y();
+    marker.pose.orientation.z = q.z();
+    marker.pose.orientation.w = q.w();
+
+    marker.scale.x = 2*cylinder->getRadius();
     marker.scale.y = 2*cylinder->getRadius();
-    marker.scale.z = 2*cylinder->getRadius();
+    marker.scale.z = height;
 
     marker.color.r = cylinder->getRedComponent();
     marker.color.g = cylinder->getGreenComponent();

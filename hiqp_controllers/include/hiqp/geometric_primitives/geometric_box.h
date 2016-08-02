@@ -51,6 +51,11 @@ namespace hiqp
 /*!
  * \class GeometricBox
  * \brief 
+ * 
+ * The angle is the box's clockwise angle of rotation around the normal vector 
+ * of the upper side while looking in the same direction as the normal vector.
+ * 
+ * box:          [x, y, z, w, d, h, nx, ny, nz, a]
  */  
 class GeometricBox : public GeometricPrimitive
 {
@@ -70,34 +75,31 @@ public:
 	: GeometricPrimitive(name, frame_id, visible, color)
 	{
 		int size = parameters.size();
-		assert(size == 6 || size == 10);
+		assert(size == 10);
 
-		d1_(0) = std::stod( parameters.at(0) );
-		d1_(1) = std::stod( parameters.at(1) );
-		d1_(2) = std::stod( parameters.at(2) );
+		c_(0) = std::stod( parameters.at(0) );
+		c_(1) = std::stod( parameters.at(1) );
+		c_(2) = std::stod( parameters.at(2) );
 
-		d2_(0) = std::stod( parameters.at(3) );
-		d2_(1) = std::stod( parameters.at(4) );
-		d2_(2) = std::stod( parameters.at(5) );
+		dim_(0) = std::stod( parameters.at(3) );
+		dim_(1) = std::stod( parameters.at(4) );
+		dim_(2) = std::stod( parameters.at(5) );
 
-		c_ = 0.5 * (d1_ + d2_);
-		dim_ = d2_ - d1_;
+		n_up_(0) = std::stod( parameters.at(6) );
+		n_up_(1) = std::stod( parameters.at(7) );
+		n_up_(2) = std::stod( parameters.at(8) );
+		n_up_.Normalize();
+		
+		a_ = std::stod( parameters.at(9) );
+		
 
-		if (size == 10)
-		{
-			rot_vec_(0) = std::stod( parameters.at(6) );
-			rot_vec_(1) = std::stod( parameters.at(7) );
-			rot_vec_(2) = std::stod( parameters.at(8) );
-			rot_vec_.Normalize();
-			a_ = std::stod( parameters.at(9) );
-		}
-		else
-		{
-			rot_vec_(0) = 0;
-			rot_vec_(1) = 0;
-			rot_vec_(2) = 0;
-			a_ = 0;
-		}
+		// Calculate the normal of the left side of the box
+
+		KDL::Vector left = KDL::Vector(0, 0, 1) * n_up_;
+		
+		KDL::Vector back = n_up_ * left;
+
+		n_left_ = std::cos(a_) * left + std::sin(a_) * back;
 	}
 
 
@@ -107,45 +109,50 @@ public:
      */
 	~GeometricBox() noexcept {}
 
-	inline const KDL::Vector& getOffset1()
-	{ return d1_; }
+	inline const KDL::Vector& getCentrum() { return c_; }
 
-	inline const KDL::Vector& getOffset2()
-	{ return d2_; }
+	inline const KDL::Vector& getDimensions() { return dim_; }
 
-	inline const KDL::Vector& getRotationVector()
-	{ return rot_vec_; }
+	inline const KDL::Vector& getNormalUp() { return n_up_; }
 
-	inline double getRotationAngle()
-	{ return a_; }
+	inline const KDL::Vector& getNormalLeft() { return n_left_; }
+
+	inline double getRotationAngle() { return a_; }
+
 
 	inline double getCenterX() { return c_(0); }
 	inline double getCenterY() { return c_(1); }
 	inline double getCenterZ() { return c_(2); }
 
-	inline double getRotationX() { return rot_vec_(0); }
-	inline double getRotationY() { return rot_vec_(1); }
-	inline double getRotationZ() { return rot_vec_(2); }
-
 	inline double getDimX() { return dim_(0); }
 	inline double getDimY() { return dim_(1); }
 	inline double getDimZ() { return dim_(2); }
+
+	inline double getNormalUpX() { return n_up_(0); }
+	inline double getNormalUpY() { return n_up_(1); }
+	inline double getNormalUpZ() { return n_up_(2); }
+
+	inline double getNormalLeftX() { return n_left_(0); }
+	inline double getNormalLeftY() { return n_left_(1); }
+	inline double getNormalLeftZ() { return n_left_(2); }
+
+	
 
 
 
 protected:
 
-	KDL::Vector   d1_; // one corner of the box
-
-	KDL::Vector   d2_; // the diagonally opposite corner of the box
-
 	KDL::Vector   c_; // the geometrical cetrum of the box
 
-	KDL::Vector   dim_; // the dimensions fo the box
+	KDL::Vector   dim_; // the dimensions of the box
 
-	KDL::Vector   rot_vec_; // the rotational vector
 
-	double        a_; // the angle of rotation around the rotational vector
+	KDL::Vector   n_up_; // the normal vector of the top plane of the box
+
+	KDL::Vector   n_left_; // the normal vector of the left plane of the box
+
+
+	double        a_; // the angle of rotation around the normal-up-vector
 
 
 
