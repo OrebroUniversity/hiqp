@@ -189,21 +189,21 @@ bool ROSKinematicsController::init
 	// Advertise available ROS services and link the callback functions
 	add_task_service_ = controller_nh_.advertiseService
 	(
-		"addTask",
+		"add_task",
 		&ROSKinematicsController::addTask,
 		this
 	);
 
 	remove_task_service_ = controller_nh_.advertiseService
 	(
-		"removeTask",
+		"remove_task",
 		&ROSKinematicsController::removeTask,
 		this
 	);
 
 	add_geomprim_service_ = controller_nh_.advertiseService
 	(
-		"addGeomPrim",
+		"add_primitive",
 		&ROSKinematicsController::addGeometricPrimitive,
 		this
 	);
@@ -392,6 +392,9 @@ bool ROSKinematicsController::addTask
 }
 
 
+
+
+
 bool ROSKinematicsController::removeTask
 (
 	hiqp_msgs_srvs::RemoveTask::Request& req, 
@@ -413,6 +416,23 @@ bool ROSKinematicsController::removeTask
 
 	return true;
 }
+
+
+
+
+
+bool ROSKinematicsController::removeAllTasks
+(
+    hiqp_msgs_srvs::RemoveAllTasks::Request& req, 
+    hiqp_msgs_srvs::RemoveAllTasks::Response& res
+)
+{
+	res.success = false;
+	return true;
+}
+
+
+
 
 
 bool ROSKinematicsController::addGeometricPrimitive
@@ -437,6 +457,33 @@ bool ROSKinematicsController::addGeometricPrimitive
 	return true;
 }
 
+
+
+
+
+bool removeGeometricPrimitive
+(
+    hiqp_msgs_srvs::RemoveGeometricPrimitive::Request& req, 
+    hiqp_msgs_srvs::RemoveGeometricPrimitive::Response& res
+)
+{
+	res.success = false;
+	return true;
+}
+
+
+
+
+
+bool removeAllGeometricPrimitives
+(
+    hiqp_msgs_srvs::RemoveAllGeometricPrimitives::Request& req, 
+    hiqp_msgs_srvs::RemoveAllGeometricPrimitives::Response& res
+)
+{
+	res.success = false;
+	return true;
+}
 
 
 

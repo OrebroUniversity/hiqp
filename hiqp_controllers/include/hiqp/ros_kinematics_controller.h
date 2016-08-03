@@ -64,7 +64,10 @@
 
 #include <hiqp_msgs_srvs/AddTask.h>
 #include <hiqp_msgs_srvs/RemoveTask.h>
+#include <hiqp_msgs_srvs/RemoveAllTasks.h>
 #include <hiqp_msgs_srvs/AddGeometricPrimitive.h>
+#include <hiqp_msgs_srvs/RemoveGeometricPrimitive.h>
+#include <hiqp_msgs_srvs/RemoveAllGeometricPrimitives.h>
 
 
 
@@ -203,19 +206,29 @@ private:
           hiqp_msgs_srvs::RemoveTask::Response& res
      );
 
+     bool removeAllTasks
+     (
+          hiqp_msgs_srvs::RemoveAllTasks::Request& req, 
+          hiqp_msgs_srvs::RemoveAllTasks::Response& res
+     );
+
      bool addGeometricPrimitive
      (
           hiqp_msgs_srvs::AddGeometricPrimitive::Request& req, 
           hiqp_msgs_srvs::AddGeometricPrimitive::Response& res
      );
 
-/*
-     bool removeGeometricPrimitive(hiqp_msgs_srvs::RemoveGeometricPrimitive::Request& req, 
-                                   hiqp_msgs_srvs::RemoveGeometricPrimitive::Response& res);
-*/
-     
-     // setTaskVisibility, setTaskActive, updateTask, setTaskPriority
-     // printTaskInfo (for debugging purposes)
+     bool removeGeometricPrimitive
+     (
+          hiqp_msgs_srvs::RemoveGeometricPrimitive::Request& req, 
+          hiqp_msgs_srvs::RemoveGeometricPrimitive::Response& res
+     );
+
+     bool removeAllGeometricPrimitives
+     (
+          hiqp_msgs_srvs::RemoveAllGeometricPrimitives::Request& req, 
+          hiqp_msgs_srvs::RemoveAllGeometricPrimitives::Response& res
+     );
 
 
 
