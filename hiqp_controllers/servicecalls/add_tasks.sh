@@ -1,4 +1,4 @@
-rosservice call /yumi/hiqp_kinematics_controller/addTask \
+rosservice call /yumi/hiqp_kinematics_controller/add_task \
 "name: 'mytask'
 type: 'TaskGeometricProjection'
 behaviour: ['DynamicsFirstOrder', '10']

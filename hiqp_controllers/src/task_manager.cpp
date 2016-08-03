@@ -80,10 +80,11 @@ TaskManager::TaskManager
 }
 
 
+/*!
+ * \todo cleanup of tasks and task dynamics is missing!
+ */
 TaskManager::~TaskManager() noexcept
 {
-    // We have memory leaks in tasks_ and task_behaviours_ !!!
-
     delete solver_;
     delete geometric_primitive_map_;
     delete task_factory_;
@@ -223,7 +224,8 @@ std::size_t TaskManager::addTask
 
 
 
-
+/*! \todo removal of tasks must also delete task dynamics or else there's a memory leak!
+ */
 int TaskManager::removeTask
 (
     std::size_t task_id
@@ -234,6 +236,19 @@ int TaskManager::removeTask
 
     return -1;
 }
+
+
+
+
+
+int TaskManager::removeAllTasks
+()
+{
+    tasks_.clear();
+    task_dynamics_.clear();
+    return 0;
+}
+
 
 
 
@@ -259,10 +274,31 @@ int TaskManager::addGeometricPrimitive
 
 
 
+int TaskManager::removeGeometricPrimitive
+(
+    std::string name
+)
+{
+    return geometric_primitive_map_->removeGeometricPrimitive(name);
+}
 
 
 
 
+int TaskManager::removeAllGeometricPrimitives
+()
+{
+    geometric_primitive_map_->clear();
+}
+
+
+
+
+
+
+
+
+/*
 TaskFunction* TaskManager::buildTaskFunction
 (
     const std::string& type,
@@ -296,7 +332,7 @@ TaskDynamics* TaskManager::buildTaskDynamics
 
     return new DynamicsFirstOrder();
 }
-
+*/
 
 
 

@@ -17,7 +17,7 @@
 
 
 
-uint16    primitive_id    # unique primitive identifier
+string    name            # unique primitive identifier
 
 ---
 

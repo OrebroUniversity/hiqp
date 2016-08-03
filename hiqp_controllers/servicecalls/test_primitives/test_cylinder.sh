@@ -12,7 +12,7 @@
 
 
 
-rosservice call /yumi/hiqp_kinematics_controller/addGeomPrim \
+rosservice call /yumi/hiqp_kinematics_controller/add_primitive \
 "name: 'mycylinder1'
 type: 'cylinder'
 frame_id: 'yumi_body'
@@ -20,7 +20,7 @@ visible: true
 color: [0.9, 0.9, 0.0, 0.9]
 parameters: ['1', '1', '0', '0.3', '0.3', '0', '0.06', '0.3']"
 
-rosservice call /yumi/hiqp_kinematics_controller/addGeomPrim \
+rosservice call /yumi/hiqp_kinematics_controller/add_primitive \
 "name: 'mycylinder2'
 type: 'cylinder'
 frame_id: 'yumi_body'
@@ -28,7 +28,7 @@ visible: true
 color: [0.9, 0.0, 0.9, 0.9]
 parameters: ['1', '0', '1', '0.3', '0', '0.3', '0.04', '0.5']"
 
-rosservice call /yumi/hiqp_kinematics_controller/addGeomPrim \
+rosservice call /yumi/hiqp_kinematics_controller/add_primitive \
 "name: 'mycylinder3'
 type: 'cylinder'
 frame_id: 'yumi_body'
@@ -41,7 +41,7 @@ parameters: ['0', '1', '1', '0', '0.3', '0.3', '0.02', '0.6']"
 
 
 
-rosservice call /yumi/hiqp_kinematics_controller/addGeomPrim \
+rosservice call /yumi/hiqp_kinematics_controller/add_primitive \
 "name: 'mycylinder4'
 type: 'cylinder'
 frame_id: 'yumi_body'
@@ -49,7 +49,7 @@ visible: true
 color: [0.9, 0, 0.0, 0.9]
 parameters: ['-1', '0', '0', '-0.3', '0', '0', '0.06', 'INF']"
 
-rosservice call /yumi/hiqp_kinematics_controller/addGeomPrim \
+rosservice call /yumi/hiqp_kinematics_controller/add_primitive \
 "name: 'mycylinder5'
 type: 'cylinder'
 frame_id: 'yumi_body'
@@ -57,7 +57,7 @@ visible: true
 color: [0.0, 0.9, 0, 0.9]
 parameters: ['0', '-1', '0', '0', '-0.3', '0', '0.04', 'Inf']"
 
-rosservice call /yumi/hiqp_kinematics_controller/addGeomPrim \
+rosservice call /yumi/hiqp_kinematics_controller/add_primitive \
 "name: 'mycylinder6'
 type: 'cylinder'
 frame_id: 'yumi_body'

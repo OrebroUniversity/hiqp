@@ -13,7 +13,7 @@
 
 
 
-rosservice call /yumi/hiqp_kinematics_controller/addGeomPrim \
+rosservice call /yumi/hiqp_kinematics_controller/add_primitive \
 "name: 'myline4'
 type: 'line'
 frame_id: 'yumi_body'
@@ -21,7 +21,7 @@ visible: true
 color: [0.9, 0.9, 0.0, 0.9]
 parameters: ['0.1', '0.1', '0', '0.5', '0.5', '0']"
 
-rosservice call /yumi/hiqp_kinematics_controller/addGeomPrim \
+rosservice call /yumi/hiqp_kinematics_controller/add_primitive \
 "name: 'myline5'
 type: 'line'
 frame_id: 'yumi_body'
@@ -29,7 +29,7 @@ visible: true
 color: [0.0, 0.9, 0.9, 0.9]
 parameters: ['0', '0.1', '0.1', '0', '0.5', '0.5']"
 
-rosservice call /yumi/hiqp_kinematics_controller/addGeomPrim \
+rosservice call /yumi/hiqp_kinematics_controller/add_primitive \
 "name: 'myline6'
 type: 'line'
 frame_id: 'yumi_body'

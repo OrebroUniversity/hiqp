@@ -76,6 +76,8 @@ public:
 
 	virtual void remove(int id) = 0;
 
+	virtual void removeMany(const std::vector<int>& ids) = 0;
+
 
 private:
 

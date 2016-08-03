@@ -255,7 +255,10 @@ private:
 
      ros::ServiceServer                                add_task_service_;
      ros::ServiceServer                                remove_task_service_;
+     ros::ServiceServer                                remove_all_tasks_service_;
      ros::ServiceServer                                add_geomprim_service_;
+     ros::ServiceServer                                remove_geomprim_service_;
+     ros::ServiceServer                                remove_all_geomprims_service_;
 
      JointHandleMap                                    joint_handles_map_;
      std::mutex                                        handles_mutex_;

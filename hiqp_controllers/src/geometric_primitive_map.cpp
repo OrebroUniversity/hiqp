@@ -63,6 +63,8 @@ namespace hiqp {
 */
 
 
+/*! \todo primitive names shall be unique across primitive types, i.e. across the different internal maps aswell!
+ */
 int GeometricPrimitiveMap::addGeometricPrimitive
 (
 	const std::string& name,
@@ -74,95 +76,151 @@ int GeometricPrimitiveMap::addGeometricPrimitive
 )
 {
 
+    if (visual_id_map_.find(name) != visual_id_map_.end())
+    {
+        std::cerr << "A primitive with name '" << name 
+                  << "' already exists. No new primitive was added!\n";
+        return -1;
+    }
+
+    std::size_t id = 0;
+
     if (type.compare("point") == 0)
     {
-        assert( point_map_.find(name) == point_map_.end() );
-
         GeometricPoint* point = new GeometricPoint(
             name, frame_id, visible, color, parameters);
 
         point_map_.insert( 
             std::pair< std::string, GeometricPoint* >( name, point ) );
 
-        unsigned int id = visualizer_->add(point);
-        point->setId(id);
-
+        id = visualizer_->add(point);
     }
     else if (type.compare("line") == 0)
     {
-        assert( line_map_.find(name) == line_map_.end() );
-
         GeometricLine* line = new GeometricLine(
             name, frame_id, visible, color, parameters);
 
         line_map_.insert( 
             std::pair< std::string, GeometricLine* >( name, line ) );
 
-        unsigned int id = visualizer_->add(line);
-        line->setId(id);
+        id = visualizer_->add(line);
         
     }
     else if (type.compare("plane") == 0)
     {
-        assert( plane_map_.find(name) == plane_map_.end() );
-
         GeometricPlane* plane = new GeometricPlane(
             name, frame_id, visible, color, parameters);
 
         plane_map_.insert( 
             std::pair< std::string, GeometricPlane* > ( name, plane ) );
 
-        unsigned int id = visualizer_->add(plane);
-        plane->setId(id);
+        id = visualizer_->add(plane);
 
     }
     else if (type.compare("box") == 0)
     {
-        assert( box_map_.find(name) == box_map_.end() );
-
         GeometricBox* box = new GeometricBox(
             name, frame_id, visible, color, parameters);
 
         box_map_.insert( 
             std::pair< std::string, GeometricBox* > ( name, box ) );
 
-        unsigned int id = visualizer_->add(box);
-        box->setId(id);
+        id = visualizer_->add(box);
     }
     else if (type.compare("cylinder") == 0)
     {
-        assert( cylinder_map_.find(name) == cylinder_map_.end() );
-
         GeometricCylinder* cylinder = new GeometricCylinder(
             name, frame_id, visible, color, parameters);
 
         cylinder_map_.insert( 
             std::pair< std::string, GeometricCylinder* > ( name, cylinder ) );
 
-        unsigned int id = visualizer_->add(cylinder);
-        cylinder->setId(id);
+        id = visualizer_->add(cylinder);
     }
     else if (type.compare("sphere") == 0)
     {
-        assert( sphere_map_.find(name) == sphere_map_.end() );
-
         GeometricSphere* sphere = new GeometricSphere(
             name, frame_id, visible, color, parameters);
 
         sphere_map_.insert( 
             std::pair< std::string, GeometricSphere* > ( name, sphere ) );
 
-        unsigned int id = visualizer_->add(sphere);
-        sphere->setId(id);
+        id = visualizer_->add(sphere);
     }
     else
     {
         std::cerr << "ERROR: Couldn't parse geometric type '" << type << "'!\n";
     }
 
+    visual_id_map_.insert(
+            std::pair< std::string, std::size_t >( name, id ) );
+
     return 0;
 
 }
+
+
+
+
+/*! \todo primitives should have dependencies on tasks and not be removable if dependencies exists!
+ */
+int GeometricPrimitiveMap::removeGeometricPrimitive
+( 
+    std::string name
+)
+{
+    std::size_t id = 0;
+    std::map<std::string, std::size_t>::iterator it = visual_id_map_.find(name);
+    if (it == visual_id_map_.end())
+    {
+        return -1;
+    }
+
+    id = it->second;
+    visualizer_->remove(id);
+
+    visual_id_map_.erase(name);
+
+    point_map_.erase(name);
+    line_map_.erase(name);
+    plane_map_.erase(name);
+    box_map_.erase(name);
+    cylinder_map_.erase(name);
+    sphere_map_.erase(name);
+    
+    return 0;
+}
+
+
+
+/*! \todo primitives with dependencies to tasks shall not be deleted!
+ */
+int GeometricPrimitiveMap::clear
+()
+{
+    std::vector<int> ids;
+
+    std::map<std::string, std::size_t>::iterator it = visual_id_map_.begin();
+    while (it != visual_id_map_.end())
+    {
+        ids.push_back(it->second); 
+        ++it;
+    }
+
+    visualizer_->removeMany(ids);
+
+    visual_id_map_.clear();
+
+    point_map_.clear();
+    line_map_.clear();
+    plane_map_.clear();
+    box_map_.clear();
+    cylinder_map_.clear();
+    sphere_map_.clear();
+
+    return 0;
+}
+
 
 
 
@@ -239,11 +297,6 @@ void GeometricPrimitiveMap::redrawAllPrimitives()
         }
     }
 }
-
-
-
-
-
 
 
 

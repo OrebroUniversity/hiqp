@@ -12,7 +12,7 @@
 
 
 
-rosservice call /yumi/hiqp_kinematics_controller/addGeomPrim \
+rosservice call /yumi/hiqp_kinematics_controller/add_primitive \
 "name: 'mybox1'
 type: 'box'
 frame_id: 'yumi_body'

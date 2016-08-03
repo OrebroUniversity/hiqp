@@ -81,6 +81,10 @@ public:
         const std::vector<std::string>& parameters
     );
 
+    int removeGeometricPrimitive( std::string name);
+
+    int clear();
+
 	template<typename PrimitiveType>
 	PrimitiveType* getGeometricPrimitive(const std::string& name);
 
@@ -100,6 +104,7 @@ private:
 
 
 
+	std::map< std::string, std::size_t> 			visual_id_map_;
 
 	std::map< std::string, GeometricPoint* > 		point_map_;
 	std::map< std::string, GeometricLine* > 	    line_map_;

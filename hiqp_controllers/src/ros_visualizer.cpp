@@ -62,8 +62,8 @@ int ROSVisualizer::init
 {
 	controller_nh_ = controller_nh;
 
-	marker_pub_ = controller_nh_->advertise<visualization_msgs::Marker>
-		("visualization_marker", 1);
+    marker_array_pub_ = controller_nh_->advertise<visualization_msgs::MarkerArray>
+        ("visualization_marker", 1);
 }
 
 
@@ -113,7 +113,9 @@ int ROSVisualizer::apply
 
     marker.lifetime = ros::Duration(0);
 
-    marker_pub_.publish(marker);
+    visualization_msgs::MarkerArray marker_array;
+    marker_array.markers.push_back(marker);
+    marker_array_pub_.publish(marker_array);
 
     if (action == ACTION_ADD)
     {
@@ -176,7 +178,9 @@ int ROSVisualizer::apply
 
     marker.lifetime = ros::Duration(0);
 
-    marker_pub_.publish(marker);
+    visualization_msgs::MarkerArray marker_array;
+    marker_array.markers.push_back(marker);
+    marker_array_pub_.publish(marker_array);
 
     if (action == ACTION_ADD)
     {
@@ -237,7 +241,9 @@ int ROSVisualizer::apply
 
     marker.lifetime = ros::Duration(0); // forever
 
-    marker_pub_.publish(marker);
+    visualization_msgs::MarkerArray marker_array;
+    marker_array.markers.push_back(marker);
+    marker_array_pub_.publish(marker_array);
 
     if (action == ACTION_ADD)
     {
@@ -325,7 +331,9 @@ int ROSVisualizer::apply
 
     marker.lifetime = ros::Duration(0); // forever
 
-    marker_pub_.publish(marker);
+    visualization_msgs::MarkerArray marker_array;
+    marker_array.markers.push_back(marker);
+    marker_array_pub_.publish(marker_array);
 
 /*
     // For debugging purposes
@@ -367,8 +375,7 @@ int ROSVisualizer::apply
     marker.type = visualization_msgs::Marker::CYLINDER;
     marker.action = visualization_msgs::Marker::ADD; 
 
-    double height = (cylinder->isInfinite() ? kInfiniteLength 
-                                            : cylinder->getHeight());
+    double height = (cylinder->isInfinite() ? 0 : cylinder->getHeight());
 
     Eigen::Vector3d v = cylinder->getDirectionEigen();
     Eigen::Vector3d p = cylinder->getOffsetEigen() + v*height/2;
@@ -388,7 +395,7 @@ int ROSVisualizer::apply
 
     marker.scale.x = 2*cylinder->getRadius();
     marker.scale.y = 2*cylinder->getRadius();
-    marker.scale.z = height;
+    marker.scale.z = (cylinder->isInfinite() ? kInfiniteLength : height);
 
     marker.color.r = cylinder->getRedComponent();
     marker.color.g = cylinder->getGreenComponent();
@@ -397,7 +404,9 @@ int ROSVisualizer::apply
 
     marker.lifetime = ros::Duration(0);
 
-    marker_pub_.publish(marker);
+    visualization_msgs::MarkerArray marker_array;
+    marker_array.markers.push_back(marker);
+    marker_array_pub_.publish(marker_array);
 
     if (action == ACTION_ADD)
     {
@@ -451,7 +460,9 @@ int ROSVisualizer::apply
 
     marker.lifetime = ros::Duration(0);
 
-    marker_pub_.publish(marker);
+    visualization_msgs::MarkerArray marker_array;
+    marker_array.markers.push_back(marker);
+    marker_array_pub_.publish(marker_array);
 
     if (action == ACTION_ADD)
     {
@@ -641,12 +652,40 @@ void ROSVisualizer::remove
 	int id
 )
 {
+    visualization_msgs::Marker marker;
 
+    marker.header.stamp = ros::Time::now();
+    marker.ns = kNamespace;
+    marker.id = id;
+    marker.action = visualization_msgs::Marker::DELETE; 
+
+    visualization_msgs::MarkerArray marker_array;
+    marker_array.markers.push_back(marker);
+    marker_array_pub_.publish(marker_array);
 }
 
 
+void ROSVisualizer::removeMany
+(
+    const std::vector<int>& ids
+)
+{
+    visualization_msgs::MarkerArray marker_array;
 
+    for (int id : ids)
+    {
+        visualization_msgs::Marker marker;
 
+        marker.header.stamp = ros::Time::now();
+        marker.ns = kNamespace;
+        marker.id = id;
+        marker.action = visualization_msgs::Marker::DELETE; 
+
+        marker_array.markers.push_back(marker);
+    }
+
+    marker_array_pub_.publish(marker_array);
+}
 
 
 

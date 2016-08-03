@@ -198,6 +198,14 @@ public:
 
 
 
+     int removeAllTasks();
+
+
+
+
+
+
+
      int addGeometricPrimitive
      (
           const std::string& name,
@@ -207,6 +215,17 @@ public:
           const std::vector<double>& color,
           const std::vector<std::string>& parameters
      );
+
+
+
+
+
+     int removeGeometricPrimitive(std::string name);
+
+
+
+
+     int removeAllGeometricPrimitives();
 
 
 
@@ -226,6 +245,7 @@ private:
 	TaskManager& operator=(const TaskManager& other) = delete;
 	TaskManager& operator=(TaskManager&& other) noexcept = delete;
 
+     /*
      TaskFunction* buildTaskFunction
      (
           const std::string& type,
@@ -236,7 +256,7 @@ private:
      (
           const std::string& behaviour_name
      );
-
+     */
 
 
      typedef std::map< std::size_t, TaskFunction* >            TaskMap;

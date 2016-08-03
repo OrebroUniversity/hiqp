@@ -11,7 +11,7 @@
 # sphere:       [x, y, z, radius]
 #
 
-rosservice call /yumi/hiqp_kinematics_controller/addGeomPrim \
+rosservice call /yumi/hiqp_kinematics_controller/add_primitive \
 "name: 'myplane1'
 type: 'plane'
 frame_id: 'yumi_body'
@@ -19,7 +19,7 @@ visible: true
 color: [1, 1, 0, 0.4]
 parameters: ['1', '1', '0', '1']"
 
-rosservice call /yumi/hiqp_kinematics_controller/addGeomPrim \
+rosservice call /yumi/hiqp_kinematics_controller/add_primitive \
 "name: 'myplane2'
 type: 'plane'
 frame_id: 'yumi_body'
@@ -27,7 +27,7 @@ visible: true
 color: [1, 0, 1, 0.4]
 parameters: ['1', '0', '1', '1']"
 
-rosservice call /yumi/hiqp_kinematics_controller/addGeomPrim \
+rosservice call /yumi/hiqp_kinematics_controller/add_primitive \
 "name: 'myplane3'
 type: 'plane'
 frame_id: 'yumi_body'
@@ -38,7 +38,7 @@ parameters: ['0', '1', '1', '1']"
 
 
 
-rosservice call /yumi/hiqp_kinematics_controller/addGeomPrim \
+rosservice call /yumi/hiqp_kinematics_controller/add_primitive \
 "name: 'myplane4'
 type: 'plane'
 frame_id: 'yumi_body'
@@ -46,7 +46,7 @@ visible: true
 color: [1, 1, 0, 0.4]
 parameters: ['-1', '-1', '0', '1']"
 
-rosservice call /yumi/hiqp_kinematics_controller/addGeomPrim \
+rosservice call /yumi/hiqp_kinematics_controller/add_primitive \
 "name: 'myplane5'
 type: 'plane'
 frame_id: 'yumi_body'
@@ -54,7 +54,7 @@ visible: true
 color: [1, 0, 1, 0.4]
 parameters: ['-1', '0', '-1', '1']"
 
-rosservice call /yumi/hiqp_kinematics_controller/addGeomPrim \
+rosservice call /yumi/hiqp_kinematics_controller/add_primitive \
 "name: 'myplane6'
 type: 'plane'
 frame_id: 'yumi_body'

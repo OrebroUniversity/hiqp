@@ -176,7 +176,7 @@ Visualization Manager:
       Update Interval: 0
       Value: true
       Visual Enabled: true
-    - Class: rviz/Marker
+    - Class: rviz/MarkerArray
       Enabled: true
       Marker Topic: /yumi/hiqp_kinematics_controller/visualization_marker
       Name: Tasks

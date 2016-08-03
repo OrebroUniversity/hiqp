@@ -79,6 +79,8 @@ public:
 
 	void remove(int id);
 
+	void removeMany(const std::vector<int>& ids);
+
 private:
 
 	// No copying of this class is allowed !
@@ -104,7 +106,7 @@ private:
 
 	ros::NodeHandle*                    controller_nh_;
 
-	ros::Publisher 						marker_pub_;
+	ros::Publisher 						marker_array_pub_;
 
 	std::size_t 						next_id_;
 

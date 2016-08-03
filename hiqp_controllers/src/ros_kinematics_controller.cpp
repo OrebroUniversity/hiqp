@@ -201,10 +201,31 @@ bool ROSKinematicsController::init
 		this
 	);
 
+	remove_all_tasks_service_ = controller_nh_.advertiseService
+	(
+		"remove_all_tasks",
+		&ROSKinematicsController::removeAllTasks,
+		this
+	);
+
 	add_geomprim_service_ = controller_nh_.advertiseService
 	(
 		"add_primitive",
 		&ROSKinematicsController::addGeometricPrimitive,
+		this
+	);
+
+	remove_geomprim_service_ = controller_nh_.advertiseService
+	(
+		"remove_primitive",
+		&ROSKinematicsController::removeGeometricPrimitive,
+		this
+	);
+
+	remove_all_geomprims_service_ = controller_nh_.advertiseService
+	(
+		"remove_all_primitives",
+		&ROSKinematicsController::removeAllGeometricPrimitives,
 		this
 	);
 
@@ -427,7 +448,9 @@ bool ROSKinematicsController::removeAllTasks
     hiqp_msgs_srvs::RemoveAllTasks::Response& res
 )
 {
-	res.success = false;
+	task_manager_.removeAllTasks();
+	ROS_INFO_STREAM("Removed all tasks successfully!");
+	res.success = true;
 	return true;
 }
 
@@ -461,13 +484,25 @@ bool ROSKinematicsController::addGeometricPrimitive
 
 
 
-bool removeGeometricPrimitive
+bool ROSKinematicsController::removeGeometricPrimitive
 (
     hiqp_msgs_srvs::RemoveGeometricPrimitive::Request& req, 
     hiqp_msgs_srvs::RemoveGeometricPrimitive::Response& res
 )
 {
 	res.success = false;
+	if (task_manager_.removeGeometricPrimitive(req.name) == 0)
+		res.success = true;
+
+	if (res.success)
+	{
+		ROS_INFO_STREAM("Removed primitive '" << req.name << "' successfully!");
+	}
+	else
+	{
+		ROS_INFO_STREAM("Couldn't remove primitive '" << req.name << "'!");	
+	}
+
 	return true;
 }
 
@@ -475,13 +510,15 @@ bool removeGeometricPrimitive
 
 
 
-bool removeAllGeometricPrimitives
+bool ROSKinematicsController::removeAllGeometricPrimitives
 (
     hiqp_msgs_srvs::RemoveAllGeometricPrimitives::Request& req, 
     hiqp_msgs_srvs::RemoveAllGeometricPrimitives::Response& res
 )
 {
-	res.success = false;
+	task_manager_.removeAllGeometricPrimitives();
+	ROS_INFO_STREAM("Removed all primitives successfully!");
+	res.success = true;
 	return true;
 }
 
