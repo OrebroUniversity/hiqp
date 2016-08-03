@@ -29,6 +29,7 @@
 #include <hiqp/task_factory.h>
 
 #include <hiqp/tasks/task_geometric_projection.h>
+#include <hiqp/tasks/task_jnt_config.h>
 #include <hiqp/tasks/dynamics_first_order.h>
 
 
@@ -70,6 +71,9 @@ TaskFunction* TaskFactory::buildTaskFunction
 {
 	TaskFunction* function = nullptr;
 
+
+
+
 	if (type.compare("TaskGeometricProjection") == 0)
     {
         if (parameters.at(0).compare("point") == 0 && 
@@ -83,6 +87,13 @@ TaskFunction* TaskFactory::buildTaskFunction
             function = new TaskGeometricProjection<GeometricPoint, GeometricPlane>();
         }
     }
+    else if (type.compare("TaskJntConfig") == 0)
+    {
+        function = new TaskJntConfig();
+    }
+
+
+
 
     if (function != nullptr)
     {
@@ -98,6 +109,9 @@ TaskFunction* TaskFactory::buildTaskFunction
 
     	function->init(parameters, num_controls_);
     }
+
+
+
 
     return function;
 }

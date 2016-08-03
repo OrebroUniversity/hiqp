@@ -54,10 +54,9 @@ namespace hiqp
 
 /*!
  * \class TaskJntConfig
- * \brief Represents a task that limits joint positions/velocities/accelerations
+ * \brief Represents a task that sets a specific joint configuration
  *
- *  The type of limitation (pos/vel/acc) is given as a parameter to the task
- *  along with all lower and upper bounds for each joint.
+ *  This task does not leave any redundancy available to other tasks.
  */	
 class TaskJntConfig : public TaskFunction
 {
@@ -68,7 +67,7 @@ public:
      * \brief Constructor
      * Constructs my awesome task
      */
-	TaskJntConfig();
+	TaskJntConfig() {}
 
 
 
@@ -90,7 +89,7 @@ public:
 	int init
      (
           const std::vector<std::string>& parameters,
-          unsigned int numControls
+          unsigned int num_controls
      );
 
 
@@ -114,6 +113,17 @@ public:
 
 
 
+
+
+     /*!
+     * \brief Computes all performance measures used when monitoring this task.
+     *
+     * \return 0 if the calculation was successful
+     */
+     int monitor();
+
+
+
 private:
 
 	// No copying of this class is allowed !
@@ -122,10 +132,8 @@ private:
 	TaskJntConfig& operator=(const TaskJntConfig& other) = delete;
 	TaskJntConfig& operator=(TaskJntConfig&& other) noexcept = delete;
 
-	enum LimitationType {kPos = 0, kVel = 1, kAcc = 2};
 
-	
-
+     std::vector<double>                desired_configuration_;
 
 };
 

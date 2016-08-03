@@ -87,7 +87,7 @@ namespace hiqp
     virtual int init
     (
         const std::vector<std::string>& parameters,
-        unsigned int numControls
+        unsigned int num_controls
     ) = 0;
 
 

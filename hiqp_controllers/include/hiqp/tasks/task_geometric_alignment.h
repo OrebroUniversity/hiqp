@@ -89,7 +89,7 @@ public:
 	int init
      (
           const std::vector<std::string>& parameters,
-          unsigned int numControls
+          unsigned int num_controls
      )
      {
           return 0;
