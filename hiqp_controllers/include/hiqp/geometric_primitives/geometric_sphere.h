@@ -86,8 +86,8 @@ public:
 
 
 
-	inline const KDL::Vector&     getCentrumKDL() { return kdl_p_; }
-	inline const Eigen::Vector3d& getCentrumEigen() { return eigen_p_; }
+	inline const KDL::Vector&     getCenterKDL() { return kdl_p_; }
+	inline const Eigen::Vector3d& getCenterEigen() { return eigen_p_; }
 
 	inline double getRadius() { return radius_; }
 
