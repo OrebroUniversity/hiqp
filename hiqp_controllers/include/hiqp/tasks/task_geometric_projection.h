@@ -137,6 +137,17 @@ private:
 
      int project(PrimitiveA* first, PrimitiveB* second);
 
+     /*! \brief Computes column number q_nr of the resulting jacobian for the 
+      *         vector (p2-p1), NOTE! p1 must be related to pose_a_ and p2 to 
+      *         pose_b_ !
+      */
+     KDL::Vector getVelocityJacobianForTwoPoints
+     (
+          const KDL::Vector& p1, 
+          const KDL::Vector& p2,
+          int q_nr
+     );
+
 
 
 

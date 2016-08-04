@@ -68,41 +68,25 @@ int TaskGeometricProjection<GeometricPoint, GeometricPoint>::project
 	GeometricPoint* point2
 )
 {
-	std::cout << "\nproject()\n";
-
 	KDL::Vector p1__ = pose_a_.M * point1->getPointKDL();
-
-	KDL::Vector p1( pose_a_.p.x() + p1__(0), 
-		            pose_a_.p.y() + p1__(1), 
-		            pose_a_.p.z() + p1__(2) );
+	KDL::Vector p1 = pose_a_.p + p1__;
 
 	KDL::Vector p2__ = pose_b_.M * point2->getPointKDL();
-
-	KDL::Vector p2( pose_b_.p.x() + p2__(0), 
-		            pose_b_.p.y() + p2__(1), 
-		            pose_b_.p.z() + p2__(2) );
+	KDL::Vector p2 = pose_b_.p + p2__;
 
 	KDL::Vector d = p2 - p1;
+	e_(0) = KDL::dot(d, d);
 
-	e_(0) = -d.Norm();
-
-	std::cout << "p1 = " << p1 << "\n";
-	std::cout << "p2 = " << p2 << "\n";
-	std::cout << "d = " << d << "\n";
-	std::cout << "e_ = " << e_(0) << "\n";
+	// The task jacobian is J = 2 (p2-p1)^T (Jp2 - Jp1)
 
 	for (int q_nr = 0; q_nr < jacobian_a_.columns(); ++q_nr)
 	{
-		J_(0, q_nr) =   jacobian_b_.getColumn(q_nr).vel.x()
-		              + jacobian_b_.getColumn(q_nr).vel.y()
-		              + jacobian_b_.getColumn(q_nr).vel.z()
-		              - jacobian_a_.getColumn(q_nr).vel.x()
-		              - jacobian_a_.getColumn(q_nr).vel.y()
-		              - jacobian_a_.getColumn(q_nr).vel.z();
+		KDL::Vector Jp2p1 = getVelocityJacobianForTwoPoints(p1__, p2__, q_nr);
+
+		J_(0, q_nr) = 2 * dot(d, Jp2p1);
 	}
 	
 	return 0;
-
 }
 
 
@@ -116,31 +100,38 @@ int TaskGeometricProjection<GeometricPoint, GeometricLine>::project
 	GeometricLine* line
 )
 {
-
 	KDL::Vector p__ = pose_a_.M * point->getPointKDL();
+	KDL::Vector p = pose_a_.p + p__;
 
-	KDL::Vector p( pose_a_.p.x() + p__(0), 
-		           pose_a_.p.y() + p__(1), 
-		           pose_a_.p.z() + p__(2) );
+	KDL::Vector v = pose_b_.M * line->getDirectionKDL();
 
-	KDL::Vector n = pose_b_.M * line->getDirectionKDL();
-	KDL::Vector d = pose_b_.M * line->getOffsetKDL();
+	KDL::Vector d__ = pose_b_.M * line->getOffsetKDL();
+	KDL::Vector d = pose_b_.p + d__;
 
-	KDL::Vector p_tilde = p - d;
+	KDL::Vector x = p - d;
+	double s = KDL::dot(x, v);
 
-	KDL::Vector l = p_tilde - KDL::dot(p_tilde, n) * n;
+	e_(0) = KDL::dot(x, x) - s*s;
 
-	e_(0) = KDL::dot(l, l);
+	// The task jacobian is J = 2 (p-d)^T (I-vv^T) (Jp-Jd)
+
+	// As KDL does not provide a KDL::Matrix class, we use KDL::Rotation
+	// although K is not an actual rotation matrix in this context !
+	// K = (I - v v^T)
+	KDL::Rotation K = KDL::Rotation(KDL::Vector(1,0,0) - v*v(0), 
+		                            KDL::Vector(0,1,0) - v*v(1), 
+		                            KDL::Vector(0,0,1) - v*v(2));
 
 	for (int q_nr = 0; q_nr < jacobian_a_.columns(); ++q_nr)
 	{
-		J_(0, q_nr) =   jacobian_a_.getColumn(q_nr).vel.x()
-		              + jacobian_a_.getColumn(q_nr).vel.y()
-		              + jacobian_a_.getColumn(q_nr).vel.z();
+		KDL::Vector Jpd = - getVelocityJacobianForTwoPoints(p__, d__, q_nr);
+
+		KDL::Vector y = K * Jpd;
+
+		J_(0, q_nr) = 2 * KDL::dot(x, y);
 	}
 	
 	return 0;
-
 }
 
 
@@ -156,28 +147,24 @@ int TaskGeometricProjection<GeometricPoint, GeometricPlane>::project
 	GeometricPlane* plane
 )
 {
-
 	KDL::Vector p__ = pose_a_.M * point->getPointKDL();
-
-	KDL::Vector p( pose_a_.p.x() + p__(0), 
-		           pose_a_.p.y() + p__(1), 
-		           pose_a_.p.z() + p__(2) );
+	KDL::Vector p = pose_a_.p + p__;
 
 	KDL::Vector n = pose_b_.M * plane->getNormalKDL();
 
-	double d = plane->getOffset() + KDL::dot(n, pose_b_.p);
+	KDL::Vector d__ = n * plane->getOffset();
+	KDL::Vector d = d__ + n * KDL::dot(n, pose_b_.p);
 
-	e_(0) = KDL::dot(n, p) - d;
+	e_(0) = KDL::dot(n, (p-d));
 
 	for (int q_nr = 0; q_nr < jacobian_a_.columns(); ++q_nr)
 	{
-		J_(0, q_nr) =   n(0) * jacobian_a_.getColumn(q_nr).vel.x()
-		              + n(1) * jacobian_a_.getColumn(q_nr).vel.y()
-		              + n(2) * jacobian_a_.getColumn(q_nr).vel.z();
+		KDL::Vector Jpd = - getVelocityJacobianForTwoPoints(p__, d__, q_nr);
+
+		J_(0, q_nr) = KDL::dot(n, Jpd);
 	}
 	
 	return 0;
-
 }
 
 

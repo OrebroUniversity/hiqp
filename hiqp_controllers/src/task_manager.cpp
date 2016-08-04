@@ -115,7 +115,13 @@ bool TaskManager::getKinematicControls
     std::vector<double> &controls
 )
 {
-    if (tasks_.size() < 1) return false;
+    if (tasks_.size() < 1) 
+    {
+        for (int i=0; i<controls.size(); ++i)
+            controls.at(i) = 0;
+        
+        return false;
+    }
 
     solver_->clearStages();
 

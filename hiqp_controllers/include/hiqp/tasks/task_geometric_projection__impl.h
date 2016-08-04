@@ -346,6 +346,27 @@ int TaskGeometricProjection<PrimitiveA, PrimitiveB>::apply
 
 
 
+template<typename PrimitiveA, typename PrimitiveB>
+KDL::Vector TaskGeometricProjection<PrimitiveA, PrimitiveB>
+::getVelocityJacobianForTwoPoints
+(
+    const KDL::Vector& p1, 
+    const KDL::Vector& p2,
+    int q_nr
+)
+{
+	KDL::Twist Ja = jacobian_a_.getColumn(q_nr);
+	KDL::Twist Jb = jacobian_b_.getColumn(q_nr);
+	KDL::Vector Jp1 = Ja.rot * p1;
+	KDL::Vector Jp2 = Jb.rot * p2;
+
+	return ( Jb.vel+Jp2 - (Ja.vel+Jp1) );
+}
+
+
+
+
+
 
 
 
