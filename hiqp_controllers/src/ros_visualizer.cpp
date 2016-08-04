@@ -152,7 +152,7 @@ int ROSVisualizer::apply
     double length = kInfiniteLength;
 
     Eigen::Vector3d v = line->getDirectionEigen();
-    Eigen::Vector3d p = line->getOffsetEigen() + v * length/2;
+    Eigen::Vector3d p = line->getOffsetEigen();
 
     // Quaternion that aligns the z-axis with the line direction
     Eigen::Quaterniond q;

@@ -232,7 +232,8 @@ void GeometricPrimitiveMap::redrawAllPrimitives()
         it = point_map_.begin();
         while (it != point_map_.end())
         {
-            visualizer_->update(it->second->getId(), it->second);
+            std::size_t id = visual_id_map_.find(it->first)->second;
+            visualizer_->update(id, it->second);
             ++it;
         }
     }
@@ -244,7 +245,8 @@ void GeometricPrimitiveMap::redrawAllPrimitives()
         it = line_map_.begin();
         while (it != line_map_.end())
         {
-            visualizer_->update(it->second->getId(), it->second);
+            std::size_t id = visual_id_map_.find(it->first)->second;
+            visualizer_->update(id, it->second);
             ++it;
         }
     }
@@ -256,7 +258,8 @@ void GeometricPrimitiveMap::redrawAllPrimitives()
         it = plane_map_.begin();
         while (it != plane_map_.end())
         {
-            visualizer_->update(it->second->getId(), it->second);
+            std::size_t id = visual_id_map_.find(it->first)->second;
+            visualizer_->update(id, it->second);
             ++it;
         }
     }
@@ -268,7 +271,8 @@ void GeometricPrimitiveMap::redrawAllPrimitives()
         it = box_map_.begin();
         while (it != box_map_.end())
         {
-            visualizer_->update(it->second->getId(), it->second);
+            std::size_t id = visual_id_map_.find(it->first)->second;
+            visualizer_->update(id, it->second);
             ++it;
         }
     }
@@ -280,7 +284,8 @@ void GeometricPrimitiveMap::redrawAllPrimitives()
         it = cylinder_map_.begin();
         while (it != cylinder_map_.end())
         {
-            visualizer_->update(it->second->getId(), it->second);
+            std::size_t id = visual_id_map_.find(it->first)->second;
+            visualizer_->update(id, it->second);
             ++it;
         }
     }
@@ -292,7 +297,8 @@ void GeometricPrimitiveMap::redrawAllPrimitives()
         it = sphere_map_.begin();
         while (it != sphere_map_.end())
         {
-            visualizer_->update(it->second->getId(), it->second);
+            std::size_t id = visual_id_map_.find(it->first)->second;
+            visualizer_->update(id, it->second);
             ++it;
         }
     }

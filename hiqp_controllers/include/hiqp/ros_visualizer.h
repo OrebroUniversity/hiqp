@@ -99,9 +99,9 @@ private:
 	enum {ACTION_ADD = 0, ACTION_MODIFY = 1};
 
 	const std::string 					kNamespace = "/yumi";
-	const double 						kInfiniteLength = 10;
-	const double 						kPointRadius    = 0.003;
-	const double 						kLineRadius     = 0.003;
+	const double 						kInfiniteLength = 12;
+	const double 						kPointRadius    = 0.002;
+	const double 						kLineRadius     = 0.0005;
 	const double 						kPlaneThickness = 0.001;
 
 	ros::NodeHandle*                    controller_nh_;
