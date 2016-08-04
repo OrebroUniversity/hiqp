@@ -287,27 +287,29 @@ int ROSVisualizer::apply
 
 
     Eigen::Vector3d p = box->getCentrumEigen();
-    Eigen::Vector3d nu = box->getNormalUpEigen();
-    Eigen::Vector3d nl = box->getNormalLeftEigen();
+    // Eigen::Vector3d nu = box->getNormalUpEigen();
+    // Eigen::Vector3d nl = box->getNormalLeftEigen();
 
-    // Quaternion that aligns the x-axis with the normal of the upper side
-    // projected on the x-y plane
-    Eigen::Quaterniond q1;
-    Eigen::Vector3d nu_xy;
-    nu_xy << nu(0), nu(1), 0;
-    q1.setFromTwoVectors(Eigen::Vector3d::UnitX(), nu_xy);
+    // // Quaternion that aligns the x-axis with the normal of the upper side
+    // // projected on the x-y plane
+    // Eigen::Quaterniond q1;
+    // Eigen::Vector3d nu_xy;
+    // nu_xy << nu(0), nu(1), 0;
+    // q1.setFromTwoVectors(Eigen::Vector3d::UnitX(), nu_xy);
 
-    // Quaternion that aligns the z-axis with the normal of the upper side
-    Eigen::Quaterniond q2;
-    q2.setFromTwoVectors(Eigen::Vector3d::UnitZ(), nu);
+    // // Quaternion that aligns the z-axis with the normal of the upper side
+    // Eigen::Quaterniond q2;
+    // q2.setFromTwoVectors(Eigen::Vector3d::UnitZ(), nu);
 
-    // Rotate around the normal upper side vector
-    Eigen::Vector3d left = Eigen::Vector3d::UnitZ().cross(nu);
-    Eigen::Quaterniond q3;
-    q3.setFromTwoVectors(left, nl);
+    // // Rotate around the normal upper side vector
+    // Eigen::Vector3d left = Eigen::Vector3d::UnitZ().cross(nu);
+    // Eigen::Quaterniond q3;
+    // q3.setFromTwoVectors(left, nl);
 
-    Eigen::Quaterniond q = q1 * q2 * q3;
+    // Eigen::Quaterniond q = q1 * q2 * q3;
 
+
+    Eigen::Quaterniond q = box->getQuaternionEigen();
 
 
 
