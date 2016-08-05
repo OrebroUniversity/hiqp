@@ -72,27 +72,39 @@ TaskFunction* TaskFactory::buildTaskFunction
 	TaskFunction* function = nullptr;
 
 
-
-
 	if (type.compare("TaskGeometricProjection") == 0)
     {
-        if (parameters.at(0).compare("point") == 0 && 
-            parameters.at(1).compare("point") == 0)
+        std::string type1 = parameters.at(0);
+        std::string type2 = parameters.at(1);
+        if (type1.compare("point") == 0 && 
+            type2.compare("point") == 0)
         {
             function = new TaskGeometricProjection<GeometricPoint, GeometricPoint>();
         }
-        else if (parameters.at(0).compare("point") == 0 && 
-                 parameters.at(1).compare("plane") == 0)
+        else if (type1.compare("point") == 0 && 
+                 type2.compare("line") == 0)
+        {
+            function = new TaskGeometricProjection<GeometricPoint, GeometricLine>();
+        }
+        else if (type1.compare("point") == 0 && 
+                 type2.compare("plane") == 0)
         {
             function = new TaskGeometricProjection<GeometricPoint, GeometricPlane>();
+        }
+        else
+        {
+            printHiqpWarning("TaskGeometricProjection does not allow primitive types: '"
+                + type1 + "' and '" + type2 + "'!");
         }
     }
     else if (type.compare("TaskJntConfig") == 0)
     {
         function = new TaskJntConfig();
     }
-
-
+    else
+    {
+        printHiqpWarning("Task type name '" + type + "' was not recognized!");
+    }
 
 
     if (function != nullptr)
@@ -110,9 +122,6 @@ TaskFunction* TaskFactory::buildTaskFunction
     	function->init(parameters, num_controls_);
     }
 
-
-
-
     return function;
 }
 
@@ -126,15 +135,28 @@ TaskDynamics* TaskFactory::buildTaskDynamics
 	const std::vector<std::string>& parameters
 )
 {
-	if (parameters.size() < 1)
-		return nullptr;
+    TaskDynamics* dynamics = nullptr;
 
-	if (parameters.at(0).compare("DynamicsFirstOrder") != 0)
-        return nullptr;
+    int size = parameters.size();
+	if (size == 0 || (size == 1 && parameters.at(0).compare("NA") == 0) )
+    {
+        dynamics = new DynamicsFirstOrder();
+        dynamics->init( {"DynamicsFirstOrder", "1.0"} );
+    }
 
-    TaskDynamics* dynamics = new DynamicsFirstOrder();
-
-    dynamics->init(parameters);
+	if (parameters.at(0).compare("DynamicsFirstOrder") == 0)
+    {
+        if (size == 2)
+        {
+            dynamics = new DynamicsFirstOrder();
+            dynamics->init(parameters);
+        }
+        else
+        {
+            printHiqpWarning("DynamicsFirstOrder requires 2 parameters, got " 
+                + std::to_string(size) + "!");
+        }
+    }
 
     return dynamics;
 }

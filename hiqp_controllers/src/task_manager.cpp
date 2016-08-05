@@ -33,8 +33,6 @@
 #include <hiqp/tasks/task_geometric_projection.h>
 #include <hiqp/tasks/dynamics_first_order.h>
 
-#include <hiqp/geometric_primitives/geometric_point.h>
-#include <hiqp/geometric_primitives/geometric_plane.h>
 
 // STL Includes
 //#include <iostream>
@@ -170,7 +168,7 @@ void TaskManager::getTaskMonitoringData
 
 
 
-std::size_t TaskManager::addTask
+int TaskManager::addTask
 (
     const std::string& name,
     const std::string& type,
@@ -184,22 +182,11 @@ std::size_t TaskManager::addTask
     TaskDynamics* dynamics = nullptr;
     TaskFunction* function = nullptr;
 
-    if (behaviour_parameters.size() == 1 && 
-        behaviour_parameters.at(0).compare("NA") == 0)
+    dynamics = task_factory_->buildTaskDynamics(behaviour_parameters);
+    if (dynamics == nullptr)
     {
-        dynamics = task_factory_->buildTaskDynamics( 
-            {"DynamicsFirstOrder", "1.0"} );
-    }
-    else if (behaviour_parameters.size() >= 2)
-    {
-        dynamics = task_factory_->buildTaskDynamics(behaviour_parameters);
-        if (dynamics == nullptr)
-        {
-            return -2;
-        }
-    }
-    else
-    {
+        printHiqpWarning("While trying to add task '" + name 
+            + "', could not parse the dynamics parameters! No task was added!");
         return -1;
     }
 
@@ -211,13 +198,21 @@ std::size_t TaskManager::addTask
 
     if (function == nullptr)
     {
+        printHiqpWarning("While trying to add task '" + name 
+            + "', could not parse the task parameters! No task was added!");
         delete dynamics;
         return -3;
     }
 
-    assert(function->e_.rows() == function->J_.rows());
-    assert(function->e_.rows() == function->e_dot_star_.rows());
-    assert(function->e_.rows() == function->task_types_.size());
+    bool size_test1 = (function->e_.rows() != function->J_.rows());
+    bool size_test2 = (function->e_.rows() != function->e_dot_star_.rows());
+    bool size_test3 = (function->e_.rows() != function->task_types_.size());
+
+    if (size_test1 || size_test2 || size_test3)
+    {
+        printHiqpWarning("While trying to add task '" + name 
+            + "', the task dimensions was not properly setup! No task was added!");
+    }
 
     tasks_.insert( TaskMapElement(next_task_id_, function) );
     next_task_id_++;

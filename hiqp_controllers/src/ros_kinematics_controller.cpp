@@ -395,14 +395,17 @@ bool ROSKinematicsController::addTask
     hiqp_msgs_srvs::AddTask::Response& res
 )
 {
-	res.task_id = task_manager_.addTask(req.name, req.type, req.behaviour,
-									    req.priority, req.visibility, 
-									    req.parameters);
+	int retval = task_manager_.addTask(req.name, req.type, req.behaviour,
+									   req.priority, req.visibility, 
+									   req.parameters);
 
-	res.success = (res.task_id < 0 ? false : true);
+
+
+	res.success = (retval < 0 ? false : true);
 
 	if (res.success)
 	{
+		res.task_id = retval;
 		printHiqpInfo("Added task of type '" + req.type + "'"
 			+ " with priority " + std::to_string(req.priority)
 			+ " and identifier " + std::to_string(res.task_id));

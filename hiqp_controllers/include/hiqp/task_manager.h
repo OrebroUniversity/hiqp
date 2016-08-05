@@ -179,13 +179,13 @@ public:
      *         -2 if the task behaviour name was not recognised,
      *         -3 if the task name was not recognised
      */
-     std::size_t addTask(const std::string& name,
-                         const std::string& type,
-                         const std::vector<std::string>& behaviour_parameters,
-                         unsigned int priority,
-                         bool visibility,
-                         const std::vector<std::string>& parameters);
-
+     int addTask(const std::string& name,
+                 const std::string& type,
+                 const std::vector<std::string>& behaviour_parameters,
+                 unsigned int priority,
+                 bool visibility,
+                 const std::vector<std::string>& parameters);
+                 
 
 
 
