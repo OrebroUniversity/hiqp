@@ -81,20 +81,25 @@ public:
 
 
 
-	int init(const std::vector<std::string>& parameters)
+	int init(const std::vector<double>& parameters)
 	{
 		int size = parameters.size();
-		assert(size == 6);
+		if (size != 6)
+		{
+			printHiqpWarning("GeometricLine requires 6 parameters, got " 
+				+ std::to_string(size) + "! Initialization failed!");
+			return -1;
+		}
 
-		kdl_v_(0) = std::stod( parameters.at(0) );
-		kdl_v_(1) = std::stod( parameters.at(1) );
-		kdl_v_(2) = std::stod( parameters.at(2) );
+		kdl_v_(0) = parameters.at(0);
+		kdl_v_(1) = parameters.at(1);
+		kdl_v_(2) = parameters.at(2);
 		
 		kdl_v_.Normalize();
 		
-		kdl_p_(0) = std::stod( parameters.at(3) );
-		kdl_p_(1) = std::stod( parameters.at(4) );
-		kdl_p_(2) = std::stod( parameters.at(5) );
+		kdl_p_(0) = parameters.at(3);
+		kdl_p_(1) = parameters.at(4);
+		kdl_p_(2) = parameters.at(5);
 
 		l_ = -1; // infinitely long line
 

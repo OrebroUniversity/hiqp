@@ -71,7 +71,7 @@ int GeometricPrimitiveMap::addGeometricPrimitive
     const std::string& frame_id,
     bool visible,
     const std::vector<double>& color,
-    const std::vector<std::string>& parameters
+    const std::vector<double>& parameters
 )
 {
     if (visual_id_map_.find(name) != visual_id_map_.end())

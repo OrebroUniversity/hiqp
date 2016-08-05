@@ -403,10 +403,9 @@ bool ROSKinematicsController::addTask
 
 	if (res.success)
 	{
-		ROS_INFO_STREAM("Added task of type '" 
-			<< req.type << "'"
-			<< " with priority " << req.priority
-			<< " and identifier " << res.task_id);
+		printHiqpInfo("Added task of type '" + req.type + "'"
+			+ " with priority " + std::to_string(req.priority)
+			+ " and identifier " + std::to_string(res.task_id));
 	}
 
 	return true;
@@ -428,11 +427,11 @@ bool ROSKinematicsController::removeTask
 
 	if (res.success)
 	{
-		ROS_INFO_STREAM("Removed task '" << req.task_id << "' successfully!");
+		printHiqpInfo("Removed task '" + std::to_string(req.task_id) + "' successfully!");
 	}
 	else
 	{
-		ROS_INFO_STREAM("Couldn't remove task '" << req.task_id << "'!");	
+		printHiqpInfo("Couldn't remove task '" + std::to_string(req.task_id) + "'!");	
 	}
 
 	return true;
@@ -449,7 +448,7 @@ bool ROSKinematicsController::removeAllTasks
 )
 {
 	task_manager_.removeAllTasks();
-	ROS_INFO_STREAM("Removed all tasks successfully!");
+	printHiqpInfo("Removed all tasks successfully!");
 	res.success = true;
 	return true;
 }
@@ -472,9 +471,8 @@ bool ROSKinematicsController::addGeometricPrimitive
 
 	if (res.success)
 	{
-		ROS_INFO_STREAM("Added geometric primitive of type '" 
-			<< req.type << "'"
-			<< " with name " << req.name);
+		printHiqpInfo("Added geometric primitive of type '" 
+			+ req.type + "' with name '" + req.name + "'.");
 	}
 
 	return true;
@@ -496,11 +494,11 @@ bool ROSKinematicsController::removeGeometricPrimitive
 
 	if (res.success)
 	{
-		ROS_INFO_STREAM("Removed primitive '" << req.name << "' successfully!");
+		printHiqpInfo("Removed primitive '" + req.name + "' successfully!");
 	}
 	else
 	{
-		ROS_INFO_STREAM("Couldn't remove primitive '" << req.name << "'!");	
+		printHiqpInfo("Couldn't remove primitive '" + req.name + "'!");	
 	}
 
 	return true;

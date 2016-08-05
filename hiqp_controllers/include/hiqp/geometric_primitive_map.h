@@ -78,7 +78,7 @@ public:
         const std::string& frame_id,
         bool visible,
         const std::vector<double>& color,
-        const std::vector<std::string>& parameters
+        const std::vector<double>& parameters
     );
 
     int removeGeometricPrimitive( std::string name);

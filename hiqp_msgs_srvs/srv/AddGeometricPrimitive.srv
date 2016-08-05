@@ -22,7 +22,7 @@ string              type
 string              frame_id
 bool                visible
 float64[]           color
-string[]            parameters
+float64[]           parameters
 
 ---
 

@@ -4,7 +4,7 @@ type: 'point'
 frame_id: 'gripper_r_base'
 visible: true
 color: [1.0, 0.0, 0.0, 0.9]
-parameters: ['0', '0', '0.1']"
+parameters: [0, 0, 0.1]"
 
 
 rosservice call /yumi/hiqp_kinematics_controller/add_primitive \
@@ -13,7 +13,7 @@ type: 'point'
 frame_id: 'gripper_l_base'
 visible: true
 color: [1.0, 0.0, 0.0, 0.9]
-parameters: ['0.2', '0', '0.1']"
+parameters: [0.2, 0, 0.1]"
 
 
 rosservice call /yumi/hiqp_kinematics_controller/add_primitive \
@@ -22,7 +22,7 @@ type: 'line'
 frame_id: 'gripper_l_base'
 visible: true
 color: [1.0, 1.0, 1.0, 0.9]
-parameters: ['0.0', '0.1', '1', '0', '-0.1', '0']"
+parameters: [0.0, 0.1, 1, 0, -0.1, 0]"
 
 
 rosservice call /yumi/hiqp_kinematics_controller/add_primitive \
@@ -31,7 +31,7 @@ type: 'plane'
 frame_id: 'gripper_l_base'
 visible: true
 color: [0.6, 0.6, 1.0, 0.4]
-parameters: ['1', '0', '0', '-0.3']"
+parameters: [1, 0, 0, -0.3]"
 
 
 rosservice call /yumi/hiqp_kinematics_controller/add_primitive \
@@ -40,7 +40,7 @@ type: 'cylinder'
 frame_id: 'yumi_body'
 visible: true
 color: [0.6, 1.0, 0.6, 0.7]
-parameters: ['0', '0', '1', '0.4', '0', '0', '0.3', '0.4']"
+parameters: [0, 0, 1, 0.4, 0, 0, 0.3, 0.4]"
 
 
 rosservice call /yumi/hiqp_kinematics_controller/add_primitive \
@@ -49,4 +49,4 @@ type: 'sphere'
 frame_id: 'yumi_body'
 visible: true
 color: [1.0, 0.6, 0.6, 0.7]
-parameters: ['0.4', '0', '0', '0.4']"
+parameters: [0.4, 0, 0, 0.4]"

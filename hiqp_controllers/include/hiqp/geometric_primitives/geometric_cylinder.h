@@ -81,23 +81,28 @@ public:
 
 
 
-	int init(const std::vector<std::string>& parameters)
+	int init(const std::vector<double>& parameters)
 	{
 		int size = parameters.size();
-		assert(size == 8);
+		if (size != 8)
+		{
+			printHiqpWarning("GeometricCylinder requires 8 parameters, got " 
+				+ std::to_string(size) + "! Initialization failed!");
+			return -1;
+		}
 
-		kdl_v_(0) = std::stod( parameters.at(0) );
-		kdl_v_(1) = std::stod( parameters.at(1) );
-		kdl_v_(2) = std::stod( parameters.at(2) );
+		kdl_v_(0) = parameters.at(0);
+		kdl_v_(1) = parameters.at(1);
+		kdl_v_(2) = parameters.at(2);
 		kdl_v_.Normalize();
 
-		kdl_p_(0) = std::stod( parameters.at(3) );
-		kdl_p_(1) = std::stod( parameters.at(4) );
-		kdl_p_(2) = std::stod( parameters.at(5) );
+		kdl_p_(0) = parameters.at(3);
+		kdl_p_(1) = parameters.at(4);
+		kdl_p_(2) = parameters.at(5);
 
-		radius_ = std::stod( parameters.at(6) );
+		radius_ = parameters.at(6);
 
-		h_ = std::stod( parameters.at(7) );
+		h_ = parameters.at(7);
 
 		// std::string height = parameters.at(7);
 		// if (height.compare("INF")==0 || 
@@ -108,7 +113,7 @@ public:
 		// }
 		// else
 		// {
-		// 	h_ = std::stod( height );
+		// 	h_ = height );
 		// }
 
 		eigen_v_ << kdl_v_(0), kdl_v_(1), kdl_v_(2);

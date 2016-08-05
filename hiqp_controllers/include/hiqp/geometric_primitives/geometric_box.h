@@ -82,29 +82,29 @@ public:
      */
 	~GeometricBox() noexcept {}
 
-	int init(const std::vector<std::string>& parameters)
+	int init(const std::vector<double>& parameters)
 	{
 		int size = parameters.size();
 		if (size != 6 && size != 9 && size != 10)
 		{
 			printHiqpWarning("GeometricBox requires 6, 9 or 10 parameters, got " 
-				+ std::to_string(size) + "! The box failed to be initialized!");
+				+ std::to_string(size) + "! Initialization failed!");
 			return -1;
 		}
 
-		kdl_c_(0) = std::stod( parameters.at(0) );
-		kdl_c_(1) = std::stod( parameters.at(1) );
-		kdl_c_(2) = std::stod( parameters.at(2) );
+		kdl_c_(0) = parameters.at(0);
+		kdl_c_(1) = parameters.at(1);
+		kdl_c_(2) = parameters.at(2);
 
-		kdl_dim_(0) = std::stod( parameters.at(3) );
-		kdl_dim_(1) = std::stod( parameters.at(4) );
-		kdl_dim_(2) = std::stod( parameters.at(5) );
+		kdl_dim_(0) = parameters.at(3);
+		kdl_dim_(1) = parameters.at(4);
+		kdl_dim_(2) = parameters.at(5);
 
 		if (size == 9)
 		{
-			double angle1 = std::stod( parameters.at(6) );
-			double angle2 = std::stod( parameters.at(7) );
-			double angle3 = std::stod( parameters.at(8) );
+			double angle1 = parameters.at(6);
+			double angle2 = parameters.at(7);
+			double angle3 = parameters.at(8);
 
 			Eigen::Matrix3d m;
 			m =   Eigen::AngleAxisd(angle1, Eigen::Vector3d::UnitX())
@@ -115,10 +115,10 @@ public:
 		}
 		else if (size == 10)
 		{
-			double w = std::stod( parameters.at(6) );
-			double x = std::stod( parameters.at(7) );
-			double y = std::stod( parameters.at(8) );
-			double z = std::stod( parameters.at(9) );
+			double w = parameters.at(6);
+			double x = parameters.at(7);
+			double y = parameters.at(8);
+			double z = parameters.at(9);
 
 			q_ = Eigen::Quaternion<double>(w, x, y, z);
 		}

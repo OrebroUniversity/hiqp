@@ -77,15 +77,23 @@ public:
 
 
 
-	int init(const std::vector<std::string>& parameters)
+	int init(const std::vector<double>& parameters)
 	{
-		assert(parameters.size() == 3);
+		int size = parameters.size();
+		if (size != 3)
+		{
+			printHiqpWarning("GeometricPoint requires 3 parameters, got " 
+				+ std::to_string(size) + "! Initialization failed!");
+			return -1;
+		}
 
-		kdl_p_(0) = std::stod( parameters.at(0) );
-		kdl_p_(1) = std::stod( parameters.at(1) );
-		kdl_p_(2) = std::stod( parameters.at(2) );
+		kdl_p_(0) = parameters.at(0);
+		kdl_p_(1) = parameters.at(1);
+		kdl_p_(2) = parameters.at(2);
 
 		eigen_p_ << kdl_p_(0), kdl_p_(1), kdl_p_(2);
+
+		return 0;
 	}
 
 

@@ -78,19 +78,27 @@ public:
 	~GeometricPlane() noexcept {}
 
 
-	int init(const std::vector<std::string>& parameters)
+	int init(const std::vector<double>& parameters)
 	{
-		assert(parameters.size() == 4);
+		int size = parameters.size();
+		if (size != 4)
+		{
+			printHiqpWarning("GeometricPlane requires 4 parameters, got " 
+				+ std::to_string(size) + "! Initialization failed!");
+			return -1;
+		}
 
-		kdl_n_(0) = std::stod( parameters.at(0) );
-		kdl_n_(1) = std::stod( parameters.at(1) );
-		kdl_n_(2) = std::stod( parameters.at(2) );
+		kdl_n_(0) = parameters.at(0);
+		kdl_n_(1) = parameters.at(1);
+		kdl_n_(2) = parameters.at(2);
 
 		kdl_n_.Normalize();
 
 		eigen_n_ << kdl_n_(0), kdl_n_(1), kdl_n_(2);
 
-		d_ = std::stod( parameters.at(3) );
+		d_ = parameters.at(3);
+
+		return 0;
 	}
 
 

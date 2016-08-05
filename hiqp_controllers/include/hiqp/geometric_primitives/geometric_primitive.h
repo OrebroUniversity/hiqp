@@ -79,7 +79,7 @@ public:
 	virtual ~GeometricPrimitive() noexcept = 0;
 
 
-	virtual int init(const std::vector<std::string>& parameters) = 0;
+	virtual int init(const std::vector<double>& parameters) = 0;
 
 
 	inline void setId(unsigned int id) { id_ = id; }
