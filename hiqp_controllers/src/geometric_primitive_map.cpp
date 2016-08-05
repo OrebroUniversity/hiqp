@@ -28,10 +28,10 @@
 
 
 #include <hiqp/geometric_primitive_map.h>
+#include <hiqp/hiqp_utils.h>
 
 // STL Includes
 #include <iostream>
-#include <cassert>
 
 
 
@@ -63,8 +63,7 @@ namespace hiqp {
 */
 
 
-/*! \todo primitive names shall be unique across primitive types, i.e. across the different internal maps aswell!
- */
+
 int GeometricPrimitiveMap::addGeometricPrimitive
 (
 	const std::string& name,
@@ -75,88 +74,118 @@ int GeometricPrimitiveMap::addGeometricPrimitive
     const std::vector<std::string>& parameters
 )
 {
-
     if (visual_id_map_.find(name) != visual_id_map_.end())
     {
-        std::cerr << "A primitive with name '" << name 
-                  << "' already exists. No new primitive was added!\n";
+        printHiqpWarning("A primitive with name '" + name 
+           + "' already exists. No new primitive was added!");
         return -1;
     }
 
     std::size_t id = 0;
+    bool success = false;
 
     if (type.compare("point") == 0)
     {
         GeometricPoint* point = new GeometricPoint(
-            name, frame_id, visible, color, parameters);
+            name, frame_id, visible, color);
 
-        point_map_.insert( 
-            std::pair< std::string, GeometricPoint* >( name, point ) );
+        if (point->init(parameters) == 0)
+        {
+            point_map_.insert( 
+                std::pair< std::string, GeometricPoint* >( name, point ) );
 
-        id = visualizer_->add(point);
+            id = visualizer_->add(point);
+
+            success = true;
+        }
     }
     else if (type.compare("line") == 0)
     {
         GeometricLine* line = new GeometricLine(
-            name, frame_id, visible, color, parameters);
+            name, frame_id, visible, color);
 
-        line_map_.insert( 
-            std::pair< std::string, GeometricLine* >( name, line ) );
+        if (line->init(parameters) == 0)
+        {
+            line_map_.insert( 
+                std::pair< std::string, GeometricLine* >( name, line ) );
 
-        id = visualizer_->add(line);
+            id = visualizer_->add(line);
+
+            success = true;
+        }
         
     }
     else if (type.compare("plane") == 0)
     {
         GeometricPlane* plane = new GeometricPlane(
-            name, frame_id, visible, color, parameters);
+            name, frame_id, visible, color);
 
-        plane_map_.insert( 
-            std::pair< std::string, GeometricPlane* > ( name, plane ) );
+        if (plane->init(parameters) == 0)
+        {
+            plane_map_.insert( 
+                std::pair< std::string, GeometricPlane* > ( name, plane ) );
 
-        id = visualizer_->add(plane);
+            id = visualizer_->add(plane);
+
+            success = true;
+        }
 
     }
     else if (type.compare("box") == 0)
     {
         GeometricBox* box = new GeometricBox(
-            name, frame_id, visible, color, parameters);
+            name, frame_id, visible, color);
 
-        box_map_.insert( 
-            std::pair< std::string, GeometricBox* > ( name, box ) );
+        if (box->init(parameters) == 0)
+        {
+            box_map_.insert( 
+                std::pair< std::string, GeometricBox* > ( name, box ) );
 
-        id = visualizer_->add(box);
+            id = visualizer_->add(box);
+
+            success = true;
+        }
     }
     else if (type.compare("cylinder") == 0)
     {
         GeometricCylinder* cylinder = new GeometricCylinder(
-            name, frame_id, visible, color, parameters);
+            name, frame_id, visible, color);
 
-        cylinder_map_.insert( 
-            std::pair< std::string, GeometricCylinder* > ( name, cylinder ) );
+        if (cylinder->init(parameters) == 0)
+        {
+            cylinder_map_.insert( 
+                std::pair< std::string, GeometricCylinder* > ( name, cylinder ) );
 
-        id = visualizer_->add(cylinder);
+            id = visualizer_->add(cylinder);
+
+            success = true;
+        }
     }
     else if (type.compare("sphere") == 0)
     {
         GeometricSphere* sphere = new GeometricSphere(
-            name, frame_id, visible, color, parameters);
+            name, frame_id, visible, color);
 
-        sphere_map_.insert( 
-            std::pair< std::string, GeometricSphere* > ( name, sphere ) );
+        if (sphere->init(parameters) == 0)
+        {
+            sphere_map_.insert( 
+                std::pair< std::string, GeometricSphere* > ( name, sphere ) );
 
-        id = visualizer_->add(sphere);
+            id = visualizer_->add(sphere);
+
+            success = true;
+        }
     }
     else
     {
-        std::cerr << "ERROR: Couldn't parse geometric type '" << type << "'!\n";
+        printHiqpWarning("Couldn't parse geometric type '" + type + "'. No new primitive was added!");
+        return -2;
     }
 
-    visual_id_map_.insert(
-            std::pair< std::string, std::size_t >( name, id ) );
+    if (!success) return -3;
 
+    visual_id_map_.insert( std::pair< std::string, std::size_t >( name, id ) );
     return 0;
-
 }
 
 
@@ -173,6 +202,8 @@ int GeometricPrimitiveMap::removeGeometricPrimitive
     std::map<std::string, std::size_t>::iterator it = visual_id_map_.find(name);
     if (it == visual_id_map_.end())
     {
+        printHiqpWarning("While trying to remove primitive with name '" + name 
+            + "', could not find that primitive. No action taken!");
         return -1;
     }
 

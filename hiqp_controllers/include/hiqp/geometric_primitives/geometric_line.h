@@ -35,6 +35,7 @@
 
 
 #include <hiqp/geometric_primitives/geometric_primitive.h>
+#include <hiqp/hiqp_utils.h>
 
 #include <kdl/frames.hpp>
 
@@ -68,10 +69,19 @@ public:
 		const std::string& name,
 		const std::string& frame_id,
 		bool visible,
-		const std::vector<double>& color,
-		const std::vector<std::string>& parameters
+		const std::vector<double>& color
 	)
 	: GeometricPrimitive(name, frame_id, visible, color)
+	{}
+
+	/*!
+     * \brief Destructor
+     */
+	~GeometricLine() noexcept {}
+
+
+
+	int init(const std::vector<std::string>& parameters)
 	{
 		int size = parameters.size();
 		assert(size == 6);
@@ -90,14 +100,11 @@ public:
 
 		eigen_v_ << kdl_v_(0), kdl_v_(1), kdl_v_(2);
 		eigen_p_ << kdl_p_(0), kdl_p_(1), kdl_p_(2);
+
+		return 0;
 	}
 
 
-
-	/*!
-     * \brief Destructor
-     */
-	~GeometricLine() noexcept {}
 
 	inline const KDL::Vector&      getDirectionKDL()    { return kdl_v_; }
 	inline const Eigen::Vector3d&  getDirectionEigen()  { return eigen_v_; }

@@ -297,6 +297,20 @@ int kdl_JntToJac
 
 
 
+void printHiqpInfo(const std::string& msg)
+{
+    std::cout << "[HiQP INFO] : " << msg << "\n";
+}
+
+void printHiqpWarning(const std::string& msg)
+{
+    std::cerr << "[HiQP WARNING] : " << msg << "\n";
+}
+
+
+
+
+
 
 
 

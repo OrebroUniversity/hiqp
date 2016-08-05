@@ -73,6 +73,8 @@ int kdl_JntToJac
     const std::string& segmentname
 );
 
+void printHiqpInfo(const std::string& msg);
+void printHiqpWarning(const std::string& msg);
 
 
 

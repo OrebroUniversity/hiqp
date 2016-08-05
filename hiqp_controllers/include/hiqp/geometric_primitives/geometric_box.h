@@ -35,6 +35,7 @@
 
 
 #include <hiqp/geometric_primitives/geometric_primitive.h>
+#include <hiqp/hiqp_utils.h>
 
 #include <kdl/frames.hpp>
 
@@ -71,13 +72,25 @@ public:
 		const std::string& name,
 		const std::string& frame_id,
 		bool visible,
-		const std::vector<double>& color,
-		const std::vector<std::string>& parameters
+		const std::vector<double>& color
 	)
 	: GeometricPrimitive(name, frame_id, visible, color)
+	{}
+
+	/*!
+     * \brief Destructor
+     */
+	~GeometricBox() noexcept {}
+
+	int init(const std::vector<std::string>& parameters)
 	{
 		int size = parameters.size();
-		assert(size == 6 || size == 9 || size == 10);
+		if (size != 6 && size != 9 && size != 10)
+		{
+			printHiqpWarning("GeometricBox requires 6, 9 or 10 parameters, got " 
+				+ std::to_string(size) + "! The box failed to be initialized!");
+			return -1;
+		}
 
 		kdl_c_(0) = std::stod( parameters.at(0) );
 		kdl_c_(1) = std::stod( parameters.at(1) );
@@ -110,27 +123,18 @@ public:
 			q_ = Eigen::Quaternion<double>(w, x, y, z);
 		}
 
-		
-		
-
 		// Calculate the normal of the left side of the box
 		// KDL::Vector left = KDL::Vector(0, 0, 1) * kdl_n_up_;
 		// KDL::Vector back = kdl_n_up_ * left;
 		// kdl_n_left_ = std::cos(a_) * left + std::sin(a_) * back;
 
-
 		eigen_c_ << kdl_c_(0), kdl_c_(1), kdl_c_(2);
 		eigen_dim_ << kdl_dim_(0), kdl_dim_(1), kdl_dim_(2);
 		// eigen_n_up_ << kdl_n_up_(0), kdl_n_up_(1), kdl_n_up_(2);
 		// eigen_n_left_ << kdl_n_left_(0), kdl_n_left_(1), kdl_n_left_(2);
+
+		return 0;
 	}
-
-
-
-	/*!
-     * \brief Destructor
-     */
-	~GeometricBox() noexcept {}
 
 	inline const KDL::Vector&     getCentrumKDL() { return kdl_c_; }
 	inline const Eigen::Vector3d& getCentrumEigen() { return eigen_c_; }

@@ -34,6 +34,7 @@
 
 
 #include <hiqp/geometric_primitives/geometric_primitive.h>
+#include <hiqp/hiqp_utils.h>
 
 #include <kdl/frames.hpp>
 
@@ -64,10 +65,19 @@ public:
 		const std::string& name,
 		const std::string& frame_id,
 		bool visible,
-		const std::vector<double>& color,
-		const std::vector<std::string>& parameters
+		const std::vector<double>& color
 	)
 	: GeometricPrimitive(name, frame_id, visible, color)
+	{}
+
+	/*!
+     * \brief Destructor
+     */
+	~GeometricPoint() noexcept {}
+
+
+
+	int init(const std::vector<std::string>& parameters)
 	{
 		assert(parameters.size() == 3);
 
@@ -77,14 +87,6 @@ public:
 
 		eigen_p_ << kdl_p_(0), kdl_p_(1), kdl_p_(2);
 	}
-
-
-
-	/*!
-     * \brief Destructor
-     */
-	~GeometricPoint() noexcept {}
-
 
 
 	inline const KDL::Vector&       getPointKDL() 

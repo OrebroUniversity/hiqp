@@ -75,6 +75,7 @@ int TaskJntConfig::init
 		}
 	}
 
+
 	e_.resize(1);
 	J_.resize(1, num_controls);
 	e_dot_star_.resize(1);
@@ -85,6 +86,7 @@ int TaskJntConfig::init
 		J_(0, i) = -1;
 
 	std::cout << "Initialized TaskJntConfig successfully!\n";
+	std::cout << "num_controls = " << num_controls << "\n";
 
 	return 0;
 }
@@ -100,6 +102,8 @@ int TaskJntConfig::apply
 {
 	const KDL::JntArray &q = kdl_joint_pos_vel.q;
 	e_(0) = 0;
+	
+	std::cout << "q.columns() = " << q.columns() << "\n";
 	for (int i=0; i<q.columns(); ++i)
 	{
 		e_(0) += desired_configuration_.at(i) - q(i);

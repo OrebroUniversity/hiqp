@@ -81,6 +81,14 @@ int CasADiSolver::solve
 	std::vector<double>& solution
 )
 {
+
+	StageMapIterator it2 = stages_map_.begin();
+	while (it2 != stages_map_.end())
+	{
+		std::cout << *it2;
+		it2++;
+	}
+
 	unsigned int solutionSize = solution.size();
 
 	// Setup the parts of the QP problem that wont change between interations

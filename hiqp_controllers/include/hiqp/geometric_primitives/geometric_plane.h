@@ -35,6 +35,7 @@
 
 
 #include <hiqp/geometric_primitives/geometric_primitive.h>
+#include <hiqp/hiqp_utils.h>
 
 #include <kdl/frames.hpp>
 
@@ -65,10 +66,19 @@ public:
 		const std::string& name,
 		const std::string& frame_id,
 		bool visible,
-		const std::vector<double>& color,
-		const std::vector<std::string>& parameters
+		const std::vector<double>& color
 	)
 	: GeometricPrimitive(name, frame_id, visible, color)
+	{}
+
+	/*!
+     * \brief Destructor
+     * Destructs my awesome task
+     */
+	~GeometricPlane() noexcept {}
+
+
+	int init(const std::vector<std::string>& parameters)
 	{
 		assert(parameters.size() == 4);
 
@@ -82,14 +92,6 @@ public:
 
 		d_ = std::stod( parameters.at(3) );
 	}
-
-
-
-	/*!
-     * \brief Destructor
-     * Destructs my awesome task
-     */
-	~GeometricPlane() noexcept {}
 
 
 
