@@ -82,12 +82,12 @@ int CasADiSolver::solve
 )
 {
 
-	StageMapIterator it2 = stages_map_.begin();
-	while (it2 != stages_map_.end())
-	{
-		std::cout << *it2;
-		it2++;
-	}
+	// StageMapIterator it2 = stages_map_.begin();
+	// while (it2 != stages_map_.end())
+	// {
+	// 	std::cout << *it2;
+	// 	it2++;
+	// }
 
 	unsigned int solutionSize = solution.size();
 

@@ -309,6 +309,7 @@ void ROSKinematicsController::update
 
 
 
+
 	// If monitoring is turned on, generate monitoring data and publish it
 	if (monitoring_active_)
 	{
@@ -518,7 +519,7 @@ bool ROSKinematicsController::removeAllGeometricPrimitives
 )
 {
 	task_manager_.removeAllGeometricPrimitives();
-	ROS_INFO_STREAM("Removed all primitives successfully!");
+	printHiqpInfo("Removed all primitives successfully!");
 	res.success = true;
 	return true;
 }

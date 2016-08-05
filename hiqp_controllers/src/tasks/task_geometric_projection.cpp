@@ -230,7 +230,7 @@ int TaskGeometricProjection<GeometricPoint, GeometricCylinder>::project
 	KDL::Vector x = p - d;
 	double s = KDL::dot(x, v);
 
-	e_(0) = KDL::dot(x, x) - s*s - cylinder->getRadius();
+	e_(0) = KDL::dot(x, x) - s*s - cylinder->getRadius()*cylinder->getRadius();
 
 	// The task jacobian is J = 2 (p-d)^T (I-vv^T) (Jp-Jd)
 
@@ -273,7 +273,7 @@ int TaskGeometricProjection<GeometricPoint, GeometricSphere>::project
 	KDL::Vector p2 = pose_b_.p + p2__;
 
 	KDL::Vector d = p2 - p1;
-	e_(0) = KDL::dot(d, d) - sphere->getRadius();
+	e_(0) = KDL::dot(d, d) - sphere->getRadius()*sphere->getRadius();
 
 	// The task jacobian is J = 2 (p2-p1)^T (Jp2 - Jp1)
 

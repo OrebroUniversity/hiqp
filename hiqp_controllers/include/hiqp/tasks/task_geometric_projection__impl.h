@@ -102,7 +102,7 @@ int TaskGeometricProjection<PrimitiveA, PrimitiveB>::init
 	else if (args.at(1).compare(">") == 0 || 
 		     args.at(1).compare(">=") == 0)
 	{
-		sign = -1;
+		sign = 1;
 	}
 	else
 	{

@@ -30,14 +30,10 @@
 
 #include <hiqp/tasks/task_jnt_config.h>
 
-//#include <hiqp/hiqp_utils.h>
+#include <hiqp/hiqp_utils.h>
 
-// Orocos KDL Includes
-//#include <kdl/treefksolverpos_recursive.hpp>
-//#include <kdl/treejnttojacsolver.hpp>
 
 #include <iostream>
-//#include <string>
 
 
 
@@ -59,6 +55,9 @@ int TaskJntConfig::init
 	int size = parameters.size();
 	if (size != 0 && size != num_controls)
 	{
+		printHiqpWarning("TaskJntConfig requires 0 or " 
+			+ std::to_string(num_controls) + " parameters, got " 
+			+ std::to_string(size) + "! Initialization failed!");
 		return -1;
 	}
 
@@ -85,9 +84,6 @@ int TaskJntConfig::init
 	for (int i=0; i<num_controls; ++i) 
 		J_(0, i) = -1;
 
-	std::cout << "Initialized TaskJntConfig successfully!\n";
-	std::cout << "num_controls = " << num_controls << "\n";
-
 	return 0;
 }
 
@@ -103,8 +99,7 @@ int TaskJntConfig::apply
 	const KDL::JntArray &q = kdl_joint_pos_vel.q;
 	e_(0) = 0;
 	
-	std::cout << "q.columns() = " << q.columns() << "\n";
-	for (int i=0; i<q.columns(); ++i)
+	for (int i=0; i<q.rows(); ++i)
 	{
 		e_(0) += desired_configuration_.at(i) - q(i);
 	}
