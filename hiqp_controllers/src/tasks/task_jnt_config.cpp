@@ -81,8 +81,8 @@ int TaskJntConfig::init
 	performance_measures_.resize(1);
 	task_types_.insert(task_types_.begin(), 1, 0);
 
-	for (int i=0; i<num_controls; ++i) 
-		J_(0, i) = -1;
+	//for (int i=0; i<num_controls; ++i) 
+	//	J_(0, i) = -1;
 
 	return 0;
 }
@@ -101,7 +101,13 @@ int TaskJntConfig::apply
 	
 	for (int i=0; i<q.rows(); ++i)
 	{
-		e_(0) += desired_configuration_.at(i) - q(i);
+		double d = desired_configuration_.at(i) - q(i); 
+		e_(0) += d*d;
+	}
+
+	for (int q_nr = 0; q_nr < J_.cols(); ++q_nr)
+	{
+		J_(0, q_nr) = - 2 * ( desired_configuration_.at(q_nr) - q(q_nr) );
 	}
 
 	return 0;
