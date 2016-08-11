@@ -61,38 +61,38 @@ public:
 		const std::string& frame_id,
 		bool visible,
 		const std::vector<double>& color
-	)
-	: name_(name), frame_id_(frame_id), visible_(visible)
-	{
-		assert(color.size() == 4);
-		r_ = color.at(0);
-		g_ = color.at(1);
-		b_ = color.at(2);
-		a_ = color.at(3);
-	}
+	);
+	// : name_(name), frame_id_(frame_id), visible_(visible)
+	// {
+	// 	assert(color.size() == 4);
+	// 	r_ = color.at(0);
+	// 	g_ = color.at(1);
+	// 	b_ = color.at(2);
+	// 	a_ = color.at(3);
+	// }
 
 
 
 	/*!
      * \brief Destructor
      */
-	virtual ~GeometricPrimitive() noexcept = 0;
+	~GeometricPrimitive() noexcept {};
 
 
 	virtual int init(const std::vector<double>& parameters) = 0;
 
 
-	inline void setId(unsigned int id) { id_ = id; }
+	inline void 		setId(unsigned int id) { id_ = id; }
 	inline unsigned int getId() { return id_; }
 
-	inline std::string getName() { return name_; }
-	inline std::string getFrameId() { return frame_id_; }
-	inline bool isVisible() { return visible_; }
+	inline std::string 	getName() { return name_; }
+	inline std::string 	getFrameId() { return frame_id_; }
+	inline bool 		isVisible() { return visible_; }
 
-	inline double getRedComponent() { return r_; }
-	inline double getGreenComponent() { return g_; }
-	inline double getBlueComponent() { return b_; }
-	inline double getAlphaComponent() { return a_; }
+	inline double 		getRedComponent() { return r_; }
+	inline double 		getGreenComponent() { return g_; }
+	inline double 		getBlueComponent() { return b_; }
+	inline double 		getAlphaComponent() { return a_; }
 
 
 protected:

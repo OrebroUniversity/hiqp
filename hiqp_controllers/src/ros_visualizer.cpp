@@ -286,7 +286,7 @@ int ROSVisualizer::apply
 
 
 
-    Eigen::Vector3d p = box->getCentrumEigen();
+    Eigen::Vector3d p = box->getCenterEigen();
     // Eigen::Vector3d nu = box->getNormalUpEigen();
     // Eigen::Vector3d nl = box->getNormalLeftEigen();
 

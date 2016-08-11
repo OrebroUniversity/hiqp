@@ -66,9 +66,9 @@ public:
 		const std::string& frame_id,
 		bool visible,
 		const std::vector<double>& color
-	)
-	: GeometricPrimitive(name, frame_id, visible, color)
-	{}
+	);
+	//: GeometricPrimitive(name, frame_id, visible, color)
+	//{}
 
 	/*!
      * \brief Destructor
@@ -77,24 +77,24 @@ public:
 
 
 
-	int init(const std::vector<double>& parameters)
-	{
-		int size = parameters.size();
-		if (size != 3)
-		{
-			printHiqpWarning("GeometricPoint requires 3 parameters, got " 
-				+ std::to_string(size) + "! Initialization failed!");
-			return -1;
-		}
+	int init(const std::vector<double>& parameters);
+	// {
+	// 	int size = parameters.size();
+	// 	if (size != 3)
+	// 	{
+	// 		printHiqpWarning("GeometricPoint requires 3 parameters, got " 
+	// 			+ std::to_string(size) + "! Initialization failed!");
+	// 		return -1;
+	// 	}
 
-		kdl_p_(0) = parameters.at(0);
-		kdl_p_(1) = parameters.at(1);
-		kdl_p_(2) = parameters.at(2);
+	// 	kdl_p_(0) = parameters.at(0);
+	// 	kdl_p_(1) = parameters.at(1);
+	// 	kdl_p_(2) = parameters.at(2);
 
-		eigen_p_ << kdl_p_(0), kdl_p_(1), kdl_p_(2);
+	// 	eigen_p_ << kdl_p_(0), kdl_p_(1), kdl_p_(2);
 
-		return 0;
-	}
+	// 	return 0;
+	// }
 
 
 	inline const KDL::Vector&       getPointKDL() 

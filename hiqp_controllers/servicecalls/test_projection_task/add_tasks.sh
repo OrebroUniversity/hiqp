@@ -47,6 +47,17 @@
 
 
 
+rosservice call /yumi/hiqp_kinematics_controller/add_task \
+"name: 'geomproj155'
+type: 'TaskGeometricProjection'
+behaviour: ['DynamicsFirstOrder', '10']
+priority: 1
+visibility: 0
+parameters: ['point', 'box', 'mypoint1 = mybox1']"
+
+
+
+
 # rosservice call /yumi/hiqp_kinematics_controller/add_task \
 # "name: 'geomproj6'
 # type: 'TaskGeometricProjection'
@@ -90,13 +101,13 @@
 # visibility: 0
 # parameters: ['point', 'sphere', 'mypoint1 < mysphere2']"
 
-rosservice call /yumi/hiqp_kinematics_controller/add_task \
-"name: 'geomproj11'
-type: 'TaskGeometricProjection'
-behaviour: ['DynamicsFirstOrder', '10']
-priority: 1
-visibility: 0
-parameters: ['point', 'sphere', 'mypoint1 > mysphere2']"
+# rosservice call /yumi/hiqp_kinematics_controller/add_task \
+# "name: 'geomproj11'
+# type: 'TaskGeometricProjection'
+# behaviour: ['DynamicsFirstOrder', '10']
+# priority: 1
+# visibility: 0
+# parameters: ['point', 'sphere', 'mypoint1 > mysphere2']"
 
 
 

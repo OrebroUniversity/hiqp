@@ -180,7 +180,94 @@ int TaskGeometricProjection<GeometricPoint, GeometricBox>::project
 	GeometricBox* box
 )
 {
-/*
+
+	KDL::Vector p__ = pose_a_.M * point->getPointKDL();
+	KDL::Vector p = pose_a_.p + p__; 
+
+	KDL::Rotation S = KDL::Rotation(
+		box->getDimX(), 0, 0,
+		0, box->getDimY(), 0,
+		0, 0, box->getDimZ()
+	);
+
+	KDL::Rotation Sinv = KDL::Rotation(
+		1/box->getDimX(), 0, 0,
+		0, 1/box->getDimY(), 0,
+		0, 0, 1/box->getDimZ()
+	);
+
+	// std::cout << "S = (";
+	// for (int i=0; i<3; i++){
+	// 	for (int j=0; j<3; j++) std::cout << S(i,j) << ", ";
+	// 	if (i < 2) std::cout << "\n";
+	// }
+	// std::cout << ")\n";
+
+	// std::cout << "Sinv = (";
+	// for (int i=0; i<3; i++){
+	// 	for (int j=0; j<3; j++) std::cout << Sinv(i,j) << ", ";
+	// 	if (i < 2) std::cout << "\n";
+	// }
+	// std::cout << ")\n";
+
+	double qx, qy, qz, qw;
+	box->getQuaternion(qw, qx, qy, qz);
+
+	// rotation from box to root coordinates
+	KDL::Rotation Rbox = KDL::Rotation::Quaternion(qx, qy, qz, qw);
+	KDL::Rotation R = pose_b_.M * Rbox;
+
+	// std::cout << "Rbox = (";
+	// for (int i=0; i<3; i++){
+	// 	for (int j=0; j<3; j++) std::cout << Rbox(i,j) << ", ";
+	// 	if (i < 2) std::cout << "\n";
+	// }
+	// std::cout << ")\n";
+
+	// std::cout << "R = (";
+	// for (int i=0; i<3; i++){
+	// 	for (int j=0; j<3; j++) std::cout << R(i,j) << ", ";
+	// 	if (i < 2) std::cout << "\n";
+	// }
+	// std::cout << ")\n";
+
+	KDL::Vector c__= pose_b_.M * box->getCenterKDL();
+	KDL::Vector c = pose_b_.p + c__;
+
+	KDL::Vector x = Sinv * R * (p - c);
+
+	// std::cout << "p = (" << p.x() << ", " << p.y() << ", " << p.z() << ")\n";
+	// std::cout << "c = (" << c.x() << ", " << c.y() << ", " << c.z() << ")\n";
+	// std::cout << "x = (" << x.x() << ", " << x.y() << ", " << x.z() << ")\n";
+
+	double f = std::max( { x.x(), x.y(), x.z() } );
+	double lambda = 0.5 * 1 / f;
+	KDL::Vector x_prim = lambda * x;
+	KDL::Vector p_prim = S * R.Inverse() * x_prim + c;
+
+	// std::cout << "x_prim = (" << x_prim.x() << ", " << x_prim.y() << ", " << x_prim.z() << ")\n";
+	// std::cout << "p_prim = (" << p_prim.x() << ", " <<p_prim.y() << ", " << p_prim.z() << ")\n";
+
+	GeometricPoint projpoint( "p_prim", "world", true, {0, 1.0, 0, 0.5} );
+	std::vector<double> ppos;
+	ppos.push_back(p_prim.x()); 
+	ppos.push_back(p_prim.y()); 
+	ppos.push_back(p_prim.z());
+	projpoint.init( ppos );
+	getVisualizer()->update(1234, &projpoint);
+
+	
+
+	e_(0) = 0;
+
+	for (int q_nr = 0; q_nr < jacobian_a_.columns(); ++q_nr)
+	{
+		J_(0, q_nr) = 0;
+	}
+
+
+
+	/*
 	KDL::Vector p__ = pose_a_.M * point->getPoint();
 
 	KDL::Vector p( pose_a_.p.x() + p__(0), 
@@ -202,6 +289,7 @@ int TaskGeometricProjection<GeometricPoint, GeometricBox>::project
 		              + jacobian_a_.getColumn(q_nr).vel.z();
 	}
 	*/
+
 	return 0;
 
 }
@@ -284,6 +372,26 @@ int TaskGeometricProjection<GeometricPoint, GeometricSphere>::project
 		J_(0, q_nr) = 2 * dot(d, Jp2p1);
 	}
 	
+	return 0;
+}
+
+
+
+
+
+
+
+
+template<>
+int TaskGeometricProjection<GeometricLine, GeometricLine>::project
+(
+	GeometricLine* line1, 
+	GeometricLine* line2
+)
+{
+
+
+
 	return 0;
 }
 

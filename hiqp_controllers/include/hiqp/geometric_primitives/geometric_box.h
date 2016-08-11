@@ -100,6 +100,10 @@ public:
 		kdl_dim_(1) = parameters.at(4);
 		kdl_dim_(2) = parameters.at(5);
 
+		scaling_matrix_ << 1/kdl_dim_(0), 0, 0,
+		                   0, 1/kdl_dim_(1), 0,
+		                   0, 0, 1/kdl_dim_(2);
+
 		if (size == 9)
 		{
 			double angle1 = parameters.at(6);
@@ -122,6 +126,10 @@ public:
 
 			q_ = Eigen::Quaternion<double>(w, x, y, z);
 		}
+		else
+		{
+			q_ = Eigen::Quaternion<double>(1.0, 0.0, 0.0, 0.0);
+		}
 
 		// Calculate the normal of the left side of the box
 		// KDL::Vector left = KDL::Vector(0, 0, 1) * kdl_n_up_;
@@ -136,8 +144,8 @@ public:
 		return 0;
 	}
 
-	inline const KDL::Vector&     getCentrumKDL() { return kdl_c_; }
-	inline const Eigen::Vector3d& getCentrumEigen() { return eigen_c_; }
+	inline const KDL::Vector&     getCenterKDL() { return kdl_c_; }
+	inline const Eigen::Vector3d& getCenterEigen() { return eigen_c_; }
 
 	inline const KDL::Vector&     getDimensionsKDL() { return kdl_dim_; }
 	inline const Eigen::Vector3d& getDimensionsEigen() { return eigen_dim_; }
@@ -145,6 +153,8 @@ public:
 	inline const Eigen::Quaternion<double>& getQuaternionEigen() { return q_; }
 	inline void getQuaternion(double& w, double& x, double& y, double& z)
 	{ w = q_.w(); x = q_.x(); y = q_.y(); z = q_.z(); }
+
+	inline const Eigen::Matrix3d& getScalingMatrix() { return scaling_matrix_; }
 
 
 	// inline const KDL::Vector&     getNormalUpKDL() { return kdl_n_up_; }
@@ -183,6 +193,8 @@ protected:
 	Eigen::Vector3d  eigen_dim_;
 
 	Eigen::Quaternion<double> q_;
+
+	Eigen::Matrix3d  scaling_matrix_;
 
 
 	// KDL::Vector      kdl_n_up_; // the normal vector of the top plane of the box

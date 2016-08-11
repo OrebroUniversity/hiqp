@@ -44,6 +44,15 @@ parameters: [0, 0, 0.1]"
 # parameters: [1, 0, 0, -0.3]"
 
 
+rosservice call /yumi/hiqp_kinematics_controller/add_primitive \
+"name: 'mybox1'
+type: 'box'
+frame_id: 'yumi_body'
+visible: true
+color: [0.6, 0.6, 1.0, 0.6]
+parameters: [0.5, 0, 0.05, 0.1, 0.1, 0.1]"
+
+
 # rosservice call /yumi/hiqp_kinematics_controller/add_primitive \
 # "name: 'mycylinder2'
 # type: 'cylinder'
@@ -53,10 +62,10 @@ parameters: [0, 0, 0.1]"
 # parameters: [0, 0, 1, 0.4, 0, 0, 0.3, 0.4]"
 
 
-rosservice call /yumi/hiqp_kinematics_controller/add_primitive \
-"name: 'mysphere2'
-type: 'sphere'
-frame_id: 'yumi_body'
-visible: true
-color: [1.0, 0.6, 0.6, 0.7]
-parameters: [0.4, 0, 0, 0.4]"
+# rosservice call /yumi/hiqp_kinematics_controller/add_primitive \
+# "name: 'mysphere2'
+# type: 'sphere'
+# frame_id: 'yumi_body'
+# visible: true
+# color: [1.0, 0.6, 0.6, 0.7]
+# parameters: [0.4, 0, 0, 0.4]"

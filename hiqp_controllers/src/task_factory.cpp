@@ -92,6 +92,11 @@ TaskFunction* TaskFactory::buildTaskFunction
             function = new TaskGeometricProjection<GeometricPoint, GeometricPlane>();
         }
         else if (type1.compare("point") == 0 && 
+                 type2.compare("box") == 0)
+        {
+            function = new TaskGeometricProjection<GeometricPoint, GeometricBox>();
+        }
+        else if (type1.compare("point") == 0 && 
                  type2.compare("cylinder") == 0)
         {
             function = new TaskGeometricProjection<GeometricPoint, GeometricCylinder>();
