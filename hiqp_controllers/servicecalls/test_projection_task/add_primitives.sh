@@ -50,7 +50,7 @@ type: 'box'
 frame_id: 'yumi_body'
 visible: true
 color: [0.6, 0.6, 1.0, 0.6]
-parameters: [0.5, 0, 0.05, 0.1, 0.1, 0.1]"
+parameters: [0.5, 0, 0.05, 0.1, 0.1, 0.1, 0.785, 0.785, 0.785]"
 
 
 # rosservice call /yumi/hiqp_kinematics_controller/add_primitive \

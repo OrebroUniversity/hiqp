@@ -67,7 +67,7 @@ public:
 	/*!
      * \brief Constructor
      */
-	TaskGeometricAlignment() {}
+	TaskGeometricAlignment();
 
 
 
@@ -75,7 +75,7 @@ public:
 	/*!
      * \brief Destructor
      */
-	~TaskGeometricAlignment() noexcept {}
+	~TaskGeometricAlignment() noexcept;
 
 
 
@@ -90,10 +90,7 @@ public:
      (
           const std::vector<std::string>& parameters,
           unsigned int num_controls
-     )
-     {
-          return 0;
-     }
+     );
 
 
 
@@ -111,10 +108,7 @@ public:
 	(
 		const KDL::Tree& kdl_tree, 
 		const KDL::JntArrayVel& kdl_joint_pos_vel
-	)
-     {
-          return 0;
-     }
+	);
 
 
 
@@ -124,10 +118,7 @@ public:
      *
      * \return 0 if the calculation was successful
      */
-     int monitor()
-     {
-          return 0;
-     }
+     int monitor();
 
 
 
@@ -139,6 +130,12 @@ private:
 	TaskGeometricAlignment& operator=(const TaskGeometricAlignment& other) = delete;
 	TaskGeometricAlignment& operator=(TaskGeometricAlignment&& other) noexcept = delete;
 
+
+
+     int align(PrimitiveA* first, PrimitiveB* second);
+
+
+
      PrimitiveA*              primitive_a_;
      KDL::Frame               pose_a_;
      KDL::Jacobian            jacobian_a_;
@@ -146,6 +143,8 @@ private:
      PrimitiveB*              primitive_b_;
      KDL::Frame               pose_b_;
      KDL::Jacobian            jacobian_b_;
+
+     double                   delta_; // the angular error margin
 
 
 };
@@ -162,6 +161,6 @@ private:
 
 } // namespace hiqp
 
-//#include <hiqp/tasks/task_geometric_projection__impl.h>
+#include <hiqp/tasks/task_geometric_alignment__impl.h>
 
 #endif // include guard

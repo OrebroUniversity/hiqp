@@ -29,6 +29,7 @@
 #include <hiqp/task_factory.h>
 
 #include <hiqp/tasks/task_geometric_projection.h>
+#include <hiqp/tasks/task_geometric_alignment.h>
 #include <hiqp/tasks/task_jnt_config.h>
 #include <hiqp/tasks/dynamics_first_order.h>
 
@@ -71,8 +72,17 @@ TaskFunction* TaskFactory::buildTaskFunction
 {
 	TaskFunction* function = nullptr;
 
+    if (type.compare("TaskJntConfig") == 0)
+    {
+        function = new TaskJntConfig();
+    }
 
-	if (type.compare("TaskGeometricProjection") == 0)
+    // else if (type.compare("TaskJntConfig") == 0)
+    // {
+    //     function = new TaskJntConfig();
+    // }
+
+	else if (type.compare("TaskGeometricProjection") == 0)
     {
         std::string type1 = parameters.at(0);
         std::string type2 = parameters.at(1);
@@ -112,14 +122,29 @@ TaskFunction* TaskFactory::buildTaskFunction
                 + type1 + "' and '" + type2 + "'!");
         }
     }
-    else if (type.compare("TaskJntConfig") == 0)
+
+    else if (type.compare("TaskGeometricAlignment") == 0)
     {
-        function = new TaskJntConfig();
+        std::string type1 = parameters.at(0);
+        std::string type2 = parameters.at(1);
+        if (type1.compare("line") == 0 && 
+            type2.compare("line") == 0)
+        {
+            function = new TaskGeometricAlignment<GeometricLine, GeometricLine>();
+        }
+        else
+        {
+            printHiqpWarning("TaskGeometricAlignment does not allow primitive types: '"
+                + type1 + "' and '" + type2 + "'!");
+        }
     }
+
     else
     {
         printHiqpWarning("Task type name '" + type + "' was not recognized!");
     }
+
+
 
 
     if (function != nullptr)

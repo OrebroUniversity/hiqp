@@ -243,7 +243,8 @@ int TaskGeometricProjection<GeometricPoint, GeometricBox>::project
 	double f = std::max( { x.x(), x.y(), x.z() } );
 	double lambda = 0.5 * 1 / f;
 	KDL::Vector x_prim = lambda * x;
-	KDL::Vector p_prim = S * R.Inverse() * x_prim + c;
+	KDL::Vector x_prim__ = S * R.Inverse() * x_prim;
+	KDL::Vector p_prim = x_prim__ + c;
 
 	// std::cout << "x_prim = (" << x_prim.x() << ", " << x_prim.y() << ", " << x_prim.z() << ")\n";
 	// std::cout << "p_prim = (" << p_prim.x() << ", " <<p_prim.y() << ", " << p_prim.z() << ")\n";
@@ -258,37 +259,18 @@ int TaskGeometricProjection<GeometricPoint, GeometricBox>::project
 
 	
 
-	e_(0) = 0;
+	KDL::Vector d = p - p_prim;
+	e_(0) = KDL::dot(d, d);
+
+	// The task jacobian is J = 2 (p2-p1)^T (Jp2 - Jp1)
 
 	for (int q_nr = 0; q_nr < jacobian_a_.columns(); ++q_nr)
 	{
-		J_(0, q_nr) = 0;
+		KDL::Vector Jp2p1 = getVelocityJacobianForTwoPoints(p__, x_prim__+c__, q_nr);
+
+		J_(0, q_nr) = - 2 * dot(d, Jp2p1);
 	}
 
-
-
-	/*
-	KDL::Vector p__ = pose_a_.M * point->getPoint();
-
-	KDL::Vector p( pose_a_.p.x() + p__(0), 
-		           pose_a_.p.y() + p__(1), 
-		           pose_a_.p.z() + p__(2) );
-
-	KDL::Vector n = pose_b_.M * box->getNormal();
-	KDL::Vector d = pose_b_.M * box->getOffset();
-
-	KDL::Vector p_tilde = p - d;
-
-
-	e_(0) = 0;
-
-	for (int q_nr = 0; q_nr < jacobian_a_.columns(); ++q_nr)
-	{
-		J_(0, q_nr) =   jacobian_a_.getColumn(q_nr).vel.x()
-		              + jacobian_a_.getColumn(q_nr).vel.y()
-		              + jacobian_a_.getColumn(q_nr).vel.z();
-	}
-	*/
 
 	return 0;
 
@@ -372,26 +354,6 @@ int TaskGeometricProjection<GeometricPoint, GeometricSphere>::project
 		J_(0, q_nr) = 2 * dot(d, Jp2p1);
 	}
 	
-	return 0;
-}
-
-
-
-
-
-
-
-
-template<>
-int TaskGeometricProjection<GeometricLine, GeometricLine>::project
-(
-	GeometricLine* line1, 
-	GeometricLine* line2
-)
-{
-
-
-
 	return 0;
 }
 
