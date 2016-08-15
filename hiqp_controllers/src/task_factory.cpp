@@ -31,7 +31,9 @@
 #include <hiqp/tasks/task_geometric_projection.h>
 #include <hiqp/tasks/task_geometric_alignment.h>
 #include <hiqp/tasks/task_jnt_config.h>
+#include <hiqp/tasks/task_jnt_limits.h>
 #include <hiqp/tasks/dynamics_first_order.h>
+#include <hiqp/tasks/dynamics_jnt_limits.h>
 
 
 
@@ -77,10 +79,10 @@ TaskFunction* TaskFactory::buildTaskFunction
         function = new TaskJntConfig();
     }
 
-    // else if (type.compare("TaskJntConfig") == 0)
-    // {
-    //     function = new TaskJntConfig();
-    // }
+    else if (type.compare("TaskJntLimits") == 0)
+    {
+        function = new TaskJntLimits();
+    }
 
 	else if (type.compare("TaskGeometricProjection") == 0)
     {
@@ -156,8 +158,7 @@ TaskFunction* TaskFactory::buildTaskFunction
     	function->setId(id);
     	function->setPriority(priority);
     	function->setVisibility(visibility);
-
-	    function->setTaskDynamics(dynamics);
+        function->setTaskDynamics(dynamics);
 
     	function->init(parameters, num_controls_);
     }
@@ -194,6 +195,22 @@ TaskDynamics* TaskFactory::buildTaskDynamics
         else
         {
             printHiqpWarning("DynamicsFirstOrder requires 2 parameters, got " 
+                + std::to_string(size) + "!");
+        }
+    }
+
+    else if (parameters.at(0).compare("DynamicsJntLimits") == 0)
+    {
+        if (size == num_controls_ + 1)
+        {
+            dynamics = new DynamicsJntLimits();
+            dynamics->init(parameters);
+        }
+        else
+        {
+            printHiqpWarning("DynamicsJntLimits requires "
+                + std::to_string(num_controls_ + 1) 
+                + " parameters, got " 
                 + std::to_string(size) + "!");
         }
     }

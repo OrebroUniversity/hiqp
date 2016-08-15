@@ -18,7 +18,7 @@
 
 
 /*!
- * \file   task_jnt_limit.h
+ * \file   task_jnt_limits.h
  * \Author Marcus A Johansson (marcus.adam.johansson@gmail.com)
  * \date   July, 2016
  * \brief  Brief description of file.
@@ -28,8 +28,8 @@
 
 
 
-#ifndef HIQP_TASK_JNT_LIMIT_H
-#define HIQP_TASK_JNT_LIMIT_H
+#ifndef HIQP_TASK_JNT_LIMITS_H
+#define HIQP_TASK_JNT_LIMITS_H
 
 
 // HiQP Includes
@@ -54,12 +54,9 @@ namespace hiqp
 
 /*!
  * \class TaskJntLimit
- * \brief Represents a task that limits joint positions/velocities/accelerations
- *
- *  The type of limitation (pos/vel/acc) is given as a parameter to the task
- *  along with all lower and upper bounds for each joint.
+ * \brief Represents a task that limits joint velocities
  */	
-class TaskJntLimit : public TaskFunction
+class TaskJntLimits : public TaskFunction
 {
 
 public:
@@ -68,7 +65,7 @@ public:
      * \brief Constructor
      * Constructs my awesome task
      */
-	TaskJntLimit();
+	TaskJntLimits() {}
 
 
 
@@ -77,7 +74,7 @@ public:
      * \brief Destructor
      * Destructs my awesome task
      */
-	~TaskJntLimit() noexcept {}
+	~TaskJntLimits() noexcept {}
 
 
 
@@ -114,17 +111,28 @@ public:
 
 
 
+
+     /*!
+     * \brief <i>Pure virtual</i>. Computes all performance measures used when
+     *        monitoring this task.
+     *
+     * \return 0 if the calculation was successful
+     */
+    int monitor();
+
+
+
 private:
 
 	// No copying of this class is allowed !
-	TaskJntLimit(const TaskJntLimit& other) = delete;
-	TaskJntLimit(TaskJntLimit&& other) = delete;
-	TaskJntLimit& operator=(const TaskJntLimit& other) = delete;
-	TaskJntLimit& operator=(TaskJntLimit&& other) noexcept = delete;
+	TaskJntLimits(const TaskJntLimits& other) = delete;
+	TaskJntLimits(TaskJntLimits&& other) = delete;
+	TaskJntLimits& operator=(const TaskJntLimits& other) = delete;
+	TaskJntLimits& operator=(TaskJntLimits&& other) noexcept = delete;
 
-	enum LimitationType {kPos = 0, kVel = 1, kAcc = 2};
+	//enum LimitationType {kPos = 0, kVel = 1, kAcc = 2};
 
-	
+	unsigned int            num_controls_;
 
 
 };

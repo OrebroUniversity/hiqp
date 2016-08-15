@@ -108,9 +108,11 @@ add_library(${PROJECT_NAME} #include/hiqp/geometric_primitive_map.h
                             src/solvers/casadi_solver.cpp
 
                             src/tasks/dynamics_first_order.cpp
+                            src/tasks/dynamics_jnt_limits.cpp
                             src/tasks/task_geometric_projection.cpp
                             src/tasks/task_geometric_alignment.cpp
                             src/tasks/task_jnt_config.cpp
+                            src/tasks/task_jnt_limits.cpp
 )
 
 target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} ${orocos_kdl_LIBRARIES} ${CASADI_LIBRARIES} ${GUROBI_LIBS})

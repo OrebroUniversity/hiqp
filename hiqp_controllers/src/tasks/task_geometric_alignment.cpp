@@ -70,28 +70,19 @@ int TaskGeometricAlignment<GeometricLine, GeometricLine>::align
 	KDL::Vector v2 = pose_b_.M * line2->getDirectionKDL();
 
 	double d = KDL::dot(v1, v2);
-	double alpha = std::acos( d );
-	while (alpha > 2*M_PI) alpha -= 2*M_PI;
-	while (alpha < 0) alpha += 2*M_PI;
 
-	e_(0) = alpha;
+	e_(0) = d - std::cos(delta_);
+
 	std::cout << "e = " << e_(0) << "\n";
 
-	//double epsilon = 1e-5;
-	double epsilon = 0;
-	double f = - 1/( std::sin(e_(0)) + epsilon );
-	f = - 1/( std::sqrt(1-d*d) );
-	std::cout << "f = " << f << "\n";
+	KDL::Vector v = v1 * v2;    // v = v1 x v2
 
 	for (int q_nr = 0; q_nr < jacobian_a_.columns(); ++q_nr)
 	{
 		KDL::Vector Ja = jacobian_a_.getColumn(q_nr).rot;
 		KDL::Vector Jb = jacobian_b_.getColumn(q_nr).rot;
 
-		//std::cout << "Ja = " << Ja.x() << ", " << Ja.y() << ", " << Ja.z() << "\n";
-		//std::cout << "Jb = " << Jb.x() << ", " << Jb.y() << ", " << Jb.z() << "\n";
-
-		J_(0, q_nr) = ( KDL::dot(Ja, v2) + KDL::dot(Jb, v1) );
+		J_(0, q_nr) = KDL::dot( v, (Ja - Jb) );
 	}
 
 	return 0;
