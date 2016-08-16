@@ -59,6 +59,15 @@ namespace hiqp
 
 
 
+
+
+
+
+
+
+
+
+
 template<>
 int TaskGeometricAlignment<GeometricLine, GeometricLine>::align
 (
@@ -69,26 +78,94 @@ int TaskGeometricAlignment<GeometricLine, GeometricLine>::align
 	KDL::Vector v1 = pose_a_.M * line1->getDirectionKDL();
 	KDL::Vector v2 = pose_b_.M * line2->getDirectionKDL();
 
-	double d = KDL::dot(v1, v2);
-
-	e_(0) = d - std::cos(delta_);
-
-	std::cout << "e = " << e_(0) << "\n";
-
-	KDL::Vector v = v1 * v2;    // v = v1 x v2
-
-	for (int q_nr = 0; q_nr < jacobian_a_.columns(); ++q_nr)
-	{
-		KDL::Vector Ja = jacobian_a_.getColumn(q_nr).rot;
-		KDL::Vector Jb = jacobian_b_.getColumn(q_nr).rot;
-
-		J_(0, q_nr) = KDL::dot( v, (Ja - Jb) );
-	}
-
-	return 0;
+	return alignVectors(v1, v2);
 }
 
 
 
 
+
+template<>
+int TaskGeometricAlignment<GeometricLine, GeometricPlane>::align
+(
+	GeometricLine* line,
+	GeometricPlane* plane
+)
+{
+	KDL::Vector v1 = pose_a_.M * line->getDirectionKDL();
+	KDL::Vector v2 = - ( pose_b_.M * plane->getNormalKDL() );
+
+	return alignVectors(v1, v2);
+}
+
+
+
+
+
+template<>
+int TaskGeometricAlignment<GeometricLine, GeometricCylinder>::align
+(
+	GeometricLine* line,
+	GeometricCylinder* cylinder
+)
+{
+	KDL::Vector v1 = pose_a_.M * line->getDirectionKDL();
+
+	KDL::Vector p = pose_a_.p + pose_a_.M * line->getOffsetKDL();
+	KDL::Vector d = pose_b_.p + pose_b_.M * cylinder->getOffsetKDL();
+	KDL::Vector v = pose_b_.M * cylinder->getDirectionKDL();
+
+	KDL::Vector x = KDL::dot( (p-d), v) * v;
+
+	KDL::Vector v2 = x - (p-d);
+
+	v2.Normalize();
+
+	return alignVectors(v1, v2);
+}
+
+
+
+
+
+template<>
+int TaskGeometricAlignment<GeometricLine, GeometricSphere>::align
+(
+	GeometricLine* line,
+	GeometricSphere* sphere
+)
+{
+	KDL::Vector v1 = pose_a_.M * line->getDirectionKDL();
+
+	KDL::Vector p = pose_a_.p + pose_a_.M * line->getOffsetKDL();
+	KDL::Vector d = pose_b_.p + pose_b_.M * sphere->getCenterKDL();
+
+	KDL::Vector v2 = d - p;
+
+	v2.Normalize();
+
+	return alignVectors(v1, v2);
+}
+
+
+
+
+
+
+
+
+
+
 } // namespace hiqp
+
+
+
+
+
+
+
+
+
+
+
+

@@ -134,6 +134,9 @@ private:
 
      int align(PrimitiveA* first, PrimitiveB* second);
 
+     // v1 must relate to primitive_a_, and v2 to primitive_b_ !
+     int alignVectors(const KDL::Vector& v1, const KDL::Vector v2);
+
 
 
      PrimitiveA*              primitive_a_;

@@ -129,10 +129,21 @@ TaskFunction* TaskFactory::buildTaskFunction
     {
         std::string type1 = parameters.at(0);
         std::string type2 = parameters.at(1);
-        if (type1.compare("line") == 0 && 
-            type2.compare("line") == 0)
+        if (type1.compare("line") == 0 && type2.compare("line") == 0)
         {
             function = new TaskGeometricAlignment<GeometricLine, GeometricLine>();
+        }
+        else if (type1.compare("line") == 0 && type2.compare("plane") == 0)
+        {
+            function = new TaskGeometricAlignment<GeometricLine, GeometricPlane>();
+        }
+        else if (type1.compare("line") == 0 && type2.compare("cylinder") == 0)
+        {
+            function = new TaskGeometricAlignment<GeometricLine, GeometricCylinder>();
+        }
+        else if (type1.compare("line") == 0 && type2.compare("sphere") == 0)
+        {
+            function = new TaskGeometricAlignment<GeometricLine, GeometricSphere>();
         }
         else
         {

@@ -225,6 +225,35 @@ int TaskGeometricAlignment<PrimitiveA, PrimitiveB>::apply
 
 
 
+template<typename PrimitiveA, typename PrimitiveB>
+int TaskGeometricAlignment<PrimitiveA, PrimitiveB>::alignVectors
+(
+	const KDL::Vector& v1, 
+	const KDL::Vector v2
+)
+{
+	double d = KDL::dot(v1, v2);
+
+	e_(0) = d - std::cos(delta_);
+
+	//std::cout << "e = " << e_(0) << "\n";
+
+	KDL::Vector v = v1 * v2;    // v = v1 x v2
+
+	for (int q_nr = 0; q_nr < jacobian_a_.columns(); ++q_nr)
+	{
+		KDL::Vector Ja = jacobian_a_.getColumn(q_nr).rot;
+		KDL::Vector Jb = jacobian_b_.getColumn(q_nr).rot;
+
+		J_(0, q_nr) = KDL::dot( v, (Ja - Jb) );
+	}
+
+	return 0;
+}
+
+
+
+
 
 
 
