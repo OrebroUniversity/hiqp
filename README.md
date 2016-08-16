@@ -1,3 +1,9 @@
-# Copyright (C) 2016 Marcus A Johansson
 # The HiQP Control Framework
-an optimal control framework targeted at robotics
+Copyright (C) 2016 Marcus A Johansson
+
+HiQP is an optimal control framework targeted at robotics.
+
+# Known issues
+Geometric projection for point on box is not working when the box is rotated.
+
+Geometric alignment for line with cylinder is not working, probably the jacobian is miscalculated.
