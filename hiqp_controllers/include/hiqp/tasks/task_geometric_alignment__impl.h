@@ -87,6 +87,9 @@ int TaskGeometricAlignment<PrimitiveA, PrimitiveB>::init
 	primitive_a_ = geometric_primitive_map_->getGeometricPrimitive<PrimitiveA>(args.at(0));
 	primitive_b_ = geometric_primitive_map_->getGeometricPrimitive<PrimitiveB>(args.at(2));
 
+	geometric_primitive_map_->addDependencyToPrimitive(args.at(0), this->getId());
+	geometric_primitive_map_->addDependencyToPrimitive(args.at(2), this->getId());
+
 	int sign = 0;
 
 	if (args.at(1).compare("<") == 0 || 

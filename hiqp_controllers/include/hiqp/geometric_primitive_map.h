@@ -90,6 +90,10 @@ public:
 
 	void redrawAllPrimitives();
 
+	void addDependencyToPrimitive(const std::string& name, std::size_t id);
+
+	void removeDependency(std::size_t id);
+
 
 
 
@@ -101,10 +105,19 @@ private:
 	GeometricPrimitiveMap& operator=(const GeometricPrimitiveMap& other) = delete;
 	GeometricPrimitiveMap& operator=(GeometricPrimitiveMap&& other) noexcept = delete;
 
+	typedef std::map< std::string, std::vector< std::size_t> >   
+		DependencyMap;
 
+	typedef std::map< std::string, std::vector< std::size_t> >::iterator 
+		DependencyMapIterator;
+
+	typedef std::pair< std::string, std::vector< std::size_t> >  
+		DependencyMapElement;
 
 
 	std::map< std::string, std::size_t> 			visual_id_map_;
+
+	DependencyMap 									dependency_map_;
 
 	std::map< std::string, GeometricPoint* > 		point_map_;
 	std::map< std::string, GeometricLine* > 	    line_map_;

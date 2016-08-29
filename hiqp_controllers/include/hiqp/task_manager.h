@@ -245,19 +245,6 @@ private:
 	TaskManager& operator=(const TaskManager& other) = delete;
 	TaskManager& operator=(TaskManager&& other) noexcept = delete;
 
-     /*
-     TaskFunction* buildTaskFunction
-     (
-          const std::string& type,
-          const std::vector<std::string>& parameters
-     );
-
-     TaskDynamics* buildTaskDynamics
-     (
-          const std::string& behaviour_name
-     );
-     */
-
 
      typedef std::map< std::size_t, TaskFunction* >            TaskMap;
      typedef std::map< std::size_t, TaskFunction* >::iterator  TaskMapIterator;
@@ -267,6 +254,8 @@ private:
 
      TaskMap                                      tasks_;
      std::size_t                                  next_task_id_;
+
+     std::vector<std::size_t>                     existing_task_ids_;
 
      std::map< std::size_t, TaskDynamics* >       task_dynamics_;
      std::size_t                                  next_task_dynamics_id_;

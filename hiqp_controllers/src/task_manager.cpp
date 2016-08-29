@@ -233,7 +233,10 @@ int TaskManager::removeTask
 )
 {
     if (tasks_.erase(task_id) == 1) 
+    {
+        geometric_primitive_map_->removeDependency(task_id);
         return 0;
+    }
 
     return -1;
 }
@@ -245,6 +248,13 @@ int TaskManager::removeTask
 int TaskManager::removeAllTasks
 ()
 {
+    TaskMapIterator it = tasks_.begin();
+    while (it != tasks_.end())
+    {
+        geometric_primitive_map_->removeDependency(it->first);
+        ++it;
+    }
+
     tasks_.clear();
     task_dynamics_.clear();
     return 0;

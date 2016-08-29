@@ -32,6 +32,8 @@
 
 // STL Includes
 #include <iostream>
+#include <algorithm>
+#include <iterator>
 
 
 
@@ -207,6 +209,24 @@ int GeometricPrimitiveMap::removeGeometricPrimitive
         return -1;
     }
 
+    DependencyMapIterator it2 = dependency_map_.find(name);
+    if (it2 != dependency_map_.end())
+    {
+        if (!it2->second.empty())
+        {
+            std::stringstream ss;
+            std::copy(
+                it2->second.begin(), 
+                it2->second.end(),
+                std::ostream_iterator< std::size_t >(ss, ", ")
+            );
+            printHiqpWarning("Geometric primitive '" + name + 
+                "' has the following dependencies: " + ss.str() + 
+                " and could not be deleted. Remove the dependencies first!");
+            return -2;
+        }
+    }
+
     id = it->second;
     visualizer_->remove(id);
 
@@ -230,26 +250,110 @@ int GeometricPrimitiveMap::clear
 ()
 {
     std::vector<int> ids;
+    std::vector<std::string> names;
 
     std::map<std::string, std::size_t>::iterator it = visual_id_map_.begin();
     while (it != visual_id_map_.end())
     {
-        ids.push_back(it->second); 
+        bool shouldRemove = true;
+
+        DependencyMapIterator it2 = dependency_map_.find(it->first);
+        if (it2 != dependency_map_.end())
+        {
+            if (!it2->second.empty())
+            {
+                std::stringstream ss;
+                std::copy(
+                    it2->second.begin(), 
+                    it2->second.end(),
+                    std::ostream_iterator< std::size_t >(ss, ", ")
+                    );
+                printHiqpWarning("Geometric primitive '" + it->first + 
+                    "' has the following dependencies: " + ss.str() + 
+                    " and could not be deleted. Remove the dependencies first!");
+                shouldRemove = false;
+            }
+        }
+
+        if (shouldRemove)
+        {
+            ids.push_back(it->second); 
+            names.push_back(it->first);
+        }
+
         ++it;
     }
 
     visualizer_->removeMany(ids);
 
-    visual_id_map_.clear();
+    std::vector<std::string>::iterator it3 = names.begin();
+    while (it3 != names.end())
+    {
+        visual_id_map_.erase(*it3);
 
-    point_map_.clear();
-    line_map_.clear();
-    plane_map_.clear();
-    box_map_.clear();
-    cylinder_map_.clear();
-    sphere_map_.clear();
+        point_map_.erase(*it3);
+        line_map_.erase(*it3);
+        plane_map_.erase(*it3);
+        box_map_.erase(*it3);
+        cylinder_map_.erase(*it3);
+        sphere_map_.erase(*it3);
+
+        ++it3;
+    }
 
     return 0;
+}
+
+
+
+
+
+void GeometricPrimitiveMap::addDependencyToPrimitive
+(
+    const std::string& name, 
+    std::size_t id
+)
+{
+    DependencyMapIterator it = dependency_map_.find(name);
+
+    if (it == dependency_map_.end())
+    {
+        it = dependency_map_.insert( DependencyMapElement( 
+                name, std::vector<std::size_t>() 
+        ) ).first;
+    }
+
+    std::vector<std::size_t>::iterator it2 = std::find(
+        it->second.begin(), it->second.end(), id
+    );
+
+    if (it2 == it->second.end())
+        it->second.push_back(id);
+}
+
+
+
+
+
+void GeometricPrimitiveMap::removeDependency
+(
+    std::size_t id
+)
+{
+    DependencyMapIterator it = dependency_map_.begin();
+    while (it != dependency_map_.end())
+    {
+        it->second.erase(
+            std::remove(
+                it->second.begin(), 
+                it->second.end(), 
+                id)
+            , 
+            it->second.end()
+        );
+
+        ++it;
+    }
 }
 
 
