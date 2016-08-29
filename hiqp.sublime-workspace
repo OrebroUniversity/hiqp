@@ -180,18 +180,10 @@
 	"buffers":
 	[
 		{
-			"file": "hiqp_controllers/src/tasks/task_geometric_alignment.cpp",
+			"file": "hiqp_controllers/servicecalls/test_projection_task/add_tasks.sh",
 			"settings":
 			{
-				"buffer_size": 3120,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "hiqp_controllers/include/hiqp/tasks/task_geometric_alignment__impl.h",
-			"settings":
-			{
-				"buffer_size": 5688,
+				"buffer_size": 2993,
 				"line_ending": "Unix"
 			}
 		},
@@ -212,26 +204,34 @@
 			}
 		},
 		{
-			"file": "hiqp_controllers/include/hiqp/geometric_primitives/geometric_sphere.h",
+			"file": "hiqp_controllers/servicecalls/test_primitives/test_line.sh",
 			"settings":
 			{
-				"buffer_size": 2893,
+				"buffer_size": 1002,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "hiqp_controllers/src/tasks/task_geometric_projection.cpp",
+			"file": "hiqp_controllers/servicecalls/test_primitives/test_plane.sh",
 			"settings":
 			{
-				"buffer_size": 8402,
+				"buffer_size": 1534,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "hiqp_controllers/include/hiqp/tasks/task_geometric_alignment.h",
+			"file": "hiqp_controllers/servicecalls/test_primitives/test_cylinder.sh",
 			"settings":
 			{
-				"buffer_size": 3350,
+				"buffer_size": 1640,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "hiqp_controllers/servicecalls/test_projection_task/add_primitives.sh",
+			"settings":
+			{
+				"buffer_size": 1704,
 				"line_ending": "Unix"
 			}
 		}
@@ -287,12 +287,18 @@
 	],
 	"file_history":
 	[
-		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/src/task_factory.cpp",
-		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/include/hiqp/tasks/task_geometric_alignment.h",
+		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/servicecalls/test_projection_task/add_primitives.sh",
+		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/servicecalls/test_alignment_task/add_primitives.sh",
 		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/src/tasks/task_geometric_alignment.cpp",
+		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/include/hiqp/tasks/task_geometric_alignment__impl.h",
+		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/servicecalls/reset_all.sh",
+		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/servicecalls/test_alignment_task/add_tasks.sh",
+		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/include/hiqp/geometric_primitives/geometric_sphere.h",
+		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/src/tasks/task_geometric_projection.cpp",
+		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/include/hiqp/tasks/task_geometric_alignment.h",
+		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/src/task_factory.cpp",
 		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/CMakeLists.txt",
 		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/servicecalls/test_jnt_limits/add_tasks.sh",
-		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/servicecalls/test_alignment_task/add_primitives.sh",
 		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/servicecalls/test_jnt_limits/add_primitives.sh",
 		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/servicecalls/test_jntlimits_task.sh",
 		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/include/hiqp/tasks/task_jnt_limits.h",
@@ -305,11 +311,7 @@
 		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/include/hiqp/tasks/dynamics_jnt_limits.h",
 		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/servicecalls/reset_robot.sh",
 		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/include/hiqp/geometric_primitives/geometric_box.h",
-		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/servicecalls/test_alignment_task/add_tasks.sh",
-		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/include/hiqp/tasks/task_geometric_alignment__impl.h",
-		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/src/tasks/task_geometric_projection.cpp",
 		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/servicecalls/test_projection_task/add_tasks.sh",
-		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/servicecalls/test_projection_task/add_primitives.sh",
 		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/include/hiqp/geometric_primitives/geometric_point.h",
 		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/include/hiqp/geometric_primitives/geometric_primitive.h",
 		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/include/hiqp/geometric_primitives/geometric_line.h",
@@ -326,8 +328,6 @@
 		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/include/hiqp/geometric_primitives/geometric_plane.h",
 		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_msgs_srvs/srv/AddGeometricPrimitive.srv",
 		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/include/hiqp/geometric_primitive_map.h",
-		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/include/hiqp/geometric_primitives/geometric_sphere.h",
-		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/servicecalls/reset_all.sh",
 		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/servicecalls/remove_task.sh",
 		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/src/hiqp_utils.cpp",
 		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/servicecalls/remove_primitive.sh",
@@ -434,6 +434,13 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"3'",
+			"'-1'",
+			"'0",
+			"'1'",
+			"'0'",
+			"'-1'",
+			"'1'",
 			"TaskGeometricProjection",
 			"'0.1'",
 			"'0'",
@@ -465,6 +472,13 @@
 		"regex": false,
 		"replace_history":
 		[
+			"3",
+			"-1",
+			"0",
+			"1",
+			"0",
+			"-1",
+			"1",
 			"TaskGeometricAlignment",
 			"'0'",
 			"'0.1'",
@@ -491,33 +505,32 @@
 	"groups":
 	[
 		{
-			"selected": 5,
+			"selected": 1,
 			"sheets":
 			[
 				{
 					"buffer": 0,
-					"file": "hiqp_controllers/src/tasks/task_geometric_alignment.cpp",
+					"file": "hiqp_controllers/servicecalls/test_projection_task/add_tasks.sh",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 3120,
+						"buffer_size": 2993,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								2631,
-								2631
+								1488,
+								1488
 							]
 						],
 						"settings":
 						{
-							"syntax": "Packages/C++/C++.sublime-syntax",
-							"translate_tabs_to_spaces": false
+							"syntax": "Packages/ShellScript/Shell-Unix-Generic.sublime-syntax"
 						},
 						"translation.x": 0.0,
-						"translation.y": 1131.0,
+						"translation.y": 273.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 2,
@@ -525,35 +538,6 @@
 				},
 				{
 					"buffer": 1,
-					"file": "hiqp_controllers/include/hiqp/tasks/task_geometric_alignment__impl.h",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 5688,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								5635,
-								5635
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/C++/C++.sublime-syntax",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 2652.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 1,
-					"type": "text"
-				},
-				{
-					"buffer": 2,
 					"file": "hiqp_controllers/servicecalls/test_alignment_task/add_primitives.sh",
 					"semi_transient": false,
 					"settings":
@@ -565,8 +549,120 @@
 						"selection":
 						[
 							[
-								1396,
-								1396
+								1651,
+								1651
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/ShellScript/Shell-Unix-Generic.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 78.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "hiqp_controllers/servicecalls/test_alignment_task/add_tasks.sh",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 998,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								620,
+								620
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/ShellScript/Shell-Unix-Generic.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "hiqp_controllers/servicecalls/test_primitives/test_line.sh",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1002,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								999,
+								999
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/ShellScript/Shell-Unix-Generic.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 6,
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "hiqp_controllers/servicecalls/test_primitives/test_plane.sh",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1534,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								979,
+								979
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/ShellScript/Shell-Unix-Generic.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 5,
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "hiqp_controllers/servicecalls/test_primitives/test_cylinder.sh",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1640,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1636,
+								1636
 							]
 						],
 						"settings":
@@ -581,20 +677,20 @@
 					"type": "text"
 				},
 				{
-					"buffer": 3,
-					"file": "hiqp_controllers/servicecalls/test_alignment_task/add_tasks.sh",
+					"buffer": 6,
+					"file": "hiqp_controllers/servicecalls/test_projection_task/add_primitives.sh",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 998,
+						"buffer_size": 1704,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								998,
-								998
+								834,
+								834
 							]
 						],
 						"settings":
@@ -606,94 +702,6 @@
 						"zoom_level": 1.0
 					},
 					"stack_index": 3,
-					"type": "text"
-				},
-				{
-					"buffer": 4,
-					"file": "hiqp_controllers/include/hiqp/geometric_primitives/geometric_sphere.h",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 2893,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								772,
-								772
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/C++/C++.sublime-syntax",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 5,
-					"type": "text"
-				},
-				{
-					"buffer": 5,
-					"file": "hiqp_controllers/src/tasks/task_geometric_projection.cpp",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 8402,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								985,
-								985
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/C++/C++.sublime-syntax",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 0,
-					"type": "text"
-				},
-				{
-					"buffer": 6,
-					"file": "hiqp_controllers/include/hiqp/tasks/task_geometric_alignment.h",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 3350,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								2842,
-								2842
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/C++/C++.sublime-syntax",
-							"tab_size": 5,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 1248.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 6,
 					"type": "text"
 				}
 			]

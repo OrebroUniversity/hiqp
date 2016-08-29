@@ -240,7 +240,21 @@ int TaskGeometricProjection<GeometricPoint, GeometricBox>::project
 	// std::cout << "c = (" << c.x() << ", " << c.y() << ", " << c.z() << ")\n";
 	// std::cout << "x = (" << x.x() << ", " << x.y() << ", " << x.z() << ")\n";
 
-	double f = std::max( { x.x(), x.y(), x.z() } );
+	double xx = std::abs(x.x());
+	double xy = std::abs(x.y());
+	double xz = std::abs(x.z());
+	double f = 0;
+	if (xx > xy)
+	{
+		if (xx > xz) f = x.x();
+		else f = x.z();
+	}
+	else
+	{
+		if (xy > xz) f = x.y();
+		else f = x.z();
+	}
+
 	double lambda = 0.5 * 1 / f;
 	KDL::Vector x_prim = lambda * x;
 	KDL::Vector x_prim__ = S * R.Inverse() * x_prim;

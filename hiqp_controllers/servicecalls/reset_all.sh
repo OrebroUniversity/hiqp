@@ -15,3 +15,7 @@ visibility: 0
 parameters: []"
 
 sleep .15
+
+./remove_all_tasks.sh
+
+sleep .15
