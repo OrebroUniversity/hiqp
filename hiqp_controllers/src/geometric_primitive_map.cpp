@@ -238,6 +238,8 @@ int GeometricPrimitiveMap::removeGeometricPrimitive
     box_map_.erase(name);
     cylinder_map_.erase(name);
     sphere_map_.erase(name);
+
+    printHiqpInfo("Removed geometric primitive '" + name + "'.");
     
     return 0;
 }

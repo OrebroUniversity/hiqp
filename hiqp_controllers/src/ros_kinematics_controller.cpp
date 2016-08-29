@@ -277,23 +277,23 @@ void ROSKinematicsController::update
 
 
 
-
-
 	// Lock the mutex and read all joint positions from the handles
 	KDL::JntArray& q = kdl_joint_pos_vel_.q;
 	KDL::JntArray& qdot = kdl_joint_pos_vel_.qdot;
 	handles_mutex_.lock();
-	for (auto&& handle : joint_handles_map_)
-	{
-		q(handle.first) = handle.second.getPosition();
-		qdot(handle.first) = handle.second.getVelocity();
-	}
+		sampling_time_ = std::chrono::steady_clock::now();
+		for (auto&& handle : joint_handles_map_)
+		{
+			q(handle.first) = handle.second.getPosition();
+			qdot(handle.first) = handle.second.getVelocity();
+		}
 	handles_mutex_.unlock();
 
 
 
 	// Calculate the kinematic controls
-	task_manager_.getKinematicControls(kdl_tree_, 
+	task_manager_.getKinematicControls(sampling_time_,
+									   kdl_tree_, 
 									   kdl_joint_pos_vel_,
 									   output_controls_);
 
@@ -301,10 +301,10 @@ void ROSKinematicsController::update
 
 	// Lock the mutex and write the controls to the joint handles
 	handles_mutex_.lock();
-	for (auto&& handle : joint_handles_map_)
-	{
-		handle.second.setCommand(output_controls_.at(handle.first));
-	}
+		for (auto&& handle : joint_handles_map_)
+		{
+			handle.second.setCommand(output_controls_.at(handle.first));
+		}
 	handles_mutex_.unlock();
 
 
@@ -398,7 +398,8 @@ bool ROSKinematicsController::addTask
 {
 	int retval = task_manager_.addTask(req.name, req.type, req.behaviour,
 									   req.priority, req.visibility, 
-									   req.parameters);
+									   req.parameters,
+									   sampling_time_);
 
 
 

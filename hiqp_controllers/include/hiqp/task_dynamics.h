@@ -34,6 +34,7 @@
 
 // STL Includes
 #include <vector>
+#include <chrono>
 
 // Eigen Includes
 #include <Eigen/Dense>
@@ -58,10 +59,15 @@ public:
 	TaskDynamics() {}
 	~TaskDynamics() noexcept {}
 
-	virtual int init(const std::vector<std::string>& parameters) = 0;
+	virtual int init
+	(
+		const std::chrono::steady_clock::time_point& sampling_time,
+		const std::vector<std::string>& parameters
+	) = 0;
 
 	virtual int apply
 	(
+		const std::chrono::steady_clock::time_point& sampling_time,
 		const Eigen::VectorXd& e,
 		Eigen::VectorXd& e_dot_star
 	) = 0;

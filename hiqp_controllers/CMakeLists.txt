@@ -109,6 +109,7 @@ add_library(${PROJECT_NAME} #include/hiqp/geometric_primitive_map.h
 
                             src/tasks/dynamics_first_order.cpp
                             src/tasks/dynamics_jnt_limits.cpp
+                            src/tasks/dynamics_minimal_jerk.cpp
                             src/tasks/task_geometric_projection.cpp
                             src/tasks/task_geometric_alignment.cpp
                             src/tasks/task_jnt_config.cpp

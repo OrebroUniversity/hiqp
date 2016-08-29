@@ -245,6 +245,7 @@ private:
 
 
      bool                                              is_active_;
+     std::chrono::steady_clock::time_point             sampling_time_;
 
      bool                                              monitoring_active_;
      double                                            monitoring_publish_rate_;

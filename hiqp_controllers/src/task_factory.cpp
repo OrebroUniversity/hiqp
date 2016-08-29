@@ -34,6 +34,7 @@
 #include <hiqp/tasks/task_jnt_limits.h>
 #include <hiqp/tasks/dynamics_first_order.h>
 #include <hiqp/tasks/dynamics_jnt_limits.h>
+#include <hiqp/tasks/dynamics_minimal_jerk.h>
 
 
 
@@ -69,7 +70,8 @@ TaskFunction* TaskFactory::buildTaskFunction
     unsigned int priority,
     bool visibility,
     const std::vector<std::string>& parameters,
-    TaskDynamics* dynamics
+    TaskDynamics* dynamics,
+    const std::chrono::steady_clock::time_point& sampling_time
 )
 {
 	TaskFunction* function = nullptr;
@@ -171,7 +173,7 @@ TaskFunction* TaskFactory::buildTaskFunction
     	function->setVisibility(visibility);
         function->setTaskDynamics(dynamics);
 
-    	function->init(parameters, num_controls_);
+    	function->init(sampling_time, parameters, num_controls_);
     }
 
     return function;
@@ -184,7 +186,8 @@ TaskFunction* TaskFactory::buildTaskFunction
 
 TaskDynamics* TaskFactory::buildTaskDynamics
 (
-	const std::vector<std::string>& parameters
+	const std::vector<std::string>& parameters,
+    const std::chrono::steady_clock::time_point& sampling_time
 )
 {
     TaskDynamics* dynamics = nullptr;
@@ -193,15 +196,15 @@ TaskDynamics* TaskFactory::buildTaskDynamics
 	if (size == 0 || (size == 1 && parameters.at(0).compare("NA") == 0) )
     {
         dynamics = new DynamicsFirstOrder();
-        dynamics->init( {"DynamicsFirstOrder", "1.0"} );
+        dynamics->init(sampling_time, {"DynamicsFirstOrder", "1.0"} );
     }
 
-	if (parameters.at(0).compare("DynamicsFirstOrder") == 0)
+	else if (parameters.at(0).compare("DynamicsFirstOrder") == 0)
     {
         if (size == 2)
         {
             dynamics = new DynamicsFirstOrder();
-            dynamics->init(parameters);
+            dynamics->init(sampling_time, parameters);
         }
         else
         {
@@ -215,12 +218,28 @@ TaskDynamics* TaskFactory::buildTaskDynamics
         if (size == num_controls_ + 1)
         {
             dynamics = new DynamicsJntLimits();
-            dynamics->init(parameters);
+            dynamics->init(sampling_time, parameters);
         }
         else
         {
             printHiqpWarning("DynamicsJntLimits requires "
                 + std::to_string(num_controls_ + 1) 
+                + " parameters, got " 
+                + std::to_string(size) + "!");
+        }
+    }
+
+    else if (parameters.at(0).compare("DynamicsMinimalJerk") == 0)
+    {
+        if (size == 3)
+        {
+            dynamics = new DynamicsMinimalJerk();
+            dynamics->init(sampling_time, parameters);
+        }
+        else
+        {
+            printHiqpWarning("DynamicsMinimalJerk requires "
+                + std::to_string(3) 
                 + " parameters, got " 
                 + std::to_string(size) + "!");
         }

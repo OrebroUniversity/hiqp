@@ -139,7 +139,8 @@ public:
      * \param controls : reference to the controls data
      * \return true if the initialization was successful
      */
-	bool getKinematicControls(const KDL::Tree& kdl_tree,
+	bool getKinematicControls(const std::chrono::steady_clock::time_point& sampling_time,
+                               const KDL::Tree& kdl_tree,
                                const KDL::JntArrayVel& kdl_joint_pos_vel,
 		                     std::vector<double> &controls);
 
@@ -184,7 +185,8 @@ public:
                  const std::vector<std::string>& behaviour_parameters,
                  unsigned int priority,
                  bool visibility,
-                 const std::vector<std::string>& parameters);
+                 const std::vector<std::string>& parameters,
+                 const std::chrono::steady_clock::time_point& sampling_time);
                  
 
 

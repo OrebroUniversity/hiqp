@@ -39,6 +39,7 @@
 // STL Includes
 #include <vector>
 #include <iostream>
+#include <chrono>
 
 // Eigen Includes
 #include <Eigen/Dense>
@@ -86,6 +87,7 @@ namespace hiqp
 
     virtual int init
     (
+        const std::chrono::steady_clock::time_point& sampling_time,
         const std::vector<std::string>& parameters,
         unsigned int num_controls
     ) = 0;
@@ -109,6 +111,7 @@ namespace hiqp
      */
     virtual int apply
     (
+        const std::chrono::steady_clock::time_point& sampling_time,
         const KDL::Tree& kdl_tree, 
         const KDL::JntArrayVel& kdl_joint_pos_vel
     ) = 0;
@@ -237,13 +240,14 @@ namespace hiqp
      */
     int computeTaskMetrics
     (
+        const std::chrono::steady_clock::time_point& sampling_time,
         const KDL::Tree& kdl_tree, 
         const KDL::JntArrayVel& kdl_joint_pos_vel
     )
     {
-        apply(kdl_tree, kdl_joint_pos_vel);
+        apply(sampling_time, kdl_tree, kdl_joint_pos_vel);
 
-        task_dynamics_->apply(e_, e_dot_star_);
+        task_dynamics_->apply(sampling_time, e_, e_dot_star_);
 
         return 0;
     }

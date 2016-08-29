@@ -58,10 +58,15 @@ public:
 
 	~DynamicsMinimalJerk() noexcept {}
 
-	int init(const std::vector<std::string>& parameters);
+	int init
+	(
+		const std::chrono::steady_clock::time_point& sampling_time,
+		const std::vector<std::string>& parameters
+	);
 
 	int apply
 	(
+		const std::chrono::steady_clock::time_point& sampling_time,
 		const Eigen::VectorXd& e,
 		Eigen::VectorXd& e_dot_star
 	);
@@ -73,6 +78,12 @@ private:
 	DynamicsMinimalJerk(DynamicsMinimalJerk&& other) = delete;
 	DynamicsMinimalJerk& operator=(const DynamicsMinimalJerk& other) = delete;
 	DynamicsMinimalJerk& operator=(DynamicsMinimalJerk&& other) noexcept = delete;
+
+
+
+	double 				time_final_;
+
+	double 				k_;
 
 
 };

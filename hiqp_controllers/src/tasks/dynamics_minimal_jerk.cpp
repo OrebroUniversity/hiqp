@@ -50,9 +50,11 @@ namespace hiqp
 
 int DynamicsMinimalJerk::init
 (
+	const std::chrono::steady_clock::time_point& sampling_time,
     const std::vector<std::string>& parameters
 )
 {
+	
     return 0;
 }
 
@@ -64,6 +66,7 @@ int DynamicsMinimalJerk::init
 
 int DynamicsMinimalJerk::apply
 (
+	const std::chrono::steady_clock::time_point& sampling_time,
 	const Eigen::VectorXd& e,
 	Eigen::VectorXd& e_dot_star
 )

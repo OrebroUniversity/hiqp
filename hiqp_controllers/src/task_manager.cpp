@@ -108,6 +108,7 @@ void TaskManager::init
 
 bool TaskManager::getKinematicControls
 (
+    const std::chrono::steady_clock::time_point& sampling_time,
     const KDL::Tree& kdl_tree,
     const KDL::JntArrayVel& kdl_joint_pos_vel,
     std::vector<double> &controls
@@ -125,7 +126,8 @@ bool TaskManager::getKinematicControls
 
     for (TaskMapElement&& element : tasks_)
     {
-        element.second->computeTaskMetrics(kdl_tree,
+        element.second->computeTaskMetrics(sampling_time,
+                                           kdl_tree,
                                            kdl_joint_pos_vel);
 
         solver_->appendStage(element.second->priority_, 
@@ -175,14 +177,16 @@ int TaskManager::addTask
     const std::vector<std::string>& behaviour_parameters,
     unsigned int priority,
     bool visibility,
-    const std::vector<std::string>& parameters
+    const std::vector<std::string>& parameters,
+    const std::chrono::steady_clock::time_point& sampling_time
 )
 {
 
     TaskDynamics* dynamics = nullptr;
     TaskFunction* function = nullptr;
 
-    dynamics = task_factory_->buildTaskDynamics(behaviour_parameters);
+    dynamics = task_factory_->buildTaskDynamics(
+        behaviour_parameters, sampling_time);
     if (dynamics == nullptr)
     {
         printHiqpWarning("While trying to add task '" + name 
@@ -194,7 +198,15 @@ int TaskManager::addTask
     next_task_dynamics_id_++;
 
     function = task_factory_->buildTaskFunction(
-        name, next_task_id_, type, priority, visibility, parameters, dynamics);
+        name, 
+        next_task_id_, 
+        type, 
+        priority, 
+        visibility, 
+        parameters, 
+        dynamics, 
+        sampling_time
+    );
 
     if (function == nullptr)
     {

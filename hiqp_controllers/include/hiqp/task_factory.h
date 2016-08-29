@@ -48,6 +48,7 @@
 // STL Includes
 #include <string>
 #include <vector>
+#include <chrono>
 
 // Orocos KDL
 #include <kdl/tree.hpp>
@@ -111,7 +112,8 @@ public:
     	unsigned int priority,
     	bool visibility,
     	const std::vector<std::string>& parameters,
-    	TaskDynamics* dynamics
+    	TaskDynamics* dynamics,
+    	const std::chrono::steady_clock::time_point& sampling_time
 	);
 
 
@@ -123,7 +125,8 @@ public:
 	 */
 	TaskDynamics* buildTaskDynamics
 	(
-		const std::vector<std::string>& parameters
+		const std::vector<std::string>& parameters,
+    	const std::chrono::steady_clock::time_point& sampling_time
 	);
 
 

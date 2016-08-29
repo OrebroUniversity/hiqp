@@ -50,6 +50,7 @@ namespace hiqp
 
 int DynamicsFirstOrder::init
 (
+	const std::chrono::steady_clock::time_point& sampling_time,
     const std::vector<std::string>& parameters
 )
 {
@@ -69,6 +70,7 @@ int DynamicsFirstOrder::init
 
 int DynamicsFirstOrder::apply
 (
+	const std::chrono::steady_clock::time_point& sampling_time,
 	const Eigen::VectorXd& e,
 	Eigen::VectorXd& e_dot_star
 )
