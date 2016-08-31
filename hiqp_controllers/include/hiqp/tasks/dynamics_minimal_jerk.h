@@ -32,6 +32,9 @@
 #ifndef HIQP_DYNAMICS_MINIMAL_JERK_H
 #define HIQP_DYNAMICS_MINIMAL_JERK_H
 
+// STL Includes
+#include <chrono>
+
 // HiQP Includes
 #include <hiqp/task_dynamics.h>
 
@@ -61,15 +64,20 @@ public:
 	int init
 	(
 		const std::chrono::steady_clock::time_point& sampling_time,
-		const std::vector<std::string>& parameters
+		const std::vector<std::string>& parameters,
+    	const Eigen::VectorXd& e_initial,
+    	const Eigen::VectorXd& e_final
 	);
 
 	int apply
 	(
 		const std::chrono::steady_clock::time_point& sampling_time,
 		const Eigen::VectorXd& e,
+		const Eigen::MatrixXd& J,
 		Eigen::VectorXd& e_dot_star
 	);
+
+	int monitor();
 
 private:
 
@@ -81,9 +89,13 @@ private:
 
 
 
-	double 				time_final_;
+	std::chrono::steady_clock::time_point		time_start_;
 
-	double 				k_;
+	double 										total_duration_;
+
+	Eigen::VectorXd 							e_diff_;
+
+	double 										f_;
 
 
 };

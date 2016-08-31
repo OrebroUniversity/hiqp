@@ -75,15 +75,22 @@ int TaskJntConfig::init
 		}
 	}
 
-
+/*
 	e_.resize(1);
 	J_.resize(1, num_controls);
 	e_dot_star_.resize(1);
 	performance_measures_.resize(1);
 	task_types_.insert(task_types_.begin(), 1, 0);
+*/
 
-	//for (int i=0; i<num_controls; ++i) 
-	//	J_(0, i) = -1;
+	e_.resize(num_controls);
+	J_.resize(num_controls, num_controls);
+	e_dot_star_.resize(num_controls);
+	performance_measures_.resize(num_controls);
+	task_types_.insert(task_types_.begin(), num_controls, 0);
+
+	for (int i=0; i<num_controls; ++i) 
+		J_(i, i) = -1;
 
 	return 0;
 }
@@ -99,6 +106,19 @@ int TaskJntConfig::apply
 )
 {
 	const KDL::JntArray &q = kdl_joint_pos_vel.q;
+
+	double diff = 0;
+
+	for (int i=0; i<q.rows(); ++i)
+	{
+		e_(i) = desired_configuration_.at(i) - q(i);
+		diff += std::abs(e_(i));
+	}
+
+	std::cout << "sum e_i = " << diff << "\n";
+
+
+	/*
 	e_(0) = 0;
 	
 	for (int i=0; i<q.rows(); ++i)
@@ -111,6 +131,7 @@ int TaskJntConfig::apply
 	{
 		J_(0, q_nr) = - 2 * ( desired_configuration_.at(q_nr) - q(q_nr) );
 	}
+	*/
 
 	return 0;
 }
@@ -121,7 +142,10 @@ int TaskJntConfig::apply
 
 int TaskJntConfig::monitor()
 {
-	performance_measures_.at(0) = e_(0);
+	//for (int i=0; i<e_.rows(); ++i)
+	//{
+	//	performance_measures_.at(i) = e_(i);
+	//}
 	
 	return 0;
 }

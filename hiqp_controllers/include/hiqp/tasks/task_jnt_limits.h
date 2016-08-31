@@ -120,7 +120,7 @@ public:
      *
      * \return 0 if the calculation was successful
      */
-    int monitor();
+     int monitor();
 
 
 

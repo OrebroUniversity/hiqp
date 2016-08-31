@@ -128,6 +128,32 @@ namespace hiqp
 
 
 
+
+    Eigen::VectorXd getInitialState()
+    {
+        return e_initial_;
+    }
+
+
+
+
+    Eigen::MatrixXd getInitialStateJacobian()
+    {
+        return J_initial_;
+    }
+
+
+
+    virtual Eigen::VectorXd getFinalState
+    (
+        const KDL::Tree& kdl_tree
+    )
+    {
+        return Eigen::VectorXd::Zero(e_.rows());
+    }
+
+
+
     
 
 
@@ -138,14 +164,22 @@ namespace hiqp
     protected:
 
     Eigen::VectorXd                 e_; // the task function
+
+    Eigen::VectorXd                 e_initial_;
      
     Eigen::MatrixXd                 J_; // the task jacobian
+
+    Eigen::MatrixXd                 J_initial_;
 
     Eigen::VectorXd                 e_dot_star_; // the task dynamics
 
     std::vector<int>                task_types_; // -1 leq, 0 eq, 1 geq
 
     std::vector<double>             performance_measures_;
+
+    std::vector<double>             measures_e_;
+
+    std::vector<double>             measures_e_dot_star_;
 
     GeometricPrimitiveMap*          geometric_primitive_map_;
 
@@ -225,18 +259,56 @@ namespace hiqp
     inline void setVisibility(bool visibility) 
     { visibility_ = visibility; }
 
+
+
+
+/*
+    inline const std::vector<double>& getMeasuresE()
+    { return measures_e_; }
+
+    inline const std::vector<double>& getMeasuresEDotStar()
+    { return measures_e__dot_star_; }
+*/
+
+
     
+    void monitorFunctionAndDynamics()
+    {
+        measures_e_.clear();
+        for (int i=0; i<e_.rows(); ++i)
+            measures_e_.push_back( e_(i) );
+
+        measures_e_dot_star_.clear();
+        for (int i=0; i<e_dot_star_.rows(); ++i)
+            measures_e_dot_star_.push_back( e_dot_star_(i) );
+    }
 
 
 
+    /*!
+     * \brief This is called from TaskFactory, makes calls to Task::apply()
+     *        to get the inital task function and jacobain states.
+     *        Do not change!
+     */
+    int computeInitialState
+    (
+        const std::chrono::steady_clock::time_point& sampling_time,
+        const KDL::Tree& kdl_tree, 
+        const KDL::JntArrayVel& kdl_joint_pos_vel
+    )
+    {
+        apply(sampling_time, kdl_tree, kdl_joint_pos_vel);
+        e_initial_ = e_;
+        J_initial_ = J_;
+        return 0;
+    }
 
 
 
     /*!
      * \brief This is called from TaskManager, makes calls to Task::apply()
      *        and TaskBehaviour::apply() to get the new controls.
-     *        New tasks and task behaviours are created by implementing the 
-     *        apply function of the respective classes.
+     *        Do not change!
      */
     int computeTaskMetrics
     (
@@ -247,7 +319,7 @@ namespace hiqp
     {
         apply(sampling_time, kdl_tree, kdl_joint_pos_vel);
 
-        task_dynamics_->apply(sampling_time, e_, e_dot_star_);
+        task_dynamics_->apply(sampling_time, e_, J_, e_dot_star_);
 
         return 0;
     }

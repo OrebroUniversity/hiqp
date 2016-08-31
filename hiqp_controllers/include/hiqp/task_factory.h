@@ -104,7 +104,7 @@ public:
 	 * \brief
 	 *
 	 */
-	TaskFunction* buildTaskFunction
+	int buildTask
 	(
 		const std::string& name,
 		std::size_t id,
@@ -112,24 +112,13 @@ public:
     	unsigned int priority,
     	bool visibility,
     	const std::vector<std::string>& parameters,
-    	TaskDynamics* dynamics,
-    	const std::chrono::steady_clock::time_point& sampling_time
+    	const std::vector<std::string>& behaviour_parameters,
+    	const std::chrono::steady_clock::time_point& sampling_time,
+    	const KDL::Tree& kdl_tree,
+    	const KDL::JntArrayVel& kdl_joint_pos_vel,
+    	TaskDynamics*& dynamics,
+    	TaskFunction*& function
 	);
-
-
-
-
-	/*!
-	 * \brief
-	 *
-	 */
-	TaskDynamics* buildTaskDynamics
-	(
-		const std::vector<std::string>& parameters,
-    	const std::chrono::steady_clock::time_point& sampling_time
-	);
-
-
 
 
 
@@ -143,6 +132,22 @@ private:
 	TaskFactory(TaskFactory&& other) = delete;
 	TaskFactory& operator=(const TaskFactory& other) = delete;
 	TaskFactory& operator=(TaskFactory&& other) noexcept = delete;
+
+
+
+	TaskDynamics* constructTaskDynamics
+	(
+		const std::vector<std::string>& parameters
+	);
+
+
+
+	TaskFunction* constructTaskFunction
+	(
+		const std::string& type,
+		const std::vector<std::string>& parameters
+	);
+
 
 
 

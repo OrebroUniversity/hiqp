@@ -74,15 +74,18 @@ public:
      (
           unsigned int task_id,
           const std::string& task_name,
+          const std::string& measure_tag,
           const std::vector<double>& performance_measures
      )
      : task_id_(task_id), 
        task_name_(task_name), 
+       measure_tag_(measure_tag),
        performance_measures_(performance_measures)
      {}
 
      std::size_t                 task_id_;
      const std::string&          task_name_;
+     std::string                 measure_tag_;
      const std::vector<double>&  performance_measures_;
 };
 
@@ -140,9 +143,9 @@ public:
      * \return true if the initialization was successful
      */
 	bool getKinematicControls(const std::chrono::steady_clock::time_point& sampling_time,
-                               const KDL::Tree& kdl_tree,
-                               const KDL::JntArrayVel& kdl_joint_pos_vel,
-		                     std::vector<double> &controls);
+                              const KDL::Tree& kdl_tree,
+                              const KDL::JntArrayVel& kdl_joint_pos_vel,
+		                      std::vector<double> &controls);
 
 
 
@@ -180,13 +183,18 @@ public:
      *         -2 if the task behaviour name was not recognised,
      *         -3 if the task name was not recognised
      */
-     int addTask(const std::string& name,
-                 const std::string& type,
-                 const std::vector<std::string>& behaviour_parameters,
-                 unsigned int priority,
-                 bool visibility,
-                 const std::vector<std::string>& parameters,
-                 const std::chrono::steady_clock::time_point& sampling_time);
+     int addTask
+     (
+        const std::string& name,
+        const std::string& type,
+        const std::vector<std::string>& behaviour_parameters,
+        unsigned int priority,
+        bool visibility,
+        const std::vector<std::string>& parameters,
+        const std::chrono::steady_clock::time_point& sampling_time,
+        const KDL::Tree& kdl_tree,
+        const KDL::JntArrayVel& kdl_joint_pos_vel
+    );
                  
 
 

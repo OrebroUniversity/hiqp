@@ -51,13 +51,17 @@ namespace hiqp
 int DynamicsFirstOrder::init
 (
 	const std::chrono::steady_clock::time_point& sampling_time,
-    const std::vector<std::string>& parameters
+    const std::vector<std::string>& parameters,
+    const Eigen::VectorXd& e_initial,
+    const Eigen::VectorXd& e_final
 )
 {
     if (parameters.size() != 2)
         return -1;
 
     lambda_ = std::stod( parameters.at(1) );
+
+	performance_measures_.resize(e_initial.rows());
     
     return 0;
 }
@@ -72,6 +76,7 @@ int DynamicsFirstOrder::apply
 (
 	const std::chrono::steady_clock::time_point& sampling_time,
 	const Eigen::VectorXd& e,
+	const Eigen::MatrixXd& J,
 	Eigen::VectorXd& e_dot_star
 )
 {
@@ -79,6 +84,13 @@ int DynamicsFirstOrder::apply
 
 	//std::cout << "e_dot_star = " << e_dot_star << "\n\n";
 
+	return 0;
+}
+
+
+
+int DynamicsFirstOrder::monitor()
+{
 	return 0;
 }
 

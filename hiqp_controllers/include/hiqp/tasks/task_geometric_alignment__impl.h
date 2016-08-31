@@ -227,6 +227,19 @@ int TaskGeometricAlignment<PrimitiveA, PrimitiveB>::apply
 
 
 
+/*
+template<typename PrimitiveA, typename PrimitiveB>
+Eigen::VectorXd TaskGeometricAlignment<PrimitiveA, PrimitiveB>::getFinalState
+(
+	const KDL::Tree& kdl_tree
+)
+{
+	return Eigen::VectorXd::Zero(e_.rows());
+}
+*/
+
+
+
 
 
 

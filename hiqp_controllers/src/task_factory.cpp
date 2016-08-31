@@ -62,7 +62,7 @@ void TaskFactory::init
 
 
 
-TaskFunction* TaskFactory::buildTaskFunction
+int TaskFactory::buildTask
 (
 	const std::string& name,
 	std::size_t id,
@@ -70,11 +70,143 @@ TaskFunction* TaskFactory::buildTaskFunction
     unsigned int priority,
     bool visibility,
     const std::vector<std::string>& parameters,
-    TaskDynamics* dynamics,
-    const std::chrono::steady_clock::time_point& sampling_time
+    const std::vector<std::string>& behaviour_parameters,
+    const std::chrono::steady_clock::time_point& sampling_time,
+    const KDL::Tree& kdl_tree,
+    const KDL::JntArrayVel& kdl_joint_pos_vel,
+    TaskDynamics*& dynamics,
+    TaskFunction*& function
 )
 {
-	TaskFunction* function = nullptr;
+	dynamics = this->constructTaskDynamics(behaviour_parameters);
+    if (dynamics == nullptr)
+    {
+        printHiqpWarning("While trying to add task '" + name 
+            + "', could not parse the dynamics parameters! No task was added!");
+        return -1;
+    }
+
+    function = this->constructTaskFunction(type, parameters);
+    if (function == nullptr)
+    {
+        printHiqpWarning("While trying to add task '" + name 
+            + "', could not parse the task parameters! No task was added!");
+        delete dynamics;
+        return -2;
+    }
+
+    function->setVisualizer(visualizer_);
+	function->setGeometricPrimitiveMap(geometric_primitive_map_);
+	function->setTaskName(name);
+	function->setId(id);
+	function->setPriority(priority);
+	function->setVisibility(visibility);
+    function->setTaskDynamics(dynamics);
+	function->init(sampling_time, parameters, num_controls_);
+    function->computeInitialState(sampling_time, kdl_tree, kdl_joint_pos_vel);
+
+    std::vector<std::string> beh_params = {"DynamicsFirstOrder", "1.0"};
+
+    dynamics->init(
+        sampling_time, 
+        (behaviour_parameters.size() == 0 ? beh_params : behaviour_parameters), 
+        function->getInitialState(),
+        function->getFinalState(kdl_tree)
+    );
+
+    bool size_test1 = (function->e_.rows() != function->J_.rows());
+    bool size_test2 = (function->e_.rows() != function->e_dot_star_.rows());
+    bool size_test3 = (function->e_.rows() != function->task_types_.size());
+
+    if (size_test1 || size_test2 || size_test3)
+    {
+        printHiqpWarning("While trying to add task '" + name 
+            + "', the task dimensions was not properly setup! No task was added!");
+        delete function;
+        delete dynamics;
+        return -3;
+    }
+
+    return 0;
+}
+
+
+
+
+
+
+
+TaskDynamics* TaskFactory::constructTaskDynamics
+(
+    const std::vector<std::string>& parameters
+)
+{
+    TaskDynamics* dynamics = nullptr;
+
+    int size = parameters.size();
+    if (size == 0 || (size == 1 && parameters.at(0).compare("NA") == 0) )
+    {
+        dynamics = new DynamicsFirstOrder();
+    }
+
+    else if (parameters.at(0).compare("DynamicsFirstOrder") == 0)
+    {
+        if (size == 2)
+        {
+            dynamics = new DynamicsFirstOrder();
+        }
+        else
+        {
+            printHiqpWarning("DynamicsFirstOrder requires 2 parameters, got " 
+                + std::to_string(size) + "!");
+        }
+    }
+
+    else if (parameters.at(0).compare("DynamicsJntLimits") == 0)
+    {
+        if (size == num_controls_ + 1)
+        {
+            dynamics = new DynamicsJntLimits();
+        }
+        else
+        {
+            printHiqpWarning("DynamicsJntLimits requires "
+                + std::to_string(num_controls_ + 1) 
+                + " parameters, got " 
+                + std::to_string(size) + "!");
+        }
+    }
+
+    else if (parameters.at(0).compare("DynamicsMinimalJerk") == 0)
+    {
+        if (size == 2)
+        {
+            dynamics = new DynamicsMinimalJerk();
+        }
+        else
+        {
+            printHiqpWarning("DynamicsMinimalJerk requires "
+                + std::to_string(2) 
+                + " parameters, got " 
+                + std::to_string(size) + "!");
+        }
+    }
+
+    return dynamics;
+}
+
+
+
+
+
+
+TaskFunction* TaskFactory::constructTaskFunction
+(
+    const std::string& type,
+    const std::vector<std::string>& parameters
+)
+{
+    TaskFunction* function = nullptr;
 
     if (type.compare("TaskJntConfig") == 0)
     {
@@ -86,7 +218,7 @@ TaskFunction* TaskFactory::buildTaskFunction
         function = new TaskJntLimits();
     }
 
-	else if (type.compare("TaskGeometricProjection") == 0)
+    else if (type.compare("TaskGeometricProjection") == 0)
     {
         std::string type1 = parameters.at(0);
         std::string type2 = parameters.at(1);
@@ -159,23 +291,6 @@ TaskFunction* TaskFactory::buildTaskFunction
         printHiqpWarning("Task type name '" + type + "' was not recognized!");
     }
 
-
-
-
-    if (function != nullptr)
-    {
-    	function->setVisualizer(visualizer_);
-    	function->setGeometricPrimitiveMap(geometric_primitive_map_);
-
-    	function->setTaskName(name);
-    	function->setId(id);
-    	function->setPriority(priority);
-    	function->setVisibility(visibility);
-        function->setTaskDynamics(dynamics);
-
-    	function->init(sampling_time, parameters, num_controls_);
-    }
-
     return function;
 }
 
@@ -184,69 +299,6 @@ TaskFunction* TaskFactory::buildTaskFunction
 
 
 
-TaskDynamics* TaskFactory::buildTaskDynamics
-(
-	const std::vector<std::string>& parameters,
-    const std::chrono::steady_clock::time_point& sampling_time
-)
-{
-    TaskDynamics* dynamics = nullptr;
-
-    int size = parameters.size();
-	if (size == 0 || (size == 1 && parameters.at(0).compare("NA") == 0) )
-    {
-        dynamics = new DynamicsFirstOrder();
-        dynamics->init(sampling_time, {"DynamicsFirstOrder", "1.0"} );
-    }
-
-	else if (parameters.at(0).compare("DynamicsFirstOrder") == 0)
-    {
-        if (size == 2)
-        {
-            dynamics = new DynamicsFirstOrder();
-            dynamics->init(sampling_time, parameters);
-        }
-        else
-        {
-            printHiqpWarning("DynamicsFirstOrder requires 2 parameters, got " 
-                + std::to_string(size) + "!");
-        }
-    }
-
-    else if (parameters.at(0).compare("DynamicsJntLimits") == 0)
-    {
-        if (size == num_controls_ + 1)
-        {
-            dynamics = new DynamicsJntLimits();
-            dynamics->init(sampling_time, parameters);
-        }
-        else
-        {
-            printHiqpWarning("DynamicsJntLimits requires "
-                + std::to_string(num_controls_ + 1) 
-                + " parameters, got " 
-                + std::to_string(size) + "!");
-        }
-    }
-
-    else if (parameters.at(0).compare("DynamicsMinimalJerk") == 0)
-    {
-        if (size == 3)
-        {
-            dynamics = new DynamicsMinimalJerk();
-            dynamics->init(sampling_time, parameters);
-        }
-        else
-        {
-            printHiqpWarning("DynamicsMinimalJerk requires "
-                + std::to_string(3) 
-                + " parameters, got " 
-                + std::to_string(size) + "!");
-        }
-    }
-
-    return dynamics;
-}
 
 
 

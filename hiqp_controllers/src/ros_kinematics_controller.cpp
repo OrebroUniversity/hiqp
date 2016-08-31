@@ -181,7 +181,25 @@ bool ROSKinematicsController::init
 	}
 	kdl_joint_pos_vel_.resize(n_kdl_joints);
 	output_controls_ = std::vector<double>(n_kdl_joints, 0.0);
+
+
+
+
+
+
+	// Sample the first joint positions and velocities
+	KDL::JntArray& q = kdl_joint_pos_vel_.q;
+	KDL::JntArray& qdot = kdl_joint_pos_vel_.qdot;
+	handles_mutex_.lock();
+		sampling_time_ = std::chrono::steady_clock::now();
+		for (auto&& handle : joint_handles_map_)
+		{
+			q(handle.first) = handle.second.getPosition();
+			qdot(handle.first) = handle.second.getVelocity();
+		}
+	handles_mutex_.unlock();
 	
+
 
 
 
@@ -331,6 +349,7 @@ void ROSKinematicsController::update
 				
 				per_msg.task_id = it->task_id_;
 				per_msg.task_name = it->task_name_;
+				per_msg.measure_tag = it->measure_tag_;
 				per_msg.data.insert(per_msg.data.begin(),
 					                it->performance_measures_.cbegin(),
 					                it->performance_measures_.cend());
@@ -399,7 +418,9 @@ bool ROSKinematicsController::addTask
 	int retval = task_manager_.addTask(req.name, req.type, req.behaviour,
 									   req.priority, req.visibility, 
 									   req.parameters,
-									   sampling_time_);
+									   sampling_time_,
+									   kdl_tree_,
+									   kdl_joint_pos_vel_);
 
 
 

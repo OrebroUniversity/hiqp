@@ -119,8 +119,8 @@ int TaskJntLimits::apply
 
 int TaskJntLimits::monitor()
 {
-	for (int i=0; i<num_controls_; ++i)
-		performance_measures_.at(i) = e_(i);
+	//for (int i=0; i<num_controls_; ++i)
+	//	performance_measures_.at(i) = e_(i);
 	
 	return 0;
 }

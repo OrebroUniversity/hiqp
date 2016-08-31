@@ -62,15 +62,29 @@ public:
 	virtual int init
 	(
 		const std::chrono::steady_clock::time_point& sampling_time,
-		const std::vector<std::string>& parameters
+		const std::vector<std::string>& parameters,
+    	const Eigen::VectorXd& e_initial,
+   	 	const Eigen::VectorXd& e_final
 	) = 0;
 
 	virtual int apply
 	(
 		const std::chrono::steady_clock::time_point& sampling_time,
 		const Eigen::VectorXd& e,
+		const Eigen::MatrixXd& J,
 		Eigen::VectorXd& e_dot_star
 	) = 0;
+
+	virtual int monitor() = 0;
+
+
+
+
+protected:
+
+    std::vector<double>             performance_measures_;
+
+
 
 
 

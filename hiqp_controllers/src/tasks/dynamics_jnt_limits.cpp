@@ -51,7 +51,9 @@ namespace hiqp
 int DynamicsJntLimits::init
 (
 	const std::chrono::steady_clock::time_point& sampling_time,
-    const std::vector<std::string>& parameters
+    const std::vector<std::string>& parameters,
+    const Eigen::VectorXd& e_initial,
+    const Eigen::VectorXd& e_final
 )
 {
 	size_ = parameters.size()-1;
@@ -64,6 +66,8 @@ int DynamicsJntLimits::init
     	jnt_vel_limits_.begin(),
     	[](const std::string& param) {return std::stod(param); }
     );
+
+    performance_measures_.resize(e_initial.rows());
     
     return 0;
 }
@@ -78,6 +82,7 @@ int DynamicsJntLimits::apply
 (
 	const std::chrono::steady_clock::time_point& sampling_time,
 	const Eigen::VectorXd& e,
+	const Eigen::MatrixXd& J,
 	Eigen::VectorXd& e_dot_star
 )
 {
@@ -90,6 +95,12 @@ int DynamicsJntLimits::apply
 		++i;
 	}
 
+	return 0;
+}
+
+
+int DynamicsJntLimits::monitor()
+{
 	return 0;
 }
 

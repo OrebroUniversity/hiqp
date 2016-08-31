@@ -61,7 +61,7 @@
 rosservice call /yumi/hiqp_kinematics_controller/add_task \
 "name: 'geomproj6'
 type: 'TaskGeometricProjection'
-behaviour: ['DynamicsFirstOrder', '0.5']
+behaviour: ['DynamicsMinimalJerk', '8.0']
 priority: 1
 visibility: 0
 parameters: ['point', 'cylinder', 'mypoint1 = mycylinder2']"

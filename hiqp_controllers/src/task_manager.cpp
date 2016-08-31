@@ -139,7 +139,7 @@ bool TaskManager::getKinematicControls
     solver_->solve(controls);
 
     geometric_primitive_map_->redrawAllPrimitives();
-
+    
     return true;
 }
 
@@ -152,12 +152,38 @@ void TaskManager::getTaskMonitoringData
 {
     for (TaskMapElement&& element : tasks_)
     {
-        element.second->monitor(); // computes the performance measures
+        // computes the custom performance measures
+        element.second->monitor();
+
+        // copies the e and e_dot_star_ values onto double-vectors
+        element.second->monitorFunctionAndDynamics();
+
         data.push_back( 
             TaskMonitoringData
             (
                 element.second->getId(),
                 element.second->getTaskName(),
+                "e",
+                element.second->measures_e_
+            )
+        );
+
+        data.push_back( 
+            TaskMonitoringData
+            (
+                element.second->getId(),
+                element.second->getTaskName(),
+                "de*",
+                element.second->measures_e_dot_star_
+            )
+        );
+
+        data.push_back( 
+            TaskMonitoringData
+            (
+                element.second->getId(),
+                element.second->getTaskName(),
+                "PM",
                 element.second->performance_measures_
             )
         );
@@ -178,58 +204,41 @@ int TaskManager::addTask
     unsigned int priority,
     bool visibility,
     const std::vector<std::string>& parameters,
-    const std::chrono::steady_clock::time_point& sampling_time
+    const std::chrono::steady_clock::time_point& sampling_time,
+    const KDL::Tree& kdl_tree,
+    const KDL::JntArrayVel& kdl_joint_pos_vel
 )
 {
 
     TaskDynamics* dynamics = nullptr;
     TaskFunction* function = nullptr;
 
-    dynamics = task_factory_->buildTaskDynamics(
-        behaviour_parameters, sampling_time);
-    if (dynamics == nullptr)
-    {
-        printHiqpWarning("While trying to add task '" + name 
-            + "', could not parse the dynamics parameters! No task was added!");
-        return -1;
-    }
-
-    task_dynamics_[next_task_dynamics_id_] = dynamics;
-    next_task_dynamics_id_++;
-
-    function = task_factory_->buildTaskFunction(
+    int result = task_factory_->buildTask(
         name, 
         next_task_id_, 
         type, 
         priority, 
         visibility, 
         parameters, 
-        dynamics, 
-        sampling_time
+        behaviour_parameters,
+        sampling_time,
+        kdl_tree,
+        kdl_joint_pos_vel,
+        dynamics,
+        function
     );
 
-    if (function == nullptr)
+    if (result == 0)
     {
-        printHiqpWarning("While trying to add task '" + name 
-            + "', could not parse the task parameters! No task was added!");
-        delete dynamics;
-        return -3;
+        task_dynamics_[next_task_dynamics_id_] = dynamics;
+        next_task_dynamics_id_++;
+        tasks_.insert( TaskMapElement(next_task_id_, function) );
+        next_task_id_++;
+
+        return next_task_id_-1;
     }
 
-    bool size_test1 = (function->e_.rows() != function->J_.rows());
-    bool size_test2 = (function->e_.rows() != function->e_dot_star_.rows());
-    bool size_test3 = (function->e_.rows() != function->task_types_.size());
-
-    if (size_test1 || size_test2 || size_test3)
-    {
-        printHiqpWarning("While trying to add task '" + name 
-            + "', the task dimensions was not properly setup! No task was added!");
-    }
-
-    tasks_.insert( TaskMapElement(next_task_id_, function) );
-    next_task_id_++;
-
-    return next_task_id_-1;
+    return -1;
 }
 
 
@@ -319,43 +328,6 @@ int TaskManager::removeAllGeometricPrimitives
 
 
 
-
-
-/*
-TaskFunction* TaskManager::buildTaskFunction
-(
-    const std::string& type,
-    const std::vector<std::string>& parameters
-)
-{
-    if (type.compare("TaskGeometricProjection") == 0)
-    {
-        if (parameters.at(0).compare("point") == 0 && 
-            parameters.at(1).compare("plane") == 0)
-        {
-            return new TaskGeometricProjection<GeometricPoint, GeometricPlane>();
-        }
-
-    }
-
-    return nullptr;
-}
-
-
-
-
-
-TaskDynamics* TaskManager::buildTaskDynamics
-(
-    const std::string& behaviour_name
-)
-{
-    if (behaviour_name.compare("DynamicsFirstOrder") != 0)
-        return nullptr;
-
-    return new DynamicsFirstOrder();
-}
-*/
 
 
 
