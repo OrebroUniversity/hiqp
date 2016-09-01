@@ -76,6 +76,11 @@ int GeometricPoint::init(const std::vector<double>& parameters)
 		return -1;
 	}
 
+	std::cout << "point init: " 
+		<< parameters.at(0) << ", " 
+		<< parameters.at(1) << ", " 
+		<< parameters.at(2) << "\n";
+
 	kdl_p_(0) = parameters.at(0);
 	kdl_p_(1) = parameters.at(1);
 	kdl_p_(2) = parameters.at(2);

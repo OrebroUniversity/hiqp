@@ -61,6 +61,7 @@
 // HiQP Includes
 #include <hiqp/task_manager.h>
 #include <hiqp/ros_visualizer.h>
+#include <hiqp/ros_topic_subscriber.h>
 
 #include <hiqp_msgs_srvs/AddTask.h>
 #include <hiqp_msgs_srvs/RemoveTask.h>
@@ -253,6 +254,8 @@ private:
 
      ros::NodeHandle                                   controller_nh_;
      ros::Publisher                                    monitoring_pub_;
+
+     ROSTopicSubscriber                                topic_subscriber_;
 
      ros::ServiceServer                                add_task_service_;
      ros::ServiceServer                                remove_task_service_;

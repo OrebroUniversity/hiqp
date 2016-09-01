@@ -241,6 +241,12 @@ public:
 
 
 
+     inline GeometricPrimitiveMap* getGeometricPrimitiveMap()
+     { return geometric_primitive_map_; }
+
+
+
+
 
 
 

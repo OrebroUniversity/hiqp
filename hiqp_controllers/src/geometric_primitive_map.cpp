@@ -364,6 +364,8 @@ void GeometricPrimitiveMap::removeDependency
 
 void GeometricPrimitiveMap::redrawAllPrimitives()
 {
+    std::cout << "GeometricPrimitiveMap::redrawAllPrimitives\n";
+    std::cout << "opintmap size = " << point_map_.size() << "\n";
     {
         std::map< std::string, GeometricPoint* >::iterator it;
         it = point_map_.begin();
@@ -440,6 +442,17 @@ void GeometricPrimitiveMap::redrawAllPrimitives()
         }
     }
 }
+
+
+
+
+
+// ----------------------------------------------------------------------------
+//
+//
+//
+//
+// ----------------------------------------------------------------------------
 
 
 
@@ -547,6 +560,84 @@ GeometricPrimitiveMap::getGeometricPrimitive<GeometricSphere>
 
     if (it  == sphere_map_.end())       return nullptr;
     else                                return it->second;
+}
+
+
+
+
+
+// ----------------------------------------------------------------------------
+//
+//
+//
+//
+// ----------------------------------------------------------------------------
+
+
+
+
+
+template<>
+void GeometricPrimitiveMap::updateGeometricPrimitive<GeometricPoint>
+(
+    const std::string& name, 
+    const std::vector<double>& parameters
+)
+{
+    std::map< std::string, GeometricPoint* >::iterator it = 
+        point_map_.find(name);
+
+    if (it == point_map_.end()) 
+    {
+        printHiqpWarning("Couldn't update GeometricPoint with name '" + 
+            name + "'. The point was not found!");
+        return;
+    }
+
+    it->second->init(parameters);
+}
+
+
+
+
+template<>
+void GeometricPrimitiveMap::updateGeometricPrimitive<GeometricLine>
+(
+    const std::string& name, 
+    const std::vector<double>& parameters
+)
+{
+    std::map< std::string, GeometricLine* >::iterator it = 
+        line_map_.find(name);
+
+    if (it == line_map_.end()) 
+    {
+        printHiqpWarning("Couldn't update GeometricLine with name '" + 
+            name + "'. The line was not found!");
+        return;
+    }
+
+    it->second->init(parameters);
+}
+
+template<>
+void GeometricPrimitiveMap::updateGeometricPrimitive<GeometricSphere>
+(
+    const std::string& name, 
+    const std::vector<double>& parameters
+)
+{
+    std::map< std::string, GeometricSphere* >::iterator it = 
+        sphere_map_.find(name);
+
+    if (it == sphere_map_.end()) 
+    {
+        printHiqpWarning("Couldn't update GeometricSphere with name '" + 
+            name + "'. The sphere was not found!");
+        return;
+    }
+
+    it->second->init(parameters);
 }
 
 

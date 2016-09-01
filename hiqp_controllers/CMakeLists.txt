@@ -99,6 +99,7 @@ add_library(${PROJECT_NAME} #include/hiqp/geometric_primitive_map.h
                             src/geometric_primitive_map.cpp
                             src/hiqp_utils.cpp
                             src/ros_kinematics_controller.cpp
+                            src/ros_topic_subscriber.cpp
                             src/ros_visualizer.cpp
                             src/task_factory.cpp
                             src/task_manager.cpp

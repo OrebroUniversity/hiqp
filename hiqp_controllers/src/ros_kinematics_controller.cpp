@@ -40,6 +40,11 @@
 
 #include <iostream>
 
+#include <geometry_msgs/PoseStamped.h> // teleoperation magnet sensors
+
+
+
+
 namespace hiqp
 {
 	
@@ -198,7 +203,19 @@ bool ROSKinematicsController::init
 			qdot(handle.first) = handle.second.getVelocity();
 		}
 	handles_mutex_.unlock();
+
+
+
+
+
+
+	// Setup topic subscription
+	topic_subscriber_.init( task_manager_.getGeometricPrimitiveMap() );
 	
+	topic_subscriber_.addSubscription<geometry_msgs::PoseStamped>(
+		controller_nh_, "/wintracker/pose", 100
+	);
+
 
 
 
@@ -308,7 +325,6 @@ void ROSKinematicsController::update
 	handles_mutex_.unlock();
 
 
-
 	// Calculate the kinematic controls
 	task_manager_.getKinematicControls(sampling_time_,
 									   kdl_tree_, 
@@ -325,6 +341,10 @@ void ROSKinematicsController::update
 		}
 	handles_mutex_.unlock();
 
+
+
+	// Redraw all geometric primitives
+	task_manager_.getGeometricPrimitiveMap()->redrawAllPrimitives();
 
 
 

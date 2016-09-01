@@ -88,6 +88,14 @@ public:
 	template<typename PrimitiveType>
 	PrimitiveType* getGeometricPrimitive(const std::string& name);
 
+	template<typename PrimitiveType>
+	void updateGeometricPrimitive
+	(
+		const std::string& name, 
+		const std::vector<double>& parameters
+	);
+
+
 	void redrawAllPrimitives();
 
 	void addDependencyToPrimitive(const std::string& name, std::size_t id);
