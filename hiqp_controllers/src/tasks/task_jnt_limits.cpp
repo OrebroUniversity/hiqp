@@ -52,44 +52,43 @@ int TaskJntLimits::init
 (
 	const std::chrono::steady_clock::time_point& sampling_time,
 	const std::vector<std::string>& parameters,
+    const KDL::Tree& kdl_tree, 
 	unsigned int num_controls
 )
 {
 	int size = parameters.size();
-	if (size != 1)
+	if (size != 4)
 	{
-		printHiqpWarning("TaskJntLimits requires 1 parameter, got " 
+		printHiqpWarning("TaskJntLimits requires 4 parameter, got " 
 			+ std::to_string(size) + "! Initialization failed!");
 		return -1;
 	}
 
-	num_controls_ = num_controls;
+	e_.resize(4);
+	J_.resize(4, num_controls);
+	e_dot_star_.resize(4);
+	performance_measures_.resize(0);
 
-	e_.resize(num_controls);
-	J_.resize(num_controls, num_controls);
-	e_dot_star_.resize(num_controls);
-	performance_measures_.resize(num_controls);
+	task_types_.resize(4);
+	task_types_.at(0) = 1; // > -dq_max
+	task_types_.at(1) = -1; // < dq_max
+	task_types_.at(2) = 1; // > lower bound
+	task_types_.at(3) = -1; // < upper bound
 
+	link_frame_name_ = parameters.at(0);
+	link_frame_q_nr_ = kdl_getQNrFromLinkName(kdl_tree, link_frame_name_);
+	dq_max_ = std::stod( parameters.at(1) );
+	jnt_lower_bound_ = std::stod( parameters.at(2) );
+	jnt_upper_bound_ = std::stod( parameters.at(3) );
 
-	std::string sign = parameters.at(0);
-	if (sign.compare("<") == 0 || sign.compare("<=") == 0)
+	for (int i=0; i<4; ++i) 
 	{
-		task_types_.insert(task_types_.begin(), num_controls, -1);
-	}
-	else if (sign.compare("==") == 0 || sign.compare("=") == 0)
-	{
-		task_types_.insert(task_types_.begin(), num_controls, 0);
-	}
-	else if (sign.compare(">") == 0 || sign.compare(">=") == 0)
-	{
-		task_types_.insert(task_types_.begin(), num_controls, 1);
-	}
-
-
-	for (int i=0; i<num_controls; ++i) 
 		for (int j=0; j<num_controls; ++j) 
-			J_(i, j) = (i==j ? 1 : 0);
-
+		{
+			J_(i, j) = (j == link_frame_q_nr_ ? 1 : 0);
+		}
+	}
+	
 	return 0;
 }
 
@@ -103,12 +102,12 @@ int TaskJntLimits::apply
 	const KDL::JntArrayVel& kdl_joint_pos_vel
 )
 {
-	const KDL::JntArray &q = kdl_joint_pos_vel.q;
+	double q = kdl_joint_pos_vel.q(link_frame_q_nr_);
 	
-	for (int i=0; i<q.rows(); ++i)
-	{
-		e_(i) = q(i);
-	}
+	e_(0) = q;
+	e_(1) = q;
+	e_(2) = q - jnt_lower_bound_;
+	e_(3) = q - jnt_upper_bound_;
 
 	return 0;
 }
@@ -119,9 +118,6 @@ int TaskJntLimits::apply
 
 int TaskJntLimits::monitor()
 {
-	//for (int i=0; i<num_controls_; ++i)
-	//	performance_measures_.at(i) = e_(i);
-	
 	return 0;
 }
 

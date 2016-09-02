@@ -571,7 +571,6 @@ void ROSVisualizer::update
 	GeometricPoint* point
 )
 {
-    std::cout << "updating visualizing point\n";
 	apply(id, point, ACTION_MODIFY);
 }
 

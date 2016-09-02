@@ -364,8 +364,6 @@ void GeometricPrimitiveMap::removeDependency
 
 void GeometricPrimitiveMap::redrawAllPrimitives()
 {
-    std::cout << "GeometricPrimitiveMap::redrawAllPrimitives\n";
-    std::cout << "opintmap size = " << point_map_.size() << "\n";
     {
         std::map< std::string, GeometricPoint* >::iterator it;
         it = point_map_.begin();

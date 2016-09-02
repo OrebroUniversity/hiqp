@@ -235,6 +235,8 @@ int TaskManager::addTask
         tasks_.insert( TaskMapElement(next_task_id_, function) );
         next_task_id_++;
 
+        printHiqpInfo("Successfully added task with name '" + name + "'!");
+
         return next_task_id_-1;
     }
 

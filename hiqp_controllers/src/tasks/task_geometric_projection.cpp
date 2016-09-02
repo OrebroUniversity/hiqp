@@ -61,6 +61,20 @@ namespace hiqp
 
 
 
+
+
+
+//#############################################################################
+//
+//                                 P O I N T
+//
+//#############################################################################
+
+
+
+
+
+
 template<>
 int TaskGeometricProjection<GeometricPoint, GeometricPoint>::project
 (
@@ -381,6 +395,95 @@ int TaskGeometricProjection<GeometricPoint, GeometricSphere>::project
 
 	KDL::Vector d = p2 - p1;
 	e_(0) = KDL::dot(d, d) - sphere->getRadius()*sphere->getRadius();
+
+	// The task jacobian is J = 2 (p2-p1)^T (Jp2 - Jp1)
+
+	for (int q_nr = 0; q_nr < jacobian_a_.columns(); ++q_nr)
+	{
+		KDL::Vector Jp2p1 = getVelocityJacobianForTwoPoints(p1__, p2__, q_nr);
+
+		J_(0, q_nr) = 2 * dot(d, Jp2p1);
+	}
+	
+	return 0;
+}
+
+
+
+
+
+
+
+
+
+//#############################################################################
+//
+//                                 S P H E R E
+//
+//#############################################################################
+
+
+
+
+
+
+
+
+
+template<>
+int TaskGeometricProjection<GeometricSphere, GeometricPlane>::project
+(
+	GeometricSphere* sphere, 
+	GeometricPlane* plane
+)
+{
+	KDL::Vector c__ = pose_a_.M * sphere->getCenterKDL();
+	KDL::Vector c = pose_a_.p + c__;
+
+	KDL::Vector n = pose_b_.M * plane->getNormalKDL();
+
+	KDL::Vector d__ = n * plane->getOffset();
+	KDL::Vector d = d__ + n * KDL::dot(n, pose_b_.p);
+
+
+
+	e_(0) = (KDL::dot(c, n) - plane->getOffset() - KDL::dot(n, pose_b_.p));
+
+	// The task jacobian is J = 2 (p2-p1)^T (Jp2 - Jp1)
+
+	for (int q_nr = 0; q_nr < jacobian_a_.columns(); ++q_nr)
+	{
+		KDL::Vector Jpd = - getVelocityJacobianForTwoPoints(c__, d__, q_nr);
+
+		J_(0, q_nr) = KDL::dot(n, Jpd);
+	}
+	
+	return 0;
+}
+
+
+
+
+
+
+
+template<>
+int TaskGeometricProjection<GeometricSphere, GeometricSphere>::project
+(
+	GeometricSphere* sphere1, 
+	GeometricSphere* sphere2
+)
+{
+	KDL::Vector p1__ = pose_a_.M * sphere1->getCenterKDL();
+	KDL::Vector p1 = pose_a_.p + p1__;
+
+	KDL::Vector p2__ = pose_b_.M * sphere2->getCenterKDL();
+	KDL::Vector p2 = pose_b_.p + p2__;
+
+	KDL::Vector d = p2 - p1;
+	double r1 = sphere1->getRadius();
+	double r2 = sphere2->getRadius();
+	e_(0) = KDL::dot(d, d) - (r1*r1 + 2*r1*r2 + r2*r2);
 
 	// The task jacobian is J = 2 (p2-p1)^T (Jp2 - Jp1)
 

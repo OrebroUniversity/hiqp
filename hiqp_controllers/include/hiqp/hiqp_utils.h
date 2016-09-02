@@ -65,6 +65,12 @@ unsigned int kdl_getQNrFromJointName
     const std::string& joint_name
 );
 
+unsigned int kdl_getQNrFromLinkName
+(
+    const KDL::Tree& kdl_tree, 
+    const std::string& link_name
+);
+
 int kdl_JntToJac
 (
     const KDL::Tree& tree,

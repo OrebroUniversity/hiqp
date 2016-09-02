@@ -56,18 +56,10 @@ int DynamicsJntLimits::init
     const Eigen::VectorXd& e_final
 )
 {
-	size_ = parameters.size()-1;
+    dq_max_ = std::stod( parameters.at(1) );
+    std::cout << "dq_max_ = " << dq_max_ << "\n";
 
-    jnt_vel_limits_.resize( size_ );
-
-    std::transform(
-    	parameters.begin()+1, 
-    	parameters.end(), 
-    	jnt_vel_limits_.begin(),
-    	[](const std::string& param) {return std::stod(param); }
-    );
-
-    performance_measures_.resize(e_initial.rows());
+    performance_measures_.resize(0);
     
     return 0;
 }
@@ -86,14 +78,10 @@ int DynamicsJntLimits::apply
 	Eigen::VectorXd& e_dot_star
 )
 {
-	e_dot_star.resize( size_ );
-
-	int i=0;
-	for (double limit : jnt_vel_limits_)
-	{
-		e_dot_star(i) = limit;
-		++i;
-	}
+	e_dot_star(0) = -dq_max_;
+	e_dot_star(1) = dq_max_;
+	e_dot_star(2) = -e(2); // first order dynamics with gain = -1
+	e_dot_star(3) = -e(3); // first order dynamics with gain = -1
 
 	return 0;
 }

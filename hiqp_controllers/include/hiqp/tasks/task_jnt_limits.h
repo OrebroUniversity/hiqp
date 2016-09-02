@@ -88,6 +88,7 @@ public:
      (
           const std::chrono::steady_clock::time_point& sampling_time,
           const std::vector<std::string>& parameters,
+          const KDL::Tree& kdl_tree, 
           unsigned int num_controls
      );
 
@@ -132,9 +133,11 @@ private:
 	TaskJntLimits& operator=(const TaskJntLimits& other) = delete;
 	TaskJntLimits& operator=(TaskJntLimits&& other) noexcept = delete;
 
-	//enum LimitationType {kPos = 0, kVel = 1, kAcc = 2};
-
-	unsigned int            num_controls_;
+     std::string              link_frame_name_;
+     std::size_t              link_frame_q_nr_;
+     double                   dq_max_;
+     double                   jnt_upper_bound_;
+     double                   jnt_lower_bound_;
 
 
 };

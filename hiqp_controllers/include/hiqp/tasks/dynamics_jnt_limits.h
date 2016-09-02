@@ -83,8 +83,7 @@ private:
 	DynamicsJntLimits& operator=(const DynamicsJntLimits& other) = delete;
 	DynamicsJntLimits& operator=(DynamicsJntLimits&& other) noexcept = delete;
 
-	unsigned int  			size_;
-	std::vector<double> 	jnt_vel_limits_;
+	double 						dq_max_;
 
 };
 

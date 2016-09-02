@@ -102,14 +102,27 @@ int TaskFactory::buildTask
 	function->setPriority(priority);
 	function->setVisibility(visibility);
     function->setTaskDynamics(dynamics);
-	function->init(sampling_time, parameters, num_controls_);
+	function->init(sampling_time, parameters, kdl_tree, num_controls_);
     function->computeInitialState(sampling_time, kdl_tree, kdl_joint_pos_vel);
 
-    std::vector<std::string> beh_params = {"DynamicsFirstOrder", "1.0"};
+
+    std::vector<std::string> default_beh_params = {"DynamicsFirstOrder", "1.0"};
+
+    // There are some special cases for behaviour parameters
+    std::vector<std::string> beh_params;
+    if (behaviour_parameters.size() == 0) 
+    {
+        beh_params = default_beh_params;
+    }
+    else if (type.compare("TaskJntLimits") == 0)
+    {
+        beh_params.push_back(behaviour_parameters.at(0));
+        beh_params.push_back(parameters.at(1)); // dq_max
+    }
 
     dynamics->init(
         sampling_time, 
-        (behaviour_parameters.size() == 0 ? beh_params : behaviour_parameters), 
+        beh_params, 
         function->getInitialState(),
         function->getFinalState(kdl_tree)
     );
@@ -121,11 +134,12 @@ int TaskFactory::buildTask
     if (size_test1 || size_test2 || size_test3)
     {
         printHiqpWarning("While trying to add task '" + name 
-            + "', the task dimensions was not properly setup! No task was added!");
+            + "', the task dimensions was not properly setup! The task was not added!");
         delete function;
         delete dynamics;
         return -3;
     }
+
 
     return 0;
 }
@@ -164,14 +178,14 @@ TaskDynamics* TaskFactory::constructTaskDynamics
 
     else if (parameters.at(0).compare("DynamicsJntLimits") == 0)
     {
-        if (size == num_controls_ + 1)
+        if (size == 1)
         {
             dynamics = new DynamicsJntLimits();
         }
         else
         {
             printHiqpWarning("DynamicsJntLimits requires "
-                + std::to_string(num_controls_ + 1) 
+                + std::to_string(1) 
                 + " parameters, got " 
                 + std::to_string(size) + "!");
         }
@@ -222,6 +236,9 @@ TaskFunction* TaskFactory::constructTaskFunction
     {
         std::string type1 = parameters.at(0);
         std::string type2 = parameters.at(1);
+
+
+
         if (type1.compare("point") == 0 && 
             type2.compare("point") == 0)
         {
@@ -252,11 +269,29 @@ TaskFunction* TaskFactory::constructTaskFunction
         {
             function = new TaskGeometricProjection<GeometricPoint, GeometricSphere>();
         }
+
+
+        else if (type1.compare("sphere") == 0 && 
+                 type2.compare("plane") == 0)
+        {
+            function = new TaskGeometricProjection<GeometricSphere, GeometricPlane>();
+        }
+        else if (type1.compare("sphere") == 0 && 
+                 type2.compare("sphere") == 0)
+        {
+            function = new TaskGeometricProjection<GeometricSphere, GeometricSphere>();
+        }
+
+
+
         else
         {
             printHiqpWarning("TaskGeometricProjection does not allow primitive types: '"
                 + type1 + "' and '" + type2 + "'!");
         }
+
+
+
     }
 
     else if (type.compare("TaskGeometricAlignment") == 0)

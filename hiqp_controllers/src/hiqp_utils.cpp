@@ -208,7 +208,7 @@ unsigned int kdl_getQNrFromJointName
 (
 	const KDL::Tree& kdl_tree, 
 	const std::string& joint_name
-	)
+)
 {
 	for (auto&& it : kdl_tree.getSegments())
 	{
@@ -219,6 +219,24 @@ unsigned int kdl_getQNrFromJointName
 	}
 
 	return -1;
+}
+
+
+
+
+
+
+unsigned int kdl_getQNrFromLinkName
+(
+	const KDL::Tree& kdl_tree, 
+	const std::string& link_name
+)
+{
+	KDL::SegmentMap::const_iterator it = kdl_tree.getSegments().find(link_name);
+	if (it != kdl_tree.getSegments().end())
+		return it->second.q_nr;
+	else
+		return -1;
 }
 
 

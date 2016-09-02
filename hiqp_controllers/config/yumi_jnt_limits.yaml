@@ -1,0 +1,43 @@
+joint_limitations:
+  - link_frame: yumi_link_1_r
+    limitations: [1.4835, 2.94, -2.94] #dq_max, upper joint limit, lower joint limit
+
+  - link_frame: yumi_link_2_r
+    limitations: [1.4835, 0.75, -2.5] #dq_max, upper joint limit, lower joint limit
+
+  - link_frame: yumi_link_3_r
+    limitations: [1.7453, 2.94, -2.94] #dq_max, upper joint limit, lower joint limit
+
+  - link_frame: yumi_link_4_r
+    limitations: [1.3090, 1.4, -2.16] #dq_max, upper joint limit, lower joint limit
+
+  - link_frame: yumi_link_5_r
+    limitations: [2.2689, 5.07, -5.07] #dq_max, upper joint limit, lower joint limit
+
+  - link_frame: yumi_link_6_r
+    limitations: [2.2689, 2.41, -1.54] #dq_max, upper joint limit, lower joint limit
+
+  - link_frame: yumi_link_7_r
+    limitations: [2.2689, 4.0, -4.0] #dq_max, upper joint limit, lower joint limit
+
+
+  # - link_frame: yumi_link_1_l
+  #   limitations: [1.4835, 2.94, -2.94] #dq_max, upper joint limit, lower joint limit
+
+  # - link_frame: yumi_link_2_l
+  #   limitations: [1.4835, 0.75, -2.5] #dq_max, upper joint limit, lower joint limit
+
+  # - link_frame: yumi_link_3_l
+  #   limitations: [1.7453, 2.94, -2.94] #dq_max, upper joint limit, lower joint limit
+
+  # - link_frame: yumi_link_4_l
+  #   limitations: [1.3090, 1.4, -2.16] #dq_max, upper joint limit, lower joint limit
+
+  # - link_frame: yumi_link_5_l
+  #   limitations: [2.2689, 5.07, -5.07] #dq_max, upper joint limit, lower joint limit
+
+  # - link_frame: yumi_link_6_l
+  #   limitations: [2.2689, 2.41, -1.54] #dq_max, upper joint limit, lower joint limit
+
+  # - link_frame: yumi_link_7_l
+  #   limitations: [2.2689, 4.0, -4.0] #dq_max, upper joint limit, lower joint limit

@@ -103,6 +103,7 @@ public:
 	{
 		StageMapIterator it = stages_map_.find(priority_level);
 
+		// if there's no stage for this priority level
 		if (it == stages_map_.end())
 		{
 			HiQPStage stage;
@@ -113,6 +114,8 @@ public:
 
 			stages_map_.insert(StageMapElement(priority_level, stage));
 		}
+
+		// else, a.k.a. there is already a stage for this priority level
 		else
 		{
 			int rows = it->second.e_dot_star_.rows() + e_dot_star.rows();
@@ -124,24 +127,21 @@ public:
 
 			it->second.e_dot_star_.resize(rows);
 
-			it->second.e_dot_star_ << edotstar__;
-
+			it->second.e_dot_star_ = edotstar__;
 
 
 			Eigen::MatrixXd J__(rows, it->second.J_.cols());
-			
+					
 			J__ << it->second.J_,
 			       J;
 
-			it->second.J_ << J__;
-
+			it->second.J_ = J__;
 
 
 			it->second.constraint_signs_.insert(
 				it->second.constraint_signs_.begin(),
 				constraint_signs.begin(),
 				constraint_signs.end() );
-
 
 
 			it->second.nRows += e_dot_star.rows();
