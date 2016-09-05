@@ -37,6 +37,7 @@
 #include <pluginlib/class_list_macros.h> // to allow the controller to be loaded as a plugin
 
 #include <XmlRpcValue.h>  
+#include <XmlRpcException.h> 
 
 #include <iostream>
 
@@ -284,6 +285,8 @@ bool ROSKinematicsController::init
 	// - tasks
 	// in among the preload parameters in the .yaml file, if there are any
 	loadJointLimitsFromParamServer();
+	loadGeometricPrimitivesFromParamServer();
+	loadTasksFromParamServer();
 
 
 
@@ -667,6 +670,113 @@ void ROSKinematicsController::loadJointLimitsFromParamServer()
 	    ROS_INFO("Loaded and initiated joint limit tasks successfully!");
 	}
 }
+
+
+
+
+
+
+
+void ROSKinematicsController::loadGeometricPrimitivesFromParamServer()
+{
+	XmlRpc::XmlRpcValue hiqp_preload_geometric_primitives;
+	if (!controller_nh_.getParam(
+		"hiqp_preload_geometric_primitives", 
+		hiqp_preload_geometric_primitives)
+		)
+    {
+    	ROS_WARN_STREAM("No hiqp_preload_geometric_primitives parameter "
+    		<< "found on the parameter server. No geometric primitives "
+    		<< "were loaded!");
+	}
+	else
+	{
+		bool parsing_success = true;
+		for (int i=0; i<hiqp_preload_geometric_primitives.size(); ++i)
+	    {
+	    	try {
+		    	std::string name = static_cast<std::string>(
+		    		hiqp_preload_geometric_primitives[i]["name"] );
+
+		    	std::string type = static_cast<std::string>(
+		    		hiqp_preload_geometric_primitives[i]["type"] );
+
+		    	std::string frame_id = static_cast<std::string>(
+		    		hiqp_preload_geometric_primitives[i]["frame_id"] );
+
+		    	bool visible = static_cast<bool>(
+		    		hiqp_preload_geometric_primitives[i]["visible"] );
+
+		    	XmlRpc::XmlRpcValue& color_xml = 
+		    		hiqp_preload_geometric_primitives[i]["color"];
+
+		    	XmlRpc::XmlRpcValue& parameters_xml = 
+		    		hiqp_preload_geometric_primitives[i]["parameters"];
+
+		    	std::vector<double> color;
+		    	color.push_back( static_cast<double>(color_xml[0]) );
+		    	color.push_back( static_cast<double>(color_xml[1]) );
+		    	color.push_back( static_cast<double>(color_xml[2]) );
+		    	color.push_back( static_cast<double>(color_xml[3]) );
+
+		    	std::vector<double> parameters;
+		    	for (int j=0; j<parameters_xml.size(); ++j)
+		    	{
+		    		parameters.push_back( 
+		    			static_cast<double>(parameters_xml[j]) 
+		    		);
+		    	}
+
+		    	// int addGeometricPrimitive
+			    // (
+			    //     const std::string& name,
+			    //     const std::string& type,
+			    //     const std::string& frame_id,
+			    //     bool visible,
+			    //     const std::vector<double>& color,
+			    //     const std::vector<double>& parameters
+			    // );
+
+		    	task_manager_.addGeometricPrimitive(
+		    		name, type, frame_id, visible, color, parameters
+		    	);
+
+		    }
+		    catch (const XmlRpc::XmlRpcException& e)
+		    {
+		    	ROS_WARN_STREAM("Error while loading "
+		    		<< "hiqp_preload_geometric_primitives parameter from the "
+		    		<< "parameter server. XmlRcpException thrown with message: "
+		    		<< e.getMessage());
+		    	parsing_success = false;
+		    	break;
+		    }
+	    }
+
+	    if (parsing_success)
+	    	ROS_INFO("Loaded and initiated geometric primitives successfully!");
+	}
+}
+
+
+
+
+
+
+
+
+void ROSKinematicsController::loadTasksFromParamServer()
+{
+
+}
+
+
+
+
+
+
+
+
 
 
 

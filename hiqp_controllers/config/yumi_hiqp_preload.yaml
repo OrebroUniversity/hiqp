@@ -22,25 +22,25 @@ yumi:
       - link_frame: yumi_link_7_r
         limitations: [2.2689, -4.0, 4.0] 
 
-    # hiqp_preload_geometric_primitives:
-    #   - name: floor_avoidance_plane
-    #     type: plane 
-    #     frame_id: world
-    #     visible: true
-    #     color: [0.2, 0.2, 1.0, 0.5]
-    #     parameters: [0.0, 0.0, 1.0, 0.115]
+    hiqp_preload_geometric_primitives:
+      - name: floor_avoidance_plane
+        type: plane 
+        frame_id: world
+        visible: true
+        color: [0.2, 0.2, 1.0, 0.5]
+        parameters: [0.0, 0.0, 1.0, 0.115]
 
-    #   - name: yumi_link_5_r_avoidance_sphere
-    #     type: sphere 
-    #     frame_id: yumi_link_5_r
-    #     visible: true
-    #     color: [1.0, 0.0, 0.0, 0.6]
-    #     parameters: [-0.023, -0.04, 0.1, 0.04]
+      - name: yumi_link_5_r_avoidance_sphere
+        type: sphere 
+        frame_id: yumi_link_5_r
+        visible: true
+        color: [1.0, 0.0, 0.0, 0.6]
+        parameters: [-0.023, -0.04, 0.1, 0.04]
 
-    # hiqp_preload_tasks:
-    #   - name: mytask
-    #     type: TaskGeometricProjection
-    #     behaviour: ['DynamicsFirstOrder', '10']
-    #     priority: 2
-    #     visibility: 0
-    #     parameters: ['point', 'point', 'mypoint1 = mypoint2']
+    hiqp_preload_tasks:
+      - name: mytask
+        type: TaskGeometricProjection
+        behaviour: ['DynamicsFirstOrder', '10']
+        priority: 2
+        visibility: 0
+        parameters: ['point', 'point', 'mypoint1 = mypoint2']

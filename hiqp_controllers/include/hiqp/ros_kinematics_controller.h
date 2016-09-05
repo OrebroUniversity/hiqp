@@ -192,6 +192,9 @@ private:
 
 
      void loadJointLimitsFromParamServer();
+     void loadGeometricPrimitivesFromParamServer();
+     void loadTasksFromParamServer();
+
 
 
 
