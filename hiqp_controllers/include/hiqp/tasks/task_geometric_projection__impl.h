@@ -87,7 +87,20 @@ int TaskGeometricProjection<PrimitiveA, PrimitiveB>::init
 	performance_measures_.resize(1);
 
 	primitive_a_ = geometric_primitive_map_->getGeometricPrimitive<PrimitiveA>(args.at(0));
+	if (primitive_a_ == nullptr)
+	{
+		printHiqpWarning("In TaskGeometricProjection::init(), couldn't find primitive with name '"
+			+ args.at(0) + "'. Unable to create task!");
+		return -3;
+	}
+
 	primitive_b_ = geometric_primitive_map_->getGeometricPrimitive<PrimitiveB>(args.at(2));
+	if (primitive_b_ == nullptr)
+	{
+		printHiqpWarning("In TaskGeometricProjection::init(), couldn't find primitive with name '"
+			+ args.at(2) + "'. Unable to create task!");
+		return -3;
+	}
 
 	geometric_primitive_map_->addDependencyToPrimitive(args.at(0), this->getId());
 	geometric_primitive_map_->addDependencyToPrimitive(args.at(2), this->getId());
@@ -111,10 +124,12 @@ int TaskGeometricProjection<PrimitiveA, PrimitiveB>::init
 	}
 	else
 	{
-		return -3;
+		return -4;
 	}
 
 	task_types_.insert(task_types_.begin(), 1, sign);
+
+	return 0;
 
 /*
 	point_frame_id_ = parameters.at(0);
@@ -156,7 +171,6 @@ int TaskGeometricProjection<PrimitiveA, PrimitiveB>::apply
 	const KDL::JntArrayVel& kdl_joint_pos_vel
 )
 {
-
 	KDL::TreeFkSolverPos_recursive fk_solver_pos(kdl_tree);
 	KDL::TreeJntToJacSolver fk_solver_jac(kdl_tree);
 
@@ -164,7 +178,6 @@ int TaskGeometricProjection<PrimitiveA, PrimitiveB>::apply
 
 
 	// Get pose_a_
-
 	retval = fk_solver_pos.JntToCart(kdl_joint_pos_vel.q, 
 		                             pose_a_,
 		                             primitive_a_->getFrameId());
@@ -229,7 +242,6 @@ int TaskGeometricProjection<PrimitiveA, PrimitiveB>::apply
 			<< "'" << retval << "'\n";
 		return -4;
 	}
-
 
 
 

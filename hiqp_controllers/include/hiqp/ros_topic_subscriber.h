@@ -66,14 +66,13 @@ public:
 		unsigned int buffer_size
 	)
 	{
-		std::cout << "ROSTopicSubscriber::init()\n";
-		std::cout << "topic_name = " << topic_name << "\n";
 		sub = controller_nh.subscribe(
 			topic_name, 
 			buffer_size, 
 			&ROSTopicSubscriber::topicCallback<ROSMessageType>,
 			this
 		);
+		ROS_INFO_STREAM("Subsribed to topic '" << topic_name << "'");
 	}
 
 	/*! \brief Implement this function for your own message!

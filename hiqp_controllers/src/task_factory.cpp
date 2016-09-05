@@ -102,7 +102,19 @@ int TaskFactory::buildTask
 	function->setPriority(priority);
 	function->setVisibility(visibility);
     function->setTaskDynamics(dynamics);
-	function->init(sampling_time, parameters, kdl_tree, num_controls_);
+    int init_result = function->init(sampling_time, 
+                                     parameters, 
+                                     kdl_tree, 
+                                     num_controls_);
+	if (init_result != 0)
+    {
+        printHiqpWarning("Task '" + name 
+            + "' could'nt be initialized. The task has not been added. Return code: "
+            + std::to_string(init_result) + ".");
+        delete dynamics;
+        delete function;
+        return -3;
+    }
     function->computeInitialState(sampling_time, kdl_tree, kdl_joint_pos_vel);
 
 
@@ -119,6 +131,7 @@ int TaskFactory::buildTask
         beh_params.push_back(behaviour_parameters.at(0));
         beh_params.push_back(parameters.at(1)); // dq_max
     }
+
 
     dynamics->init(
         sampling_time, 
@@ -137,7 +150,7 @@ int TaskFactory::buildTask
             + "', the task dimensions was not properly setup! The task was not added!");
         delete function;
         delete dynamics;
-        return -3;
+        return -4;
     }
 
 
