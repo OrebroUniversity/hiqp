@@ -57,7 +57,6 @@ int DynamicsJntLimits::init
 )
 {
     dq_max_ = std::stod( parameters.at(1) );
-    std::cout << "dq_max_ = " << dq_max_ << "\n";
 
     performance_measures_.resize(0);
     

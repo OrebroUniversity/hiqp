@@ -191,6 +191,9 @@ private:
 	ROSKinematicsController& operator=(ROSKinematicsController&& other) noexcept = delete;
 
 
+     void loadJointLimitsFromParamServer();
+
+
 
 
 

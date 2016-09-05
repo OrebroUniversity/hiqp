@@ -112,6 +112,7 @@ bool ROSKinematicsController::init
 
 
 
+
     // Load the monitoring setup specified in the .yaml file
 	XmlRpc::XmlRpcValue task_monitoring;
 	if (!controller_nh.getParam("task_monitoring", task_monitoring))
@@ -129,6 +130,8 @@ bool ROSKinematicsController::init
     	static_cast<double>(task_monitoring["publish_rate"]);
     monitoring_pub_ = controller_nh_.advertise<hiqp_msgs_srvs::MonitorDataMsg>
 		("monitoring_data", 1);
+
+
 
 
 
@@ -268,6 +271,19 @@ bool ROSKinematicsController::init
 
 
 	task_manager_.init(n_kdl_joints);
+
+
+
+
+
+
+
+	// Preload the:
+	// - joint limitations
+	// - geometric primitives
+	// - tasks
+	// in among the preload parameters in the .yaml file, if there are any
+	loadJointLimitsFromParamServer();
 
 
 
@@ -593,6 +609,64 @@ bool ROSKinematicsController::removeAllGeometricPrimitives
 
 
 /*** PRIVATE ***/
+
+
+void ROSKinematicsController::loadJointLimitsFromParamServer()
+{
+	XmlRpc::XmlRpcValue hiqp_preload_jnt_limits;
+	if (!controller_nh_.getParam("hiqp_preload_jnt_limits", hiqp_preload_jnt_limits))
+    {
+    	ROS_WARN_STREAM("No hiqp_preload_jnt_limits parameter found on "
+    		<< "the parameter server. No joint limits were loaded!");
+	}
+	else
+	{
+	    for (int i=0; i<hiqp_preload_jnt_limits.size(); ++i)
+	    {
+	    	std::string link_frame = static_cast<std::string>(
+	    		hiqp_preload_jnt_limits[i]["link_frame"] );
+
+	    	XmlRpc::XmlRpcValue& limitations = 
+	    		hiqp_preload_jnt_limits[i]["limitations"];
+
+	    	std::vector<std::string> parameters;
+	    	parameters.push_back(link_frame);
+	    	parameters.push_back( std::to_string(
+	    		static_cast<double>(limitations[0]) ) );
+	    	parameters.push_back( std::to_string(
+	    		static_cast<double>(limitations[1]) ) );
+	    	parameters.push_back( std::to_string(
+	    		static_cast<double>(limitations[2]) ) );
+
+			// int addTask
+			//     (
+			//        const std::string& name,
+			//        const std::string& type,
+			//        const std::vector<std::string>& behaviour_parameters,
+			//        unsigned int priority,
+			//        bool visibility,
+			//        const std::vector<std::string>& parameters,
+			//        const std::chrono::steady_clock::time_point& sampling_time,
+			//        const KDL::Tree& kdl_tree,
+			//        const KDL::JntArrayVel& kdl_joint_pos_vel
+			//    );
+
+	    	task_manager_.addTask(
+	    		link_frame + "_jntlimits",
+	    		"TaskJntLimits",
+	    		std::vector<std::string>(),
+	    		1,
+	    		false,
+	    		parameters,
+	    		sampling_time_,
+	    		kdl_tree_,
+	    		kdl_joint_pos_vel_
+	    	);
+	    }
+
+	    ROS_INFO("Loaded and initiated joint limit tasks successfully!");
+	}
+}
 
 
 

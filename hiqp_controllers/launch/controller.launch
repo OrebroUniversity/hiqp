@@ -13,6 +13,9 @@
   <!-- Load the YAML file -->
   <rosparam file="$(find hiqp_controllers)/config/rbt_yumi.yaml" command="load"/>
 
+  <!-- Load preload configurations for YuMi and HiQP -->
+  <rosparam file="$(find hiqp_controllers)/config/yumi_hiqp_preload.yaml" command="load"/>
+
   <!-- Startup a spawner node that loads the controllers -->
   <node name="controller_spawner" 
         pkg="controller_manager" 
