@@ -166,47 +166,47 @@ yumi:
 
       #####      OBSTACLE AVOIDANCE TASKS    #####
 
-      # - name: yumi_link_5_r_l_avoidance
-      #   type: TaskGeometricProjection
-      #   behaviour: ['DynamicsFirstOrder', '10']
-      #   priority: 1
-      #   visibility: 0
-      #   parameters: ['sphere', 'sphere', 'yumi_link_5_l_avoidance_sphere > yumi_link_5_r_avoidance_sphere']
+      - name: yumi_link_5_r_l_avoidance
+        type: TaskGeometricProjection
+        behaviour: ['DynamicsFirstOrder', '10']
+        priority: 1
+        visibility: 0
+        parameters: ['sphere', 'sphere', 'yumi_link_5_l_avoidance_sphere > yumi_link_5_r_avoidance_sphere']
 
-      # - name: yumi_link_6_r_l_avoidance
-      #   type: TaskGeometricProjection
-      #   behaviour: ['DynamicsFirstOrder', '10']
-      #   priority: 1
-      #   visibility: 0
-      #   parameters: ['sphere', 'sphere', 'yumi_link_6_l_avoidance_sphere > yumi_link_6_r_avoidance_sphere']
+      - name: yumi_link_6_r_l_avoidance
+        type: TaskGeometricProjection
+        behaviour: ['DynamicsFirstOrder', '10']
+        priority: 1
+        visibility: 0
+        parameters: ['sphere', 'sphere', 'yumi_link_6_l_avoidance_sphere > yumi_link_6_r_avoidance_sphere']
 
-      # - name: yumi_link_5_l_floor_avoidance
-      #   type: TaskGeometricProjection
-      #   behaviour: ['DynamicsFirstOrder', '10']
-      #   priority: 1
-      #   visibility: 0
-      #   parameters: ['sphere', 'plane', 'yumi_link_5_l_avoidance_sphere > floor_avoidance_plane']
+      - name: yumi_link_5_l_floor_avoidance
+        type: TaskGeometricProjection
+        behaviour: ['DynamicsFirstOrder', '10']
+        priority: 1
+        visibility: 0
+        parameters: ['sphere', 'plane', 'yumi_link_5_l_avoidance_sphere > floor_avoidance_plane']
 
-      # - name: yumi_link_6_l_floor_avoidance
-      #   type: TaskGeometricProjection
-      #   behaviour: ['DynamicsFirstOrder', '10']
-      #   priority: 1
-      #   visibility: 0
-      #   parameters: ['sphere', 'plane', 'yumi_link_6_l_avoidance_sphere > floor_avoidance_plane']
+      - name: yumi_link_6_l_floor_avoidance
+        type: TaskGeometricProjection
+        behaviour: ['DynamicsFirstOrder', '10']
+        priority: 1
+        visibility: 0
+        parameters: ['sphere', 'plane', 'yumi_link_6_l_avoidance_sphere > floor_avoidance_plane']
 
-      # - name: yumi_link_5_r_floor_avoidance
-      #   type: TaskGeometricProjection
-      #   behaviour: ['DynamicsFirstOrder', '10']
-      #   priority: 1
-      #   visibility: 0
-      #   parameters: ['sphere', 'plane', 'yumi_link_5_r_avoidance_sphere > floor_avoidance_plane']
+      - name: yumi_link_5_r_floor_avoidance
+        type: TaskGeometricProjection
+        behaviour: ['DynamicsFirstOrder', '10']
+        priority: 1
+        visibility: 0
+        parameters: ['sphere', 'plane', 'yumi_link_5_r_avoidance_sphere > floor_avoidance_plane']
 
-      # - name: yumi_link_6_r_floor_avoidance
-      #   type: TaskGeometricProjection
-      #   behaviour: ['DynamicsFirstOrder', '10']
-      #   priority: 1
-      #   visibility: 0
-      #   parameters: ['sphere', 'plane', 'yumi_link_6_r_avoidance_sphere > floor_avoidance_plane']
+      - name: yumi_link_6_r_floor_avoidance
+        type: TaskGeometricProjection
+        behaviour: ['DynamicsFirstOrder', '10']
+        priority: 1
+        visibility: 0
+        parameters: ['sphere', 'plane', 'yumi_link_6_r_avoidance_sphere > floor_avoidance_plane']
 
 
 
@@ -242,33 +242,33 @@ yumi:
 
 
 
-      # - name: yumi_l_gripper_floor_avoidance_1
-      #   type: TaskGeometricProjection
-      #   behaviour: ['DynamicsFirstOrder', '10']
-      #   priority: 1
-      #   visibility: 0
-      #   parameters: ['point', 'plane', 'gripper_l_base_avoidance_point_1 > floor_avoidance_plane']
+      - name: yumi_l_gripper_floor_avoidance_1
+        type: TaskGeometricProjection
+        behaviour: ['DynamicsFirstOrder', '10']
+        priority: 1
+        visibility: 0
+        parameters: ['point', 'plane', 'gripper_l_base_avoidance_point_1 > floor_avoidance_plane']
 
-      # - name: yumi_l_gripper_floor_avoidance_2
-      #   type: TaskGeometricProjection
-      #   behaviour: ['DynamicsFirstOrder', '10']
-      #   priority: 1
-      #   visibility: 0
-      #   parameters: ['point', 'plane', 'gripper_l_base_avoidance_point_2 > floor_avoidance_plane']
+      - name: yumi_l_gripper_floor_avoidance_2
+        type: TaskGeometricProjection
+        behaviour: ['DynamicsFirstOrder', '10']
+        priority: 1
+        visibility: 0
+        parameters: ['point', 'plane', 'gripper_l_base_avoidance_point_2 > floor_avoidance_plane']
 
-      # - name: yumi_l_gripper_floor_avoidance_3
-      #   type: TaskGeometricProjection
-      #   behaviour: ['DynamicsFirstOrder', '10']
-      #   priority: 1
-      #   visibility: 0
-      #   parameters: ['point', 'plane', 'gripper_l_base_avoidance_point_3 > floor_avoidance_plane']
+      - name: yumi_l_gripper_floor_avoidance_3
+        type: TaskGeometricProjection
+        behaviour: ['DynamicsFirstOrder', '10']
+        priority: 1
+        visibility: 0
+        parameters: ['point', 'plane', 'gripper_l_base_avoidance_point_3 > floor_avoidance_plane']
 
-      # - name: yumi_l_gripper_floor_avoidance_4
-      #   type: TaskGeometricProjection
-      #   behaviour: ['DynamicsFirstOrder', '10']
-      #   priority: 1
-      #   visibility: 0
-      #   parameters: ['point', 'plane', 'gripper_l_base_avoidance_point_4 > floor_avoidance_plane']
+      - name: yumi_l_gripper_floor_avoidance_4
+        type: TaskGeometricProjection
+        behaviour: ['DynamicsFirstOrder', '10']
+        priority: 1
+        visibility: 0
+        parameters: ['point', 'plane', 'gripper_l_base_avoidance_point_4 > floor_avoidance_plane']
 
 
 

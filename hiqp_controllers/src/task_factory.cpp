@@ -118,27 +118,61 @@ int TaskFactory::buildTask
     function->computeInitialState(sampling_time, kdl_tree, kdl_joint_pos_vel);
 
 
-    std::vector<std::string> default_beh_params = {"DynamicsFirstOrder", "1.0"};
-
     // There are some special cases for behaviour parameters
-    std::vector<std::string> beh_params;
-    if (behaviour_parameters.size() == 0) 
+    init_result = 0;
+    std::string dynamics_name = "";
+    if (behaviour_parameters.size() == 0)
     {
-        beh_params = default_beh_params;
+        std::vector<std::string> default_beh_params = 
+            {"DynamicsFirstOrder", "1.0"};
+
+        dynamics_name = default_beh_params.at(0);
+
+        init_result = dynamics->init(
+            sampling_time, 
+            default_beh_params, 
+            function->getInitialState(),
+            function->getFinalState(kdl_tree)
+        );
     }
+
     else if (type.compare("TaskJntLimits") == 0)
     {
-        beh_params.push_back(behaviour_parameters.at(0));
-        beh_params.push_back(parameters.at(1)); // dq_max
+        std::vector<std::string> task_jntlimits_beh_params = 
+            {"DynamicsJntLimits", parameters.at(1)};
+
+        dynamics_name = task_jntlimits_beh_params.at(0);
+
+        init_result = dynamics->init(
+            sampling_time, 
+            task_jntlimits_beh_params, 
+            function->getInitialState(),
+            function->getFinalState(kdl_tree)
+        );
     }
 
+    else
+    {
+        dynamics_name = behaviour_parameters.at(0);
 
-    dynamics->init(
-        sampling_time, 
-        beh_params, 
-        function->getInitialState(),
-        function->getFinalState(kdl_tree)
-    );
+        init_result = dynamics->init(
+            sampling_time, 
+            behaviour_parameters, 
+            function->getInitialState(),
+            function->getFinalState(kdl_tree)
+        );
+    }
+
+    if (init_result != 0)
+    {
+        printHiqpWarning("Task dynamics '" + dynamics_name 
+            + "' could'nt be initialized. The task has not been added. Return code: "
+            + std::to_string(init_result) + ".");
+        delete dynamics;
+        delete function;
+        return -4;
+    }
+
 
     bool size_test1 = (function->e_.rows() != function->J_.rows());
     bool size_test2 = (function->e_.rows() != function->e_dot_star_.rows());
@@ -150,7 +184,7 @@ int TaskFactory::buildTask
             + "', the task dimensions was not properly setup! The task was not added!");
         delete function;
         delete dynamics;
-        return -4;
+        return -5;
     }
 
 

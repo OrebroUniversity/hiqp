@@ -787,8 +787,14 @@ void ROSKinematicsController::loadTasksFromParamServer()
 		    	for (int j=0; j<behaviour_xml.size(); ++j)
 		    	{
 		    		behaviour.push_back(
-		    			static_cast<std::string>(behaviour_xml[j]) );
+		    			static_cast<std::string>( behaviour_xml[j] ));
 		    	}
+
+		    	// std::cout << "behaviour_xml.size() = " << behaviour_xml.size() << "\n";
+		    	// std::cout << "behaviour_xml[1] = " << static_cast<std::string>(behaviour_xml[1]) << "\n";
+		    	// std::cout << "behaviour = ";
+		    	// for (auto&& s : behaviour) std::cout << s << ", ";
+		    	// std::cout << "\n";
 
 		    	unsigned int priority = static_cast<int>(
 		    		hiqp_preload_tasks[i]["priority"] );
@@ -814,6 +820,8 @@ void ROSKinematicsController::loadTasksFromParamServer()
 		    	// std::cout << "parameters = ";
 		    	// for (auto&& s : parameters) std::cout << s << ", ";
 		    	// std::cout << "\n";
+
+
 
 		    	task_manager_.addTask(
 		    		name,

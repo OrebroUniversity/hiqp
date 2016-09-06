@@ -56,6 +56,10 @@ int DynamicsFirstOrder::init
     const Eigen::VectorXd& e_final
 )
 {
+	// std::cout << "DynamicsFirstOrder::init\n";
+	// std::cout << "parameters = ";
+	// for (auto&& s : parameters) std::cout << s << ", ";
+	// std::cout << "\n";
     if (parameters.size() != 2)
         return -1;
 
