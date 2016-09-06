@@ -3,11 +3,9 @@ yumi:
 
 
 
-
+    #####      JOINT LIMITATIONS    #####
 
     hiqp_preload_jnt_limits:
-
-      #####      JOINT LIMITATIONS    #####
 
       - link_frame: yumi_link_1_r
         limitations: [1.4835, -2.94, 2.94] #dq_max, lower joint limit, upper joint limit
@@ -169,42 +167,42 @@ yumi:
       - name: yumi_link_5_r_l_avoidance
         type: TaskGeometricProjection
         behaviour: ['DynamicsFirstOrder', '10']
-        priority: 1
+        priority: 2
         visibility: 0
         parameters: ['sphere', 'sphere', 'yumi_link_5_l_avoidance_sphere > yumi_link_5_r_avoidance_sphere']
 
       - name: yumi_link_6_r_l_avoidance
         type: TaskGeometricProjection
         behaviour: ['DynamicsFirstOrder', '10']
-        priority: 1
+        priority: 2
         visibility: 0
         parameters: ['sphere', 'sphere', 'yumi_link_6_l_avoidance_sphere > yumi_link_6_r_avoidance_sphere']
 
       - name: yumi_link_5_l_floor_avoidance
         type: TaskGeometricProjection
         behaviour: ['DynamicsFirstOrder', '10']
-        priority: 1
+        priority: 2
         visibility: 0
         parameters: ['sphere', 'plane', 'yumi_link_5_l_avoidance_sphere > floor_avoidance_plane']
 
       - name: yumi_link_6_l_floor_avoidance
         type: TaskGeometricProjection
         behaviour: ['DynamicsFirstOrder', '10']
-        priority: 1
+        priority: 2
         visibility: 0
         parameters: ['sphere', 'plane', 'yumi_link_6_l_avoidance_sphere > floor_avoidance_plane']
 
       - name: yumi_link_5_r_floor_avoidance
         type: TaskGeometricProjection
         behaviour: ['DynamicsFirstOrder', '10']
-        priority: 1
+        priority: 2
         visibility: 0
         parameters: ['sphere', 'plane', 'yumi_link_5_r_avoidance_sphere > floor_avoidance_plane']
 
       - name: yumi_link_6_r_floor_avoidance
         type: TaskGeometricProjection
         behaviour: ['DynamicsFirstOrder', '10']
-        priority: 1
+        priority: 2
         visibility: 0
         parameters: ['sphere', 'plane', 'yumi_link_6_r_avoidance_sphere > floor_avoidance_plane']
 
@@ -214,28 +212,28 @@ yumi:
       - name: yumi_r_gripper_floor_avoidance_1
         type: TaskGeometricProjection
         behaviour: ['DynamicsFirstOrder', '10']
-        priority: 1
+        priority: 2
         visibility: 0
         parameters: ['point', 'plane', 'gripper_r_base_avoidance_point_1 > floor_avoidance_plane']
 
       - name: yumi_r_gripper_floor_avoidance_2
         type: TaskGeometricProjection
         behaviour: ['DynamicsFirstOrder', '10']
-        priority: 1
+        priority: 2
         visibility: 0
         parameters: ['point', 'plane', 'gripper_r_base_avoidance_point_2 > floor_avoidance_plane']
 
       - name: yumi_r_gripper_floor_avoidance_3
         type: TaskGeometricProjection
         behaviour: ['DynamicsFirstOrder', '10']
-        priority: 1
+        priority: 2
         visibility: 0
         parameters: ['point', 'plane', 'gripper_r_base_avoidance_point_3 > floor_avoidance_plane']
 
       - name: yumi_r_gripper_floor_avoidance_4
         type: TaskGeometricProjection
         behaviour: ['DynamicsFirstOrder', '10']
-        priority: 1
+        priority: 2
         visibility: 0
         parameters: ['point', 'plane', 'gripper_r_base_avoidance_point_4 > floor_avoidance_plane']
 
@@ -245,28 +243,28 @@ yumi:
       - name: yumi_l_gripper_floor_avoidance_1
         type: TaskGeometricProjection
         behaviour: ['DynamicsFirstOrder', '10']
-        priority: 1
+        priority: 2
         visibility: 0
         parameters: ['point', 'plane', 'gripper_l_base_avoidance_point_1 > floor_avoidance_plane']
 
       - name: yumi_l_gripper_floor_avoidance_2
         type: TaskGeometricProjection
         behaviour: ['DynamicsFirstOrder', '10']
-        priority: 1
+        priority: 2
         visibility: 0
         parameters: ['point', 'plane', 'gripper_l_base_avoidance_point_2 > floor_avoidance_plane']
 
       - name: yumi_l_gripper_floor_avoidance_3
         type: TaskGeometricProjection
         behaviour: ['DynamicsFirstOrder', '10']
-        priority: 1
+        priority: 2
         visibility: 0
         parameters: ['point', 'plane', 'gripper_l_base_avoidance_point_3 > floor_avoidance_plane']
 
       - name: yumi_l_gripper_floor_avoidance_4
         type: TaskGeometricProjection
         behaviour: ['DynamicsFirstOrder', '10']
-        priority: 1
+        priority: 2
         visibility: 0
         parameters: ['point', 'plane', 'gripper_l_base_avoidance_point_4 > floor_avoidance_plane']
 
@@ -282,6 +280,6 @@ yumi:
       - name: mytask
         type: TaskGeometricProjection
         behaviour: ['DynamicsFirstOrder', '10']
-        priority: 2
+        priority: 3
         visibility: 0
         parameters: ['point', 'point', 'mypoint1 = mypoint2']

@@ -9,7 +9,8 @@ HiQP is an optimal control framework targeted at robotics. It is based on the ta
 - 6 geometric primitives: point, line, plane, box, cylinder and sphere
 - ROS service calls for adding/removing tasks and primitives
 - Visualization of tasks and primitives in rViz
-- Ability to preload joint limitations (position and velocity) and geometric primitives via .yaml files
+- Ability to preload joint limitations, geometric primitives and tasks via .yaml files
+- Ability to subscribe to ROS topics and customize the callback function with access to the framework
 
 
 
@@ -34,5 +35,3 @@ Running a projection task where both primitives are attached to the same frame, 
 This can be solved by checking both frames upon task initialization and only add the task is the frames differ.
 
 Minimal jerk task dynamics is not working properly.
-
-Preloading tasks via .yaml craches in segfault.

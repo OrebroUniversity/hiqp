@@ -78,7 +78,28 @@ int TaskFactory::buildTask
     TaskFunction*& function
 )
 {
-	dynamics = this->constructTaskDynamics(behaviour_parameters);
+    // There are some special cases for behaviour parameters
+    std::vector<std::string> beh_params;
+    if (type.compare("TaskJntLimits") == 0)
+    {
+        beh_params.push_back("DynamicsJntLimits");
+        beh_params.push_back(parameters.at(1));
+    }
+    else if (behaviour_parameters.size() == 0)
+    {
+        beh_params.push_back("DynamicsFirstOrder");
+        beh_params.push_back("1.0");
+    }
+    else
+    {
+        for (auto&& p : behaviour_parameters)
+            beh_params.push_back(p);
+    }
+
+
+
+
+	dynamics = this->constructTaskDynamics(beh_params);
     if (dynamics == nullptr)
     {
         printHiqpWarning("While trying to add task '" + name 
@@ -118,54 +139,16 @@ int TaskFactory::buildTask
     function->computeInitialState(sampling_time, kdl_tree, kdl_joint_pos_vel);
 
 
-    // There are some special cases for behaviour parameters
-    init_result = 0;
-    std::string dynamics_name = "";
-    if (behaviour_parameters.size() == 0)
-    {
-        std::vector<std::string> default_beh_params = 
-            {"DynamicsFirstOrder", "1.0"};
-
-        dynamics_name = default_beh_params.at(0);
-
-        init_result = dynamics->init(
+    init_result = dynamics->init(
             sampling_time, 
-            default_beh_params, 
+            beh_params, 
             function->getInitialState(),
             function->getFinalState(kdl_tree)
         );
-    }
-
-    else if (type.compare("TaskJntLimits") == 0)
-    {
-        std::vector<std::string> task_jntlimits_beh_params = 
-            {"DynamicsJntLimits", parameters.at(1)};
-
-        dynamics_name = task_jntlimits_beh_params.at(0);
-
-        init_result = dynamics->init(
-            sampling_time, 
-            task_jntlimits_beh_params, 
-            function->getInitialState(),
-            function->getFinalState(kdl_tree)
-        );
-    }
-
-    else
-    {
-        dynamics_name = behaviour_parameters.at(0);
-
-        init_result = dynamics->init(
-            sampling_time, 
-            behaviour_parameters, 
-            function->getInitialState(),
-            function->getFinalState(kdl_tree)
-        );
-    }
 
     if (init_result != 0)
     {
-        printHiqpWarning("Task dynamics '" + dynamics_name 
+        printHiqpWarning("Task dynamics '" + beh_params.at(0) 
             + "' could'nt be initialized. The task has not been added. Return code: "
             + std::to_string(init_result) + ".");
         delete dynamics;
@@ -225,14 +208,14 @@ TaskDynamics* TaskFactory::constructTaskDynamics
 
     else if (parameters.at(0).compare("DynamicsJntLimits") == 0)
     {
-        if (size == 1)
+        if (size == 2)
         {
             dynamics = new DynamicsJntLimits();
         }
         else
         {
             printHiqpWarning("DynamicsJntLimits requires "
-                + std::to_string(1) 
+                + std::to_string(2) 
                 + " parameters, got " 
                 + std::to_string(size) + "!");
         }
