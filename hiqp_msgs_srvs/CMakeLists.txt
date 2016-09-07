@@ -29,6 +29,7 @@ add_service_files(
   RemoveAllTasks.srv
   RemoveGeometricPrimitive.srv
   RemoveTask.srv
+  UpdateTask.srv
   )
 
 

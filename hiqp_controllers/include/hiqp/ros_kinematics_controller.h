@@ -64,6 +64,7 @@
 #include <hiqp/ros_topic_subscriber.h>
 
 #include <hiqp_msgs_srvs/AddTask.h>
+#include <hiqp_msgs_srvs/UpdateTask.h>
 #include <hiqp_msgs_srvs/RemoveTask.h>
 #include <hiqp_msgs_srvs/RemoveAllTasks.h>
 #include <hiqp_msgs_srvs/AddGeometricPrimitive.h>
@@ -207,6 +208,12 @@ private:
           hiqp_msgs_srvs::AddTask::Response& res
      );
 
+     bool updateTask
+     (
+          hiqp_msgs_srvs::UpdateTask::Request& req, 
+          hiqp_msgs_srvs::UpdateTask::Response& res
+     );
+
      bool removeTask
      (
           hiqp_msgs_srvs::RemoveTask::Request& req, 
@@ -264,6 +271,7 @@ private:
      ROSTopicSubscriber                                topic_subscriber_;
 
      ros::ServiceServer                                add_task_service_;
+     ros::ServiceServer                                update_task_service_;
      ros::ServiceServer                                remove_task_service_;
      ros::ServiceServer                                remove_all_tasks_service_;
      ros::ServiceServer                                add_geomprim_service_;

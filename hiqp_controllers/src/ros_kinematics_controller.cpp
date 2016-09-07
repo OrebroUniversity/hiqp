@@ -233,6 +233,13 @@ bool ROSKinematicsController::init
 		this
 	);
 
+	update_task_service_ = controller_nh_.advertiseService
+	(
+		"update_task",
+		&ROSKinematicsController::updateTask,
+		this
+	);
+
 	remove_task_service_ = controller_nh_.advertiseService
 	(
 		"remove_task",
@@ -386,7 +393,7 @@ void ROSKinematicsController::update
 			{
 				hiqp_msgs_srvs::PerfMeasMsg per_msg;
 				
-				per_msg.task_id = it->task_id_;
+				//per_msg.task_id = it->task_id_;
 				per_msg.task_name = it->task_name_;
 				per_msg.measure_tag = it->measure_tag_;
 				per_msg.data.insert(per_msg.data.begin(),
@@ -465,13 +472,42 @@ bool ROSKinematicsController::addTask
 
 	res.success = (retval < 0 ? false : true);
 
-	if (res.success)
-	{
-		res.task_id = retval;
-		printHiqpInfo("Added task of type '" + req.type + "'"
-			+ " with priority " + std::to_string(req.priority)
-			+ " and identifier " + std::to_string(res.task_id));
-	}
+	// if (res.success)
+	// {
+	// 	printHiqpInfo("Added task of type '" + req.type + "'"
+	// 		+ " with priority " + std::to_string(req.priority)
+	// 		+ " and identifier " + std::to_string(res.task_id));
+	// }
+
+	return true;
+}
+
+
+
+
+bool ROSKinematicsController::updateTask
+(
+    hiqp_msgs_srvs::UpdateTask::Request& req, 
+    hiqp_msgs_srvs::UpdateTask::Response& res
+)
+{
+	
+	int retval = task_manager_.updateTask(req.name, req.type, req.behaviour,
+									      req.priority, req.visibility, 
+									      req.parameters,
+									      sampling_time_,
+									      kdl_tree_,
+									      kdl_joint_pos_vel_);
+
+	res.success = (retval < 0 ? false : true);
+
+	// if (res.success)
+	// {
+	// 	res.task_id = retval;
+	// 	printHiqpInfo("Updated task of type '" + req.type + "'"
+	// 		+ " with priority " + std::to_string(req.priority)
+	// 		+ " and identifier " + std::to_string(res.task_id));
+	// }
 
 	return true;
 }
@@ -487,16 +523,16 @@ bool ROSKinematicsController::removeTask
 )
 {
 	res.success = false;
-	if (task_manager_.removeTask(req.task_id) == 0)
+	if (task_manager_.removeTask(req.task_name) == 0)
 		res.success = true;
 
 	if (res.success)
 	{
-		printHiqpInfo("Removed task '" + std::to_string(req.task_id) + "' successfully!");
+		printHiqpInfo("Removed task '" + req.task_name + "'.");
 	}
 	else
 	{
-		printHiqpInfo("Couldn't remove task '" + std::to_string(req.task_id) + "'!");	
+		printHiqpInfo("Couldn't remove task '" + req.task_name + "'!");	
 	}
 
 	return true;

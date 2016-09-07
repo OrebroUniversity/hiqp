@@ -200,8 +200,8 @@ namespace hiqp
     GeometricPrimitiveMap* getGeometricPrimitiveMap()
     { return geometric_primitive_map_; }
 
-    inline std::size_t getId()
-    { return id_; }
+    // inline std::size_t getId()
+    // { return id_; }
 
     inline const std::string& getTaskName()
     { return task_name_; }
@@ -248,8 +248,11 @@ namespace hiqp
     inline void setGeometricPrimitiveMap(GeometricPrimitiveMap* map)
     { geometric_primitive_map_ = map; }
 
-    inline void setId(std::size_t id)
-    { id_ = id; }
+    //inline void setId(std::size_t id)
+    //{ id_ = id; }
+
+    inline void setDynamicsId(std::size_t id)
+    { dynamics_id_ = id; }
 
     inline void setTaskName(const std::string& name)
     { task_name_ = name; }
@@ -335,9 +338,12 @@ namespace hiqp
 
     Visualizer*             visualizer_;
 
-    std::size_t             id_; // unique identifier of the task
+    //std::size_t             id_; // unique identifier of the task
 
-    std::string             task_name_; // non-unique task name
+    // unique identifier of the task dynamics associated with this task
+    std::size_t             dynamics_id_; 
+
+    std::string             task_name_; // unique task name identifier
 
     unsigned int            priority_;
 

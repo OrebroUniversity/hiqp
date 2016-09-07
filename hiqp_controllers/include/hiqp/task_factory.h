@@ -107,7 +107,7 @@ public:
 	int buildTask
 	(
 		const std::string& name,
-		std::size_t id,
+		//std::size_t id,
     	const std::string& type,
     	unsigned int priority,
     	bool visibility,
@@ -116,6 +116,7 @@ public:
     	const std::chrono::steady_clock::time_point& sampling_time,
     	const KDL::Tree& kdl_tree,
     	const KDL::JntArrayVel& kdl_joint_pos_vel,
+    	std::size_t dynamics_id,
     	TaskDynamics*& dynamics,
     	TaskFunction*& function
 	);

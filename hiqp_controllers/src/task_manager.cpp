@@ -66,7 +66,7 @@ TaskManager::TaskManager
 (
     Visualizer* visualizer
 )
-: next_task_id_(0), 
+: //next_task_id_(0), 
   next_task_dynamics_id_(0),
   visualizer_(visualizer)
 {
@@ -137,8 +137,6 @@ bool TaskManager::getKinematicControls
     }
 
     solver_->solve(controls);
-
-    //geometric_primitive_map_->redrawAllPrimitives();
     
     return true;
 }
@@ -161,7 +159,6 @@ void TaskManager::getTaskMonitoringData
         data.push_back( 
             TaskMonitoringData
             (
-                element.second->getId(),
                 element.second->getTaskName(),
                 "e",
                 element.second->measures_e_
@@ -171,7 +168,6 @@ void TaskManager::getTaskMonitoringData
         data.push_back( 
             TaskMonitoringData
             (
-                element.second->getId(),
                 element.second->getTaskName(),
                 "de*",
                 element.second->measures_e_dot_star_
@@ -181,7 +177,6 @@ void TaskManager::getTaskMonitoringData
         data.push_back( 
             TaskMonitoringData
             (
-                element.second->getId(),
                 element.second->getTaskName(),
                 "PM",
                 element.second->performance_measures_
@@ -215,7 +210,7 @@ int TaskManager::addTask
 
     int result = task_factory_->buildTask(
         name, 
-        next_task_id_, 
+        //next_task_id_, 
         type, 
         priority, 
         visibility, 
@@ -224,6 +219,7 @@ int TaskManager::addTask
         sampling_time,
         kdl_tree,
         kdl_joint_pos_vel,
+        next_task_dynamics_id_,
         dynamics,
         function
     );
@@ -232,12 +228,11 @@ int TaskManager::addTask
     {
         task_dynamics_[next_task_dynamics_id_] = dynamics;
         next_task_dynamics_id_++;
-        tasks_.insert( TaskMapElement(next_task_id_, function) );
-        next_task_id_++;
+        tasks_.insert( TaskMapElement(name, function) );
 
-        printHiqpInfo("Successfully added task with name '" + name + "'!");
+        printHiqpInfo("Added task '" + name + "'.");
 
-        return next_task_id_-1;
+        return 0;
     }
 
     return -1;
@@ -247,17 +242,65 @@ int TaskManager::addTask
 
 
 
+int TaskManager::updateTask
+(
+    const std::string& name,
+    const std::string& type,
+    const std::vector<std::string>& behaviour_parameters,
+    unsigned int priority,
+    bool visibility,
+    const std::vector<std::string>& parameters,
+    const std::chrono::steady_clock::time_point& sampling_time,
+    const KDL::Tree& kdl_tree,
+    const KDL::JntArrayVel& kdl_joint_pos_vel
+)
+{
+
+    TaskDynamics* dynamics = nullptr;
+    TaskFunction* function = nullptr;
+
+    int result = 0;//task_factory_->updateTask(
+    //     name, 
+    //     next_task_id_, 
+    //     type, 
+    //     priority, 
+    //     visibility, 
+    //     parameters, 
+    //     behaviour_parameters,
+    //     sampling_time,
+    //     kdl_tree,
+    //     kdl_joint_pos_vel,
+    //     dynamics,
+    //     function
+    // );
+
+    if (result == 0)
+    {
+        printHiqpInfo("Updated task '" + name + "'.");
+        return 0;
+    }
+    else
+    {
+        printHiqpWarning("Couldn't update task '" + name + "'.");
+    }
+
+    return -1;
+}
+
+
+
+
 
 /*! \todo removal of tasks must also delete task dynamics or else there's a memory leak!
  */
 int TaskManager::removeTask
 (
-    std::size_t task_id
+    std::string task_name
 )
 {
-    if (tasks_.erase(task_id) == 1) 
+    if (tasks_.erase(task_name) == 1) 
     {
-        geometric_primitive_map_->removeDependency(task_id);
+        geometric_primitive_map_->removeDependency(task_name);
         return 0;
     }
 

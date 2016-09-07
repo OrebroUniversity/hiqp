@@ -218,7 +218,7 @@ int GeometricPrimitiveMap::removeGeometricPrimitive
             std::copy(
                 it2->second.begin(), 
                 it2->second.end(),
-                std::ostream_iterator< std::size_t >(ss, ", ")
+                std::ostream_iterator< std::string >(ss, ", ")
             );
             printHiqpWarning("Geometric primitive '" + name + 
                 "' has the following dependencies: " + ss.str() + 
@@ -268,7 +268,7 @@ int GeometricPrimitiveMap::clear
                 std::copy(
                     it2->second.begin(), 
                     it2->second.end(),
-                    std::ostream_iterator< std::size_t >(ss, ", ")
+                    std::ostream_iterator< std::string >(ss, ", ")
                     );
                 printHiqpWarning("Geometric primitive '" + it->first + 
                     "' has the following dependencies: " + ss.str() + 
@@ -313,7 +313,7 @@ int GeometricPrimitiveMap::clear
 void GeometricPrimitiveMap::addDependencyToPrimitive
 (
     const std::string& name, 
-    std::size_t id
+    const std::string& id
 )
 {
     DependencyMapIterator it = dependency_map_.find(name);
@@ -321,11 +321,11 @@ void GeometricPrimitiveMap::addDependencyToPrimitive
     if (it == dependency_map_.end())
     {
         it = dependency_map_.insert( DependencyMapElement( 
-                name, std::vector<std::size_t>() 
+                name, std::vector<std::string>() 
         ) ).first;
     }
 
-    std::vector<std::size_t>::iterator it2 = std::find(
+    std::vector<std::string>::iterator it2 = std::find(
         it->second.begin(), it->second.end(), id
     );
 
@@ -339,7 +339,7 @@ void GeometricPrimitiveMap::addDependencyToPrimitive
 
 void GeometricPrimitiveMap::removeDependency
 (
-    std::size_t id
+    const std::string& id
 )
 {
     DependencyMapIterator it = dependency_map_.begin();

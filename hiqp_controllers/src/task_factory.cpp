@@ -65,7 +65,7 @@ void TaskFactory::init
 int TaskFactory::buildTask
 (
 	const std::string& name,
-	std::size_t id,
+	//std::size_t id,
     const std::string& type,
     unsigned int priority,
     bool visibility,
@@ -74,6 +74,7 @@ int TaskFactory::buildTask
     const std::chrono::steady_clock::time_point& sampling_time,
     const KDL::Tree& kdl_tree,
     const KDL::JntArrayVel& kdl_joint_pos_vel,
+    std::size_t dynamics_id,
     TaskDynamics*& dynamics,
     TaskFunction*& function
 )
@@ -106,6 +107,7 @@ int TaskFactory::buildTask
             + "', could not parse the dynamics parameters! No task was added!");
         return -1;
     }
+    dynamics->setDynamicsTypeName(beh_params.at(0));
 
     function = this->constructTaskFunction(type, parameters);
     if (function == nullptr)
@@ -119,7 +121,8 @@ int TaskFactory::buildTask
     function->setVisualizer(visualizer_);
 	function->setGeometricPrimitiveMap(geometric_primitive_map_);
 	function->setTaskName(name);
-	function->setId(id);
+	//function->setId(id);
+    function->setDynamicsId(dynamics_id);
 	function->setPriority(priority);
 	function->setVisibility(visibility);
     function->setTaskDynamics(dynamics);

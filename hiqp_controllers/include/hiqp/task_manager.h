@@ -72,18 +72,15 @@ class TaskMonitoringData
 public:
      TaskMonitoringData
      (
-          unsigned int task_id,
           const std::string& task_name,
           const std::string& measure_tag,
           const std::vector<double>& performance_measures
      )
-     : task_id_(task_id), 
-       task_name_(task_name), 
+     : task_name_(task_name), 
        measure_tag_(measure_tag),
        performance_measures_(performance_measures)
      {}
 
-     std::size_t                 task_id_;
      const std::string&          task_name_;
      std::string                 measure_tag_;
      const std::vector<double>&  performance_measures_;
@@ -195,13 +192,29 @@ public:
         const KDL::Tree& kdl_tree,
         const KDL::JntArrayVel& kdl_joint_pos_vel
     );
+
+
+
+
+    int updateTask
+    (
+        const std::string& name,
+        const std::string& type,
+        const std::vector<std::string>& behaviour_parameters,
+        unsigned int priority,
+        bool visibility,
+        const std::vector<std::string>& parameters,
+        const std::chrono::steady_clock::time_point& sampling_time,
+        const KDL::Tree& kdl_tree,
+        const KDL::JntArrayVel& kdl_joint_pos_vel
+    );
                  
 
 
 
 
 
-     int removeTask(std::size_t task_id);
+     int removeTask(std::string task_name);
 
 
 
@@ -262,14 +275,13 @@ private:
 	TaskManager& operator=(TaskManager&& other) noexcept = delete;
 
 
-     typedef std::map< std::size_t, TaskFunction* >            TaskMap;
-     typedef std::map< std::size_t, TaskFunction* >::iterator  TaskMapIterator;
-     typedef std::pair< std::size_t, TaskFunction* >           TaskMapElement;
+     typedef std::map< std::string, TaskFunction* >            TaskMap;
+     typedef std::map< std::string, TaskFunction* >::iterator  TaskMapIterator;
+     typedef std::pair< std::string, TaskFunction* >           TaskMapElement;
 
      
 
      TaskMap                                      tasks_;
-     std::size_t                                  next_task_id_;
 
      std::vector<std::size_t>                     existing_task_ids_;
 

@@ -17,7 +17,7 @@
 
 
 
-uint16    task_id    # unique task identifier
+string    task_name    # unique task identifier
 
 ---
 

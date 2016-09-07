@@ -102,8 +102,8 @@ int TaskGeometricProjection<PrimitiveA, PrimitiveB>::init
 		return -3;
 	}
 
-	geometric_primitive_map_->addDependencyToPrimitive(args.at(0), this->getId());
-	geometric_primitive_map_->addDependencyToPrimitive(args.at(2), this->getId());
+	geometric_primitive_map_->addDependencyToPrimitive(args.at(0), this->getTaskName());
+	geometric_primitive_map_->addDependencyToPrimitive(args.at(2), this->getTaskName());
 
 	int sign = 0;
 

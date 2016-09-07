@@ -164,19 +164,19 @@ yumi:
 
       #####      OBSTACLE AVOIDANCE TASKS    #####
 
-      - name: yumi_link_5_r_l_avoidance
-        type: TaskGeometricProjection
-        behaviour: ['DynamicsFirstOrder', '10']
-        priority: 2
-        visibility: 0
-        parameters: ['sphere', 'sphere', 'yumi_link_5_l_avoidance_sphere > yumi_link_5_r_avoidance_sphere']
+      # - name: yumi_link_5_r_l_avoidance
+      #   type: TaskGeometricProjection
+      #   behaviour: ['DynamicsFirstOrder', '10']
+      #   priority: 2
+      #   visibility: 0
+      #   parameters: ['sphere', 'sphere', 'yumi_link_5_l_avoidance_sphere > yumi_link_5_r_avoidance_sphere']
 
-      - name: yumi_link_6_r_l_avoidance
-        type: TaskGeometricProjection
-        behaviour: ['DynamicsFirstOrder', '10']
-        priority: 2
-        visibility: 0
-        parameters: ['sphere', 'sphere', 'yumi_link_6_l_avoidance_sphere > yumi_link_6_r_avoidance_sphere']
+      # - name: yumi_link_6_r_l_avoidance
+      #   type: TaskGeometricProjection
+      #   behaviour: ['DynamicsFirstOrder', '10']
+      #   priority: 2
+      #   visibility: 0
+      #   parameters: ['sphere', 'sphere', 'yumi_link_6_l_avoidance_sphere > yumi_link_6_r_avoidance_sphere']
 
       - name: yumi_link_5_l_floor_avoidance
         type: TaskGeometricProjection
@@ -277,9 +277,9 @@ yumi:
 
       #####      OTHER TASKS    #####
 
-      - name: mytask
-        type: TaskGeometricProjection
-        behaviour: ['DynamicsFirstOrder', '10']
-        priority: 3
-        visibility: 0
-        parameters: ['point', 'point', 'mypoint1 = mypoint2']
+      # - name: mytask
+      #   type: TaskGeometricProjection
+      #   behaviour: ['DynamicsFirstOrder', '10']
+      #   priority: 3
+      #   visibility: 0
+      #   parameters: ['point', 'point', 'mypoint1 = mypoint2']

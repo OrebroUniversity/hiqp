@@ -82,6 +82,9 @@ public:
 
 protected:
 
+	const std::string& getDynamicsTypeName()
+	{ return dynamics_type_name_; }
+
     std::vector<double>             performance_measures_;
 
 
@@ -95,6 +98,11 @@ private:
 	TaskDynamics(TaskDynamics&& other) = delete;
 	TaskDynamics& operator=(const TaskDynamics& other) = delete;
 	TaskDynamics& operator=(TaskDynamics&& other) noexcept = delete;
+
+	void setDynamicsTypeName(const std::string& name)
+	{ dynamics_type_name_ = name; }
+
+	std::string 					dynamics_type_name_;
 
 	friend TaskFactory;
 
