@@ -79,11 +79,12 @@ public:
 
 
 
+	inline const std::string& getDynamicsTypeName()
+	{ return dynamics_type_name_; }
+
+
 
 protected:
-
-	const std::string& getDynamicsTypeName()
-	{ return dynamics_type_name_; }
 
     std::vector<double>             performance_measures_;
 
@@ -105,6 +106,7 @@ private:
 	std::string 					dynamics_type_name_;
 
 	friend TaskFactory;
+
 
 };
 

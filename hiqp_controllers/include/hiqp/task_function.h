@@ -203,8 +203,14 @@ namespace hiqp
     // inline std::size_t getId()
     // { return id_; }
 
+    inline std::size_t getDynamicsId()
+    { return dynamics_id_; }
+
     inline const std::string& getTaskName()
     { return task_name_; }
+
+    inline const std::string& getTaskType()
+    { return task_type_; }
 
     inline unsigned int getPriority()
     { return priority_; }
@@ -256,6 +262,9 @@ namespace hiqp
 
     inline void setTaskName(const std::string& name)
     { task_name_ = name; }
+
+    inline void setTaskType(const std::string& type)
+    { task_type_ = type; }
 
     inline void setPriority(unsigned int priority)
     { priority_ = priority; }
@@ -344,6 +353,8 @@ namespace hiqp
     std::size_t             dynamics_id_; 
 
     std::string             task_name_; // unique task name identifier
+
+    std::string             task_type_; // the type of the task
 
     unsigned int            priority_;
 

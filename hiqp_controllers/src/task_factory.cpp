@@ -121,6 +121,7 @@ int TaskFactory::buildTask
     function->setVisualizer(visualizer_);
 	function->setGeometricPrimitiveMap(geometric_primitive_map_);
 	function->setTaskName(name);
+    function->setTaskType(type);
 	//function->setId(id);
     function->setDynamicsId(dynamics_id);
 	function->setPriority(priority);

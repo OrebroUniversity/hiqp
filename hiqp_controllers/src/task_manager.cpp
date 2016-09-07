@@ -230,7 +230,7 @@ int TaskManager::addTask
         next_task_dynamics_id_++;
         tasks_.insert( TaskMapElement(name, function) );
 
-        printHiqpInfo("Added task '" + name + "'.");
+        printHiqpInfo("Added task '" + name + "'");
 
         return 0;
     }
@@ -255,36 +255,93 @@ int TaskManager::updateTask
     const KDL::JntArrayVel& kdl_joint_pos_vel
 )
 {
+    TaskMapIterator it = tasks_.find(name);
 
+
+    // Safety check 1
+    if (it == tasks_.end())
+    {
+        printHiqpWarning("While trying to update task '" + name 
+            + "', couldn't find a task with that name. The task was not updated.");
+        return -1;
+    }
+
+    TaskFunction* function = it->second;
+
+
+    // Safety check 2
+    if (function->getTaskType().compare(type) != 0)
+    {
+        printHiqpWarning("While trying to update task '" + name 
+            + "', task type can not be changed via update. "
+            + "Please remove the task and add a new one. The task was not updated.");
+        return -2;
+    }
+
+    std::size_t dynamics_id = function->getDynamicsId();
+
+
+    // Safety check 3
     TaskDynamics* dynamics = nullptr;
-    TaskFunction* function = nullptr;
-
-    int result = 0;//task_factory_->updateTask(
-    //     name, 
-    //     next_task_id_, 
-    //     type, 
-    //     priority, 
-    //     visibility, 
-    //     parameters, 
-    //     behaviour_parameters,
-    //     sampling_time,
-    //     kdl_tree,
-    //     kdl_joint_pos_vel,
-    //     dynamics,
-    //     function
-    // );
-
-    if (result == 0)
+    try
     {
-        printHiqpInfo("Updated task '" + name + "'.");
-        return 0;
+        dynamics = task_dynamics_.at(dynamics_id);
     }
-    else
+    catch (const std::out_of_range& oor)
     {
-        printHiqpWarning("Couldn't update task '" + name + "'.");
+        printHiqpWarning("While trying to update task '" + name 
+            + "', couldn't find the task dynamics instance. Contact the framework developer. "
+            + "The task was not updated.");
+        return -3;
     }
 
-    return -1;
+
+    // Safety check 4
+    if (behaviour_parameters.size() <= 0)
+    {
+        printHiqpWarning("While trying to update task '" + name 
+            + "', behaviour parameters should have at least one entry. "
+            + "The task was not updated.");
+        return -4;
+    }
+    
+
+    // Safety check 5
+    std::string dyn_type = behaviour_parameters.at(0);
+    if (dynamics->getDynamicsTypeName().compare(dyn_type) != 0)
+    {
+        printHiqpWarning("While trying to update task '" + name 
+            + "', task behaviour type can not be changed via update. "
+            + "Please remove the task and add a new one. "
+            + "The task was not updated.");
+        return -5;
+    }
+
+    function->setPriority(priority);
+    function->setVisibility(visibility);
+
+    function->init(
+        sampling_time, 
+        parameters, 
+        kdl_tree, 
+        num_controls_
+    );
+
+    function->computeInitialState(
+        sampling_time, 
+        kdl_tree, 
+        kdl_joint_pos_vel
+    );
+
+    dynamics->init(
+        sampling_time, 
+        behaviour_parameters, 
+        function->getInitialState(),
+        function->getFinalState(kdl_tree)
+    );
+
+    printHiqpInfo("Updated task '" + name + "'");
+    return 0;
 }
 
 

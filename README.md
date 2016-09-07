@@ -21,6 +21,7 @@ Add a dynamics controller.
 
 Add a service call that lists current existing primitives and tasks.
 
+The addtask and updatetask task dynamics interfaces are not consistent. Change this so that no special handling of the behaviour parameters is made!
 
 
 
