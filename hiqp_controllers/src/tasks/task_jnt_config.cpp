@@ -90,8 +90,9 @@ int TaskJntConfig::init
 	performance_measures_.resize(num_controls);
 	task_types_.insert(task_types_.begin(), num_controls, 0);
 
-	for (int i=0; i<num_controls; ++i) 
-		J_(i, i) = -1;
+	for (int j=0; j<num_controls; ++j)
+		for (int i=0; i<num_controls; ++i) 
+			J_(j, i) = (j==i ? -1 : 0);
 
 	return 0;
 }
@@ -113,10 +114,10 @@ int TaskJntConfig::apply
 	for (int i=0; i<q.rows(); ++i)
 	{
 		e_(i) = desired_configuration_.at(i) - q(i);
-		diff += std::abs(e_(i));
+		//diff += std::abs(e_(i));
 	}
 
-	std::cout << "sum e_i = " << diff << "\n";
+	//std::cout << "sum e_i = " << diff << "\n";
 
 
 	/*
@@ -143,11 +144,6 @@ int TaskJntConfig::apply
 
 int TaskJntConfig::monitor()
 {
-	//for (int i=0; i<e_.rows(); ++i)
-	//{
-	//	performance_measures_.at(i) = e_(i);
-	//}
-	
 	return 0;
 }
 

@@ -4,6 +4,18 @@ Copyright (C) 2016 Marcus A Johansson
 HiQP is an optimal control framework targeted at robotics. It is based on the task function approach.
 
 
+
+
+# Things needed to work with yumi:
+- activation/deactivation of controller. default should be deactivated at startup
+- activation/deactivation of tasks
+- a way to get the current joint values of yumi to load them into simulation for testing
+
+
+
+
+
+
 # Currently available features
 - A ROS joint velocity controller implementation with full supoprt of the framework
 - 6 geometric primitives: point, line, plane, box, cylinder and sphere
@@ -14,14 +26,25 @@ HiQP is an optimal control framework targeted at robotics. It is based on the ta
 
 
 
+
+
+
 # Proposals for further development
 Add a monitoring tag to addTask service call so that only selected tasks are monitored. This way monitoring output can be made more readable.
 
 Add a dynamics controller.
 
-Add a service call that lists current existing primitives and tasks.
+Add a service call that lists current existing primitives and tasks. (how about a ros node that can interactively list different infos on the status of the controller at runtime?)
 
 The addtask and updatetask task dynamics interfaces are not consistent. Change this so that no special handling of the behaviour parameters is made!
+
+Add grouping of tasks and calling activation/monitoring/visibility changes on task groups.
+
+Add a capsule geometric primtive, that is useful for encapsulating robot links to make the optimizer to not produce controls that will result in self-collision and shutdown.
+
+
+
+
 
 
 
