@@ -33,6 +33,7 @@
 
 #include <hiqp_msgs_srvs/PerfMeasMsg.h>
 #include <hiqp_msgs_srvs/MonitorDataMsg.h>
+#include <hiqp_msgs_srvs/JustADouble.h>
 
 #include <pluginlib/class_list_macros.h> // to allow the controller to be loaded as a plugin
 
@@ -220,6 +221,10 @@ bool ROSKinematicsController::init
 		controller_nh_, "/wintracker/pose", 100
 	);
 
+	topic_subscriber_.addSubscription<hiqp_msgs_srvs::JustADouble>(
+		controller_nh_, "/yumi/hiqp_controllers/justadouble", 100
+	);
+
 
 
 
@@ -360,12 +365,15 @@ void ROSKinematicsController::update
 
 
 	// Lock the mutex and write the controls to the joint handles
+	//std::cout << "q = ";
 	handles_mutex_.lock();
 		for (auto&& handle : joint_handles_map_)
 		{
 			handle.second.setCommand(output_controls_.at(handle.first));
+			//std::cout << output_controls_.at(handle.first) << ", ";
 		}
 	handles_mutex_.unlock();
+	//std::cout << "\n";
 
 
 

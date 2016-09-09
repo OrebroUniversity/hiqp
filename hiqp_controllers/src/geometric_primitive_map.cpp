@@ -598,6 +598,7 @@ void GeometricPrimitiveMap::updateGeometricPrimitive<GeometricPoint>
 
 
 
+
 template<>
 void GeometricPrimitiveMap::updateGeometricPrimitive<GeometricLine>
 (
@@ -617,6 +618,82 @@ void GeometricPrimitiveMap::updateGeometricPrimitive<GeometricLine>
 
     it->second->init(parameters);
 }
+
+
+
+
+
+template<>
+void GeometricPrimitiveMap::updateGeometricPrimitive<GeometricPlane>
+(
+    const std::string& name, 
+    const std::vector<double>& parameters
+)
+{
+    std::map< std::string, GeometricPlane* >::iterator it = 
+        plane_map_.find(name);
+
+    if (it == plane_map_.end()) 
+    {
+        printHiqpWarning("Couldn't update GeometricPlane with name '" + 
+            name + "'. The plane was not found!");
+        return;
+    }
+
+    it->second->init(parameters);
+}
+
+
+
+
+
+template<>
+void GeometricPrimitiveMap::updateGeometricPrimitive<GeometricBox>
+(
+    const std::string& name, 
+    const std::vector<double>& parameters
+)
+{
+    std::map< std::string, GeometricBox* >::iterator it = 
+        box_map_.find(name);
+
+    if (it == box_map_.end()) 
+    {
+        printHiqpWarning("Couldn't update GeometricBox with name '" + 
+            name + "'. The box was not found!");
+        return;
+    }
+
+    it->second->init(parameters);
+}
+
+
+
+
+
+template<>
+void GeometricPrimitiveMap::updateGeometricPrimitive<GeometricCylinder>
+(
+    const std::string& name, 
+    const std::vector<double>& parameters
+)
+{
+    std::map< std::string, GeometricCylinder* >::iterator it = 
+        cylinder_map_.find(name);
+
+    if (it == cylinder_map_.end()) 
+    {
+        printHiqpWarning("Couldn't update GeometricCylinder with name '" + 
+            name + "'. The cylinder was not found!");
+        return;
+    }
+
+    it->second->init(parameters);
+}
+
+
+
+
 
 template<>
 void GeometricPrimitiveMap::updateGeometricPrimitive<GeometricSphere>

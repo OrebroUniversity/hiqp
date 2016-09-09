@@ -109,7 +109,7 @@ int TaskGeometricAlignment<GeometricLine, GeometricCylinder>::align
 	GeometricCylinder* cylinder
 )
 {
-	KDL::Vector v1 = pose_a_.M * line->getDirectionKDL();
+	KDL::Vector v1 = - (pose_a_.M * line->getDirectionKDL());
 
 	KDL::Vector p = pose_a_.p + pose_a_.M * line->getOffsetKDL();
 	KDL::Vector d = pose_b_.p + pose_b_.M * cylinder->getOffsetKDL();
@@ -117,7 +117,7 @@ int TaskGeometricAlignment<GeometricLine, GeometricCylinder>::align
 
 	KDL::Vector x = KDL::dot( (p-d), v) * v;
 
-	KDL::Vector v2 = x - (p-d);
+	KDL::Vector v2 = (p-d) - x;
 
 	v2.Normalize();
 

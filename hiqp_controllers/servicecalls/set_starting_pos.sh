@@ -6,6 +6,6 @@ priority: 3
 visibility: 0
 parameters: ['-0.42', '-1.48', '1.21', '0.75', '-0.8', '0.45', '1.21', '0', '0', '0.42', '-1.48', '-1.21', '0.75', '0.8', '0.45', '1.21', '0', '0']"
 
-sleep 2.0
+sleep 5.0
 
 rosservice call /yumi/hiqp_kinematics_controller/remove_task "task_name: set_starting_pos"

@@ -92,6 +92,7 @@ int CasADiSolver::solve
 	// 	it2++;
 	// }
 
+
 	unsigned int solutionSize = solution.size();
 
 	// Setup the parts of the QP problem that wont change between interations
@@ -176,7 +177,9 @@ int CasADiSolver::solve
 		                     { "f", f_qdot + f_w },
 		                     { "g", vertcat(g_i, g_p)    }};
         casadi::Function solver = qpsol("solver", "gurobi", qp);
+        // std::cout << "here \n";
         casadi::DMDict res = solver(arg);
+        // std::cout << "here2 \n";
         casadi::DM x_opt = res["x"];
 		std::vector<double> x_opt_d(x_opt);
 

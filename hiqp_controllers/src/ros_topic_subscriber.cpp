@@ -30,6 +30,9 @@
 // HiQP Includes
 #include <hiqp/ros_topic_subscriber.h>
 #include <hiqp/geometric_primitives/geometric_point.h>
+#include <hiqp/geometric_primitives/geometric_cylinder.h>
+
+#include <hiqp_msgs_srvs/JustADouble.h>
 
 // STL Includes
 #include <iostream>
@@ -73,6 +76,41 @@ void ROSTopicSubscriber::topicCallback<geometry_msgs::PoseStamped>
 		<< msg.pose.orientation.z << ", "
 		<< msg.pose.orientation.w << ")\n\n";
 		*/
+}
+
+
+
+
+
+
+template<>
+void ROSTopicSubscriber::topicCallback<hiqp_msgs_srvs::JustADouble>
+(
+	const hiqp_msgs_srvs::JustADouble& msg
+)
+{
+	double d = msg.value;
+
+	std::cout << "d = " << d;
+
+	GeometricCylinder* cylinder = primitive_map_->getGeometricPrimitive<GeometricCylinder>("thecylinder");
+
+	if (cylinder == nullptr)
+	{
+		printHiqpWarning("JustADouble callback : couldn't find primitive 'thecylinder'");
+	}
+
+	std::vector<double> params;
+	params.push_back(cylinder->getDirectionX());
+	params.push_back(cylinder->getDirectionY());
+	params.push_back(cylinder->getDirectionZ());
+	params.push_back(cylinder->getOffsetX() + d);
+	params.push_back(cylinder->getOffsetY());
+	params.push_back(cylinder->getOffsetZ());
+	params.push_back(cylinder->getRadius());
+	params.push_back(cylinder->getHeight());
+	primitive_map_->updateGeometricPrimitive<GeometricCylinder>("thecylinder", params);
+
 }
 
 

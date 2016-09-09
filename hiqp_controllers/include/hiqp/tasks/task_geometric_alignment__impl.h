@@ -118,8 +118,6 @@ int TaskGeometricAlignment<PrimitiveA, PrimitiveB>::init
 
 	task_types_.insert(task_types_.begin(), 1, sign);
 
-	std::cout << "TaskGeometricAlignment initialized successfully!\n";
-
 	return 0;
 }
 
