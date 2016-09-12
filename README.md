@@ -37,6 +37,7 @@ Add a dynamics controller.
 Add a service call that lists current existing primitives and tasks. (how about a ros node that can interactively list different infos on the status of the controller at runtime?)
 
 The addtask and updatetask task dynamics interfaces are not consistent. Change this so that no special handling of the behaviour parameters is made!
+One could also exhange teh add_task and update_task service calls with a set_task service call. Remove would then be unset_task.
 
 Add grouping of tasks and calling activation/monitoring/visibility changes on task groups.
 
@@ -57,8 +58,6 @@ Removing primitives does not work properly.
 
 Running a projection task where both primitives are attached to the same frame, which results in a zero jacobian, throws an error in gurobi.
 This can be solved by checking both frames upon task initialization and only add the task is the frames differ.
-
-Minimal jerk task dynamics is not working properly.
 
 
 

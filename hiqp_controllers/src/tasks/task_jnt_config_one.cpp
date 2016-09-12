@@ -54,6 +54,7 @@ int TaskJntConfigOne::init
 	unsigned int num_controls
 )
 {
+
 	int size = parameters.size();
 	if (size != 2)
 	{
@@ -62,13 +63,13 @@ int TaskJntConfigOne::init
 		return -1;
 	}
 
-	joint_name_ = parameters.at(0);
+	link_name_ = parameters.at(0);
 
-	joint_q_nr_ = kdl_getQNrFromJointName(kdl_tree, joint_name_);
+	joint_q_nr_ = kdl_getQNrFromLinkName(kdl_tree, link_name_);
 
 	if (joint_q_nr_ < 0)
 	{
-		printHiqpWarning("TaskJntConfigOne::init, couldn't find joint '" + joint_name_ + "'! Initialization failed.");
+		printHiqpWarning("TaskJntConfigOne::init, couldn't find joint '" + link_name_ + "'! Initialization failed.");
 		return -2;
 	}
 
@@ -79,6 +80,7 @@ int TaskJntConfigOne::init
 	e_dot_star_.resize(1);
 	performance_measures_.resize(0);
 	task_types_.insert(task_types_.begin(), 1, 0);
+
 
 	for (int i=0; i<num_controls; ++i) 
 		J_(0, i) = 0;

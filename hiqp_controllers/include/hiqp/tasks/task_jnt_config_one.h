@@ -137,8 +137,8 @@ private:
 	TaskJntConfigOne& operator=(TaskJntConfigOne&& other) noexcept = delete;
 
 
-     std::string              joint_name_;
-     unsigned int             joint_q_nr_;
+     std::string              link_name_;
+     int                      joint_q_nr_;
      double                   desired_configuration_;
 
 };

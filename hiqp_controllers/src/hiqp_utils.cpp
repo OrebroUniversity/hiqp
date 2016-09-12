@@ -204,7 +204,7 @@ std::ostream& operator<<
 
 
 
-unsigned int kdl_getQNrFromJointName
+int kdl_getQNrFromJointName
 (
 	const KDL::Tree& kdl_tree, 
 	const std::string& joint_name
@@ -226,7 +226,7 @@ unsigned int kdl_getQNrFromJointName
 
 
 
-unsigned int kdl_getQNrFromLinkName
+int kdl_getQNrFromLinkName
 (
 	const KDL::Tree& kdl_tree, 
 	const std::string& link_name

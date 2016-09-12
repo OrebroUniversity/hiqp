@@ -59,13 +59,13 @@ std::ostream& operator<<(std::ostream& os, const KDL::FrameVel& kdl_frame_vel);
 std::ostream& operator<<(std::ostream& os, const KDL::JntArrayVel& kdl_joints_vel);
 std::ostream& operator<<(std::ostream& os, const KDL::Chain& kdl_chain);
 
-unsigned int kdl_getQNrFromJointName
+int kdl_getQNrFromJointName
 (
     const KDL::Tree& kdl_tree, 
     const std::string& joint_name
 );
 
-unsigned int kdl_getQNrFromLinkName
+int kdl_getQNrFromLinkName
 (
     const KDL::Tree& kdl_tree, 
     const std::string& link_name

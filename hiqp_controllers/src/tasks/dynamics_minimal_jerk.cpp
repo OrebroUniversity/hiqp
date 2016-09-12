@@ -69,7 +69,7 @@ int DynamicsMinimalJerk::init
     // convert seconds to microseconds
     total_duration_ = param * 1e6;
 
-    f_ = - 30 / param;
+    f_ = 30 / param;
 
     e_diff_ = e_final - e_initial;
 
@@ -92,8 +92,6 @@ int DynamicsMinimalJerk::apply
 	Eigen::VectorXd& e_dot_star
 )
 {
-
-	//std::chrono::steady_clock::duration d = (sampling_time - time_start_);
 	double d = std::chrono::duration_cast<std::chrono::microseconds>
 		(sampling_time - time_start_).count();
 
@@ -101,19 +99,16 @@ int DynamicsMinimalJerk::apply
 
 	double t = tau*tau - 2*tau*tau*tau + tau*tau*tau*tau;
 
-	if (tau > 1) t = 0;
+	if (tau > 1)
+	{
+		e_dot_star = 0*e; // first order wth gain -1
+	}
+	else
+	{
+		e_dot_star = f_ * e_diff_ * t; // minimal jerk
+	}
 
-	//e_dot_star = f_ * e_diff_ * t;
-
-	double ddd = (tau > 1 ? 0 : 1);
-
-	e_dot_star = e_diff_ / (total_duration_ / 1e6) * ddd;
-
-
-
-
-
-
+	
 
 	//std::cout << "total_duration_ = " << total_duration_ << "\n";
 	//std::cout << "d = " << d << "\n";
@@ -122,9 +117,6 @@ int DynamicsMinimalJerk::apply
 	//std::cout << "J = " << J << "\n";
 	//std::cout << "I = " << Eigen::VectorXd::Ones(J.cols()) << "\n";
 	std::cout << "e_dot_star = " << e_dot_star << "\n\n\n";
-
-
-
 
 	return 0;
 }

@@ -1,7 +1,17 @@
+# rosservice call /yumi/hiqp_kinematics_controller/add_task \
+# "name: 'geomproj1'
+# type: 'TaskGeometricProjection'
+# behaviour: ['DynamicsFirstOrder', '10']
+# priority: 3
+# visibility: 0
+# parameters: ['point', 'point', 'mypoint1 = mypoint2']"
+
+
+
 rosservice call /yumi/hiqp_kinematics_controller/add_task \
 "name: 'geomproj1'
 type: 'TaskGeometricProjection'
-behaviour: ['DynamicsFirstOrder', '10']
+behaviour: ['DynamicsMinimalJerk', '5.0']
 priority: 3
 visibility: 0
 parameters: ['point', 'point', 'mypoint1 = mypoint2']"
