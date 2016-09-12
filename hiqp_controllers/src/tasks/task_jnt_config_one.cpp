@@ -18,7 +18,7 @@
 
 
 /*!
- * \file   task_jnt_config.cpp
+ * \file   task_jnt_config_one.cpp
  * \Author Marcus A Johansson (marcus.adam.johansson@gmail.com)
  * \date   July, 2016
  * \brief  Brief description of file.
@@ -28,7 +28,7 @@
 
 
 
-#include <hiqp/tasks/task_jnt_config.h>
+#include <hiqp/tasks/task_jnt_config_one.h>
 
 #include <hiqp/hiqp_utils.h>
 
@@ -46,7 +46,7 @@ namespace hiqp
 
 
 
-int TaskJntConfig::init
+int TaskJntConfigOne::init
 (
 	const std::chrono::steady_clock::time_point& sampling_time,
 	const std::vector<std::string>& parameters,
@@ -55,44 +55,35 @@ int TaskJntConfig::init
 )
 {
 	int size = parameters.size();
-	if (size != 0 && size != num_controls)
+	if (size != 2)
 	{
-		printHiqpWarning("TaskJntConfig requires 0 or " 
-			+ std::to_string(num_controls) + " parameters, got " 
+		printHiqpWarning("TaskJntConfigOne requires 2 parameters, got " 
 			+ std::to_string(size) + "! Initialization failed!");
 		return -1;
 	}
 
-	if (size == 0)
+	joint_name_ = parameters.at(0);
+
+	joint_q_nr_ = kdl_getQNrFromJointName(kdl_tree, joint_name_);
+
+	if (joint_q_nr_ < 0)
 	{
-		desired_configuration_ = std::vector<double>(num_controls, 0);
-	}
-	else
-	{
-		desired_configuration_.resize(0);
-		for (int i=0; i < num_controls; ++i)
-		{
-			desired_configuration_.push_back( std::stod( parameters.at(i) ) );
-		}
+		printHiqpWarning("TaskJntConfigOne::init, couldn't find joint '" + joint_name_ + "'! Initialization failed.");
+		return -2;
 	}
 
-/*
+	desired_configuration_ = std::stod( parameters.at(1) );
+
 	e_.resize(1);
 	J_.resize(1, num_controls);
 	e_dot_star_.resize(1);
-	performance_measures_.resize(1);
-	task_types_.insert(task_types_.begin(), 1, 0);
-*/
-
-	e_.resize(num_controls);
-	J_.resize(num_controls, num_controls);
-	e_dot_star_.resize(num_controls);
 	performance_measures_.resize(0);
-	task_types_.insert(task_types_.begin(), num_controls, 0);
+	task_types_.insert(task_types_.begin(), 1, 0);
 
-	for (int j=0; j<num_controls; ++j)
-		for (int i=0; i<num_controls; ++i) 
-			J_(j, i) = (j==i ? -1 : 0);
+	for (int i=0; i<num_controls; ++i) 
+		J_(0, i) = 0;
+
+	J_(0, joint_q_nr_) = -1;
 
 	return 0;
 }
@@ -100,7 +91,7 @@ int TaskJntConfig::init
 
 
 
-int TaskJntConfig::apply
+int TaskJntConfigOne::apply
 (
 	const std::chrono::steady_clock::time_point& sampling_time,
 	const KDL::Tree& kdl_tree, 
@@ -109,31 +100,7 @@ int TaskJntConfig::apply
 {
 	const KDL::JntArray &q = kdl_joint_pos_vel.q;
 
-	double diff = 0;
-
-	for (int i=0; i<q.rows(); ++i)
-	{
-		e_(i) = desired_configuration_.at(i) - q(i);
-		//diff += std::abs(e_(i));
-	}
-
-	//std::cout << "sum e_i = " << diff << "\n";
-
-
-	/*
-	e_(0) = 0;
-	
-	for (int i=0; i<q.rows(); ++i)
-	{
-		double d = desired_configuration_.at(i) - q(i); 
-		e_(0) += d*d;
-	}
-
-	for (int q_nr = 0; q_nr < J_.cols(); ++q_nr)
-	{
-		J_(0, q_nr) = - 2 * ( desired_configuration_.at(q_nr) - q(q_nr) );
-	}
-	*/
+	e_(0) = desired_configuration_ - q(joint_q_nr_);
 
 	return 0;
 }
@@ -142,7 +109,7 @@ int TaskJntConfig::apply
 
 
 
-int TaskJntConfig::monitor()
+int TaskJntConfigOne::monitor()
 {
 	return 0;
 }
