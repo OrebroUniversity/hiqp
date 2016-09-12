@@ -18,4 +18,6 @@
 
 
 
-float64          value
+float64          val1
+float64          val2
+float64          val3
