@@ -59,3 +59,13 @@ Running a projection task where both primitives are attached to the same frame, 
 This can be solved by checking both frames upon task initialization and only add the task is the frames differ.
 
 Minimal jerk task dynamics is not working properly.
+
+
+
+
+
+# How to suppress gurobi printouts from casadi
+
+In ``casadi/casadi/interfaces/gurobi/gurobi_interface.cpp`` at line 116, add ``GRBsetintparam(m->env, "OutputFlag", 0);``
+
+
