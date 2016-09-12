@@ -49,9 +49,9 @@ Add a capsule geometric primtive, that is useful for encapsulating robot links t
 
 
 # Known issues
-Geometric projection for point on box is not working when the box is rotated.
+Running the joint limitstion tasks on priority 1, and a whole-body config task on priority 3, results in gurobi failing with message "Unable to find value 'ObjVal'". This does not happen if one runs "rostopic hz /yumi/joint_states". Why is this happening? Is this a threading issue?
 
-Geometric alignment for line with cylinder is not working, probably the jacobian is miscalculated.
+Geometric projection for point on box is not working when the box is rotated.
 
 Removing primitives does not work properly.
 
