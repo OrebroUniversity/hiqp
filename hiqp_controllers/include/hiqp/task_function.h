@@ -182,6 +182,8 @@ namespace hiqp
 
     std::vector<double>             measures_e_dot_star_;
 
+    std::vector<double>             measures_J_;
+
     GeometricPrimitiveMap*          geometric_primitive_map_;
 
     
@@ -294,6 +296,11 @@ namespace hiqp
         measures_e_dot_star_.clear();
         for (int i=0; i<e_dot_star_.rows(); ++i)
             measures_e_dot_star_.push_back( e_dot_star_(i) );
+
+        measures_J_.clear();
+        for (int i=0; i<J_.rows(); ++i)
+            for (int j=0; j<J_.cols(); ++j)
+                measures_J_.push_back( J_(i, j) );   
     }
 
 

@@ -59,6 +59,8 @@ Removing primitives does not work properly.
 Running a projection task where both primitives are attached to the same frame, which results in a zero jacobian, throws an error in gurobi.
 This can be solved by checking both frames upon task initialization and only add the task is the frames differ.
 
+Minimal jerk task dynamics: the e_dot_star value is correctly calculated, but giving it to the optimizer does not result in a correct task evolution. The controls produced by the controller are too small.
+
 
 
 

@@ -178,6 +178,15 @@ void TaskManager::getTaskMonitoringData
             TaskMonitoringData
             (
                 element.second->getTaskName(),
+                "J",
+                element.second->measures_J_
+            )
+        );
+
+        data.push_back( 
+            TaskMonitoringData
+            (
+                element.second->getTaskName(),
                 "PM",
                 element.second->performance_measures_
             )
