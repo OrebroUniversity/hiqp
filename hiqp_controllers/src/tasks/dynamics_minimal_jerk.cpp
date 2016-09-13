@@ -92,8 +92,10 @@ int DynamicsMinimalJerk::apply
 	Eigen::VectorXd& e_dot_star
 )
 {
+	std::chrono::steady_clock::time_point sampling_time_ = std::chrono::steady_clock::now();
+
 	double d = std::chrono::duration_cast<std::chrono::microseconds>
-		(sampling_time - time_start_).count();
+		(sampling_time_ - time_start_).count();
 
 	double tau = d / total_duration_;
 
@@ -111,8 +113,8 @@ int DynamicsMinimalJerk::apply
 	
 
 	//std::cout << "total_duration_ = " << total_duration_ << "\n";
-	//std::cout << "d = " << d << "\n";
-	std::cout << "tau = " << tau << "\n";
+	std::cout << "d = " << d << "\n";
+	//std::cout << "tau = " << tau << "\n";
 
 	//std::cout << "J = " << J << "\n";
 	//std::cout << "I = " << Eigen::VectorXd::Ones(J.cols()) << "\n";
