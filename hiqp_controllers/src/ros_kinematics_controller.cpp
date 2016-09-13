@@ -396,15 +396,26 @@ void ROSKinematicsController::update
 			hiqp_msgs_srvs::MonitorDataMsg mon_msg;
 			mon_msg.ts = now;
 
-			hiqp_msgs_srvs::PerfMeasMsg qdot_msg;
 
-			qdot_msg.task_name = "qdot (controls)";
-			qdot_msg.measure_tag = "qdot (controls)";
+			hiqp_msgs_srvs::PerfMeasMsg q_msg;
+			q_msg.task_name = "_q_";
+			q_msg.measure_tag = "_q_";
+			for (int i=0; i<q.columns(); ++i)
+				q_msg.data.push_back( q(i) );
+			mon_msg.data.push_back(q_msg);
+
+
+			hiqp_msgs_srvs::PerfMeasMsg qdot_msg;
+			qdot_msg.task_name = "_qdot_";
+			qdot_msg.measure_tag = "_qdot_";
 			qdot_msg.data.insert(qdot_msg.data.begin(),
 				                output_controls_.cbegin(),
 				                output_controls_.cend());
-
 			mon_msg.data.push_back(qdot_msg);
+
+
+
+
 
 			std::vector<TaskMonitoringData>::iterator it = data.begin();
 			while (it != data.end())
