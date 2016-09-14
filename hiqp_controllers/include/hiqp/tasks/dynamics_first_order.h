@@ -14,11 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
-
-
-/*!
+/*
  * \file   dynamics_first_order.h
  * \author Marcus A Johansson (marcus.adam.johansson@gmail.com)
  * \date   July, 2016
@@ -26,8 +22,6 @@
  *
  * Detailed description of file.
  */
-
-
 
 #ifndef HIQP_DYNAMICS_FIRST_ORDER_H
 #define HIQP_DYNAMICS_FIRST_ORDER_H
@@ -38,68 +32,54 @@
 
 
 
+
+
 namespace hiqp
 {
-
-
-
-
-
 
 /*!
  * \class DynamicsFirstOrder
  * \brief A general first-order task dynamics implementation that enforces an 
  *        exponential decay of the task function value
- */	
+ */  
 class DynamicsFirstOrder : public TaskDynamics
 {
 public:
 
-	DynamicsFirstOrder() {}
+  DynamicsFirstOrder() {}
 
-	~DynamicsFirstOrder() noexcept {}
+  ~DynamicsFirstOrder() noexcept {}
 
-	int init
-	(
-		const HiQPTimePoint& sampling_time,
-		const std::vector<std::string>& parameters,
-    	const Eigen::VectorXd& e_initial,
-    	const Eigen::VectorXd& e_final
-	);
+  int init
+  (
+    const HiQPTimePoint& sampling_time,
+    const std::vector<std::string>& parameters,
+      const Eigen::VectorXd& e_initial,
+      const Eigen::VectorXd& e_final
+  );
 
-	int apply
-	(
-		const HiQPTimePoint& sampling_time,
-		const Eigen::VectorXd& e,
-		const Eigen::MatrixXd& J,
-		Eigen::VectorXd& e_dot_star
-	);
+  int apply
+  (
+    const HiQPTimePoint& sampling_time,
+    const Eigen::VectorXd& e,
+    const Eigen::MatrixXd& J,
+    Eigen::VectorXd& e_dot_star
+  );
 
-	int monitor();
+  int monitor();
 
 private:
 
-	// No copying of this class is allowed !
-	DynamicsFirstOrder(const DynamicsFirstOrder& other) = delete;
-	DynamicsFirstOrder(DynamicsFirstOrder&& other) = delete;
-	DynamicsFirstOrder& operator=(const DynamicsFirstOrder& other) = delete;
-	DynamicsFirstOrder& operator=(DynamicsFirstOrder&& other) noexcept = delete;
+  // No copying of this class is allowed !
+  DynamicsFirstOrder(const DynamicsFirstOrder& other) = delete;
+  DynamicsFirstOrder(DynamicsFirstOrder&& other) = delete;
+  DynamicsFirstOrder& operator=(const DynamicsFirstOrder& other) = delete;
+  DynamicsFirstOrder& operator=(DynamicsFirstOrder&& other) noexcept = delete;
 
-	double lambda_;
+  double lambda_;
 
-};
-
-
-
-
-
-
+}; // class DynamicsFirstOrder
 
 } // namespace hiqp
-
-
-
-
-
 
 #endif // include guard

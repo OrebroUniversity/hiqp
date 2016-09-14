@@ -14,9 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
-
 /*
  * \file   geometric_cylinder.h
  * \author Marcus A Johansson (marcus.adam.johansson@gmail.com)
@@ -26,20 +23,20 @@
  * Detailed description of file.
  */
 
-
-
 #ifndef HIQP_GEOMETRIC_CYLINDER_H
 #define HIQP_GEOMETRIC_CYLINDER_H
 
-
-
-
+// HiQP Includes
 #include <hiqp/geometric_primitives/geometric_primitive.h>
 #include <hiqp/hiqp_utils.h>
 
+// Orocos KDL Includes
 #include <kdl/frames.hpp>
 
+// Eigen Includes
 #include <Eigen/Dense>
+
+
 
 
 
@@ -47,10 +44,6 @@ namespace hiqp
 {
 namespace geometric_primitives
 {
-
-
-
-
 
 /*!
  * \class GeometricCylinder
@@ -60,117 +53,108 @@ class GeometricCylinder : public GeometricPrimitive
 {
 public:
 
-	GeometricCylinder
-	(
-		const std::string& name,
-		const std::string& frame_id,
-		bool visible,
-		const std::vector<double>& color
-	)
-	: GeometricPrimitive(name, frame_id, visible, color)
-	{}
+  GeometricCylinder
+  (
+    const std::string& name,
+    const std::string& frame_id,
+    bool visible,
+    const std::vector<double>& color
+  )
+  : GeometricPrimitive(name, frame_id, visible, color)
+  {}
 
-	~GeometricCylinder() noexcept {}
+  ~GeometricCylinder() noexcept {}
 
+  /*!
+   * \brief Parses a set of parameters and initializes the cylinder.
+   *
+   * \param parameters should be of size 8. <br />
+   *   Indices 0-2 (required) defines the directional vector of the cylinder, <br />
+   *   indices 3-5 (required) defines the position of a point on the cylinder's coaxial line, <br />
+   *   index 6 (required) defines the radius of the cylinder, <br />
+   *   index 7 (required) defines the height of the cylinder.
+   *
+   * \return 0 on success, -1 if the wrong number of parameters was sent
+  */
+  int init(const std::vector<double>& parameters)
+  {
+    int size = parameters.size();
+    if (size != 8)
+    {
+      printHiqpWarning("GeometricCylinder requires 8 parameters, got " 
+        + std::to_string(size) + "! Initialization failed!");
+      return -1;
+    }
 
-	/*!
-	 * \brief Parses a set of parameters and initializes the cylinder.
-	 *
-	 * \param parameters should be of size 8. <br />
-	 *   Indices 0-2 (required) defines the directional vector of the cylinder, <br />
-	 *   indices 3-5 (required) defines the position of a point on the cylinder's coaxial line, <br />
-	 *   index 6 (required) defines the radius of the cylinder, <br />
-	 *   index 7 (required) defines the height of the cylinder.
-	 *
-	 * \return 0 on success, -1 if the wrong number of parameters was sent
-	*/
-	int init(const std::vector<double>& parameters)
-	{
-		int size = parameters.size();
-		if (size != 8)
-		{
-			printHiqpWarning("GeometricCylinder requires 8 parameters, got " 
-				+ std::to_string(size) + "! Initialization failed!");
-			return -1;
-		}
+    kdl_v_(0) = parameters.at(0);
+    kdl_v_(1) = parameters.at(1);
+    kdl_v_(2) = parameters.at(2);
+    kdl_v_.Normalize();
 
-		kdl_v_(0) = parameters.at(0);
-		kdl_v_(1) = parameters.at(1);
-		kdl_v_(2) = parameters.at(2);
-		kdl_v_.Normalize();
+    kdl_p_(0) = parameters.at(3);
+    kdl_p_(1) = parameters.at(4);
+    kdl_p_(2) = parameters.at(5);
 
-		kdl_p_(0) = parameters.at(3);
-		kdl_p_(1) = parameters.at(4);
-		kdl_p_(2) = parameters.at(5);
+    radius_ = parameters.at(6);
 
-		radius_ = parameters.at(6);
+    h_ = parameters.at(7);
 
-		h_ = parameters.at(7);
+    eigen_v_ << kdl_v_(0), kdl_v_(1), kdl_v_(2);
+    eigen_p_ << kdl_p_(0), kdl_p_(1), kdl_p_(2);
 
-		eigen_v_ << kdl_v_(0), kdl_v_(1), kdl_v_(2);
-		eigen_p_ << kdl_p_(0), kdl_p_(1), kdl_p_(2);
+    return 0;
+  }
 
-		return 0;
-	}
+  inline const KDL::Vector&     getDirectionKDL() { return kdl_v_; }
 
+  inline const Eigen::Vector3d& getDirectionEigen() { return eigen_v_; }
 
+  inline const KDL::Vector&     getOffsetKDL() { return kdl_p_; }
 
-	inline const KDL::Vector&     getDirectionKDL() { return kdl_v_; }
-	inline const Eigen::Vector3d& getDirectionEigen() { return eigen_v_; }
+  inline const Eigen::Vector3d& getOffsetEigen() { return eigen_p_; }
 
-	inline const KDL::Vector&     getOffsetKDL() { return kdl_p_; }
-	inline const Eigen::Vector3d& getOffsetEigen() { return eigen_p_; }
+  inline double getHeight() { return h_; }
 
-	inline double getHeight()
-	{ return h_; }
+  inline double getRadius() { return radius_; }
 
-	inline double getRadius()
-	{ return radius_; }
+  inline bool isInfinite() { return (h_ < 0); }
 
-	inline bool isInfinite()
-	{ return (h_ < 0); }
+  inline double getDirectionX() { return kdl_v_(0); }
 
-	inline double getDirectionX() { return kdl_v_(0); }
-	inline double getDirectionY() { return kdl_v_(1); }
-	inline double getDirectionZ() { return kdl_v_(2); }
+  inline double getDirectionY() { return kdl_v_(1); }
 
-	inline double getOffsetX() { return kdl_p_(0); }
-	inline double getOffsetY() { return kdl_p_(1); }
-	inline double getOffsetZ() { return kdl_p_(2); }
+  inline double getDirectionZ() { return kdl_v_(2); }
 
+  inline double getOffsetX() { return kdl_p_(0); }
+
+  inline double getOffsetY() { return kdl_p_(1); }
+
+  inline double getOffsetZ() { return kdl_p_(2); }
 
 
 
 protected:
 
-	KDL::Vector      kdl_v_; // the directional vector of the cylinder
-	Eigen::Vector3d  eigen_v_;
+  KDL::Vector      kdl_v_; // the directional vector of the cylinder
+  Eigen::Vector3d  eigen_v_;
 
-	KDL::Vector      kdl_p_; // the offset of the cylinder base
-	Eigen::Vector3d  eigen_p_;
+  KDL::Vector      kdl_p_; // the offset of the cylinder base
+  Eigen::Vector3d  eigen_p_;
 
-	double           h_; // the height of the cylinder
+  double           h_; // the height of the cylinder
 
-	double           radius_; // the radius of the cylinder
-
-
+  double           radius_; // the radius of the cylinder
 
 
 
 private:
+  // No copying of this class is allowed !
+  GeometricCylinder(const GeometricCylinder& other) = delete;
+  GeometricCylinder(GeometricCylinder&& other) = delete;
+  GeometricCylinder& operator=(const GeometricCylinder& other) = delete;
+  GeometricCylinder& operator=(GeometricCylinder&& other) noexcept = delete;
 
-	// No copying of this class is allowed !
-	GeometricCylinder(const GeometricCylinder& other) = delete;
-	GeometricCylinder(GeometricCylinder&& other) = delete;
-	GeometricCylinder& operator=(const GeometricCylinder& other) = delete;
-	GeometricCylinder& operator=(GeometricCylinder&& other) noexcept = delete;
-
-};
-
-
-
-
-
+}; // class GeometricCylinder
 
 } // namespace geometric_primitives
 
