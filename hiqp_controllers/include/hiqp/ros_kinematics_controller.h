@@ -192,6 +192,18 @@ private:
 	ROSKinematicsController& operator=(const ROSKinematicsController& other) = delete;
 	ROSKinematicsController& operator=(ROSKinematicsController&& other) noexcept = delete;
 
+     void sampleJointValues();
+     void setControls();
+
+     void performMonitoring();
+
+     int loadAndSetupTaskMonitoring();
+     int loadUrdfAndSetupKdlTree();
+     int loadJointsAndSetJointHandlesMap();
+
+     void advertiseAllServices();
+
+     void addAllTopicSubscriptions();
 
      void loadJointLimitsFromParamServer();
      void loadGeometricPrimitivesFromParamServer();
@@ -279,6 +291,7 @@ private:
      ros::ServiceServer                                remove_geomprim_service_;
      ros::ServiceServer                                remove_all_geomprims_service_;
 
+     hardware_interface::VelocityJointInterface *      hardware_interface_;
      JointHandleMap                                    joint_handles_map_;
      std::mutex                                        handles_mutex_;
 
@@ -289,6 +302,7 @@ private:
      KDL::JntArrayVel                                  kdl_joint_pos_vel_;
 
      std::vector<double>                               output_controls_;
+     unsigned int                                      n_controls_;
 
 
 

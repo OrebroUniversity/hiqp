@@ -41,6 +41,7 @@
 #include <XmlRpcException.h> 
 
 #include <iostream>
+#include <string>
 
 #include <geometry_msgs/PoseStamped.h> // teleoperation magnet sensors
 
@@ -49,15 +50,18 @@
 
 namespace hiqp
 {
-	
 
 
 
-
-
-
-
-
+////////////////////////////////////////////////////////////////////////////////
+//  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
+// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
+//-  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  
+////////////////////////////////////////////////////////////////////////////////
+//
+//              R O S   C O N T R O L L E R   I N T E R F A C E
+//
+////////////////////////////////////////////////////////////////////////////////
 
 ROSKinematicsController::ROSKinematicsController()
 : is_active_(true), monitoring_active_(false), task_manager_(&ros_visualizer_)
@@ -68,19 +72,11 @@ ROSKinematicsController::ROSKinematicsController()
 
 
 
+ROSKinematicsController::~ROSKinematicsController() noexcept {}
 
+void ROSKinematicsController::starting(const ros::Time& time) {}
 
-
-
-
-ROSKinematicsController::~ROSKinematicsController() noexcept
-{
-}
-
-
-
-
-
+void ROSKinematicsController::stopping(const ros::Time& time) {}
 
 
 
@@ -88,245 +84,38 @@ ROSKinematicsController::~ROSKinematicsController() noexcept
 
 bool ROSKinematicsController::init
 (
-	hardware_interface::VelocityJointInterface *hw, 
+	hardware_interface::VelocityJointInterface *hw,
 	ros::NodeHandle &controller_nh
 )
 {
-	// Store the handle of the node that runs this controller
 	controller_nh_ = controller_nh;
+
+	hardware_interface_ = hw;
+
 	ros_visualizer_.init(&controller_nh_);
 
+    if (loadAndSetupTaskMonitoring() != 0) return false;
 
+    if (loadUrdfAndSetupKdlTree() != 0) return false;
 
-	// Load the names of all joints specified in the .yaml file
-	std::string param_name = "joints";
-	std::vector< std::string > joint_names;
-	if (!controller_nh.getParam(param_name, joint_names))
-    {
-        ROS_ERROR_STREAM("In ROSKinematicsController: Call to getParam('" 
-        	<< param_name 
-        	<< "') in namespace '" 
-        	<< controller_nh.getNamespace() 
-        	<< "' failed.");
-        return false;
-    }
+	if (loadJointsAndSetJointHandlesMap() != 0) return false;
 
+	sampleJointValues();
 
+	addAllTopicSubscriptions();
 
+	advertiseAllServices();
 
+	task_manager_.init(n_controls_);
 
-    // Load the monitoring setup specified in the .yaml file
-	XmlRpc::XmlRpcValue task_monitoring;
-	if (!controller_nh.getParam("task_monitoring", task_monitoring))
-    {
-        ROS_ERROR_STREAM("In ROSKinematicsController: Call to getParam('" 
-        	<< "task_monitoring" 
-        	<< "') in namespace '" 
-        	<< controller_nh.getNamespace() 
-        	<< "' failed.");
-        return false;
-    }
-    int active = static_cast<int>(task_monitoring["active"]);
-    monitoring_active_ = (active == 1 ? true : false);
-    monitoring_publish_rate_ = 
-    	static_cast<double>(task_monitoring["publish_rate"]);
-    monitoring_pub_ = controller_nh_.advertise<hiqp_msgs_srvs::MonitorDataMsg>
-		("monitoring_data", 1);
-
-
-
-
-
-    // Load the urdf-formatted robot description to build a KDL tree
-	std::string full_parameter_path;
-    std::string robot_urdf;
-    if (controller_nh_.searchParam("robot_description", full_parameter_path))
-    {
-        controller_nh_.getParam(full_parameter_path, robot_urdf);
-        ROS_ASSERT(kdl_parser::treeFromString(robot_urdf, kdl_tree_));
-    }
-    else
-    {
-        ROS_ERROR_STREAM("In ROSKinematicsController: Could not find"
-        	<< " parameter 'robot_description' on the parameter server.");
-        return false;
-    }
-    std::cout << "KDL Tree loaded successfully! Printing it below.\n\n"
-    	<< kdl_tree_ << "\n\n";
-
-
-
-
-    // Load all joint handles for all joint name references
-	for (auto&& name : joint_names)
-	{
-		try
-		{
-			unsigned int q_nr = kdl_getQNrFromJointName(kdl_tree_, name);
-			joint_handles_map_.insert( 
-				JointHandleMapEntry(q_nr, hw->getHandle(name))
-			);
-		}
-		catch (const hardware_interface::HardwareInterfaceException& e)
-		{
-			ROS_ERROR_STREAM("Exception thrown: " << e.what());
-            return false;
-		}
-		// catch (MAP INSERT FAIL EXCEPTION)
-		// catch (HIQP Q_NR NOT AVAILABLE EXCEPTION)
-	}
-
-
-
-
-	// Set the joint position and velocity and the control vectors to all zero
-	unsigned int n_joint_names = joint_names.size();
-	unsigned int n_kdl_joints = kdl_tree_.getNrOfJoints();
-	if (n_joint_names > n_kdl_joints)
-	{
-		ROS_ERROR_STREAM("In ROSKinematicsController: The .yaml file"
-			<< " includes more joint names than specified in the .urdf file."
-			<< " Could not succeffully initialize controller. Aborting!\n");
-		return false;
-	}
-	kdl_joint_pos_vel_.resize(n_kdl_joints);
-	output_controls_ = std::vector<double>(n_kdl_joints, 0.0);
-
-
-
-
-
-
-	// Sample the first joint positions and velocities
-	KDL::JntArray& q = kdl_joint_pos_vel_.q;
-	KDL::JntArray& qdot = kdl_joint_pos_vel_.qdot;
-	handles_mutex_.lock();
-		for (auto&& handle : joint_handles_map_)
-		{
-			q(handle.first) = handle.second.getPosition();
-			qdot(handle.first) = handle.second.getVelocity();
-		}
-		ros::Time t = ros::Time::now();
-		sampling_time_.setTimePoint(t.sec, t.nsec);
-		//sampling_time_.setTimePoint(0, 0);
-	handles_mutex_.unlock();
-
-
-
-
-
-
-	// Setup topic subscription
-	topic_subscriber_.init( task_manager_.getGeometricPrimitiveMap() );
-	
-	topic_subscriber_.addSubscription<geometry_msgs::PoseStamped>(
-		controller_nh_, "/wintracker/pose", 100
-	);
-
-	topic_subscriber_.addSubscription<hiqp_msgs_srvs::Vector3d>(
-		controller_nh_, "/yumi/hiqp_controllers/vector3d", 100
-	);
-
-
-
-
-
-
-	// Advertise available ROS services and link the callback functions
-	add_task_service_ = controller_nh_.advertiseService
-	(
-		"add_task",
-		&ROSKinematicsController::addTask,
-		this
-	);
-
-	update_task_service_ = controller_nh_.advertiseService
-	(
-		"update_task",
-		&ROSKinematicsController::updateTask,
-		this
-	);
-
-	remove_task_service_ = controller_nh_.advertiseService
-	(
-		"remove_task",
-		&ROSKinematicsController::removeTask,
-		this
-	);
-
-	remove_all_tasks_service_ = controller_nh_.advertiseService
-	(
-		"remove_all_tasks",
-		&ROSKinematicsController::removeAllTasks,
-		this
-	);
-
-	add_geomprim_service_ = controller_nh_.advertiseService
-	(
-		"add_primitive",
-		&ROSKinematicsController::addGeometricPrimitive,
-		this
-	);
-
-	remove_geomprim_service_ = controller_nh_.advertiseService
-	(
-		"remove_primitive",
-		&ROSKinematicsController::removeGeometricPrimitive,
-		this
-	);
-
-	remove_all_geomprims_service_ = controller_nh_.advertiseService
-	(
-		"remove_all_primitives",
-		&ROSKinematicsController::removeAllGeometricPrimitives,
-		this
-	);
-
-
-
-
-	task_manager_.init(n_kdl_joints);
-
-
-
-
-
-
-
-	// Preload the:
-	// - joint limitations
-	// - geometric primitives
-	// - tasks
-	// in among the preload parameters in the .yaml file, if there are any
 	loadJointLimitsFromParamServer();
+
 	loadGeometricPrimitivesFromParamServer();
+
 	loadTasksFromParamServer();
-
-
-
 
 	return true;
 }
-
-
-
-
-
-
-
-
-
-
-void ROSKinematicsController::starting
-(
-	const ros::Time& time
-)
-{}
-
-
-
-
-
 
 
 
@@ -338,111 +127,20 @@ void ROSKinematicsController::update
 	const ros::Duration& period
 )
 {
-	// If the controller is inactive just return
 	if (!is_active_) return;
 
+	sampleJointValues();
 
-
-
-
-	// Lock the mutex and read all joint positions from the handles
-	KDL::JntArray& q = kdl_joint_pos_vel_.q;
-	KDL::JntArray& qdot = kdl_joint_pos_vel_.qdot;
-	handles_mutex_.lock();
-		for (auto&& handle : joint_handles_map_)
-		{
-			q(handle.first) = handle.second.getPosition();
-			qdot(handle.first) = handle.second.getVelocity();
-		}
-		ros::Time t = ros::Time::now();
-		sampling_time_.setTimePoint(t.sec, t.nsec);
-		//sampling_time_.setTimePoint(0, 0);
-	handles_mutex_.unlock();
-
-
-	// Calculate the kinematic controls
 	task_manager_.getKinematicControls(sampling_time_,
 									   kdl_tree_, 
 									   kdl_joint_pos_vel_,
 									   output_controls_);
 
+	setControls();
 
-
-	// Lock the mutex and write the controls to the joint handles
-	//std::cout << "q = ";
-	handles_mutex_.lock();
-		for (auto&& handle : joint_handles_map_)
-		{
-			handle.second.setCommand(output_controls_.at(handle.first));
-			//std::cout << output_controls_.at(handle.first) << ", ";
-		}
-	handles_mutex_.unlock();
-	//std::cout << "\n";
-
-
-
-	// Redraw all geometric primitives
 	task_manager_.getGeometricPrimitiveMap()->redrawAllPrimitives();
 
-
-
-	// If monitoring is turned on, generate monitoring data and publish it
-	if (monitoring_active_)
-	{
-		ros::Time now = ros::Time::now();
-		ros::Duration d = now - last_monitoring_update_;
-		if (d.toSec() >= 1.0/monitoring_publish_rate_)
-		{
-			last_monitoring_update_ = now;
-			std::vector<TaskMonitoringData> data;
-			task_manager_.getTaskMonitoringData(data);
-
-			hiqp_msgs_srvs::MonitorDataMsg mon_msg;
-			mon_msg.ts = now;
-
-/*
-			hiqp_msgs_srvs::PerfMeasMsg q_msg;
-			q_msg.task_name = "_q_";
-			q_msg.measure_tag = "_q_";
-			for (int i=0; i<q.columns(); ++i)
-				q_msg.data.push_back( q(i) );
-			mon_msg.data.push_back(q_msg);
-*/
-
-			hiqp_msgs_srvs::PerfMeasMsg qdot_msg;
-			qdot_msg.task_name = "_qdot_";
-			qdot_msg.measure_tag = "_qdot_";
-			qdot_msg.data.insert(qdot_msg.data.begin(),
-				                output_controls_.cbegin(),
-				                output_controls_.cend());
-			mon_msg.data.push_back(qdot_msg);
-
-
-
-
-
-			std::vector<TaskMonitoringData>::iterator it = data.begin();
-			while (it != data.end())
-			{
-				hiqp_msgs_srvs::PerfMeasMsg per_msg;
-				
-				//per_msg.task_id = it->task_id_;
-				per_msg.task_name = it->task_name_;
-				per_msg.measure_tag = it->measure_tag_;
-				per_msg.data.insert(per_msg.data.begin(),
-					                it->performance_measures_.cbegin(),
-					                it->performance_measures_.cend());
-
-				mon_msg.data.push_back(per_msg);
-				++it;
-			}
-			
-			monitoring_pub_.publish(mon_msg);
-		}
-
-	}
-
-
+	performMonitoring();
 
 	return;
 }
@@ -455,14 +153,15 @@ void ROSKinematicsController::update
 
 
 
-
-void ROSKinematicsController::stopping
-(
-	const ros::Time& time
-)
-{}
-
-
+////////////////////////////////////////////////////////////////////////////////
+//  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
+// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
+//-  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  
+////////////////////////////////////////////////////////////////////////////////
+//
+//                R O S   S E R V I C E   C A L L B A C K S
+//
+////////////////////////////////////////////////////////////////////////////////
 
 
 
@@ -481,19 +180,11 @@ bool ROSKinematicsController::addTask
 									   kdl_tree_,
 									   kdl_joint_pos_vel_);
 
-
-
 	res.success = (retval < 0 ? false : true);
-
-	// if (res.success)
-	// {
-	// 	printHiqpInfo("Added task of type '" + req.type + "'"
-	// 		+ " with priority " + std::to_string(req.priority)
-	// 		+ " and identifier " + std::to_string(res.task_id));
-	// }
 
 	return true;
 }
+
 
 
 
@@ -513,14 +204,6 @@ bool ROSKinematicsController::updateTask
 									      kdl_joint_pos_vel_);
 
 	res.success = (retval < 0 ? false : true);
-
-	// if (res.success)
-	// {
-	// 	res.task_id = retval;
-	// 	printHiqpInfo("Updated task of type '" + req.type + "'"
-	// 		+ " with priority " + std::to_string(req.priority)
-	// 		+ " and identifier " + std::to_string(res.task_id));
-	// }
 
 	return true;
 }
@@ -642,25 +325,304 @@ bool ROSKinematicsController::removeAllGeometricPrimitives
 
 
 
+////////////////////////////////////////////////////////////////////////////////
+//  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
+// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
+//-  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  
+////////////////////////////////////////////////////////////////////////////////
+//
+//                      P R I V A T E   M E T H O D S
+//
+////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+
+void ROSKinematicsController::sampleJointValues()
+{
+	// Lock the mutex and read all joint positions from the handles
+
+	KDL::JntArray& q = kdl_joint_pos_vel_.q;
+	KDL::JntArray& qdot = kdl_joint_pos_vel_.qdot;
+	handles_mutex_.lock();
+
+	for (auto&& handle : joint_handles_map_)
+	{
+		q(handle.first) = handle.second.getPosition();
+		qdot(handle.first) = handle.second.getVelocity();
+	}
+	ros::Time t = ros::Time::now();
+	sampling_time_.setTimePoint(t.sec, t.nsec);
+
+	handles_mutex_.unlock();
+}
+
+
+
+
+void ROSKinematicsController::setControls()
+{
+	// Lock the mutex and write the controls to the joint handles
+	//std::cout << "q = ";
+	handles_mutex_.lock();
+		for (auto&& handle : joint_handles_map_)
+		{
+			handle.second.setCommand(output_controls_.at(handle.first));
+			//std::cout << output_controls_.at(handle.first) << ", ";
+		}
+	handles_mutex_.unlock();
+	//std::cout << "\n";
+}
+
+
+
+
+void ROSKinematicsController::performMonitoring()
+{
+	// If monitoring is turned on, generate monitoring data and publish it
+
+	if (monitoring_active_)
+	{
+		ros::Time now = ros::Time::now();
+		ros::Duration d = now - last_monitoring_update_;
+		if (d.toSec() >= 1.0/monitoring_publish_rate_)
+		{
+			last_monitoring_update_ = now;
+			std::vector<TaskMonitoringData> data;
+			task_manager_.getTaskMonitoringData(data);
+
+			hiqp_msgs_srvs::MonitorDataMsg mon_msg;
+			mon_msg.ts = now;
+
+/*
+			hiqp_msgs_srvs::PerfMeasMsg q_msg;
+			q_msg.task_name = "_q_";
+			q_msg.measure_tag = "_q_";
+			for (int i=0; i<q.columns(); ++i)
+				q_msg.data.push_back( q(i) );
+			mon_msg.data.push_back(q_msg);
+*/
+
+			hiqp_msgs_srvs::PerfMeasMsg qdot_msg;
+			qdot_msg.task_name = "_qdot_";
+			qdot_msg.measure_tag = "_qdot_";
+			qdot_msg.data.insert(qdot_msg.data.begin(),
+				                output_controls_.cbegin(),
+				                output_controls_.cend());
+			mon_msg.data.push_back(qdot_msg);
+
+			std::vector<TaskMonitoringData>::iterator it = data.begin();
+			while (it != data.end())
+			{
+				hiqp_msgs_srvs::PerfMeasMsg per_msg;
+				
+				//per_msg.task_id = it->task_id_;
+				per_msg.task_name = it->task_name_;
+				per_msg.measure_tag = it->measure_tag_;
+				per_msg.data.insert(per_msg.data.begin(),
+					                it->performance_measures_.cbegin(),
+					                it->performance_measures_.cend());
+
+				mon_msg.data.push_back(per_msg);
+				++it;
+			}
+			
+			monitoring_pub_.publish(mon_msg);
+		}
+	}
+}
 
 
 
 
 
 
+void ROSKinematicsController::addAllTopicSubscriptions()
+{
+	// Setup topic subscription
+	topic_subscriber_.init( task_manager_.getGeometricPrimitiveMap() );
+	
+	topic_subscriber_.addSubscription<geometry_msgs::PoseStamped>(
+		controller_nh_, "/wintracker/pose", 100
+	);
+
+	topic_subscriber_.addSubscription<hiqp_msgs_srvs::Vector3d>(
+		controller_nh_, "/yumi/hiqp_controllers/vector3d", 100
+	);
+}
 
 
 
 
 
+void ROSKinematicsController::advertiseAllServices()
+{
+	// Advertise available ROS services and link the callback functions
+	add_task_service_ = controller_nh_.advertiseService
+	(
+		"add_task",
+		&ROSKinematicsController::addTask,
+		this
+	);
+
+	update_task_service_ = controller_nh_.advertiseService
+	(
+		"update_task",
+		&ROSKinematicsController::updateTask,
+		this
+	);
+
+	remove_task_service_ = controller_nh_.advertiseService
+	(
+		"remove_task",
+		&ROSKinematicsController::removeTask,
+		this
+	);
+
+	remove_all_tasks_service_ = controller_nh_.advertiseService
+	(
+		"remove_all_tasks",
+		&ROSKinematicsController::removeAllTasks,
+		this
+	);
+
+	add_geomprim_service_ = controller_nh_.advertiseService
+	(
+		"add_primitive",
+		&ROSKinematicsController::addGeometricPrimitive,
+		this
+	);
+
+	remove_geomprim_service_ = controller_nh_.advertiseService
+	(
+		"remove_primitive",
+		&ROSKinematicsController::removeGeometricPrimitive,
+		this
+	);
+
+	remove_all_geomprims_service_ = controller_nh_.advertiseService
+	(
+		"remove_all_primitives",
+		&ROSKinematicsController::removeAllGeometricPrimitives,
+		this
+	);
+}
 
 
 
 
 
+int ROSKinematicsController::loadJointsAndSetJointHandlesMap()
+{
+	// Load the names of all joints specified in the .yaml file
+	std::string param_name = "joints";
+	std::vector< std::string > joint_names;
+	if (!controller_nh_.getParam(param_name, joint_names))
+    {
+        ROS_ERROR_STREAM("In ROSKinematicsController: Call to getParam('" 
+        	<< param_name 
+        	<< "') in namespace '" 
+        	<< controller_nh_.getNamespace() 
+        	<< "' failed.");
+        return -1;
+    }
+
+    // Load all joint handles for all joint name references
+	for (auto&& name : joint_names)
+	{
+		try
+		{
+			unsigned int q_nr = kdl_getQNrFromJointName(kdl_tree_, name);
+			joint_handles_map_.insert( 
+				JointHandleMapEntry(q_nr, hardware_interface_->getHandle(name))
+			);
+		}
+		catch (const hardware_interface::HardwareInterfaceException& e)
+		{
+			ROS_ERROR_STREAM("Exception thrown: " << e.what());
+            return -2;
+		}
+		// catch (MAP INSERT FAIL EXCEPTION)
+		// catch (HIQP Q_NR NOT AVAILABLE EXCEPTION)
+	}
+
+	// Set the joint position and velocity and the control vectors to all zero
+	unsigned int n_joint_names = joint_names.size();
+	n_controls_ = kdl_tree_.getNrOfJoints();
+	if (n_joint_names > n_controls_)
+	{
+		ROS_ERROR_STREAM("In ROSKinematicsController: The .yaml file"
+			<< " includes more joint names than specified in the .urdf file."
+			<< " Could not succeffully initialize controller. Aborting!\n");
+		return -3;
+	}
+	kdl_joint_pos_vel_.resize(n_controls_);
+	output_controls_ = std::vector<double>(n_controls_, 0.0);
+
+	return 0;
+}
 
 
-/*** PRIVATE ***/
+
+
+
+int ROSKinematicsController::loadAndSetupTaskMonitoring()
+{
+	// Load the monitoring setup specified in the .yaml file
+
+	XmlRpc::XmlRpcValue task_monitoring;
+	if (!controller_nh_.getParam("task_monitoring", task_monitoring))
+    {
+        ROS_ERROR_STREAM("In ROSKinematicsController: Call to getParam('" 
+        	<< "task_monitoring" 
+        	<< "') in namespace '" 
+        	<< controller_nh_.getNamespace() 
+        	<< "' failed.");
+        return -1;
+    }
+
+    int active = static_cast<int>(task_monitoring["active"]);
+    monitoring_active_ = (active == 1 ? true : false);
+    monitoring_publish_rate_ = 
+    	static_cast<double>(task_monitoring["publish_rate"]);
+
+    monitoring_pub_ = controller_nh_.advertise<hiqp_msgs_srvs::MonitorDataMsg>
+		("monitoring_data", 1);
+
+	return 0;
+}
+
+
+
+
+
+int ROSKinematicsController::loadUrdfAndSetupKdlTree()
+{
+	// Load the urdf-formatted robot description from the parameter server
+	// and build a KDL tree from it
+
+	std::string full_parameter_path;
+    std::string robot_urdf;
+    if (controller_nh_.searchParam("robot_description", full_parameter_path))
+    {
+        controller_nh_.getParam(full_parameter_path, robot_urdf);
+        ROS_ASSERT(kdl_parser::treeFromString(robot_urdf, kdl_tree_));
+    }
+    else
+    {
+        ROS_ERROR_STREAM("In ROSKinematicsController: Could not find"
+        	<< " parameter 'robot_description' on the parameter server.");
+        return -1;
+    }
+    printHiqpInfo("Loaded the robot's urdf model and initialized the KDL tree successfully");
+    std::cout << kdl_tree_ << "\n";
+
+    return 0;
+}
+
+
+
 
 
 void ROSKinematicsController::loadJointLimitsFromParamServer()
@@ -720,8 +682,6 @@ void ROSKinematicsController::loadJointLimitsFromParamServer()
 	    		<< "file successfully!");
 	}
 }
-
-
 
 
 
@@ -798,10 +758,6 @@ void ROSKinematicsController::loadGeometricPrimitivesFromParamServer()
 	    		<< ".yaml file successfully!");
 	}
 }
-
-
-
-
 
 
 
