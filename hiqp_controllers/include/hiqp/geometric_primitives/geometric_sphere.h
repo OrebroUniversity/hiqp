@@ -17,9 +17,9 @@
 
 
 
-/*!
+/*
  * \file   geometric_sphere.h
- * \Author Marcus A Johansson (marcus.adam.johansson@gmail.com)
+ * \author Marcus A Johansson (marcus.adam.johansson@gmail.com)
  * \date   July, 2016
  * \brief  Brief description of file.
  *
@@ -44,21 +44,20 @@
 
 namespace hiqp
 {
+namespace geometric_primitives
+{
 
 
 
 
 /*!
  * \class GeometricSphere
- * \brief 
- */  
+ * \brief Parameters: [x, y, z, radius]
+ */ 
 class GeometricSphere : public GeometricPrimitive
 {
 public:
 
-	/*!
-     * \brief Constructor
-     */
 	GeometricSphere
 	(
 		const std::string& name,
@@ -69,13 +68,17 @@ public:
 	: GeometricPrimitive(name, frame_id, visible, color)
 	{}
 
-	/*!
-     * \brief Destructor
-     */
 	~GeometricSphere() noexcept {}
 
-
-
+	/*!
+	 * \brief Parses a set of parameters and initializes the sphere.
+	 *
+	 * \param parameters should be of size 4. <br />
+	 *   Indices 0-2 (required) defines the position of the center of the sphere, <br />
+	 *   index 3 (required) defines the radius of the sphere.
+	 *
+	 * \return 0 on success, -1 if the wrong number of parameters was sent
+	*/
 	int init(const std::vector<double>& parameters)
 	{
 		int size = parameters.size();
@@ -96,19 +99,17 @@ public:
 		return 0;
 	}
 
-
-
 	inline const KDL::Vector&     getCenterKDL() { return kdl_p_; }
+
 	inline const Eigen::Vector3d& getCenterEigen() { return eigen_p_; }
 
 	inline double getRadius() { return radius_; }
 
 	inline double getX() { return kdl_p_(0); }
+
 	inline double getY() { return kdl_p_(1); }
+
 	inline double getZ() { return kdl_p_(2); }
-
-
-
 
 protected:
 
@@ -116,8 +117,6 @@ protected:
 	Eigen::Vector3d  eigen_p_;
 
 	double           radius_; // the radius of the sphere
-
-
 
 
 
@@ -140,6 +139,8 @@ private:
 
 
 
+
+} // namespace geometric_primitives
 
 } // namespace hiqp
 

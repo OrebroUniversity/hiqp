@@ -14,31 +14,29 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
-
-/*!
+/*
  * \file   task_factory.h
- * \Author Marcus A Johansson (marcus.adam.johansson@gmail.com)
+ * \author Marcus A Johansson (marcus.adam.johansson@gmail.com)
  * \date   July, 2016
  * \brief  Brief description of file.
  *
  * Detailed description of file.
  */
 
-
-
-
 #ifndef HIQP_TASK_FACTORY_H
 #define HIQP_TASK_FACTORY_H
+
+// STL Includes
+#include <string>
+#include <vector>
 
 // HiQP Includes
 #include <hiqp/task_function.h>
 #include <hiqp/task_dynamics.h>
 #include <hiqp/visualizer.h>
-#include <hiqp/geometric_primitive_map.h>
 #include <hiqp/hiqp_time_point.h>
 
+#include <hiqp/geometric_primitives/geometric_primitive_map.h>
 #include <hiqp/geometric_primitives/geometric_point.h>
 #include <hiqp/geometric_primitives/geometric_line.h>
 #include <hiqp/geometric_primitives/geometric_plane.h>
@@ -46,12 +44,7 @@
 #include <hiqp/geometric_primitives/geometric_cylinder.h>
 #include <hiqp/geometric_primitives/geometric_sphere.h>
 
-// STL Includes
-#include <string>
-#include <vector>
-#include <chrono>
-
-// Orocos KDL
+// Orocos KDL Includes
 #include <kdl/tree.hpp>
 #include <kdl/jntarrayvel.hpp>
 
@@ -59,28 +52,19 @@
 
 
 
-
-
-
-
 namespace hiqp {
 
-
-
-
-
+/*!
+ * \class TaskFactory
+ * \brief A factory for creating task function and task dynamics. (The process of creating and initializing them is intertwined.)
+ */  
 class TaskFactory
 {
-
 public:
 
-
-
-	/*!
-     * \brief Constructor
-     * Constructs my awesome controller
-     */
     TaskFactory() {}
+
+	~TaskFactory() noexcept {}
 
 	void init
 	(
@@ -89,26 +73,9 @@ public:
 		unsigned int num_controls
 	);
 
-
-
-
-	/*!
-     * \brief Destructor
-     * Destructs my awesome manager
-     */
-	~TaskFactory() noexcept {}
-
-
-
-
-	/*!
-	 * \brief
-	 *
-	 */
 	int buildTask
 	(
 		const std::string& name,
-		//std::size_t id,
     	const std::string& type,
     	unsigned int priority,
     	bool visibility,
@@ -124,25 +91,17 @@ public:
 
 
 
-
-
-
 private:
-
 	// No copying of this class is allowed !
 	TaskFactory(const TaskFactory& other) = delete;
 	TaskFactory(TaskFactory&& other) = delete;
 	TaskFactory& operator=(const TaskFactory& other) = delete;
 	TaskFactory& operator=(TaskFactory&& other) noexcept = delete;
 
-
-
 	TaskDynamics* constructTaskDynamics
 	(
 		const std::vector<std::string>& parameters
 	);
-
-
 
 	TaskFunction* constructTaskFunction
 	(
@@ -150,23 +109,13 @@ private:
 		const std::vector<std::string>& parameters
 	);
 
-
-
-
-
 	GeometricPrimitiveMap* 				geometric_primitive_map_;
 
 	Visualizer* 						visualizer_;
 
 	unsigned int 						num_controls_;
 
-};
-
-
-
-
-
-
+}; // class TaskFactory
 
 } // namespace hiqp
 

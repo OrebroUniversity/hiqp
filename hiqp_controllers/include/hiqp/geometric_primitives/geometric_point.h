@@ -17,9 +17,9 @@
 
 
 
-/*!
+/*
  * \file   geometric_point.h
- * \Author Marcus A Johansson (marcus.adam.johansson@gmail.com)
+ * \author Marcus A Johansson (marcus.adam.johansson@gmail.com)
  * \date   July, 2016
  * \brief  Brief description of file.
  *
@@ -45,56 +45,58 @@
 
 namespace hiqp
 {
+namespace geometric_primitives
+{
 
 
 
 
 /*!
  * \class GeometricPoint
- * \brief 
- */  
+ * \brief Parameters: [x, y, z]
+ */ 
 class GeometricPoint : public GeometricPrimitive
 {
 public:
 
-	/*!
-     * \brief Constructor
-     */
 	GeometricPoint
 	(
 		const std::string& name,
 		const std::string& frame_id,
 		bool visible,
 		const std::vector<double>& color
-	);
-	//: GeometricPrimitive(name, frame_id, visible, color)
-	//{}
-
-	/*!
-     * \brief Destructor
-     */
+	)
+	: GeometricPrimitive(name, frame_id, visible, color)
+	{}
+	
 	~GeometricPoint() noexcept {}
 
+	/*!
+	 * \brief Parses a set of parameters and initializes the point.
+	 *
+	 * \param parameters should be of size 3. <br />
+	 *   Indices 0-2 (required) defines the position of the point.
+	 *
+	 * \return 0 on success, -1 if the wrong number of parameters was sent
+	*/
+	int init(const std::vector<double>& parameters)
+	{
+		int size = parameters.size();
+		if (size != 3)
+		{
+			printHiqpWarning("GeometricPoint requires 3 parameters, got " 
+				+ std::to_string(size) + "! Initialization failed!");
+			return -1;
+		}
 
+		kdl_p_(0) = parameters.at(0);
+		kdl_p_(1) = parameters.at(1);
+		kdl_p_(2) = parameters.at(2);
 
-	int init(const std::vector<double>& parameters);
-	// {
-	// 	int size = parameters.size();
-	// 	if (size != 3)
-	// 	{
-	// 		printHiqpWarning("GeometricPoint requires 3 parameters, got " 
-	// 			+ std::to_string(size) + "! Initialization failed!");
-	// 		return -1;
-	// 	}
+		eigen_p_ << kdl_p_(0), kdl_p_(1), kdl_p_(2);
 
-	// 	kdl_p_(0) = parameters.at(0);
-	// 	kdl_p_(1) = parameters.at(1);
-	// 	kdl_p_(2) = parameters.at(2);
-
-	// 	eigen_p_ << kdl_p_(0), kdl_p_(1), kdl_p_(2);
-
-	// 	return 0;
-	// }
+		return 0;
+	}
 
 
 	inline const KDL::Vector&       getPointKDL() 
@@ -138,6 +140,8 @@ private:
 
 
 
+
+} // namespace geometric_primitives
 
 } // namespace hiqp
 

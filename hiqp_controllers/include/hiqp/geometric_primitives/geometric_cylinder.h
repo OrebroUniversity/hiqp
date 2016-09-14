@@ -17,9 +17,9 @@
 
 
 
-/*!
+/*
  * \file   geometric_cylinder.h
- * \Author Marcus A Johansson (marcus.adam.johansson@gmail.com)
+ * \author Marcus A Johansson (marcus.adam.johansson@gmail.com)
  * \date   July, 2016
  * \brief  Brief description of file.
  *
@@ -45,24 +45,21 @@
 
 namespace hiqp
 {
+namespace geometric_primitives
+{
+
 
 
 
 
 /*!
  * \class GeometricCylinder
- * \brief 
- *
- * The parameter interface for this primitive is:
- * cylinder:     [nx, ny, nz,  x,  y,  z, radius, height]
+ * \brief Parameters: [dir.x, dir.y, dir.z, offset.x, offset.y, offset.z, radius, height]
  */  
 class GeometricCylinder : public GeometricPrimitive
 {
 public:
 
-	/*!
-     * \brief Constructor
-     */
 	GeometricCylinder
 	(
 		const std::string& name,
@@ -73,14 +70,20 @@ public:
 	: GeometricPrimitive(name, frame_id, visible, color)
 	{}
 
-	/*!
-     * \brief Destructor
-     */
 	~GeometricCylinder() noexcept {}
 
 
-
-
+	/*!
+	 * \brief Parses a set of parameters and initializes the cylinder.
+	 *
+	 * \param parameters should be of size 8. <br />
+	 *   Indices 0-2 (required) defines the directional vector of the cylinder, <br />
+	 *   indices 3-5 (required) defines the position of a point on the cylinder's coaxial line, <br />
+	 *   index 6 (required) defines the radius of the cylinder, <br />
+	 *   index 7 (required) defines the height of the cylinder.
+	 *
+	 * \return 0 on success, -1 if the wrong number of parameters was sent
+	*/
 	int init(const std::vector<double>& parameters)
 	{
 		int size = parameters.size();
@@ -104,24 +107,11 @@ public:
 
 		h_ = parameters.at(7);
 
-		// std::string height = parameters.at(7);
-		// if (height.compare("INF")==0 || 
-		// 	height.compare("Inf")==0 || 
-		// 	height.compare("inf")==0)
-		// {
-		// 	h_ = -1;
-		// }
-		// else
-		// {
-		// 	h_ = height );
-		// }
-
 		eigen_v_ << kdl_v_(0), kdl_v_(1), kdl_v_(2);
 		eigen_p_ << kdl_p_(0), kdl_p_(1), kdl_p_(2);
 
 		return 0;
 	}
-
 
 
 
@@ -182,10 +172,7 @@ private:
 
 
 
-
-
-
-
+} // namespace geometric_primitives
 
 } // namespace hiqp
 

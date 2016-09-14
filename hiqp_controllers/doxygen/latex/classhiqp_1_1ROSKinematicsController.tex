@@ -1,0 +1,130 @@
+\hypertarget{classhiqp_1_1ROSKinematicsController}{\section{hiqp\-:\-:R\-O\-S\-Kinematics\-Controller Class Reference}
+\label{classhiqp_1_1ROSKinematicsController}\index{hiqp\-::\-R\-O\-S\-Kinematics\-Controller@{hiqp\-::\-R\-O\-S\-Kinematics\-Controller}}
+}
+Inheritance diagram for hiqp\-:\-:R\-O\-S\-Kinematics\-Controller\-:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{classhiqp_1_1ROSKinematicsController}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classhiqp_1_1ROSKinematicsController_a8d0a319248f8e3debef076389f832696}{\hyperlink{classhiqp_1_1ROSKinematicsController_a8d0a319248f8e3debef076389f832696}{R\-O\-S\-Kinematics\-Controller} ()}\label{classhiqp_1_1ROSKinematicsController_a8d0a319248f8e3debef076389f832696}
+
+\begin{DoxyCompactList}\small\item\em Constructor Constructs my awesome controller. \end{DoxyCompactList}\item 
+\hypertarget{classhiqp_1_1ROSKinematicsController_ab4550e7b5bfd5368c6fcad913bbe4769}{\hyperlink{classhiqp_1_1ROSKinematicsController_ab4550e7b5bfd5368c6fcad913bbe4769}{$\sim$\-R\-O\-S\-Kinematics\-Controller} () noexcept}\label{classhiqp_1_1ROSKinematicsController_ab4550e7b5bfd5368c6fcad913bbe4769}
+
+\begin{DoxyCompactList}\small\item\em Destructor Destructs my awesome controller \-:(. \end{DoxyCompactList}\item 
+bool \hyperlink{classhiqp_1_1ROSKinematicsController_a9acc590f4c514c1321f95f0667d1aae0}{init} (\hyperlink{namespacehiqp_ac536ca3b4ba33489281fa5bec490799c}{Joint\-Velocity\-Interface} $\ast$hw, ros\-::\-Node\-Handle \&controller\-\_\-nh)
+\begin{DoxyCompactList}\small\item\em Called every time the controller is initialized by the ros\-::controller\-\_\-manager. \end{DoxyCompactList}\item 
+void \hyperlink{classhiqp_1_1ROSKinematicsController_a216a9b24cbb343496614d027868af72e}{starting} (const ros\-::\-Time \&time)
+\begin{DoxyCompactList}\small\item\em Called every time the controller is started by the ros\-::controller\-\_\-manager. \end{DoxyCompactList}\item 
+void \hyperlink{classhiqp_1_1ROSKinematicsController_aa4cc3905801b4097916731d0d7af2089}{update} (const ros\-::\-Time \&time, const ros\-::\-Duration \&period)
+\begin{DoxyCompactList}\small\item\em Called every time the controller is updated by the ros\-::controller\-\_\-manager. \end{DoxyCompactList}\item 
+void \hyperlink{classhiqp_1_1ROSKinematicsController_a683aa002bcca543a308e2a8ab507cfa5}{stopping} (const ros\-::\-Time \&time)
+\begin{DoxyCompactList}\small\item\em Called every time the controller is stopped by the ros\-::controller\-\_\-manager. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classhiqp_1_1ROSKinematicsController_a9acc590f4c514c1321f95f0667d1aae0}{\index{hiqp\-::\-R\-O\-S\-Kinematics\-Controller@{hiqp\-::\-R\-O\-S\-Kinematics\-Controller}!init@{init}}
+\index{init@{init}!hiqp::ROSKinematicsController@{hiqp\-::\-R\-O\-S\-Kinematics\-Controller}}
+\subsubsection[{init}]{\setlength{\rightskip}{0pt plus 5cm}bool hiqp\-::\-R\-O\-S\-Kinematics\-Controller\-::init (
+\begin{DoxyParamCaption}
+\item[{{\bf Joint\-Velocity\-Interface} $\ast$}]{hw, }
+\item[{ros\-::\-Node\-Handle \&}]{controller\-\_\-nh}
+\end{DoxyParamCaption}
+)}}\label{classhiqp_1_1ROSKinematicsController_a9acc590f4c514c1321f95f0667d1aae0}
+
+
+Called every time the controller is initialized by the ros\-::controller\-\_\-manager. 
+
+Does some cool stuff!
+
+
+\begin{DoxyParams}{Parameters}
+{\em hw} & \-: a pointer to the hardware interface used by this controller \\
+\hline
+{\em controller\-\_\-nh} & \-: the node handle of this controller \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true if the initialization was successful 
+\end{DoxyReturn}
+\hypertarget{classhiqp_1_1ROSKinematicsController_a216a9b24cbb343496614d027868af72e}{\index{hiqp\-::\-R\-O\-S\-Kinematics\-Controller@{hiqp\-::\-R\-O\-S\-Kinematics\-Controller}!starting@{starting}}
+\index{starting@{starting}!hiqp::ROSKinematicsController@{hiqp\-::\-R\-O\-S\-Kinematics\-Controller}}
+\subsubsection[{starting}]{\setlength{\rightskip}{0pt plus 5cm}void hiqp\-::\-R\-O\-S\-Kinematics\-Controller\-::starting (
+\begin{DoxyParamCaption}
+\item[{const ros\-::\-Time \&}]{time}
+\end{DoxyParamCaption}
+)}}\label{classhiqp_1_1ROSKinematicsController_a216a9b24cbb343496614d027868af72e}
+
+
+Called every time the controller is started by the ros\-::controller\-\_\-manager. 
+
+Does some cool stuff!
+
+
+\begin{DoxyParams}{Parameters}
+{\em time} & \-: the current wall-\/time in R\-O\-S \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true if the starting was successful 
+\end{DoxyReturn}
+\hypertarget{classhiqp_1_1ROSKinematicsController_a683aa002bcca543a308e2a8ab507cfa5}{\index{hiqp\-::\-R\-O\-S\-Kinematics\-Controller@{hiqp\-::\-R\-O\-S\-Kinematics\-Controller}!stopping@{stopping}}
+\index{stopping@{stopping}!hiqp::ROSKinematicsController@{hiqp\-::\-R\-O\-S\-Kinematics\-Controller}}
+\subsubsection[{stopping}]{\setlength{\rightskip}{0pt plus 5cm}void hiqp\-::\-R\-O\-S\-Kinematics\-Controller\-::stopping (
+\begin{DoxyParamCaption}
+\item[{const ros\-::\-Time \&}]{time}
+\end{DoxyParamCaption}
+)}}\label{classhiqp_1_1ROSKinematicsController_a683aa002bcca543a308e2a8ab507cfa5}
+
+
+Called every time the controller is stopped by the ros\-::controller\-\_\-manager. 
+
+Does some cool stuff!
+
+
+\begin{DoxyParams}{Parameters}
+{\em time} & \-: the current wall-\/time in R\-O\-S \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true if the stopping was successful 
+\end{DoxyReturn}
+\hypertarget{classhiqp_1_1ROSKinematicsController_aa4cc3905801b4097916731d0d7af2089}{\index{hiqp\-::\-R\-O\-S\-Kinematics\-Controller@{hiqp\-::\-R\-O\-S\-Kinematics\-Controller}!update@{update}}
+\index{update@{update}!hiqp::ROSKinematicsController@{hiqp\-::\-R\-O\-S\-Kinematics\-Controller}}
+\subsubsection[{update}]{\setlength{\rightskip}{0pt plus 5cm}void hiqp\-::\-R\-O\-S\-Kinematics\-Controller\-::update (
+\begin{DoxyParamCaption}
+\item[{const ros\-::\-Time \&}]{time, }
+\item[{const ros\-::\-Duration \&}]{period}
+\end{DoxyParamCaption}
+)}}\label{classhiqp_1_1ROSKinematicsController_aa4cc3905801b4097916731d0d7af2089}
+
+
+Called every time the controller is updated by the ros\-::controller\-\_\-manager. 
+
+The function\-: 
+\begin{DoxyEnumerate}
+\item locks a mutex and reads position and velocity values from the joint handles, 
+\item calls get\-Kinematic\-Controls() on its task manager, 
+\item and locks a mutex and writes velocity values to the joint handles. 
+\end{DoxyEnumerate}The joint handles are stored as a map between the joints q-\/number in the K\-D\-L\-::\-Tree and the joint handles themselves.
+
+
+\begin{DoxyParams}{Parameters}
+{\em time} & \-: the current wall-\/time in R\-O\-S \\
+\hline
+{\em period} & \-: the time between the last update call and this, i.\-e. the sample time. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true if the update was successful 
+\end{DoxyReturn}
+
+
+The documentation for this class was generated from the following files\-:\begin{DoxyCompactItemize}
+\item 
+include/hiqp/\hyperlink{ros__kinematics__controller_8h}{ros\-\_\-kinematics\-\_\-controller.\-h}\item 
+src/\hyperlink{ros__kinematics__controller_8cpp}{ros\-\_\-kinematics\-\_\-controller.\-cpp}\end{DoxyCompactItemize}

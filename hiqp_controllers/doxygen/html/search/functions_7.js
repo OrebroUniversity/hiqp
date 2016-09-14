@@ -1,8 +1,7 @@
 var searchData=
 [
-  ['setplaneesthetics',['setPlaneEsthetics',['../classhiqp_1_1TaskVisualizer.html#a9615b534b49aa9d9cf0c2d91cd10ba0e',1,'hiqp::TaskVisualizer']]],
-  ['setplanegeometry',['setPlaneGeometry',['../classhiqp_1_1TaskVisualizer.html#acac4eca22d5adadac5857327d06d9b5a',1,'hiqp::TaskVisualizer']]],
-  ['setvisibility',['setVisibility',['../classhiqp_1_1TaskVisualizer.html#ac591685c77aa46472120dad1483cb7e1',1,'hiqp::TaskVisualizer']]],
-  ['starting',['starting',['../classhiqp_1_1HiQPKinematicController.html#ad7b0146f120356c6ed350ff8ed7760d5',1,'hiqp::HiQPKinematicController']]],
-  ['stopping',['stopping',['../classhiqp_1_1HiQPKinematicController.html#ad23d401ef3f80bfc3a1af5f078f8b7f8',1,'hiqp::HiQPKinematicController']]]
+  ['removegeometricprimitive',['removeGeometricPrimitive',['../classhiqp_1_1geometric__primitives_1_1GeometricPrimitiveMap.html#a07d04c1a3bb164bb501bd03cc6bc1eae',1,'hiqp::geometric_primitives::GeometricPrimitiveMap']]],
+  ['removetask',['removeTask',['../classhiqp_1_1TaskManager.html#a1f58d497fa59e23506e6d7d60fe3693d',1,'hiqp::TaskManager']]],
+  ['rosdynamicscontroller',['ROSDynamicsController',['../classhiqp_1_1ROSDynamicsController.html#ab25caf17b0f140092447b5209eb7ddd4',1,'hiqp::ROSDynamicsController']]],
+  ['roskinematicscontroller',['ROSKinematicsController',['../classhiqp_1_1ROSKinematicsController.html#a8d0a319248f8e3debef076389f832696',1,'hiqp::ROSKinematicsController']]]
 ];

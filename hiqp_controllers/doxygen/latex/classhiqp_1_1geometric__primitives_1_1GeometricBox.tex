@@ -1,0 +1,132 @@
+\hypertarget{classhiqp_1_1geometric__primitives_1_1GeometricBox}{\section{hiqp\-:\-:geometric\-\_\-primitives\-:\-:Geometric\-Box Class Reference}
+\label{classhiqp_1_1geometric__primitives_1_1GeometricBox}\index{hiqp\-::geometric\-\_\-primitives\-::\-Geometric\-Box@{hiqp\-::geometric\-\_\-primitives\-::\-Geometric\-Box}}
+}
+
+
+Parameters\-:\par
+ \mbox{[}c.\-x, c.\-y, c.\-z, dim.\-x, dim.\-y, dim.\-z\mbox{]} \par
+ \mbox{[}c.\-x, c.\-y, c.\-z, dim.\-x, dim.\-y, dim.\-z, angle.\-x, angle.\-y, angle.\-z\mbox{]} \par
+ \mbox{[}c.\-x, c.\-y, c.\-z, dim.\-x, dim.\-y, dim.\-z, q.\-w, q.\-x, q.\-y, q.\-z\mbox{]} \par
+  
+
+
+
+
+{\ttfamily \#include $<$geometric\-\_\-box.\-h$>$}
+
+Inheritance diagram for hiqp\-:\-:geometric\-\_\-primitives\-:\-:Geometric\-Box\-:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{classhiqp_1_1geometric__primitives_1_1GeometricBox}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classhiqp_1_1geometric__primitives_1_1GeometricBox_aa52d023049089c48fe4d58e1abda191e}{{\bfseries Geometric\-Box} (const std\-::string \&name, const std\-::string \&frame\-\_\-id, bool visible, const std\-::vector$<$ double $>$ \&color)}\label{classhiqp_1_1geometric__primitives_1_1GeometricBox_aa52d023049089c48fe4d58e1abda191e}
+
+\item 
+int \hyperlink{classhiqp_1_1geometric__primitives_1_1GeometricBox_aae7d637b515e2b35c901a7e2fb5dd6cd}{init} (const std\-::vector$<$ double $>$ \&parameters)
+\begin{DoxyCompactList}\small\item\em Parses a set of parameters and initializes the box. \end{DoxyCompactList}\item 
+\hypertarget{classhiqp_1_1geometric__primitives_1_1GeometricBox_acfb9b2388e5219895e5d5818fc0309d9}{const K\-D\-L\-::\-Vector \& {\bfseries get\-Center\-K\-D\-L} ()}\label{classhiqp_1_1geometric__primitives_1_1GeometricBox_acfb9b2388e5219895e5d5818fc0309d9}
+
+\item 
+\hypertarget{classhiqp_1_1geometric__primitives_1_1GeometricBox_a419fd54ee9d68557fde580047d674d2a}{const Eigen\-::\-Vector3d \& {\bfseries get\-Center\-Eigen} ()}\label{classhiqp_1_1geometric__primitives_1_1GeometricBox_a419fd54ee9d68557fde580047d674d2a}
+
+\item 
+\hypertarget{classhiqp_1_1geometric__primitives_1_1GeometricBox_a25e529e27e5cf1ea193f09b6a3c52e38}{const K\-D\-L\-::\-Vector \& {\bfseries get\-Dimensions\-K\-D\-L} ()}\label{classhiqp_1_1geometric__primitives_1_1GeometricBox_a25e529e27e5cf1ea193f09b6a3c52e38}
+
+\item 
+\hypertarget{classhiqp_1_1geometric__primitives_1_1GeometricBox_a77f1de122e7860e9951efb118287765b}{const Eigen\-::\-Vector3d \& {\bfseries get\-Dimensions\-Eigen} ()}\label{classhiqp_1_1geometric__primitives_1_1GeometricBox_a77f1de122e7860e9951efb118287765b}
+
+\item 
+\hypertarget{classhiqp_1_1geometric__primitives_1_1GeometricBox_ab1e112b2af3cc6982a742ee641056bfb}{const Eigen\-::\-Quaternion$<$ double $>$ \& {\bfseries get\-Quaternion\-Eigen} ()}\label{classhiqp_1_1geometric__primitives_1_1GeometricBox_ab1e112b2af3cc6982a742ee641056bfb}
+
+\item 
+\hypertarget{classhiqp_1_1geometric__primitives_1_1GeometricBox_ad92b80f4b613257574f8fe178e9bb329}{void {\bfseries get\-Quaternion} (double \&w, double \&x, double \&y, double \&z)}\label{classhiqp_1_1geometric__primitives_1_1GeometricBox_ad92b80f4b613257574f8fe178e9bb329}
+
+\item 
+\hypertarget{classhiqp_1_1geometric__primitives_1_1GeometricBox_acd1f99817d10aa2765498322fb503c09}{const Eigen\-::\-Matrix3d \& {\bfseries get\-Scaling\-Matrix} ()}\label{classhiqp_1_1geometric__primitives_1_1GeometricBox_acd1f99817d10aa2765498322fb503c09}
+
+\item 
+\hypertarget{classhiqp_1_1geometric__primitives_1_1GeometricBox_adbfbd7788959ac285a96e5eff56a5c61}{double {\bfseries get\-Center\-X} ()}\label{classhiqp_1_1geometric__primitives_1_1GeometricBox_adbfbd7788959ac285a96e5eff56a5c61}
+
+\item 
+\hypertarget{classhiqp_1_1geometric__primitives_1_1GeometricBox_a9cdcda87654088a51bc821b67ce88942}{double {\bfseries get\-Center\-Y} ()}\label{classhiqp_1_1geometric__primitives_1_1GeometricBox_a9cdcda87654088a51bc821b67ce88942}
+
+\item 
+\hypertarget{classhiqp_1_1geometric__primitives_1_1GeometricBox_ab4c3f4453b9167e2f82fff1b236a95d7}{double {\bfseries get\-Center\-Z} ()}\label{classhiqp_1_1geometric__primitives_1_1GeometricBox_ab4c3f4453b9167e2f82fff1b236a95d7}
+
+\item 
+\hypertarget{classhiqp_1_1geometric__primitives_1_1GeometricBox_a8f5ccb354be710855b20adb54bf207f3}{double {\bfseries get\-Dim\-X} ()}\label{classhiqp_1_1geometric__primitives_1_1GeometricBox_a8f5ccb354be710855b20adb54bf207f3}
+
+\item 
+\hypertarget{classhiqp_1_1geometric__primitives_1_1GeometricBox_a954412b5c06750258d5250ae1c206622}{double {\bfseries get\-Dim\-Y} ()}\label{classhiqp_1_1geometric__primitives_1_1GeometricBox_a954412b5c06750258d5250ae1c206622}
+
+\item 
+\hypertarget{classhiqp_1_1geometric__primitives_1_1GeometricBox_a07282003e93d457b36e5d09a6774f2c9}{double {\bfseries get\-Dim\-Z} ()}\label{classhiqp_1_1geometric__primitives_1_1GeometricBox_a07282003e93d457b36e5d09a6774f2c9}
+
+\end{DoxyCompactItemize}
+\subsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classhiqp_1_1geometric__primitives_1_1GeometricBox_ad9b5e3a8dcc30620584bf27d6d1dda71}{K\-D\-L\-::\-Vector {\bfseries kdl\-\_\-c\-\_\-}}\label{classhiqp_1_1geometric__primitives_1_1GeometricBox_ad9b5e3a8dcc30620584bf27d6d1dda71}
+
+\item 
+\hypertarget{classhiqp_1_1geometric__primitives_1_1GeometricBox_a96ad47d72a6dbf78c4f52db15a52ed01}{Eigen\-::\-Vector3d {\bfseries eigen\-\_\-c\-\_\-}}\label{classhiqp_1_1geometric__primitives_1_1GeometricBox_a96ad47d72a6dbf78c4f52db15a52ed01}
+
+\item 
+\hypertarget{classhiqp_1_1geometric__primitives_1_1GeometricBox_aa4bd006daadaa6feed4fd24c1892629a}{K\-D\-L\-::\-Vector {\bfseries kdl\-\_\-dim\-\_\-}}\label{classhiqp_1_1geometric__primitives_1_1GeometricBox_aa4bd006daadaa6feed4fd24c1892629a}
+
+\item 
+\hypertarget{classhiqp_1_1geometric__primitives_1_1GeometricBox_a8be3b55e5793038692a7f43663b97309}{Eigen\-::\-Vector3d {\bfseries eigen\-\_\-dim\-\_\-}}\label{classhiqp_1_1geometric__primitives_1_1GeometricBox_a8be3b55e5793038692a7f43663b97309}
+
+\item 
+\hypertarget{classhiqp_1_1geometric__primitives_1_1GeometricBox_a4a57c7bef7efb4ed2f5535c796b00678}{Eigen\-::\-Quaternion$<$ double $>$ {\bfseries q\-\_\-}}\label{classhiqp_1_1geometric__primitives_1_1GeometricBox_a4a57c7bef7efb4ed2f5535c796b00678}
+
+\item 
+\hypertarget{classhiqp_1_1geometric__primitives_1_1GeometricBox_a6889ebbde5629bcd835a63948a3062b8}{Eigen\-::\-Matrix3d {\bfseries scaling\-\_\-matrix\-\_\-}}\label{classhiqp_1_1geometric__primitives_1_1GeometricBox_a6889ebbde5629bcd835a63948a3062b8}
+
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Parameters\-:\par
+ \mbox{[}c.\-x, c.\-y, c.\-z, dim.\-x, dim.\-y, dim.\-z\mbox{]} \par
+ \mbox{[}c.\-x, c.\-y, c.\-z, dim.\-x, dim.\-y, dim.\-z, angle.\-x, angle.\-y, angle.\-z\mbox{]} \par
+ \mbox{[}c.\-x, c.\-y, c.\-z, dim.\-x, dim.\-y, dim.\-z, q.\-w, q.\-x, q.\-y, q.\-z\mbox{]} \par
+ 
+
+\subsection{Member Function Documentation}
+\hypertarget{classhiqp_1_1geometric__primitives_1_1GeometricBox_aae7d637b515e2b35c901a7e2fb5dd6cd}{\index{hiqp\-::geometric\-\_\-primitives\-::\-Geometric\-Box@{hiqp\-::geometric\-\_\-primitives\-::\-Geometric\-Box}!init@{init}}
+\index{init@{init}!hiqp::geometric_primitives::GeometricBox@{hiqp\-::geometric\-\_\-primitives\-::\-Geometric\-Box}}
+\subsubsection[{init}]{\setlength{\rightskip}{0pt plus 5cm}int hiqp\-::geometric\-\_\-primitives\-::\-Geometric\-Box\-::init (
+\begin{DoxyParamCaption}
+\item[{const std\-::vector$<$ double $>$ \&}]{parameters}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}}\label{classhiqp_1_1geometric__primitives_1_1GeometricBox_aae7d637b515e2b35c901a7e2fb5dd6cd}
+
+
+Parses a set of parameters and initializes the box. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em parameters} & should be of size 6, 9, or 10. \par
+ Indices 0-\/2 (required) defines the position of the center of the box, \par
+ indices 3-\/5 (required) defines the dimensions of the box, \par
+ indices 6-\/8 (optional) defines euler angles of the orientation of the box (xyz) \par
+ indices 6-\/9 (optional) defines a quaternion for the orientation of the box.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+0 on success, -\/1 if the wrong number of parameters was sent 
+\end{DoxyReturn}
+
+
+Implements \hyperlink{classhiqp_1_1geometric__primitives_1_1GeometricPrimitive_a3697e5afb0121715280da649b8bd711d}{hiqp\-::geometric\-\_\-primitives\-::\-Geometric\-Primitive}.
+
+
+
+The documentation for this class was generated from the following file\-:\begin{DoxyCompactItemize}
+\item 
+include/hiqp/geometric\-\_\-primitives/geometric\-\_\-box.\-h\end{DoxyCompactItemize}

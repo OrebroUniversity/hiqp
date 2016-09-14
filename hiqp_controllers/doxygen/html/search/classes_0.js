@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['hiqpkinematiccontroller',['HiQPKinematicController',['../classhiqp_1_1HiQPKinematicController.html',1,'hiqp']]]
+  ['casadisolver',['CasADiSolver',['../classhiqp_1_1CasADiSolver.html',1,'hiqp']]]
 ];

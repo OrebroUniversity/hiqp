@@ -37,6 +37,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow1" class="tabs">
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
+      <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
       <li><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li><a href="annotated.html"><span>Classes</span></a></li>
       <li class="current"><a href="files.html"><span>Files</span></a></li>
@@ -68,7 +69,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Typedefs</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Pages</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -94,6 +95,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <p>Brief description of file.  
 <a href="#details">More...</a></p>
 <div class="textblock"><code>#include &lt;iostream&gt;</code><br/>
+<code>#include &lt;kdl/frames.hpp&gt;</code><br/>
 <code>#include &lt;kdl/tree.hpp&gt;</code><br/>
 <code>#include &lt;kdl/framevel.hpp&gt;</code><br/>
 <code>#include &lt;kdl/jntarray.hpp&gt;</code><br/>
@@ -110,6 +112,9 @@ Namespaces</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
+<tr class="memitem:ae25bb9b7205ab2630606197e8a35af8f"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae25bb9b7205ab2630606197e8a35af8f"></a>
+std::ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>hiqp::operator&lt;&lt;</b> (std::ostream &amp;os, const KDL::Vector &amp;kdl_vector)</td></tr>
+<tr class="separator:ae25bb9b7205ab2630606197e8a35af8f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ace17cd6f24f52ba09f129ab50f435f99"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ace17cd6f24f52ba09f129ab50f435f99"></a>
 std::ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>hiqp::operator&lt;&lt;</b> (std::ostream &amp;os, const KDL::Tree &amp;kdl_tree)</td></tr>
 <tr class="separator:ace17cd6f24f52ba09f129ab50f435f99"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -122,12 +127,21 @@ std::ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>hiqp::o
 <tr class="memitem:a6a26da69453463527d0b4c99884983c9"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6a26da69453463527d0b4c99884983c9"></a>
 std::ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>hiqp::operator&lt;&lt;</b> (std::ostream &amp;os, const KDL::Chain &amp;kdl_chain)</td></tr>
 <tr class="separator:a6a26da69453463527d0b4c99884983c9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a673449513c090a51acfecade84fa3e60"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a673449513c090a51acfecade84fa3e60"></a>
-unsigned int&#160;</td><td class="memItemRight" valign="bottom"><b>hiqp::kdl_getQNrFromJointName</b> (const KDL::Tree &amp;kdl_tree, const std::string &amp;joint_name)</td></tr>
-<tr class="separator:a673449513c090a51acfecade84fa3e60"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a95f3af7af45e7c81eda13572f2d3cc38"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a95f3af7af45e7c81eda13572f2d3cc38"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><b>hiqp::kdl_getQNrFromJointName</b> (const KDL::Tree &amp;kdl_tree, const std::string &amp;joint_name)</td></tr>
+<tr class="separator:a95f3af7af45e7c81eda13572f2d3cc38"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afc65617e444dcefe5ca39e0dac2a17b2"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="afc65617e444dcefe5ca39e0dac2a17b2"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><b>hiqp::kdl_getQNrFromLinkName</b> (const KDL::Tree &amp;kdl_tree, const std::string &amp;link_name)</td></tr>
+<tr class="separator:afc65617e444dcefe5ca39e0dac2a17b2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9266d35577397a64d24935da167b406a"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a9266d35577397a64d24935da167b406a"></a>
 int&#160;</td><td class="memItemRight" valign="bottom"><b>hiqp::kdl_JntToJac</b> (const KDL::Tree &amp;tree, const KDL::JntArrayVel &amp;qqdot, KDL::Jacobian &amp;jac, const std::string &amp;segmentname)</td></tr>
 <tr class="separator:a9266d35577397a64d24935da167b406a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aed9588cb786450e506ca68402880b1d8"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aed9588cb786450e506ca68402880b1d8"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>hiqp::printHiqpInfo</b> (const std::string &amp;msg)</td></tr>
+<tr class="separator:aed9588cb786450e506ca68402880b1d8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0993b019bfc0f0e2b38e76b2979eb0e0"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0993b019bfc0f0e2b38e76b2979eb0e0"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>hiqp::printHiqpWarning</b> (const std::string &amp;msg)</td></tr>
+<tr class="separator:a0993b019bfc0f0e2b38e76b2979eb0e0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5762e31938369b2fdbd81ac2bd11ca0f"><td class="memTemplParams" colspan="2">template&lt;typename Derived &gt; </td></tr>
 <tr class="memitem:a5762e31938369b2fdbd81ac2bd11ca0f"><td class="memTemplItemLeft" align="right" valign="top">Derived&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacehiqp.html#a5762e31938369b2fdbd81ac2bd11ca0f">hiqp::pinv</a> (const Eigen::MatrixBase&lt; Derived &gt; &amp;a)</td></tr>
 <tr class="memdesc:a5762e31938369b2fdbd81ac2bd11ca0f"><td class="mdescLeft">&#160;</td><td class="mdescRight">calculates the Moore-Penrose Pseudoinverse for any sized matrices.  <a href="#a5762e31938369b2fdbd81ac2bd11ca0f">More...</a><br/></td></tr>
@@ -144,7 +158,7 @@ int&#160;</td><td class="memItemRight" valign="bottom"><b>hiqp::kdl_JntToJac</b>
 </div></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Mon Jul 18 2016 13:55:12 for HiQP_Controllers ROS Package by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Sep 14 2016 15:19:24 for HiQP_Controllers ROS Package by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

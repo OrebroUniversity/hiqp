@@ -13,17 +13,38 @@ Should be created only once!
 \subsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-\hypertarget{classhiqp_1_1TaskManager_af3ca4a5c83b5edb21acb10b79545941e}{\hyperlink{classhiqp_1_1TaskManager_af3ca4a5c83b5edb21acb10b79545941e}{Task\-Manager} (\hyperlink{classhiqp_1_1TaskVisualizer}{Task\-Visualizer} $\ast$task\-\_\-visualizer)}\label{classhiqp_1_1TaskManager_af3ca4a5c83b5edb21acb10b79545941e}
+\hypertarget{classhiqp_1_1TaskManager_a79ce349f194b18d0fb6177dde0903b2b}{\hyperlink{classhiqp_1_1TaskManager_a79ce349f194b18d0fb6177dde0903b2b}{Task\-Manager} (\hyperlink{classhiqp_1_1Visualizer}{Visualizer} $\ast$visualizer)}\label{classhiqp_1_1TaskManager_a79ce349f194b18d0fb6177dde0903b2b}
 
 \begin{DoxyCompactList}\small\item\em Constructor Constructs my awesome controller. \end{DoxyCompactList}\item 
-\hypertarget{classhiqp_1_1TaskManager_a688ad548e2ef681b458c1fc90326f6e6}{\hyperlink{classhiqp_1_1TaskManager_a688ad548e2ef681b458c1fc90326f6e6}{$\sim$\-Task\-Manager} () noexcept}\label{classhiqp_1_1TaskManager_a688ad548e2ef681b458c1fc90326f6e6}
-
+\hyperlink{classhiqp_1_1TaskManager_a688ad548e2ef681b458c1fc90326f6e6}{$\sim$\-Task\-Manager} () noexcept
 \begin{DoxyCompactList}\small\item\em Destructor Destructs my awesome manager. \end{DoxyCompactList}\item 
-bool \hyperlink{classhiqp_1_1TaskManager_a54458771323acf4e35b1543473810d20}{get\-Kinematic\-Controls} (const K\-D\-L\-::\-Tree \&kdl\-\_\-tree, const K\-D\-L\-::\-Jnt\-Array\-Vel \&kdl\-\_\-joint\-\_\-pos\-\_\-vel, std\-::vector$<$ double $>$ \&controls)
-\begin{DoxyCompactList}\small\item\em Called every time the controller is initialized by the ros\-::controller\-\_\-manager. \end{DoxyCompactList}\item 
-std\-::size\-\_\-t \hyperlink{classhiqp_1_1TaskManager_a623cbd089f186f92293721d08f6fc5b4}{add\-Task} (const std\-::string \&task\-\_\-name, const std\-::string \&behaviour\-\_\-name, const std\-::vector$<$ std\-::string $>$ \&behaviour\-\_\-parameters, unsigned int priority, bool visibility, const std\-::vector$<$ std\-::string $>$ \&parameters)
+\hypertarget{classhiqp_1_1TaskManager_a640c2adc882769f691557a7ffd9c6cab}{void {\bfseries init} (unsigned int num\-\_\-controls)}\label{classhiqp_1_1TaskManager_a640c2adc882769f691557a7ffd9c6cab}
+
+\item 
+bool \hyperlink{classhiqp_1_1TaskManager_a077ffe75d41dd8be2c728824d93207ce}{get\-Kinematic\-Controls} (const \hyperlink{classhiqp_1_1HiQPTimePoint}{Hi\-Q\-P\-Time\-Point} \&sampling\-\_\-time, const K\-D\-L\-::\-Tree \&kdl\-\_\-tree, const K\-D\-L\-::\-Jnt\-Array\-Vel \&kdl\-\_\-joint\-\_\-pos\-\_\-vel, std\-::vector$<$ double $>$ \&controls)
+\begin{DoxyCompactList}\small\item\em Called every time the controller is updated by the ros\-::controller\-\_\-manager. \end{DoxyCompactList}\item 
+void \hyperlink{classhiqp_1_1TaskManager_a96169e24a3972b61eab9d0e15fdf723c}{get\-Task\-Monitoring\-Data} (std\-::vector$<$ \hyperlink{classhiqp_1_1TaskMonitoringData}{Task\-Monitoring\-Data} $>$ \&data)
+\begin{DoxyCompactList}\small\item\em Retrieves the performance measures for every active task along with the task's name and unique identifier. \end{DoxyCompactList}\item 
+int \hyperlink{classhiqp_1_1TaskManager_a6ae5db3755ca5231a99b1b0c5f06e00d}{add\-Task} (const std\-::string \&name, const std\-::string \&type, const std\-::vector$<$ std\-::string $>$ \&behaviour\-\_\-parameters, unsigned int priority, bool visibility, const std\-::vector$<$ std\-::string $>$ \&parameters, const \hyperlink{classhiqp_1_1HiQPTimePoint}{Hi\-Q\-P\-Time\-Point} \&sampling\-\_\-time, const K\-D\-L\-::\-Tree \&kdl\-\_\-tree, const K\-D\-L\-::\-Jnt\-Array\-Vel \&kdl\-\_\-joint\-\_\-pos\-\_\-vel)
 \begin{DoxyCompactList}\small\item\em Adds a task to the task manager and activates it. \end{DoxyCompactList}\item 
-\hypertarget{classhiqp_1_1TaskManager_a2e7eae21859a4ef31d502a227e6d15b5}{int {\bfseries remove\-Task} (std\-::size\-\_\-t task\-\_\-id)}\label{classhiqp_1_1TaskManager_a2e7eae21859a4ef31d502a227e6d15b5}
+\hypertarget{classhiqp_1_1TaskManager_aa8248ca15ed12ab7d2dd7b77fb6250e8}{int {\bfseries update\-Task} (const std\-::string \&name, const std\-::string \&type, const std\-::vector$<$ std\-::string $>$ \&behaviour\-\_\-parameters, unsigned int priority, bool visibility, const std\-::vector$<$ std\-::string $>$ \&parameters, const \hyperlink{classhiqp_1_1HiQPTimePoint}{Hi\-Q\-P\-Time\-Point} \&sampling\-\_\-time, const K\-D\-L\-::\-Tree \&kdl\-\_\-tree, const K\-D\-L\-::\-Jnt\-Array\-Vel \&kdl\-\_\-joint\-\_\-pos\-\_\-vel)}\label{classhiqp_1_1TaskManager_aa8248ca15ed12ab7d2dd7b77fb6250e8}
+
+\item 
+int \hyperlink{classhiqp_1_1TaskManager_a1f58d497fa59e23506e6d7d60fe3693d}{remove\-Task} (std\-::string task\-\_\-name)
+\item 
+\hypertarget{classhiqp_1_1TaskManager_a929fdbdd83a994ae77177ef27a9f943f}{int {\bfseries remove\-All\-Tasks} ()}\label{classhiqp_1_1TaskManager_a929fdbdd83a994ae77177ef27a9f943f}
+
+\item 
+\hypertarget{classhiqp_1_1TaskManager_adaae639bf137e5777698874baf546dc9}{int {\bfseries add\-Geometric\-Primitive} (const std\-::string \&name, const std\-::string \&type, const std\-::string \&frame\-\_\-id, bool visible, const std\-::vector$<$ double $>$ \&color, const std\-::vector$<$ double $>$ \&parameters)}\label{classhiqp_1_1TaskManager_adaae639bf137e5777698874baf546dc9}
+
+\item 
+\hypertarget{classhiqp_1_1TaskManager_aa6bdcfaeffc34104e03a552fd8d0edbf}{int {\bfseries remove\-Geometric\-Primitive} (std\-::string name)}\label{classhiqp_1_1TaskManager_aa6bdcfaeffc34104e03a552fd8d0edbf}
+
+\item 
+\hypertarget{classhiqp_1_1TaskManager_a39cff5e3787625265ca83b881c7fae84}{int {\bfseries remove\-All\-Geometric\-Primitives} ()}\label{classhiqp_1_1TaskManager_a39cff5e3787625265ca83b881c7fae84}
+
+\item 
+\hypertarget{classhiqp_1_1TaskManager_a6218eff8858bd644d58fed63ef29d290}{Geometric\-Primitive\-Map $\ast$ {\bfseries get\-Geometric\-Primitive\-Map} ()}\label{classhiqp_1_1TaskManager_a6218eff8858bd644d58fed63ef29d290}
 
 \end{DoxyCompactItemize}
 
@@ -33,19 +54,38 @@ Should be created only once!
 
 It's awesome! 
 
-\subsection{Member Function Documentation}
-\hypertarget{classhiqp_1_1TaskManager_a623cbd089f186f92293721d08f6fc5b4}{\index{hiqp\-::\-Task\-Manager@{hiqp\-::\-Task\-Manager}!add\-Task@{add\-Task}}
-\index{add\-Task@{add\-Task}!hiqp::TaskManager@{hiqp\-::\-Task\-Manager}}
-\subsubsection[{add\-Task}]{\setlength{\rightskip}{0pt plus 5cm}std\-::size\-\_\-t hiqp\-::\-Task\-Manager\-::add\-Task (
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classhiqp_1_1TaskManager_a688ad548e2ef681b458c1fc90326f6e6}{\index{hiqp\-::\-Task\-Manager@{hiqp\-::\-Task\-Manager}!$\sim$\-Task\-Manager@{$\sim$\-Task\-Manager}}
+\index{$\sim$\-Task\-Manager@{$\sim$\-Task\-Manager}!hiqp::TaskManager@{hiqp\-::\-Task\-Manager}}
+\subsubsection[{$\sim$\-Task\-Manager}]{\setlength{\rightskip}{0pt plus 5cm}hiqp\-::\-Task\-Manager\-::$\sim$\-Task\-Manager (
 \begin{DoxyParamCaption}
-\item[{const std\-::string \&}]{task\-\_\-name, }
-\item[{const std\-::string \&}]{behaviour\-\_\-name, }
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [noexcept]}}}\label{classhiqp_1_1TaskManager_a688ad548e2ef681b458c1fc90326f6e6}
+
+
+Destructor Destructs my awesome manager. 
+
+\begin{DoxyRefDesc}{Todo}
+\item[\hyperlink{todo__todo000003}{Todo}]cleanup of tasks and task dynamics is missing! \end{DoxyRefDesc}
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classhiqp_1_1TaskManager_a6ae5db3755ca5231a99b1b0c5f06e00d}{\index{hiqp\-::\-Task\-Manager@{hiqp\-::\-Task\-Manager}!add\-Task@{add\-Task}}
+\index{add\-Task@{add\-Task}!hiqp::TaskManager@{hiqp\-::\-Task\-Manager}}
+\subsubsection[{add\-Task}]{\setlength{\rightskip}{0pt plus 5cm}int hiqp\-::\-Task\-Manager\-::add\-Task (
+\begin{DoxyParamCaption}
+\item[{const std\-::string \&}]{name, }
+\item[{const std\-::string \&}]{type, }
 \item[{const std\-::vector$<$ std\-::string $>$ \&}]{behaviour\-\_\-parameters, }
 \item[{unsigned int}]{priority, }
 \item[{bool}]{visibility, }
-\item[{const std\-::vector$<$ std\-::string $>$ \&}]{parameters}
+\item[{const std\-::vector$<$ std\-::string $>$ \&}]{parameters, }
+\item[{const {\bf Hi\-Q\-P\-Time\-Point} \&}]{sampling\-\_\-time, }
+\item[{const K\-D\-L\-::\-Tree \&}]{kdl\-\_\-tree, }
+\item[{const K\-D\-L\-::\-Jnt\-Array\-Vel \&}]{kdl\-\_\-joint\-\_\-pos\-\_\-vel}
 \end{DoxyParamCaption}
-)}}\label{classhiqp_1_1TaskManager_a623cbd089f186f92293721d08f6fc5b4}
+)}}\label{classhiqp_1_1TaskManager_a6ae5db3755ca5231a99b1b0c5f06e00d}
 
 
 Adds a task to the task manager and activates it. 
@@ -60,24 +100,27 @@ Adds a task to the task manager and activates it.
 \hline
 {\em visible} & \-: whether this task should be visible or not \\
 \hline
-{\em parameters} & \-: the task specific parameters\\
+{\em parameters} & \-: the task specific parameters \\
+\hline
+{\em num\-Controls} & \-: the total number of controls used by the controller\\
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
-0 if the task creation was successful, -\/1 is the task name was not recognised, -\/2 if the task behaviour name was not recognised 
+0 if the task creation was successful, -\/1 is the behaviour\-\_\-parameters argument was invalid, -\/2 if the task behaviour name was not recognised, -\/3 if the task name was not recognised 
 \end{DoxyReturn}
-\hypertarget{classhiqp_1_1TaskManager_a54458771323acf4e35b1543473810d20}{\index{hiqp\-::\-Task\-Manager@{hiqp\-::\-Task\-Manager}!get\-Kinematic\-Controls@{get\-Kinematic\-Controls}}
+\hypertarget{classhiqp_1_1TaskManager_a077ffe75d41dd8be2c728824d93207ce}{\index{hiqp\-::\-Task\-Manager@{hiqp\-::\-Task\-Manager}!get\-Kinematic\-Controls@{get\-Kinematic\-Controls}}
 \index{get\-Kinematic\-Controls@{get\-Kinematic\-Controls}!hiqp::TaskManager@{hiqp\-::\-Task\-Manager}}
 \subsubsection[{get\-Kinematic\-Controls}]{\setlength{\rightskip}{0pt plus 5cm}bool hiqp\-::\-Task\-Manager\-::get\-Kinematic\-Controls (
 \begin{DoxyParamCaption}
+\item[{const {\bf Hi\-Q\-P\-Time\-Point} \&}]{sampling\-\_\-time, }
 \item[{const K\-D\-L\-::\-Tree \&}]{kdl\-\_\-tree, }
 \item[{const K\-D\-L\-::\-Jnt\-Array\-Vel \&}]{kdl\-\_\-joint\-\_\-pos\-\_\-vel, }
 \item[{std\-::vector$<$ double $>$ \&}]{controls}
 \end{DoxyParamCaption}
-)}}\label{classhiqp_1_1TaskManager_a54458771323acf4e35b1543473810d20}
+)}}\label{classhiqp_1_1TaskManager_a077ffe75d41dd8be2c728824d93207ce}
 
 
-Called every time the controller is initialized by the ros\-::controller\-\_\-manager. 
+Called every time the controller is updated by the ros\-::controller\-\_\-manager. 
 
 Does some cool stuff!
 
@@ -93,6 +136,33 @@ Does some cool stuff!
 \begin{DoxyReturn}{Returns}
 true if the initialization was successful 
 \end{DoxyReturn}
+\hypertarget{classhiqp_1_1TaskManager_a96169e24a3972b61eab9d0e15fdf723c}{\index{hiqp\-::\-Task\-Manager@{hiqp\-::\-Task\-Manager}!get\-Task\-Monitoring\-Data@{get\-Task\-Monitoring\-Data}}
+\index{get\-Task\-Monitoring\-Data@{get\-Task\-Monitoring\-Data}!hiqp::TaskManager@{hiqp\-::\-Task\-Manager}}
+\subsubsection[{get\-Task\-Monitoring\-Data}]{\setlength{\rightskip}{0pt plus 5cm}void hiqp\-::\-Task\-Manager\-::get\-Task\-Monitoring\-Data (
+\begin{DoxyParamCaption}
+\item[{std\-::vector$<$ {\bf Task\-Monitoring\-Data} $>$ \&}]{data}
+\end{DoxyParamCaption}
+)}}\label{classhiqp_1_1TaskManager_a96169e24a3972b61eab9d0e15fdf723c}
+
+
+Retrieves the performance measures for every active task along with the task's name and unique identifier. 
+
+N\-O\-T\-E\-: The vector sent to this function is supposed to be empty
+
+
+\begin{DoxyParams}{Parameters}
+{\em data} & \-: a reference to a vector of monitoring data structures \\
+\hline
+\end{DoxyParams}
+\hypertarget{classhiqp_1_1TaskManager_a1f58d497fa59e23506e6d7d60fe3693d}{\index{hiqp\-::\-Task\-Manager@{hiqp\-::\-Task\-Manager}!remove\-Task@{remove\-Task}}
+\index{remove\-Task@{remove\-Task}!hiqp::TaskManager@{hiqp\-::\-Task\-Manager}}
+\subsubsection[{remove\-Task}]{\setlength{\rightskip}{0pt plus 5cm}int hiqp\-::\-Task\-Manager\-::remove\-Task (
+\begin{DoxyParamCaption}
+\item[{std\-::string}]{task\-\_\-name}
+\end{DoxyParamCaption}
+)}}\label{classhiqp_1_1TaskManager_a1f58d497fa59e23506e6d7d60fe3693d}
+\begin{DoxyRefDesc}{Todo}
+\item[\hyperlink{todo__todo000004}{Todo}]removal of tasks must also delete task dynamics or else there's a memory leak! \end{DoxyRefDesc}
 
 
 The documentation for this class was generated from the following files\-:\begin{DoxyCompactItemize}

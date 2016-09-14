@@ -17,9 +17,9 @@
 
 
 
-/*!
+/*
  * \file   geometric_line.h
- * \Author Marcus A Johansson (marcus.adam.johansson@gmail.com)
+ * \author Marcus A Johansson (marcus.adam.johansson@gmail.com)
  * \date   July, 2016
  * \brief  Brief description of file.
  *
@@ -46,24 +46,20 @@
 
 namespace hiqp
 {
+namespace geometric_primitives
+{
 
 
 
 
 /*!
- * \class GeometricLineSegment
- * \brief 
- * 
- * The parameter interface for this primitive is:
- * line:         [nx, ny, nz,  x,  y,  z]
+ * \class GeometricLine
+ * \brief Parameters: [dir.x, dir.y, dir.z, offset.x, offset.y, offset.z]
  */  
 class GeometricLine : public GeometricPrimitive
 {
 public:
 
-	/*!
-     * \brief Constructor
-     */
 	GeometricLine
 	(
 		const std::string& name,
@@ -74,13 +70,18 @@ public:
 	: GeometricPrimitive(name, frame_id, visible, color)
 	{}
 
-	/*!
-     * \brief Destructor
-     */
 	~GeometricLine() noexcept {}
 
 
-
+	/*!
+	 * \brief Parses a set of parameters and initializes the line.
+	 *
+	 * \param parameters should be of size 6. <br />
+	 *   Indices 0-2 (required) defines the directional vector of the cylinder, <br />
+	 *   indices 3-5 (required) defines the position of a point on the cylinder's coaxial line.
+	 *
+	 * \return 0 on success, -1 if the wrong number of parameters was sent
+	*/
 	int init(const std::vector<double>& parameters)
 	{
 		int size = parameters.size();
@@ -164,6 +165,8 @@ private:
 
 
 
+
+} // namespace geometric_primitives
 
 } // namespace hiqp
 

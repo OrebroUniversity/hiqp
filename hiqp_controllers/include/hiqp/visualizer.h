@@ -47,7 +47,12 @@
 namespace hiqp
 {
 
-
+using geometric_primitives::GeometricPoint;
+using geometric_primitives::GeometricLine;
+using geometric_primitives::GeometricPlane;
+using geometric_primitives::GeometricBox;
+using geometric_primitives::GeometricCylinder;
+using geometric_primitives::GeometricSphere;
 
 
 

@@ -14,36 +14,36 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
-
-/*!
+/*
  * \file   ros_topic_subscriber.h
- * \Author Marcus A Johansson (marcus.adam.johansson@gmail.com)
+ * \author Marcus A Johansson (marcus.adam.johansson@gmail.com)
  * \date   July, 2016
  * \brief  Brief description of file.
  *
  * Detailed description of file.
  */
 
-
-// HiQP Includes
-#include <hiqp/geometric_primitive_map.h>
-
 // STL Includes
 #include <string>
 #include <vector>
 
+// HiQP Includes
+#include <hiqp/geometric_primitives/geometric_primitive_map.h>
+
 // ROS Includes
 #include "ros/ros.h"
-
 
 #ifndef HIQP_ROS_TOPIC_SUBSCRIBER_H
 #define HIQP_ROS_TOPIC_SUBSCRIBER_H
 
+
+
+
+
 namespace hiqp
 {
 
+using geometric_primitives::GeometricPrimitiveMap;
 
 class ROSTopicSubscriber
 {
@@ -81,8 +81,8 @@ public:
 	void topicCallback(const ROSMessageType& msg);
 
 
-private:
 
+private:
 	// No copying of this class is allowed !
 	ROSTopicSubscriber(const ROSTopicSubscriber& other) = delete;
 	ROSTopicSubscriber(ROSTopicSubscriber&& other) = delete;
@@ -93,10 +93,8 @@ private:
 
 	GeometricPrimitiveMap* 		primitive_map_;
 
-};
+}; // class ROSTopicSubscriber
 
+} // namespace hiqp
 
-
-}
-
-#endif
+#endif // Include guard

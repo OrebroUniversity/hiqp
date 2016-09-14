@@ -17,9 +17,9 @@
 
 
 
-/*!
+/*
  * \file   geometric_plane.h
- * \Author Marcus A Johansson (marcus.adam.johansson@gmail.com)
+ * \author Marcus A Johansson (marcus.adam.johansson@gmail.com)
  * \date   July, 2016
  * \brief  Brief description of file.
  *
@@ -45,22 +45,20 @@
 
 namespace hiqp
 {
+namespace geometric_primitives
+{
 
 
 
 
 /*!
  * \class GeometricPlane
- * \brief 
- */  
+ * \brief Parameters: [n.x, n.y, n.z, offset]
+ */ 
 class GeometricPlane : public GeometricPrimitive
 {
 public:
 
-	/*!
-     * \brief Constructor
-     * Constructs my awesome task
-     */
 	GeometricPlane
 	(
 		const std::string& name,
@@ -71,13 +69,17 @@ public:
 	: GeometricPrimitive(name, frame_id, visible, color)
 	{}
 
-	/*!
-     * \brief Destructor
-     * Destructs my awesome task
-     */
 	~GeometricPlane() noexcept {}
 
-
+	/*!
+	 * \brief Parses a set of parameters and initializes the plane.
+	 *
+	 * \param parameters should be of size 4. <br />
+	 *   Indices 0-2 (required) defines the normal vector of the plane, <br />
+	 *   index 3 (required) defines the offset of the plane in the normal direction.
+	 *
+	 * \return 0 on success, -1 if the wrong number of parameters was sent
+	*/
 	int init(const std::vector<double>& parameters)
 	{
 		int size = parameters.size();
@@ -145,6 +147,8 @@ private:
 
 
 
+
+} // namespace geometric_primitives
 
 } // namespace hiqp
 

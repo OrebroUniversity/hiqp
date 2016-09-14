@@ -65,8 +65,7 @@ include_directories(${GUROBI_INCLUDE_DIR})
 
 link_directories(${GUROBI_LIB_DIR})
 
-add_library(${PROJECT_NAME} src/geometric_primitive_map.cpp
-                            src/hiqp_utils.cpp
+add_library(${PROJECT_NAME} src/hiqp_utils.cpp
                             src/hiqp_time_point.cpp
                             src/ros_kinematics_controller.cpp
                             src/ros_topic_subscriber.cpp
@@ -74,7 +73,7 @@ add_library(${PROJECT_NAME} src/geometric_primitive_map.cpp
                             src/task_factory.cpp
                             src/task_manager.cpp
 
-                            src/geometric_primitives/geometric_point.cpp
+                            src/geometric_primitives/geometric_primitive_map.cpp
 
                             src/solvers/casadi_solver.cpp
 

@@ -17,9 +17,9 @@
 
 
 
-/*!
+/*
  * \file   geometric_box.h
- * \Author Marcus A Johansson (marcus.adam.johansson@gmail.com)
+ * \author Marcus A Johansson (marcus.adam.johansson@gmail.com)
  * \date   July, 2016
  * \brief  Brief description of file.
  *
@@ -45,28 +45,23 @@
 
 namespace hiqp
 {
+namespace geometric_primitives
+{
 
 
 
 
 /*!
  * \class GeometricBox
- * \brief 
- * 
- * The angle is the box's clockwise angle of rotation around the normal vector 
- * of the upper side while looking in the same direction as the normal vector.
- * 
- * box:          [x, y, z, w, d, h]
- * box:          [x, y, z, w, d, h, ex, ey, ez] (using the 2-1-2 Euler angle convention)
- * box:          [x, y, z, w, d, h, qw, qx, qy, qz]
+ * \brief Parameters:<br />
+ *        [c.x, c.y, c.z, dim.x, dim.y, dim.z] <br />
+ *        [c.x, c.y, c.z, dim.x, dim.y, dim.z, angle.x, angle.y, angle.z] <br />
+ *        [c.x, c.y, c.z, dim.x, dim.y, dim.z, q.w, q.x, q.y, q.z] <br />
  */  
 class GeometricBox : public GeometricPrimitive
 {
 public:
 
-	/*!
-     * \brief Constructor
-     */
 	GeometricBox
 	(
 		const std::string& name,
@@ -77,11 +72,19 @@ public:
 	: GeometricPrimitive(name, frame_id, visible, color)
 	{}
 
-	/*!
-     * \brief Destructor
-     */
 	~GeometricBox() noexcept {}
 
+	/*!
+	 * \brief Parses a set of parameters and initializes the box.
+	 *
+	 * \param parameters should be of size 6, 9, or 10. <br />
+	 *   Indices 0-2 (required) defines the position of the center of the box, <br />
+	 *   indices 3-5 (required) defines the dimensions of the box, <br />
+	 *   indices 6-8 (optional) defines euler angles of the orientation of the box (xyz) <br />
+	 *   indices 6-9 (optional) defines a quaternion for the orientation of the box.
+	 *
+	 * \return 0 on success, -1 if the wrong number of parameters was sent
+	*/
 	int init(const std::vector<double>& parameters)
 	{
 		int size = parameters.size();
@@ -145,12 +148,15 @@ public:
 	}
 
 	inline const KDL::Vector&     getCenterKDL() { return kdl_c_; }
+
 	inline const Eigen::Vector3d& getCenterEigen() { return eigen_c_; }
 
 	inline const KDL::Vector&     getDimensionsKDL() { return kdl_dim_; }
+
 	inline const Eigen::Vector3d& getDimensionsEigen() { return eigen_dim_; }
 
 	inline const Eigen::Quaternion<double>& getQuaternionEigen() { return q_; }
+
 	inline void getQuaternion(double& w, double& x, double& y, double& z)
 	{ w = q_.w(); x = q_.x(); y = q_.y(); z = q_.z(); }
 
@@ -197,13 +203,6 @@ protected:
 	Eigen::Matrix3d  scaling_matrix_;
 
 
-	// KDL::Vector      kdl_n_up_; // the normal vector of the top plane of the box
-	// Eigen::Vector3d  eigen_n_up_;
-
-	// KDL::Vector      kdl_n_left_; // the normal vector of the left plane of the box
-	// Eigen::Vector3d  eigen_n_left_;
-
-
 
 
 private:
@@ -225,6 +224,7 @@ private:
 
 
 
+} // namespace geometric_primitives
 
 } // namespace hiqp
 

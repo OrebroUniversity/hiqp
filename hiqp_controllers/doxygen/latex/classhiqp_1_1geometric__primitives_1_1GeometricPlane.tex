@@ -1,0 +1,92 @@
+\hypertarget{classhiqp_1_1geometric__primitives_1_1GeometricPlane}{\section{hiqp\-:\-:geometric\-\_\-primitives\-:\-:Geometric\-Plane Class Reference}
+\label{classhiqp_1_1geometric__primitives_1_1GeometricPlane}\index{hiqp\-::geometric\-\_\-primitives\-::\-Geometric\-Plane@{hiqp\-::geometric\-\_\-primitives\-::\-Geometric\-Plane}}
+}
+
+
+Parameters\-: \mbox{[}n.\-x, n.\-y, n.\-z, offset\mbox{]}.  
+
+
+
+
+{\ttfamily \#include $<$geometric\-\_\-plane.\-h$>$}
+
+Inheritance diagram for hiqp\-:\-:geometric\-\_\-primitives\-:\-:Geometric\-Plane\-:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{classhiqp_1_1geometric__primitives_1_1GeometricPlane}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classhiqp_1_1geometric__primitives_1_1GeometricPlane_a7d3def175b904855cf5ea41cd9af8827}{{\bfseries Geometric\-Plane} (const std\-::string \&name, const std\-::string \&frame\-\_\-id, bool visible, const std\-::vector$<$ double $>$ \&color)}\label{classhiqp_1_1geometric__primitives_1_1GeometricPlane_a7d3def175b904855cf5ea41cd9af8827}
+
+\item 
+int \hyperlink{classhiqp_1_1geometric__primitives_1_1GeometricPlane_aab4a9f1dd2c9b295e0963e53c4f13639}{init} (const std\-::vector$<$ double $>$ \&parameters)
+\begin{DoxyCompactList}\small\item\em Parses a set of parameters and initializes the plane. \end{DoxyCompactList}\item 
+\hypertarget{classhiqp_1_1geometric__primitives_1_1GeometricPlane_a6a5aaa0b81018b78c5fe7a1341f3004d}{const K\-D\-L\-::\-Vector \& {\bfseries get\-Normal\-K\-D\-L} ()}\label{classhiqp_1_1geometric__primitives_1_1GeometricPlane_a6a5aaa0b81018b78c5fe7a1341f3004d}
+
+\item 
+\hypertarget{classhiqp_1_1geometric__primitives_1_1GeometricPlane_aed12e48eda6560efd1987d2835a4b979}{const Eigen\-::\-Vector3d \& {\bfseries get\-Normal\-Eigen} ()}\label{classhiqp_1_1geometric__primitives_1_1GeometricPlane_aed12e48eda6560efd1987d2835a4b979}
+
+\item 
+\hypertarget{classhiqp_1_1geometric__primitives_1_1GeometricPlane_ac7944001fff45bb0f3c9a400f9242bec}{double {\bfseries get\-Offset} ()}\label{classhiqp_1_1geometric__primitives_1_1GeometricPlane_ac7944001fff45bb0f3c9a400f9242bec}
+
+\item 
+\hypertarget{classhiqp_1_1geometric__primitives_1_1GeometricPlane_a01c9232f32e246d3e35ce8e06866599d}{double {\bfseries get\-Normal\-X} ()}\label{classhiqp_1_1geometric__primitives_1_1GeometricPlane_a01c9232f32e246d3e35ce8e06866599d}
+
+\item 
+\hypertarget{classhiqp_1_1geometric__primitives_1_1GeometricPlane_ab4031f917695ab570cc46428324474a5}{double {\bfseries get\-Normal\-Y} ()}\label{classhiqp_1_1geometric__primitives_1_1GeometricPlane_ab4031f917695ab570cc46428324474a5}
+
+\item 
+\hypertarget{classhiqp_1_1geometric__primitives_1_1GeometricPlane_aa755d2dfb0603c8492ebb7efac831cfb}{double {\bfseries get\-Normal\-Z} ()}\label{classhiqp_1_1geometric__primitives_1_1GeometricPlane_aa755d2dfb0603c8492ebb7efac831cfb}
+
+\end{DoxyCompactItemize}
+\subsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classhiqp_1_1geometric__primitives_1_1GeometricPlane_aa9de883f574633a6d45cc00e0e23df13}{K\-D\-L\-::\-Vector {\bfseries kdl\-\_\-n\-\_\-}}\label{classhiqp_1_1geometric__primitives_1_1GeometricPlane_aa9de883f574633a6d45cc00e0e23df13}
+
+\item 
+\hypertarget{classhiqp_1_1geometric__primitives_1_1GeometricPlane_aabd33cbfa3063b0ae2b047ccce88555d}{Eigen\-::\-Vector3d {\bfseries eigen\-\_\-n\-\_\-}}\label{classhiqp_1_1geometric__primitives_1_1GeometricPlane_aabd33cbfa3063b0ae2b047ccce88555d}
+
+\item 
+\hypertarget{classhiqp_1_1geometric__primitives_1_1GeometricPlane_a72d00107f4a181f0815a06e588d0c0fd}{double {\bfseries d\-\_\-}}\label{classhiqp_1_1geometric__primitives_1_1GeometricPlane_a72d00107f4a181f0815a06e588d0c0fd}
+
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Parameters\-: \mbox{[}n.\-x, n.\-y, n.\-z, offset\mbox{]}. 
+
+\subsection{Member Function Documentation}
+\hypertarget{classhiqp_1_1geometric__primitives_1_1GeometricPlane_aab4a9f1dd2c9b295e0963e53c4f13639}{\index{hiqp\-::geometric\-\_\-primitives\-::\-Geometric\-Plane@{hiqp\-::geometric\-\_\-primitives\-::\-Geometric\-Plane}!init@{init}}
+\index{init@{init}!hiqp::geometric_primitives::GeometricPlane@{hiqp\-::geometric\-\_\-primitives\-::\-Geometric\-Plane}}
+\subsubsection[{init}]{\setlength{\rightskip}{0pt plus 5cm}int hiqp\-::geometric\-\_\-primitives\-::\-Geometric\-Plane\-::init (
+\begin{DoxyParamCaption}
+\item[{const std\-::vector$<$ double $>$ \&}]{parameters}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}}\label{classhiqp_1_1geometric__primitives_1_1GeometricPlane_aab4a9f1dd2c9b295e0963e53c4f13639}
+
+
+Parses a set of parameters and initializes the plane. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em parameters} & should be of size 4. \par
+ Indices 0-\/2 (required) defines the normal vector of the plane, \par
+ index 3 (required) defines the offset of the plane in the normal direction.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+0 on success, -\/1 if the wrong number of parameters was sent 
+\end{DoxyReturn}
+
+
+Implements \hyperlink{classhiqp_1_1geometric__primitives_1_1GeometricPrimitive_a3697e5afb0121715280da649b8bd711d}{hiqp\-::geometric\-\_\-primitives\-::\-Geometric\-Primitive}.
+
+
+
+The documentation for this class was generated from the following file\-:\begin{DoxyCompactItemize}
+\item 
+include/hiqp/geometric\-\_\-primitives/geometric\-\_\-plane.\-h\end{DoxyCompactItemize}

@@ -38,8 +38,9 @@
 #include <hiqp/task_factory.h>
 #include <hiqp/visualizer.h>
 #include <hiqp/hiqp_solver.h>
-#include <hiqp/geometric_primitive_map.h>
 #include <hiqp/hiqp_time_point.h>
+
+#include <hiqp/geometric_primitives/geometric_primitive_map.h>
 
 #include <hiqp/solvers/casadi_solver.h>
 

@@ -1,0 +1,85 @@
+\hypertarget{classhiqp_1_1geometric__primitives_1_1GeometricPoint}{\section{hiqp\-:\-:geometric\-\_\-primitives\-:\-:Geometric\-Point Class Reference}
+\label{classhiqp_1_1geometric__primitives_1_1GeometricPoint}\index{hiqp\-::geometric\-\_\-primitives\-::\-Geometric\-Point@{hiqp\-::geometric\-\_\-primitives\-::\-Geometric\-Point}}
+}
+
+
+Parameters\-: \mbox{[}x, y, z\mbox{]}.  
+
+
+
+
+{\ttfamily \#include $<$geometric\-\_\-point.\-h$>$}
+
+Inheritance diagram for hiqp\-:\-:geometric\-\_\-primitives\-:\-:Geometric\-Point\-:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{classhiqp_1_1geometric__primitives_1_1GeometricPoint}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classhiqp_1_1geometric__primitives_1_1GeometricPoint_a4e3dd5ac625cac7ccf795b6b2f1facfd}{{\bfseries Geometric\-Point} (const std\-::string \&name, const std\-::string \&frame\-\_\-id, bool visible, const std\-::vector$<$ double $>$ \&color)}\label{classhiqp_1_1geometric__primitives_1_1GeometricPoint_a4e3dd5ac625cac7ccf795b6b2f1facfd}
+
+\item 
+int \hyperlink{classhiqp_1_1geometric__primitives_1_1GeometricPoint_a2e055a55316c83c22a26ba85e9da975d}{init} (const std\-::vector$<$ double $>$ \&parameters)
+\begin{DoxyCompactList}\small\item\em Parses a set of parameters and initializes the point. \end{DoxyCompactList}\item 
+\hypertarget{classhiqp_1_1geometric__primitives_1_1GeometricPoint_a5515141a01be0bc90421a530cc72fe32}{const K\-D\-L\-::\-Vector \& {\bfseries get\-Point\-K\-D\-L} ()}\label{classhiqp_1_1geometric__primitives_1_1GeometricPoint_a5515141a01be0bc90421a530cc72fe32}
+
+\item 
+\hypertarget{classhiqp_1_1geometric__primitives_1_1GeometricPoint_a56500d7851c6488ece9fe62c57ee4ea0}{const Eigen\-::\-Vector3d \& {\bfseries get\-Point\-Eigen} ()}\label{classhiqp_1_1geometric__primitives_1_1GeometricPoint_a56500d7851c6488ece9fe62c57ee4ea0}
+
+\item 
+\hypertarget{classhiqp_1_1geometric__primitives_1_1GeometricPoint_a573b66ccd7b4a2071ddce07f479ebfb5}{double {\bfseries get\-X} ()}\label{classhiqp_1_1geometric__primitives_1_1GeometricPoint_a573b66ccd7b4a2071ddce07f479ebfb5}
+
+\item 
+\hypertarget{classhiqp_1_1geometric__primitives_1_1GeometricPoint_a40fb3e3735c431b798b836c68dd82e89}{double {\bfseries get\-Y} ()}\label{classhiqp_1_1geometric__primitives_1_1GeometricPoint_a40fb3e3735c431b798b836c68dd82e89}
+
+\item 
+\hypertarget{classhiqp_1_1geometric__primitives_1_1GeometricPoint_a4786d47f1c74466c1a703a53379cddd9}{double {\bfseries get\-Z} ()}\label{classhiqp_1_1geometric__primitives_1_1GeometricPoint_a4786d47f1c74466c1a703a53379cddd9}
+
+\end{DoxyCompactItemize}
+\subsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classhiqp_1_1geometric__primitives_1_1GeometricPoint_a4433663af43188e0f349fa0bebfb0078}{K\-D\-L\-::\-Vector {\bfseries kdl\-\_\-p\-\_\-}}\label{classhiqp_1_1geometric__primitives_1_1GeometricPoint_a4433663af43188e0f349fa0bebfb0078}
+
+\item 
+\hypertarget{classhiqp_1_1geometric__primitives_1_1GeometricPoint_ad19898465cb7f9621030edc32edf4364}{Eigen\-::\-Vector3d {\bfseries eigen\-\_\-p\-\_\-}}\label{classhiqp_1_1geometric__primitives_1_1GeometricPoint_ad19898465cb7f9621030edc32edf4364}
+
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Parameters\-: \mbox{[}x, y, z\mbox{]}. 
+
+\subsection{Member Function Documentation}
+\hypertarget{classhiqp_1_1geometric__primitives_1_1GeometricPoint_a2e055a55316c83c22a26ba85e9da975d}{\index{hiqp\-::geometric\-\_\-primitives\-::\-Geometric\-Point@{hiqp\-::geometric\-\_\-primitives\-::\-Geometric\-Point}!init@{init}}
+\index{init@{init}!hiqp::geometric_primitives::GeometricPoint@{hiqp\-::geometric\-\_\-primitives\-::\-Geometric\-Point}}
+\subsubsection[{init}]{\setlength{\rightskip}{0pt plus 5cm}int hiqp\-::geometric\-\_\-primitives\-::\-Geometric\-Point\-::init (
+\begin{DoxyParamCaption}
+\item[{const std\-::vector$<$ double $>$ \&}]{parameters}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}}\label{classhiqp_1_1geometric__primitives_1_1GeometricPoint_a2e055a55316c83c22a26ba85e9da975d}
+
+
+Parses a set of parameters and initializes the point. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em parameters} & should be of size 3. \par
+ Indices 0-\/2 (required) defines the position of the point.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+0 on success, -\/1 if the wrong number of parameters was sent 
+\end{DoxyReturn}
+
+
+Implements \hyperlink{classhiqp_1_1geometric__primitives_1_1GeometricPrimitive_a3697e5afb0121715280da649b8bd711d}{hiqp\-::geometric\-\_\-primitives\-::\-Geometric\-Primitive}.
+
+
+
+The documentation for this class was generated from the following file\-:\begin{DoxyCompactItemize}
+\item 
+include/hiqp/geometric\-\_\-primitives/geometric\-\_\-point.\-h\end{DoxyCompactItemize}

@@ -17,9 +17,9 @@
 
 
 
-/*!
+/*
  * \file   geometric_primitive.h
- * \Author Marcus A Johansson (marcus.adam.johansson@gmail.com)
+ * \author Marcus A Johansson (marcus.adam.johansson@gmail.com)
  * \date   July, 2016
  * \brief  Brief description of file.
  *
@@ -38,6 +38,8 @@
 
 namespace hiqp
 {
+namespace geometric_primitives
+{
 
 
 
@@ -46,39 +48,30 @@ namespace hiqp
 
 /*!
  * \class GeometricPrimitive
- * \brief <i>Pure virtual</i>
- */  
+ * \brief Abstract base class for all geometric primitives.
+ */ 
 class GeometricPrimitive
 {
 public:
 
-	/*!
-     * \brief Constructor
-     */
 	GeometricPrimitive
 	(
 		const std::string& name,
 		const std::string& frame_id,
 		bool visible,
 		const std::vector<double>& color
-	);
-	// : name_(name), frame_id_(frame_id), visible_(visible)
-	// {
-	// 	assert(color.size() == 4);
-	// 	r_ = color.at(0);
-	// 	g_ = color.at(1);
-	// 	b_ = color.at(2);
-	// 	a_ = color.at(3);
-	// }
+	)
+	: name_(name), frame_id_(frame_id), visible_(visible)
+	{
+		r_ = color.at(0);
+		g_ = color.at(1);
+		b_ = color.at(2);
+		a_ = color.at(3);
+	}
 
-
-
-	/*!
-     * \brief Destructor
-     */
 	~GeometricPrimitive() noexcept {};
 
-
+	/*! \brief Needs to be specified by the inheriting class */
 	virtual int init(const std::vector<double>& parameters) = 0;
 
 
@@ -126,6 +119,8 @@ private:
 
 
 
+
+} // namespace geometric_primitives
 
 } // namespace hiqp
 

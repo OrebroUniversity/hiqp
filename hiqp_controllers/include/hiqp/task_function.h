@@ -34,8 +34,9 @@
 // HiQP Includes
 #include <hiqp/task_dynamics.h>
 #include <hiqp/visualizer.h>
-#include <hiqp/geometric_primitive_map.h>
 #include <hiqp/hiqp_time_point.h>
+
+#include <hiqp/geometric_primitives/geometric_primitive_map.h>
 
 // STL Includes
 #include <vector>
@@ -57,34 +58,18 @@
 namespace hiqp
 {
 
+using geometric_primitives::GeometricPrimitiveMap;
 
+class TaskFactory;
+class TaskManager;
 
+class TaskFunction
+{
+public:
 
-    class TaskFactory;
-    class TaskManager;
-
-
-    class TaskFunction
-    {
-    public:
-
-	/*!
-     * \brief Constructor
-     * Constructs my awesome task
-     */
     TaskFunction() {}
 
-
-
-	/*!
-     * \brief Destructor
-     * Destructs my awesome task
-     */
     ~TaskFunction() noexcept {}
-
-
-
-
 
     virtual int init
     (
@@ -94,11 +79,7 @@ namespace hiqp
         unsigned int num_controls
     ) = 0;
 
-
-
-
-
-	/*!
+    /*!
      * \brief <i>Pure virtual</i>. Calculates the task function and task 
      *        jacobian values.
      *
@@ -118,8 +99,6 @@ namespace hiqp
         const KDL::JntArrayVel& kdl_joint_pos_vel
     ) = 0;
 
-
-
     /*!
      * \brief <i>Pure virtual</i>. Computes all performance measures used when
      *        monitoring this task.
@@ -128,23 +107,15 @@ namespace hiqp
      */
     virtual int monitor() = 0;
 
-
-
-
     Eigen::VectorXd getInitialState()
     {
         return e_initial_;
     }
 
-
-
-
     Eigen::MatrixXd getInitialStateJacobian()
     {
         return J_initial_;
     }
-
-
 
     virtual Eigen::VectorXd getFinalState
     (
@@ -156,14 +127,9 @@ namespace hiqp
 
 
 
-    
 
 
-
-
-
-
-    protected:
+protected:
 
     Eigen::VectorXd                 e_; // the task function
 
@@ -187,15 +153,7 @@ namespace hiqp
 
     GeometricPrimitiveMap*          geometric_primitive_map_;
 
-    
 
-
-
-
-
-    
-
-    
 
     Visualizer* getVisualizer()
     { return visualizer_; }
@@ -217,35 +175,21 @@ namespace hiqp
 
     inline unsigned int getPriority()
     { return priority_; }
-    
+
     inline bool getVisibility()
     { return visibility_; }
 
-    
-
-
-
-    
-
-    
 
 
 
 
+private:
 
-
-
-    private:
-
-	// No copying of this class is allowed !
+    // No copying of this class is allowed !
     TaskFunction(const TaskFunction& other) = delete;
     TaskFunction(TaskFunction&& other) = delete;
     TaskFunction& operator=(const TaskFunction& other) = delete;
     TaskFunction& operator=(TaskFunction&& other) noexcept = delete;
-
-
-
-
 
 
     inline void setTaskDynamics(TaskDynamics* task_dynamics)
@@ -276,18 +220,14 @@ namespace hiqp
     { visibility_ = visibility; }
 
 
-
-
-/*
+    /*
     inline const std::vector<double>& getMeasuresE()
     { return measures_e_; }
 
     inline const std::vector<double>& getMeasuresEDotStar()
     { return measures_e__dot_star_; }
-*/
+    */
 
-
-    
     void monitorFunctionAndDynamics()
     {
         measures_e_.clear();
@@ -303,8 +243,6 @@ namespace hiqp
             for (int j=0; j<J_.cols(); ++j)
                 measures_J_.push_back( J_(i, j) );   
     }
-
-
 
     /*!
      * \brief This is called from TaskFactory, makes calls to Task::apply()
@@ -323,8 +261,6 @@ namespace hiqp
         J_initial_ = J_;
         return 0;
     }
-
-
 
     /*!
      * \brief This is called from TaskManager, makes calls to Task::apply()
@@ -347,10 +283,6 @@ namespace hiqp
 
 
 
-
-
-
-
     TaskDynamics*           task_dynamics_; // pointer to the task behaviour
 
     Visualizer*             visualizer_;
@@ -370,28 +302,11 @@ namespace hiqp
 
 
 
-
-    
-
     friend                  TaskFactory;
 
     friend                  TaskManager;
 
-
-
-
-
-};
-
-
-
-
-
-
-
-
-
-
+}; // class TaskFunction
 
 } // namespace hiqp
 
