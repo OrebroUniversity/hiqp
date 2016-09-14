@@ -28,9 +28,9 @@
 
 #include <hiqp/task_factory.h>
 
+#include <hiqp/tasks/task_full_pose.h>
 #include <hiqp/tasks/task_geometric_projection.h>
 #include <hiqp/tasks/task_geometric_alignment.h>
-#include <hiqp/tasks/task_jnt_config.h>
 #include <hiqp/tasks/task_jnt_config_one.h>
 #include <hiqp/tasks/task_jnt_limits.h>
 #include <hiqp/tasks/dynamics_first_order.h>
@@ -257,9 +257,9 @@ TaskFunction* TaskFactory::constructTaskFunction
 {
     TaskFunction* function = nullptr;
 
-    if (type.compare("TaskJntConfig") == 0)
+    if (type.compare("TaskFullPose") == 0)
     {
-        function = new TaskJntConfig();
+        function = new TaskFullPose();
     }
 
     else if (type.compare("TaskJntConfigOne") == 0)

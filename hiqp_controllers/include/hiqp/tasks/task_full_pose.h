@@ -28,8 +28,8 @@
 
 
 
-#ifndef HIQP_TASK_JNT_CONFIG_H
-#define HIQP_TASK_JNT_CONFIG_H
+#ifndef HIQP_TASK_FULL_POSE_H
+#define HIQP_TASK_FULL_POSE_H
 
 
 // HiQP Includes
@@ -54,12 +54,12 @@ namespace hiqp
 
 
 /*!
- * \class TaskJntConfig
+ * \class TaskFullPose
  * \brief Represents a task that sets a specific joint configuration
  *
  *  This task does not leave any redundancy available to other tasks.
  */	
-class TaskJntConfig : public TaskFunction
+class TaskFullPose : public TaskFunction
 {
 
 public:
@@ -68,7 +68,7 @@ public:
      * \brief Constructor
      * Constructs my awesome task
      */
-	TaskJntConfig() {}
+	TaskFullPose() {}
 
 
 
@@ -77,7 +77,7 @@ public:
      * \brief Destructor
      * Destructs my awesome task
      */
-	~TaskJntConfig() noexcept {}
+	~TaskFullPose() noexcept {}
 
 
 
@@ -132,10 +132,10 @@ public:
 private:
 
 	// No copying of this class is allowed !
-	TaskJntConfig(const TaskJntConfig& other) = delete;
-	TaskJntConfig(TaskJntConfig&& other) = delete;
-	TaskJntConfig& operator=(const TaskJntConfig& other) = delete;
-	TaskJntConfig& operator=(TaskJntConfig&& other) noexcept = delete;
+	TaskFullPose(const TaskFullPose& other) = delete;
+	TaskFullPose(TaskFullPose&& other) = delete;
+	TaskFullPose& operator=(const TaskFullPose& other) = delete;
+	TaskFullPose& operator=(TaskFullPose&& other) noexcept = delete;
 
 
      std::vector<double>                desired_configuration_;

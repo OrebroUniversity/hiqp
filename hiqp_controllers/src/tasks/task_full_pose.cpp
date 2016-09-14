@@ -18,7 +18,7 @@
 
 
 /*!
- * \file   task_jnt_config.cpp
+ * \file   task_full_pose.cpp
  * \Author Marcus A Johansson (marcus.adam.johansson@gmail.com)
  * \date   July, 2016
  * \brief  Brief description of file.
@@ -28,7 +28,7 @@
 
 
 
-#include <hiqp/tasks/task_jnt_config.h>
+#include <hiqp/tasks/task_full_pose.h>
 
 #include <hiqp/hiqp_utils.h>
 
@@ -46,7 +46,7 @@ namespace hiqp
 
 
 
-int TaskJntConfig::init
+int TaskFullPose::init
 (
 	const HiQPTimePoint& sampling_time,
 	const std::vector<std::string>& parameters,
@@ -57,7 +57,7 @@ int TaskJntConfig::init
 	int size = parameters.size();
 	if (size != 0 && size != num_controls)
 	{
-		printHiqpWarning("TaskJntConfig requires 0 or " 
+		printHiqpWarning("TaskFullPose requires 0 or " 
 			+ std::to_string(num_controls) + " parameters, got " 
 			+ std::to_string(size) + "! Initialization failed!");
 		return -1;
@@ -100,7 +100,7 @@ int TaskJntConfig::init
 
 
 
-int TaskJntConfig::apply
+int TaskFullPose::apply
 (
 	const HiQPTimePoint& sampling_time,
 	const KDL::Tree& kdl_tree, 
@@ -142,7 +142,7 @@ int TaskJntConfig::apply
 
 
 
-int TaskJntConfig::monitor()
+int TaskFullPose::monitor()
 {
 	return 0;
 }
