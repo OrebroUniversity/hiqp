@@ -18,7 +18,7 @@
 
 
 /*!
- * \file   task_jnt_config_one.h
+ * \file   task_jnt_config.h
  * \Author Marcus A Johansson (marcus.adam.johansson@gmail.com)
  * \date   July, 2016
  * \brief  Brief description of file.
@@ -28,8 +28,8 @@
 
 
 
-#ifndef HIQP_TASK_JNT_CONFIG_ONE_H
-#define HIQP_TASK_JNT_CONFIG_ONE_H
+#ifndef HIQP_TASK_JNT_CONFIG_H
+#define HIQP_TASK_JNT_CONFIG_H
 
 
 // HiQP Includes
@@ -54,12 +54,12 @@ namespace hiqp
 
 
 /*!
- * \class TaskJntConfigOne
+ * \class TaskJntConfig
  * \brief Represents a task that sets a specific joint configuration
  *
  *  This task does not leave any redundancy available to other tasks.
  */	
-class TaskJntConfigOne : public TaskFunction
+class TaskJntConfig : public TaskFunction
 {
 
 public:
@@ -68,7 +68,7 @@ public:
      * \brief Constructor
      * Constructs my awesome task
      */
-	TaskJntConfigOne() {}
+	TaskJntConfig() {}
 
 
 
@@ -77,7 +77,7 @@ public:
      * \brief Destructor
      * Destructs my awesome task
      */
-	~TaskJntConfigOne() noexcept {}
+	~TaskJntConfig() noexcept {}
 
 
 
@@ -132,10 +132,10 @@ public:
 private:
 
 	// No copying of this class is allowed !
-	TaskJntConfigOne(const TaskJntConfigOne& other) = delete;
-	TaskJntConfigOne(TaskJntConfigOne&& other) = delete;
-	TaskJntConfigOne& operator=(const TaskJntConfigOne& other) = delete;
-	TaskJntConfigOne& operator=(TaskJntConfigOne&& other) noexcept = delete;
+	TaskJntConfig(const TaskJntConfig& other) = delete;
+	TaskJntConfig(TaskJntConfig&& other) = delete;
+	TaskJntConfig& operator=(const TaskJntConfig& other) = delete;
+	TaskJntConfig& operator=(TaskJntConfig&& other) noexcept = delete;
 
 
      std::string              link_name_;

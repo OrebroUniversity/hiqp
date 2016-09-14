@@ -84,7 +84,7 @@ add_library(${PROJECT_NAME} src/geometric_primitive_map.cpp
                             src/tasks/task_full_pose.cpp
                             src/tasks/task_geometric_projection.cpp
                             src/tasks/task_geometric_alignment.cpp
-                            src/tasks/task_jnt_config_one.cpp
+                            src/tasks/task_jnt_config.cpp
                             src/tasks/task_jnt_limits.cpp
 )
 

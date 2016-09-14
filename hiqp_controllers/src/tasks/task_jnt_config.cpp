@@ -18,7 +18,7 @@
 
 
 /*!
- * \file   task_jnt_config_one.cpp
+ * \file   task_jnt_config.cpp
  * \Author Marcus A Johansson (marcus.adam.johansson@gmail.com)
  * \date   July, 2016
  * \brief  Brief description of file.
@@ -28,7 +28,7 @@
 
 
 
-#include <hiqp/tasks/task_jnt_config_one.h>
+#include <hiqp/tasks/task_jnt_config.h>
 
 #include <hiqp/hiqp_utils.h>
 
@@ -46,7 +46,7 @@ namespace hiqp
 
 
 
-int TaskJntConfigOne::init
+int TaskJntConfig::init
 (
 	const HiQPTimePoint& sampling_time,
 	const std::vector<std::string>& parameters,
@@ -58,7 +58,7 @@ int TaskJntConfigOne::init
 	int size = parameters.size();
 	if (size != 2)
 	{
-		printHiqpWarning("TaskJntConfigOne requires 2 parameters, got " 
+		printHiqpWarning("TaskJntConfig requires 2 parameters, got " 
 			+ std::to_string(size) + "! Initialization failed!");
 		return -1;
 	}
@@ -69,7 +69,7 @@ int TaskJntConfigOne::init
 
 	if (joint_q_nr_ < 0)
 	{
-		printHiqpWarning("TaskJntConfigOne::init, couldn't find joint '" + link_name_ + "'! Initialization failed.");
+		printHiqpWarning("TaskJntConfig::init, couldn't find joint '" + link_name_ + "'! Initialization failed.");
 		return -2;
 	}
 
@@ -93,7 +93,7 @@ int TaskJntConfigOne::init
 
 
 
-int TaskJntConfigOne::apply
+int TaskJntConfig::apply
 (
 	const HiQPTimePoint& sampling_time,
 	const KDL::Tree& kdl_tree, 
@@ -111,7 +111,7 @@ int TaskJntConfigOne::apply
 
 
 
-int TaskJntConfigOne::monitor()
+int TaskJntConfig::monitor()
 {
 	return 0;
 }

@@ -1,6 +1,6 @@
 rosservice call /yumi/hiqp_kinematics_controller/add_task \
 "name: 'set_starting_pos'
-type: 'TaskJntConfig'
+type: 'TaskFullPose'
 behaviour: ['DynamicsFirstOrder', '1.0']
 priority: 3
 visibility: 0
