@@ -4,6 +4,10 @@
 		"selected_items":
 		[
 			[
+				"j",
+				"j"
+			],
+			[
 				"geome",
 				"getGeometricPrimitiveMap"
 			],
@@ -262,11 +266,17 @@
 	],
 	"file_history":
 	[
+		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/src/task_manager.cpp",
+		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/include/hiqp/task_function.h",
+		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/src/tasks/dynamics_minimal_jerk.cpp",
+		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/include/hiqp/ros_kinematics_controller.h",
+		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/src/ros_kinematics_controller.cpp",
+		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/src/solvers/casadi_solver.cpp",
+		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_msgs_srvs/msg/PerfMeasMsg.msg",
 		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/servicecalls/test_projection_task/add_tasks.sh",
 		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/servicecalls/yumi_hw_demo/tasks_minimal_jerk.sh",
 		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/servicecalls/test_minimal_jerk/add_tasks.sh",
 		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/config/yumi_hiqp_preload.yaml",
-		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/src/tasks/dynamics_minimal_jerk.cpp",
 		"/home/neckutrek/dev/indigo_ws/src/hiqp/README.md",
 		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/src/task_factory.cpp",
 		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/include/hiqp/tasks/task_jnt_config_one.h",
@@ -274,18 +284,13 @@
 		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/src/tasks/task_jnt_config.cpp",
 		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/src/hiqp_utils.cpp",
 		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/include/hiqp/hiqp_utils.h",
-		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/src/ros_kinematics_controller.cpp",
 		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/CMakeLists.txt",
 		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/include/hiqp/task_manager.h",
-		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/src/task_manager.cpp",
-		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/include/hiqp/task_function.h",
 		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/servicecalls/yumi_hw_demo/update_7r_link.sh",
 		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_msgs_srvs/srv/UpdateTask.srv",
 		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/include/hiqp/task_dynamics.h",
 		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_msgs_srvs/CMakeLists.txt",
-		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/include/hiqp/ros_kinematics_controller.h",
 		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/include/hiqp/task_factory.h",
-		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_msgs_srvs/msg/PerfMeasMsg.msg",
 		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_msgs_srvs/srv/RemoveTask.srv",
 		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/src/geometric_primitive_map.cpp",
 		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/include/hiqp/tasks/task_geometric_alignment__impl.h",
@@ -295,7 +300,6 @@
 		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/servicecalls/test_teleoperation/add_primitives.sh",
 		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/servicecalls/test_teleoperation/add_tasks.sh",
 		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/servicecalls/test_jnt_limits/add_tasks.sh",
-		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/src/solvers/casadi_solver.cpp",
 		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/include/hiqp/hiqp_solver.h",
 		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/src/tasks/dynamics_jnt_limits.cpp",
 		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/src/tasks/dynamics_first_order.cpp",

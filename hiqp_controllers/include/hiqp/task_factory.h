@@ -37,6 +37,7 @@
 #include <hiqp/task_dynamics.h>
 #include <hiqp/visualizer.h>
 #include <hiqp/geometric_primitive_map.h>
+#include <hiqp/hiqp_time_point.h>
 
 #include <hiqp/geometric_primitives/geometric_point.h>
 #include <hiqp/geometric_primitives/geometric_line.h>
@@ -113,7 +114,7 @@ public:
     	bool visibility,
     	const std::vector<std::string>& parameters,
     	const std::vector<std::string>& behaviour_parameters,
-    	const std::chrono::steady_clock::time_point& sampling_time,
+    	const HiQPTimePoint& sampling_time,
     	const KDL::Tree& kdl_tree,
     	const KDL::JntArrayVel& kdl_joint_pos_vel,
     	std::size_t dynamics_id,

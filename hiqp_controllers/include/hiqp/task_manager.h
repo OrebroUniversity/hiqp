@@ -39,6 +39,7 @@
 #include <hiqp/visualizer.h>
 #include <hiqp/hiqp_solver.h>
 #include <hiqp/geometric_primitive_map.h>
+#include <hiqp/hiqp_time_point.h>
 
 #include <hiqp/solvers/casadi_solver.h>
 
@@ -85,6 +86,7 @@ public:
      std::string                 measure_tag_;
      const std::vector<double>&  performance_measures_;
 };
+
 
 
 
@@ -139,7 +141,7 @@ public:
      * \param controls : reference to the controls data
      * \return true if the initialization was successful
      */
-	bool getKinematicControls(const std::chrono::steady_clock::time_point& sampling_time,
+	bool getKinematicControls(const HiQPTimePoint& sampling_time,
                               const KDL::Tree& kdl_tree,
                               const KDL::JntArrayVel& kdl_joint_pos_vel,
 		                      std::vector<double> &controls);
@@ -188,7 +190,7 @@ public:
         unsigned int priority,
         bool visibility,
         const std::vector<std::string>& parameters,
-        const std::chrono::steady_clock::time_point& sampling_time,
+        const HiQPTimePoint& sampling_time,
         const KDL::Tree& kdl_tree,
         const KDL::JntArrayVel& kdl_joint_pos_vel
     );
@@ -204,7 +206,7 @@ public:
         unsigned int priority,
         bool visibility,
         const std::vector<std::string>& parameters,
-        const std::chrono::steady_clock::time_point& sampling_time,
+        const HiQPTimePoint& sampling_time,
         const KDL::Tree& kdl_tree,
         const KDL::JntArrayVel& kdl_joint_pos_vel
     );

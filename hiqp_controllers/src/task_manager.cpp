@@ -108,7 +108,7 @@ void TaskManager::init
 
 bool TaskManager::getKinematicControls
 (
-    const std::chrono::steady_clock::time_point& sampling_time,
+    const HiQPTimePoint& sampling_time,
     const KDL::Tree& kdl_tree,
     const KDL::JntArrayVel& kdl_joint_pos_vel,
     std::vector<double> &controls
@@ -208,7 +208,7 @@ int TaskManager::addTask
     unsigned int priority,
     bool visibility,
     const std::vector<std::string>& parameters,
-    const std::chrono::steady_clock::time_point& sampling_time,
+    const HiQPTimePoint& sampling_time,
     const KDL::Tree& kdl_tree,
     const KDL::JntArrayVel& kdl_joint_pos_vel
 )
@@ -259,7 +259,7 @@ int TaskManager::updateTask
     unsigned int priority,
     bool visibility,
     const std::vector<std::string>& parameters,
-    const std::chrono::steady_clock::time_point& sampling_time,
+    const HiQPTimePoint& sampling_time,
     const KDL::Tree& kdl_tree,
     const KDL::JntArrayVel& kdl_joint_pos_vel
 )

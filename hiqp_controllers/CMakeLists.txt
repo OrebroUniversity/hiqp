@@ -67,6 +67,7 @@ link_directories(${GUROBI_LIB_DIR})
 
 add_library(${PROJECT_NAME} src/geometric_primitive_map.cpp
                             src/hiqp_utils.cpp
+                            src/hiqp_time_point.cpp
                             src/ros_kinematics_controller.cpp
                             src/ros_topic_subscriber.cpp
                             src/ros_visualizer.cpp

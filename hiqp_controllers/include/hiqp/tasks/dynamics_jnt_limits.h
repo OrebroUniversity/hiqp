@@ -33,6 +33,7 @@
 #define HIQP_DYNAMICS_JNT_LIMITS_H
 
 // HiQP Includes
+#include <hiqp/hiqp_time_point.h>
 #include <hiqp/task_dynamics.h>
 
 
@@ -59,7 +60,7 @@ public:
 
 	int init
 	(
-		const std::chrono::steady_clock::time_point& sampling_time,
+		const HiQPTimePoint& sampling_time,
 		const std::vector<std::string>& parameters,
     	const Eigen::VectorXd& e_initial,
     	const Eigen::VectorXd& e_final
@@ -67,7 +68,7 @@ public:
 
 	int apply
 	(
-		const std::chrono::steady_clock::time_point& sampling_time,
+		const HiQPTimePoint& sampling_time,
 		const Eigen::VectorXd& e,
 		const Eigen::MatrixXd& J,
 		Eigen::VectorXd& e_dot_star

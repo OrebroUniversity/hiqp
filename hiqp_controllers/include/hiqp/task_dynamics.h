@@ -31,6 +31,8 @@
 #ifndef HIQP_TASK_DYNAMICS_H
 #define HIQP_TASK_DYNAMICS_H
 
+// HiQP Includes
+#include <hiqp/hiqp_time_point.h>
 
 // STL Includes
 #include <vector>
@@ -61,7 +63,7 @@ public:
 
 	virtual int init
 	(
-		const std::chrono::steady_clock::time_point& sampling_time,
+		const HiQPTimePoint& sampling_time,
 		const std::vector<std::string>& parameters,
     	const Eigen::VectorXd& e_initial,
    	 	const Eigen::VectorXd& e_final
@@ -69,7 +71,7 @@ public:
 
 	virtual int apply
 	(
-		const std::chrono::steady_clock::time_point& sampling_time,
+		const HiQPTimePoint& sampling_time,
 		const Eigen::VectorXd& e,
 		const Eigen::MatrixXd& J,
 		Eigen::VectorXd& e_dot_star

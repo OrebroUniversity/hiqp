@@ -33,6 +33,7 @@
 
 
 // HiQP Includes
+#include <hiqp/hiqp_time_point.h>
 #include <hiqp/task_function.h>
 
 // STL Includes
@@ -86,7 +87,7 @@ public:
      */
 	int init
      (
-          const std::chrono::steady_clock::time_point& sampling_time,
+          const HiQPTimePoint& sampling_time,
           const std::vector<std::string>& parameters,
           const KDL::Tree& kdl_tree, 
           unsigned int num_controls
@@ -107,7 +108,7 @@ public:
      */
 	int apply
 	(
-          const std::chrono::steady_clock::time_point& sampling_time,
+          const HiQPTimePoint& sampling_time,
 		const KDL::Tree& kdl_tree, 
 		const KDL::JntArrayVel& kdl_joint_pos_vel
 	);

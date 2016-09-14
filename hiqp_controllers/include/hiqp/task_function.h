@@ -35,6 +35,7 @@
 #include <hiqp/task_dynamics.h>
 #include <hiqp/visualizer.h>
 #include <hiqp/geometric_primitive_map.h>
+#include <hiqp/hiqp_time_point.h>
 
 // STL Includes
 #include <vector>
@@ -87,7 +88,7 @@ namespace hiqp
 
     virtual int init
     (
-        const std::chrono::steady_clock::time_point& sampling_time,
+        const HiQPTimePoint& sampling_time,
         const std::vector<std::string>& parameters,
         const KDL::Tree& kdl_tree, 
         unsigned int num_controls
@@ -112,7 +113,7 @@ namespace hiqp
      */
     virtual int apply
     (
-        const std::chrono::steady_clock::time_point& sampling_time,
+        const HiQPTimePoint& sampling_time,
         const KDL::Tree& kdl_tree, 
         const KDL::JntArrayVel& kdl_joint_pos_vel
     ) = 0;
@@ -312,7 +313,7 @@ namespace hiqp
      */
     int computeInitialState
     (
-        const std::chrono::steady_clock::time_point& sampling_time,
+        const HiQPTimePoint& sampling_time,
         const KDL::Tree& kdl_tree, 
         const KDL::JntArrayVel& kdl_joint_pos_vel
     )
@@ -332,7 +333,7 @@ namespace hiqp
      */
     int computeTaskMetrics
     (
-        const std::chrono::steady_clock::time_point& sampling_time,
+        const HiQPTimePoint& sampling_time,
         const KDL::Tree& kdl_tree, 
         const KDL::JntArrayVel& kdl_joint_pos_vel
     )

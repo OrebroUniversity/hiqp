@@ -50,7 +50,7 @@ namespace hiqp
 
 int DynamicsMinimalJerk::init
 (
-	const std::chrono::steady_clock::time_point& sampling_time,
+	const HiQPTimePoint& sampling_time,
     const std::vector<std::string>& parameters,
     const Eigen::VectorXd& e_initial,
     const Eigen::VectorXd& e_final
@@ -64,12 +64,9 @@ int DynamicsMinimalJerk::init
 
     time_start_ = sampling_time;
 
-    double param = std::stod( parameters.at(1) );
+    total_duration_ = std::stod( parameters.at(1) );
 
-    // convert seconds to microseconds
-    total_duration_ = param * 1e6;
-
-    f_ = 30 / param;
+    f_ = 30 / total_duration_;
 
     e_diff_ = e_final - e_initial;
 
@@ -86,16 +83,13 @@ int DynamicsMinimalJerk::init
 
 int DynamicsMinimalJerk::apply
 (
-	const std::chrono::steady_clock::time_point& sampling_time,
+	const HiQPTimePoint& sampling_time,
 	const Eigen::VectorXd& e,
 	const Eigen::MatrixXd& J,
 	Eigen::VectorXd& e_dot_star
 )
 {
-	std::chrono::steady_clock::time_point sampling_time_ = std::chrono::steady_clock::now();
-
-	double d = std::chrono::duration_cast<std::chrono::microseconds>
-		(sampling_time_ - time_start_).count();
+	double d = (sampling_time - time_start_).toSec();
 
 	double tau = d / total_duration_;
 
@@ -113,12 +107,12 @@ int DynamicsMinimalJerk::apply
 	
 
 	//std::cout << "total_duration_ = " << total_duration_ << "\n";
-	std::cout << "d = " << d << "\n";
+	//std::cout << "d = " << d << "\n";
 	//std::cout << "tau = " << tau << "\n";
 
 	//std::cout << "J = " << J << "\n";
 	//std::cout << "I = " << Eigen::VectorXd::Ones(J.cols()) << "\n";
-	std::cout << "e_dot_star = " << e_dot_star << "\n\n\n";
+	//std::cout << "e_dot_star = " << e_dot_star << "\n\n\n";
 
 	return 0;
 }

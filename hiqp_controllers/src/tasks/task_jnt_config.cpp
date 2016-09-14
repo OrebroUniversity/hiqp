@@ -48,7 +48,7 @@ namespace hiqp
 
 int TaskJntConfig::init
 (
-	const std::chrono::steady_clock::time_point& sampling_time,
+	const HiQPTimePoint& sampling_time,
 	const std::vector<std::string>& parameters,
     const KDL::Tree& kdl_tree, 
 	unsigned int num_controls
@@ -102,7 +102,7 @@ int TaskJntConfig::init
 
 int TaskJntConfig::apply
 (
-	const std::chrono::steady_clock::time_point& sampling_time,
+	const HiQPTimePoint& sampling_time,
 	const KDL::Tree& kdl_tree, 
 	const KDL::JntArrayVel& kdl_joint_pos_vel
 )

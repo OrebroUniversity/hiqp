@@ -62,6 +62,7 @@
 #include <hiqp/task_manager.h>
 #include <hiqp/ros_visualizer.h>
 #include <hiqp/ros_topic_subscriber.h>
+#include <hiqp/hiqp_time_point.h>
 
 #include <hiqp_msgs_srvs/AddTask.h>
 #include <hiqp_msgs_srvs/UpdateTask.h>
@@ -259,7 +260,7 @@ private:
 
 
      bool                                              is_active_;
-     std::chrono::steady_clock::time_point             sampling_time_;
+     HiQPTimePoint                                     sampling_time_;
 
      bool                                              monitoring_active_;
      double                                            monitoring_publish_rate_;

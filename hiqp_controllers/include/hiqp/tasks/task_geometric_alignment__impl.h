@@ -32,6 +32,7 @@
 #define HIQP_TASK_GEOMETRIC_ALIGNMENT__IMPL_H
 
 
+
 // Orocos KDL Includes
 #include <kdl/treefksolverpos_recursive.hpp>
 #include <kdl/treejnttojacsolver.hpp>
@@ -63,7 +64,7 @@ TaskGeometricAlignment<PrimitiveA, PrimitiveB>::TaskGeometricAlignment()
 template<typename PrimitiveA, typename PrimitiveB>
 int TaskGeometricAlignment<PrimitiveA, PrimitiveB>::init
 (
-	const std::chrono::steady_clock::time_point& sampling_time,
+	const HiQPTimePoint& sampling_time,
     const std::vector<std::string>& parameters,
     const KDL::Tree& kdl_tree, 
     unsigned int num_controls
@@ -140,7 +141,7 @@ int TaskGeometricAlignment<PrimitiveA, PrimitiveB>::monitor()
 template<typename PrimitiveA, typename PrimitiveB>
 int TaskGeometricAlignment<PrimitiveA, PrimitiveB>::apply
 (
-	const std::chrono::steady_clock::time_point& sampling_time,
+	const HiQPTimePoint& sampling_time,
 	const KDL::Tree& kdl_tree, 
 	const KDL::JntArrayVel& kdl_joint_pos_vel
 )

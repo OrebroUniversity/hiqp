@@ -201,12 +201,14 @@ bool ROSKinematicsController::init
 	KDL::JntArray& q = kdl_joint_pos_vel_.q;
 	KDL::JntArray& qdot = kdl_joint_pos_vel_.qdot;
 	handles_mutex_.lock();
-		sampling_time_ = std::chrono::steady_clock::now();
 		for (auto&& handle : joint_handles_map_)
 		{
 			q(handle.first) = handle.second.getPosition();
 			qdot(handle.first) = handle.second.getVelocity();
 		}
+		ros::Time t = ros::Time::now();
+		sampling_time_.setTimePoint(t.sec, t.nsec);
+		//sampling_time_.setTimePoint(0, 0);
 	handles_mutex_.unlock();
 
 
@@ -347,12 +349,14 @@ void ROSKinematicsController::update
 	KDL::JntArray& q = kdl_joint_pos_vel_.q;
 	KDL::JntArray& qdot = kdl_joint_pos_vel_.qdot;
 	handles_mutex_.lock();
-		sampling_time_ = std::chrono::steady_clock::now();
 		for (auto&& handle : joint_handles_map_)
 		{
 			q(handle.first) = handle.second.getPosition();
 			qdot(handle.first) = handle.second.getVelocity();
 		}
+		ros::Time t = ros::Time::now();
+		sampling_time_.setTimePoint(t.sec, t.nsec);
+		//sampling_time_.setTimePoint(0, 0);
 	handles_mutex_.unlock();
 
 
