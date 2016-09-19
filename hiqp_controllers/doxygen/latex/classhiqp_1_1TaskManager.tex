@@ -3,7 +3,7 @@
 }
 
 
-Should be created only once!  
+The central mediator class in teh Hi\-Q\-P framework.  
 
 
 
@@ -13,11 +13,9 @@ Should be created only once!
 \subsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-\hypertarget{classhiqp_1_1TaskManager_a79ce349f194b18d0fb6177dde0903b2b}{\hyperlink{classhiqp_1_1TaskManager_a79ce349f194b18d0fb6177dde0903b2b}{Task\-Manager} (\hyperlink{classhiqp_1_1Visualizer}{Visualizer} $\ast$visualizer)}\label{classhiqp_1_1TaskManager_a79ce349f194b18d0fb6177dde0903b2b}
+\hypertarget{classhiqp_1_1TaskManager_a79ce349f194b18d0fb6177dde0903b2b}{{\bfseries Task\-Manager} (\hyperlink{classhiqp_1_1Visualizer}{Visualizer} $\ast$visualizer)}\label{classhiqp_1_1TaskManager_a79ce349f194b18d0fb6177dde0903b2b}
 
-\begin{DoxyCompactList}\small\item\em Constructor Constructs my awesome controller. \end{DoxyCompactList}\item 
-\hyperlink{classhiqp_1_1TaskManager_a688ad548e2ef681b458c1fc90326f6e6}{$\sim$\-Task\-Manager} () noexcept
-\begin{DoxyCompactList}\small\item\em Destructor Destructs my awesome manager. \end{DoxyCompactList}\item 
+\item 
 \hypertarget{classhiqp_1_1TaskManager_a640c2adc882769f691557a7ffd9c6cab}{void {\bfseries init} (unsigned int num\-\_\-controls)}\label{classhiqp_1_1TaskManager_a640c2adc882769f691557a7ffd9c6cab}
 
 \item 
@@ -50,25 +48,7 @@ int \hyperlink{classhiqp_1_1TaskManager_a1f58d497fa59e23506e6d7d60fe3693d}{remov
 
 
 \subsection{Detailed Description}
-Should be created only once! 
-
-It's awesome! 
-
-\subsection{Constructor \& Destructor Documentation}
-\hypertarget{classhiqp_1_1TaskManager_a688ad548e2ef681b458c1fc90326f6e6}{\index{hiqp\-::\-Task\-Manager@{hiqp\-::\-Task\-Manager}!$\sim$\-Task\-Manager@{$\sim$\-Task\-Manager}}
-\index{$\sim$\-Task\-Manager@{$\sim$\-Task\-Manager}!hiqp::TaskManager@{hiqp\-::\-Task\-Manager}}
-\subsubsection[{$\sim$\-Task\-Manager}]{\setlength{\rightskip}{0pt plus 5cm}hiqp\-::\-Task\-Manager\-::$\sim$\-Task\-Manager (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily [noexcept]}}}\label{classhiqp_1_1TaskManager_a688ad548e2ef681b458c1fc90326f6e6}
-
-
-Destructor Destructs my awesome manager. 
-
-\begin{DoxyRefDesc}{Todo}
-\item[\hyperlink{todo__todo000003}{Todo}]cleanup of tasks and task dynamics is missing! \end{DoxyRefDesc}
-
+The central mediator class in teh Hi\-Q\-P framework. 
 
 \subsection{Member Function Documentation}
 \hypertarget{classhiqp_1_1TaskManager_a6ae5db3755ca5231a99b1b0c5f06e00d}{\index{hiqp\-::\-Task\-Manager@{hiqp\-::\-Task\-Manager}!add\-Task@{add\-Task}}
@@ -106,8 +86,14 @@ Adds a task to the task manager and activates it.
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
-0 if the task creation was successful, -\/1 is the behaviour\-\_\-parameters argument was invalid, -\/2 if the task behaviour name was not recognised, -\/3 if the task name was not recognised 
+0 if the task creation was successful, -\/1 is the behaviour\-\_\-parameters argument was invalid, -\/2 if the task behaviour name was not recognised, -\/3 if the task name was not recognised
 \end{DoxyReturn}
+\begin{DoxyRefDesc}{Todo}
+\item[\hyperlink{todo__todo000002}{Todo}]the add\-\_\-task and update\-\_\-task service calls shall be exchanged for a set\-\_\-task service call 
+
+\hyperlink{classhiqp_1_1TaskFunction}{Task\-Function} objects shall be accessed through smart pointers 
+
+\hyperlink{classhiqp_1_1TaskDynamics}{Task\-Dynamics} objects shall be accessed through smart pointers \end{DoxyRefDesc}
 \hypertarget{classhiqp_1_1TaskManager_a077ffe75d41dd8be2c728824d93207ce}{\index{hiqp\-::\-Task\-Manager@{hiqp\-::\-Task\-Manager}!get\-Kinematic\-Controls@{get\-Kinematic\-Controls}}
 \index{get\-Kinematic\-Controls@{get\-Kinematic\-Controls}!hiqp::TaskManager@{hiqp\-::\-Task\-Manager}}
 \subsubsection[{get\-Kinematic\-Controls}]{\setlength{\rightskip}{0pt plus 5cm}bool hiqp\-::\-Task\-Manager\-::get\-Kinematic\-Controls (
@@ -162,10 +148,10 @@ N\-O\-T\-E\-: The vector sent to this function is supposed to be empty
 \end{DoxyParamCaption}
 )}}\label{classhiqp_1_1TaskManager_a1f58d497fa59e23506e6d7d60fe3693d}
 \begin{DoxyRefDesc}{Todo}
-\item[\hyperlink{todo__todo000004}{Todo}]removal of tasks must also delete task dynamics or else there's a memory leak! \end{DoxyRefDesc}
+\item[\hyperlink{todo__todo000003}{Todo}]refactor the remove\-\_\-task service call to a unset\-\_\-task service call \end{DoxyRefDesc}
 
 
 The documentation for this class was generated from the following files\-:\begin{DoxyCompactItemize}
 \item 
-include/hiqp/\hyperlink{task__manager_8h}{task\-\_\-manager.\-h}\item 
-src/\hyperlink{task__manager_8cpp}{task\-\_\-manager.\-cpp}\end{DoxyCompactItemize}
+include/hiqp/task\-\_\-manager.\-h\item 
+src/task\-\_\-manager.\-cpp\end{DoxyCompactItemize}

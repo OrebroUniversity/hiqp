@@ -38,7 +38,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
       <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
-      <li><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li><a href="annotated.html"><span>Classes</span></a></li>
       <li class="current"><a href="files.html"><span>Files</span></a></li>
       <li>
@@ -69,7 +68,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Pages</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Pages</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -85,7 +84,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div><!-- top -->
 <div class="header">
   <div class="summary">
-<a href="#namespaces">Namespaces</a> &#124;
 <a href="#func-members">Functions</a>  </div>
   <div class="headertitle">
 <div class="title">hiqp_utils.h File Reference</div>  </div>
@@ -105,11 +103,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div>
 <p><a href="hiqp__utils_8h_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="namespaces"></a>
-Namespaces</h2></td></tr>
-<tr class="memitem:namespacehiqp"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacehiqp.html">hiqp</a></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:ae25bb9b7205ab2630606197e8a35af8f"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae25bb9b7205ab2630606197e8a35af8f"></a>
@@ -143,11 +136,11 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>hiqp::printHiqpInfo</
 void&#160;</td><td class="memItemRight" valign="bottom"><b>hiqp::printHiqpWarning</b> (const std::string &amp;msg)</td></tr>
 <tr class="separator:a0993b019bfc0f0e2b38e76b2979eb0e0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5762e31938369b2fdbd81ac2bd11ca0f"><td class="memTemplParams" colspan="2">template&lt;typename Derived &gt; </td></tr>
-<tr class="memitem:a5762e31938369b2fdbd81ac2bd11ca0f"><td class="memTemplItemLeft" align="right" valign="top">Derived&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacehiqp.html#a5762e31938369b2fdbd81ac2bd11ca0f">hiqp::pinv</a> (const Eigen::MatrixBase&lt; Derived &gt; &amp;a)</td></tr>
+<tr class="memitem:a5762e31938369b2fdbd81ac2bd11ca0f"><td class="memTemplItemLeft" align="right" valign="top">Derived&#160;</td><td class="memTemplItemRight" valign="bottom"><b>hiqp::pinv</b> (const Eigen::MatrixBase&lt; Derived &gt; &amp;a)</td></tr>
 <tr class="memdesc:a5762e31938369b2fdbd81ac2bd11ca0f"><td class="mdescLeft">&#160;</td><td class="mdescRight">calculates the Moore-Penrose Pseudoinverse for any sized matrices.  <a href="#a5762e31938369b2fdbd81ac2bd11ca0f">More...</a><br/></td></tr>
 <tr class="separator:a5762e31938369b2fdbd81ac2bd11ca0f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8fb181f069898cddd461b0a33f2f19d1"><td class="memTemplParams" colspan="2">template&lt;typename Derived &gt; </td></tr>
-<tr class="memitem:a8fb181f069898cddd461b0a33f2f19d1"><td class="memTemplItemLeft" align="right" valign="top">Derived&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacehiqp.html#a8fb181f069898cddd461b0a33f2f19d1">hiqp::dls</a> (const Eigen::MatrixBase&lt; Derived &gt; &amp;a, double eta=0.01)</td></tr>
+<tr class="memitem:a8fb181f069898cddd461b0a33f2f19d1"><td class="memTemplItemLeft" align="right" valign="top">Derived&#160;</td><td class="memTemplItemRight" valign="bottom"><b>hiqp::dls</b> (const Eigen::MatrixBase&lt; Derived &gt; &amp;a, double eta=0.01)</td></tr>
 <tr class="memdesc:a8fb181f069898cddd461b0a33f2f19d1"><td class="mdescLeft">&#160;</td><td class="mdescRight">calculates the Damped-Least-Square matrix.  <a href="#a8fb181f069898cddd461b0a33f2f19d1">More...</a><br/></td></tr>
 <tr class="separator:a8fb181f069898cddd461b0a33f2f19d1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
@@ -158,7 +151,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>hiqp::printHiqpWarnin
 </div></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Sep 14 2016 15:28:45 for HiQP_Controllers ROS Package by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Sep 14 2016 17:32:54 for HiQP_Controllers ROS Package by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

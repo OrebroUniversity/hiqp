@@ -14,19 +14,14 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
-
-/*!
+/*
  * \file   task_geometric_projection.cpp
- * \Author Marcus A Johansson (marcus.adam.johansson@gmail.com)
+ * \author Marcus A Johansson (marcus.adam.johansson@gmail.com)
  * \date   July, 2016
  * \brief  Brief description of file.
  *
  * Detailed description of file.
  */
-
-
 
 #include <hiqp/tasks/task_geometric_projection.h>
 
@@ -39,10 +34,6 @@
 
 #include <hiqp/hiqp_utils.h>
 
-// Orocos KDL Includes
-//#include <kdl/treefksolverpos_recursive.hpp>
-//#include <kdl/treejnttojacsolver.hpp>
-
 #include <iostream>
 #include <string>
 #include <sstream>
@@ -51,29 +42,31 @@
 
 
 
-
 namespace hiqp
 {
+namespace tasks
+{
+
+/// \todo Implement point-capsule projection
+/// \todo Implement cylinder-cylinder projection
+/// \todo Implement cylinder-sphere projection
+/// \todo Implement cylinder-capsule projection
+/// \todo Implement sphere-capsule projection
+/// \todo Implement capsule-capsule projection
 
 
 
 
 
-
-
-
-
-
-//#############################################################################
+///////////////////////////////////////////////////////////////////////////////
+//  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  
+// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
+//-  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
+///////////////////////////////////////////////////////////////////////////////
 //
 //                                 P O I N T
 //
-//#############################################################################
-
-
-
-
-
+///////////////////////////////////////////////////////////////////////////////
 
 template<>
 int TaskGeometricProjection<GeometricPoint, GeometricPoint>::project
@@ -152,8 +145,6 @@ int TaskGeometricProjection<GeometricPoint, GeometricLine>::project
 
 
 
-
-
 template<>
 int TaskGeometricProjection<GeometricPoint, GeometricPlane>::project
 (
@@ -180,8 +171,6 @@ int TaskGeometricProjection<GeometricPoint, GeometricPlane>::project
 	
 	return 0;
 }
-
-
 
 
 
@@ -331,8 +320,6 @@ int TaskGeometricProjection<GeometricPoint, GeometricBox>::project
 
 
 
-
-
 template<>
 int TaskGeometricProjection<GeometricPoint, GeometricCylinder>::project
 (
@@ -378,8 +365,6 @@ int TaskGeometricProjection<GeometricPoint, GeometricCylinder>::project
 
 
 
-
-
 template<>
 int TaskGeometricProjection<GeometricPoint, GeometricSphere>::project
 (
@@ -412,23 +397,15 @@ int TaskGeometricProjection<GeometricPoint, GeometricSphere>::project
 
 
 
-
-
-
-
-//#############################################################################
+///////////////////////////////////////////////////////////////////////////////
+//  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  
+// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
+//-  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
+///////////////////////////////////////////////////////////////////////////////
 //
 //                                 S P H E R E
 //
-//#############################################################################
-
-
-
-
-
-
-
-
+///////////////////////////////////////////////////////////////////////////////
 
 template<>
 int TaskGeometricProjection<GeometricSphere, GeometricPlane>::project
@@ -460,8 +437,6 @@ int TaskGeometricProjection<GeometricSphere, GeometricPlane>::project
 	
 	return 0;
 }
-
-
 
 
 
@@ -501,6 +476,6 @@ int TaskGeometricProjection<GeometricSphere, GeometricSphere>::project
 
 
 
-
+} // namespace tasks
 
 } // namespace hiqp

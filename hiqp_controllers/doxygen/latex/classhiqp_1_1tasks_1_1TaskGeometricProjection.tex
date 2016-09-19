@@ -1,0 +1,122 @@
+\hypertarget{classhiqp_1_1tasks_1_1TaskGeometricProjection}{\section{hiqp\-:\-:tasks\-:\-:Task\-Geometric\-Projection$<$ Primitive\-A, Primitive\-B $>$ Class Template Reference}
+\label{classhiqp_1_1tasks_1_1TaskGeometricProjection}\index{hiqp\-::tasks\-::\-Task\-Geometric\-Projection$<$ Primitive\-A, Primitive\-B $>$@{hiqp\-::tasks\-::\-Task\-Geometric\-Projection$<$ Primitive\-A, Primitive\-B $>$}}
+}
+Inheritance diagram for hiqp\-:\-:tasks\-:\-:Task\-Geometric\-Projection$<$ Primitive\-A, Primitive\-B $>$\-:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{classhiqp_1_1tasks_1_1TaskGeometricProjection}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classhiqp_1_1tasks_1_1TaskGeometricProjection_ad7be5c046999f3594a986df1a67211ea}{int {\bfseries init} (const \hyperlink{classhiqp_1_1HiQPTimePoint}{Hi\-Q\-P\-Time\-Point} \&sampling\-\_\-time, const std\-::vector$<$ std\-::string $>$ \&parameters, const K\-D\-L\-::\-Tree \&kdl\-\_\-tree, unsigned int num\-\_\-controls)}\label{classhiqp_1_1tasks_1_1TaskGeometricProjection_ad7be5c046999f3594a986df1a67211ea}
+
+\item 
+int \hyperlink{classhiqp_1_1tasks_1_1TaskGeometricProjection_a80d6bb74fb3faae77a6ef3e141846761}{apply} (const \hyperlink{classhiqp_1_1HiQPTimePoint}{Hi\-Q\-P\-Time\-Point} \&sampling\-\_\-time, const K\-D\-L\-::\-Tree \&kdl\-\_\-tree, const K\-D\-L\-::\-Jnt\-Array\-Vel \&kdl\-\_\-joint\-\_\-pos\-\_\-vel)
+\begin{DoxyCompactList}\small\item\em {\itshape Pure virtual}. Calculates the task function and task jacobian values. \end{DoxyCompactList}\item 
+int \hyperlink{classhiqp_1_1tasks_1_1TaskGeometricProjection_a58d7416dfaa2ff0241065be68282848c}{monitor} ()
+\begin{DoxyCompactList}\small\item\em {\itshape Pure virtual}. Computes all performance measures used when monitoring this task. \end{DoxyCompactList}\item 
+\hypertarget{classhiqp_1_1tasks_1_1TaskGeometricProjection_a2ea2fb575435f71a21e3f04fe3fc6f83}{int {\bfseries project} (Primitive\-A $\ast$first, Primitive\-B $\ast$second)}\label{classhiqp_1_1tasks_1_1TaskGeometricProjection_a2ea2fb575435f71a21e3f04fe3fc6f83}
+
+\item 
+{\footnotesize template$<$$>$ }\\int \hyperlink{classhiqp_1_1tasks_1_1TaskGeometricProjection_a37272247434d8b14c819649f25234cc6}{project} (Geometric\-Point $\ast$point1, Geometric\-Point $\ast$point2)
+\item 
+\hypertarget{classhiqp_1_1tasks_1_1TaskGeometricProjection_ad292a6cae9f94804290cf21479aac21a}{{\footnotesize template$<$$>$ }\\int {\bfseries project} (Geometric\-Point $\ast$point, Geometric\-Line $\ast$line)}\label{classhiqp_1_1tasks_1_1TaskGeometricProjection_ad292a6cae9f94804290cf21479aac21a}
+
+\item 
+\hypertarget{classhiqp_1_1tasks_1_1TaskGeometricProjection_ae6653b1cf797c4b4ff375bd033a68ef1}{{\footnotesize template$<$$>$ }\\int {\bfseries project} (Geometric\-Point $\ast$point, Geometric\-Plane $\ast$plane)}\label{classhiqp_1_1tasks_1_1TaskGeometricProjection_ae6653b1cf797c4b4ff375bd033a68ef1}
+
+\item 
+\hypertarget{classhiqp_1_1tasks_1_1TaskGeometricProjection_a9ea4c40950f0bfa6152ce1b65a8c3d09}{{\footnotesize template$<$$>$ }\\int {\bfseries project} (Geometric\-Point $\ast$point, Geometric\-Box $\ast$box)}\label{classhiqp_1_1tasks_1_1TaskGeometricProjection_a9ea4c40950f0bfa6152ce1b65a8c3d09}
+
+\item 
+\hypertarget{classhiqp_1_1tasks_1_1TaskGeometricProjection_adf1cde404a412303ef120f5da4316daf}{{\footnotesize template$<$$>$ }\\int {\bfseries project} (Geometric\-Point $\ast$point, Geometric\-Cylinder $\ast$cylinder)}\label{classhiqp_1_1tasks_1_1TaskGeometricProjection_adf1cde404a412303ef120f5da4316daf}
+
+\item 
+\hypertarget{classhiqp_1_1tasks_1_1TaskGeometricProjection_a3d55ec9388e43cc88b166c713b071fd0}{{\footnotesize template$<$$>$ }\\int {\bfseries project} (Geometric\-Point $\ast$point, Geometric\-Sphere $\ast$sphere)}\label{classhiqp_1_1tasks_1_1TaskGeometricProjection_a3d55ec9388e43cc88b166c713b071fd0}
+
+\item 
+\hypertarget{classhiqp_1_1tasks_1_1TaskGeometricProjection_a5d7494ae8bc91c5dc1415467339966d9}{{\footnotesize template$<$$>$ }\\int {\bfseries project} (Geometric\-Sphere $\ast$sphere, Geometric\-Plane $\ast$plane)}\label{classhiqp_1_1tasks_1_1TaskGeometricProjection_a5d7494ae8bc91c5dc1415467339966d9}
+
+\item 
+\hypertarget{classhiqp_1_1tasks_1_1TaskGeometricProjection_a497ae13dedcbc22e5a78654d4ca83d75}{{\footnotesize template$<$$>$ }\\int {\bfseries project} (Geometric\-Sphere $\ast$sphere1, Geometric\-Sphere $\ast$sphere2)}\label{classhiqp_1_1tasks_1_1TaskGeometricProjection_a497ae13dedcbc22e5a78654d4ca83d75}
+
+\end{DoxyCompactItemize}
+\subsection*{Additional Inherited Members}
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classhiqp_1_1tasks_1_1TaskGeometricProjection_a80d6bb74fb3faae77a6ef3e141846761}{\index{hiqp\-::tasks\-::\-Task\-Geometric\-Projection@{hiqp\-::tasks\-::\-Task\-Geometric\-Projection}!apply@{apply}}
+\index{apply@{apply}!hiqp::tasks::TaskGeometricProjection@{hiqp\-::tasks\-::\-Task\-Geometric\-Projection}}
+\subsubsection[{apply}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Primitive\-A , typename Primitive\-B $>$ int {\bf hiqp\-::tasks\-::\-Task\-Geometric\-Projection}$<$ Primitive\-A, Primitive\-B $>$\-::apply (
+\begin{DoxyParamCaption}
+\item[{const {\bf Hi\-Q\-P\-Time\-Point} \&}]{sampling\-\_\-time, }
+\item[{const K\-D\-L\-::\-Tree \&}]{kdl\-\_\-tree, }
+\item[{const K\-D\-L\-::\-Jnt\-Array\-Vel \&}]{kdl\-\_\-joint\-\_\-pos\-\_\-vel}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [virtual]}}}\label{classhiqp_1_1tasks_1_1TaskGeometricProjection_a80d6bb74fb3faae77a6ef3e141846761}
+
+
+{\itshape Pure virtual}. Calculates the task function and task jacobian values. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em kdl\-\_\-tree} & \-: reference to the kinematic dynamic tree of the robot \\
+\hline
+{\em kdl\-\_\-joint\-\_\-pos\-\_\-vel} & \-: reference to the current joint positions and velocities \\
+\hline
+{\em task\-\_\-fun\-\_\-val} & \-: reference to where the output controls are to be stored\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+0 if the calculation was successful 
+\end{DoxyReturn}
+
+
+Implements \hyperlink{classhiqp_1_1TaskFunction_a3c476e011c762b8a8f7470ec47f70a17}{hiqp\-::\-Task\-Function}.
+
+\hypertarget{classhiqp_1_1tasks_1_1TaskGeometricProjection_a58d7416dfaa2ff0241065be68282848c}{\index{hiqp\-::tasks\-::\-Task\-Geometric\-Projection@{hiqp\-::tasks\-::\-Task\-Geometric\-Projection}!monitor@{monitor}}
+\index{monitor@{monitor}!hiqp::tasks::TaskGeometricProjection@{hiqp\-::tasks\-::\-Task\-Geometric\-Projection}}
+\subsubsection[{monitor}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename Primitive\-A , typename Primitive\-B $>$ int {\bf hiqp\-::tasks\-::\-Task\-Geometric\-Projection}$<$ Primitive\-A, Primitive\-B $>$\-::monitor (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [virtual]}}}\label{classhiqp_1_1tasks_1_1TaskGeometricProjection_a58d7416dfaa2ff0241065be68282848c}
+
+
+{\itshape Pure virtual}. Computes all performance measures used when monitoring this task. 
+
+\begin{DoxyReturn}{Returns}
+0 if the calculation was successful 
+\end{DoxyReturn}
+
+
+Implements \hyperlink{classhiqp_1_1TaskFunction_a47a3283a0c0ebafa17feeca96afe5af0}{hiqp\-::\-Task\-Function}.
+
+\hypertarget{classhiqp_1_1tasks_1_1TaskGeometricProjection_a37272247434d8b14c819649f25234cc6}{\index{hiqp\-::tasks\-::\-Task\-Geometric\-Projection@{hiqp\-::tasks\-::\-Task\-Geometric\-Projection}!project@{project}}
+\index{project@{project}!hiqp::tasks::TaskGeometricProjection@{hiqp\-::tasks\-::\-Task\-Geometric\-Projection}}
+\subsubsection[{project}]{\setlength{\rightskip}{0pt plus 5cm}template$<$$>$ int {\bf hiqp\-::tasks\-::\-Task\-Geometric\-Projection}$<$ Geometric\-Point, Geometric\-Point $>$\-::project (
+\begin{DoxyParamCaption}
+\item[{Geometric\-Point $\ast$}]{point1, }
+\item[{Geometric\-Point $\ast$}]{point2}
+\end{DoxyParamCaption}
+)}}\label{classhiqp_1_1tasks_1_1TaskGeometricProjection_a37272247434d8b14c819649f25234cc6}
+\begin{DoxyRefDesc}{Todo}
+\item[\hyperlink{todo__todo000004}{Todo}]Implement point-\/capsule projection 
+
+Implement cylinder-\/cylinder projection 
+
+Implement cylinder-\/sphere projection 
+
+Implement cylinder-\/capsule projection 
+
+Implement sphere-\/capsule projection 
+
+Implement capsule-\/capsule projection \end{DoxyRefDesc}
+
+
+The documentation for this class was generated from the following files\-:\begin{DoxyCompactItemize}
+\item 
+include/hiqp/tasks/task\-\_\-geometric\-\_\-projection.\-h\item 
+include/hiqp/tasks/task\-\_\-geometric\-\_\-projection\-\_\-\-\_\-impl.\-h\end{DoxyCompactItemize}

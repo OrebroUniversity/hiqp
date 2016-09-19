@@ -13,7 +13,7 @@ class \hyperlink{classhiqp_1_1HiQPTimePoint}{Hi\-Q\-P\-Time\-Point}
 class \hyperlink{classhiqp_1_1ROSDynamicsController}{R\-O\-S\-Dynamics\-Controller}
 \begin{DoxyCompactList}\small\item\em This is my awesome controller. \end{DoxyCompactList}\item 
 class \hyperlink{classhiqp_1_1ROSKinematicsController}{R\-O\-S\-Kinematics\-Controller}
-\item 
+\begin{DoxyCompactList}\small\item\em A velocity controller compatible with R\-O\-S that uses the Hi\-Q\-P control framework. \end{DoxyCompactList}\item 
 class \hyperlink{classhiqp_1_1ROSTopicSubscriber}{R\-O\-S\-Topic\-Subscriber}
 \item 
 class \hyperlink{classhiqp_1_1ROSVisualizer}{R\-O\-S\-Visualizer}
@@ -21,43 +21,29 @@ class \hyperlink{classhiqp_1_1ROSVisualizer}{R\-O\-S\-Visualizer}
 class \hyperlink{classhiqp_1_1CasADiSolver}{Cas\-A\-Di\-Solver}
 \item 
 class \hyperlink{classhiqp_1_1TaskDynamics}{Task\-Dynamics}
-\item 
+\begin{DoxyCompactList}\small\item\em Abstract base class for all task dynamics types. \end{DoxyCompactList}\item 
 class \hyperlink{classhiqp_1_1TaskFactory}{Task\-Factory}
 \begin{DoxyCompactList}\small\item\em A factory for creating task function and task dynamics. (The process of creating and initializing them is intertwined.) \end{DoxyCompactList}\item 
 class \hyperlink{classhiqp_1_1TaskFunction}{Task\-Function}
-\item 
+\begin{DoxyCompactList}\small\item\em Abstract base class for all task function types. \end{DoxyCompactList}\item 
 class \hyperlink{classhiqp_1_1TaskMonitoringData}{Task\-Monitoring\-Data}
 \begin{DoxyCompactList}\small\item\em An aggregation of const references to facilitate communication of monitoring data. \end{DoxyCompactList}\item 
 class \hyperlink{classhiqp_1_1TaskManager}{Task\-Manager}
 \begin{DoxyCompactList}\small\item\em Should be created only once! \end{DoxyCompactList}\item 
-class \hyperlink{classhiqp_1_1DynamicsFirstOrder}{Dynamics\-First\-Order}
-\begin{DoxyCompactList}\small\item\em A general first-\/order task dynamics implementation that enforces an exponential decay of the task function value. \end{DoxyCompactList}\item 
-class \hyperlink{classhiqp_1_1DynamicsJntLimits}{Dynamics\-Jnt\-Limits}
-\item 
-class \hyperlink{classhiqp_1_1DynamicsMinimalJerk}{Dynamics\-Minimal\-Jerk}
-\item 
-class \hyperlink{classhiqp_1_1TaskFullPose}{Task\-Full\-Pose}
-\begin{DoxyCompactList}\small\item\em Represents a task that sets a specific joint configuration. \end{DoxyCompactList}\item 
-class \hyperlink{classhiqp_1_1TaskGeometricAlignment}{Task\-Geometric\-Alignment}
-\item 
-class \hyperlink{classhiqp_1_1TaskGeometricProjection}{Task\-Geometric\-Projection}
-\begin{DoxyCompactList}\small\item\em It's awesome! \end{DoxyCompactList}\item 
-class \hyperlink{classhiqp_1_1TaskJntConfig}{Task\-Jnt\-Config}
-\begin{DoxyCompactList}\small\item\em Represents a task that sets a specific joint configuration. \end{DoxyCompactList}\item 
-class \hyperlink{classhiqp_1_1TaskJntLimits}{Task\-Jnt\-Limits}
-\item 
 class \hyperlink{classhiqp_1_1Visualizer}{Visualizer}
 \end{DoxyCompactItemize}
 \subsection*{Typedefs}
 \begin{DoxyCompactItemize}
 \item 
-typedef \\*
+\hypertarget{namespacehiqp_a7b250295f6797153486ce8ab085bd450}{typedef \\*
 controller\-\_\-interface\-::\-Controller\\*
-$<$ hardware\-\_\-interface\-::\-Velocity\-Joint\-Interface $>$ \hyperlink{namespacehiqp_a7b250295f6797153486ce8ab085bd450}{Joint\-Velocity\-Controller}
-\item 
-typedef \\*
-hardware\-\_\-interface\-::\-Velocity\-Joint\-Interface \hyperlink{namespacehiqp_ac536ca3b4ba33489281fa5bec490799c}{Joint\-Velocity\-Interface}
-\end{DoxyCompactItemize}
+$<$ hardware\-\_\-interface\-::\-Velocity\-Joint\-Interface $>$ \hyperlink{namespacehiqp_a7b250295f6797153486ce8ab085bd450}{Joint\-Velocity\-Controller}}\label{namespacehiqp_a7b250295f6797153486ce8ab085bd450}
+
+\begin{DoxyCompactList}\small\item\em The standard joint-\/velocity-\/controller in R\-O\-S. \end{DoxyCompactList}\item 
+\hypertarget{namespacehiqp_ac536ca3b4ba33489281fa5bec490799c}{typedef \\*
+hardware\-\_\-interface\-::\-Velocity\-Joint\-Interface \hyperlink{namespacehiqp_ac536ca3b4ba33489281fa5bec490799c}{Joint\-Velocity\-Interface}}\label{namespacehiqp_ac536ca3b4ba33489281fa5bec490799c}
+
+\begin{DoxyCompactList}\small\item\em The standard joint-\/velocity hardware interface in R\-O\-S. \end{DoxyCompactList}\end{DoxyCompactItemize}
 \subsection*{Functions}
 \begin{DoxyCompactItemize}
 \item 
@@ -120,15 +106,6 @@ hardware\-\_\-interface\-::\-Velocity\-Joint\-Interface \hyperlink{namespacehiqp
 
 \subsection{Detailed Description}
 namespace for Hi\-Q\-P-\/related stuff 
-
-\subsection{Typedef Documentation}
-\hypertarget{namespacehiqp_a7b250295f6797153486ce8ab085bd450}{\index{hiqp@{hiqp}!Joint\-Velocity\-Controller@{Joint\-Velocity\-Controller}}
-\index{Joint\-Velocity\-Controller@{Joint\-Velocity\-Controller}!hiqp@{hiqp}}
-\subsubsection[{Joint\-Velocity\-Controller}]{\setlength{\rightskip}{0pt plus 5cm}typedef controller\-\_\-interface\-::\-Controller$<$hardware\-\_\-interface\-::\-Velocity\-Joint\-Interface$>$ {\bf hiqp\-::\-Joint\-Velocity\-Controller}}}\label{namespacehiqp_a7b250295f6797153486ce8ab085bd450}
-A name for the standard joint-\/velocity-\/controller in R\-O\-S \hypertarget{namespacehiqp_ac536ca3b4ba33489281fa5bec490799c}{\index{hiqp@{hiqp}!Joint\-Velocity\-Interface@{Joint\-Velocity\-Interface}}
-\index{Joint\-Velocity\-Interface@{Joint\-Velocity\-Interface}!hiqp@{hiqp}}
-\subsubsection[{Joint\-Velocity\-Interface}]{\setlength{\rightskip}{0pt plus 5cm}typedef hardware\-\_\-interface\-::\-Velocity\-Joint\-Interface {\bf hiqp\-::\-Joint\-Velocity\-Interface}}}\label{namespacehiqp_ac536ca3b4ba33489281fa5bec490799c}
-A name for the standard joint-\/velocity hardware interface in R\-O\-S 
 
 \subsection{Function Documentation}
 \hypertarget{namespacehiqp_a8fb181f069898cddd461b0a33f2f19d1}{\index{hiqp@{hiqp}!dls@{dls}}

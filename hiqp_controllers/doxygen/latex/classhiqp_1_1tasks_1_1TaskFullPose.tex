@@ -1,0 +1,90 @@
+\hypertarget{classhiqp_1_1tasks_1_1TaskFullPose}{\section{hiqp\-:\-:tasks\-:\-:Task\-Full\-Pose Class Reference}
+\label{classhiqp_1_1tasks_1_1TaskFullPose}\index{hiqp\-::tasks\-::\-Task\-Full\-Pose@{hiqp\-::tasks\-::\-Task\-Full\-Pose}}
+}
+
+
+Represents a task that sets a specific joint configuration.  
+
+
+
+
+{\ttfamily \#include $<$task\-\_\-full\-\_\-pose.\-h$>$}
+
+Inheritance diagram for hiqp\-:\-:tasks\-:\-:Task\-Full\-Pose\-:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{classhiqp_1_1tasks_1_1TaskFullPose}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classhiqp_1_1tasks_1_1TaskFullPose_aa15ec40a44969406e712c906da17a174}{int {\bfseries init} (const \hyperlink{classhiqp_1_1HiQPTimePoint}{Hi\-Q\-P\-Time\-Point} \&sampling\-\_\-time, const std\-::vector$<$ std\-::string $>$ \&parameters, const K\-D\-L\-::\-Tree \&kdl\-\_\-tree, unsigned int num\-\_\-controls)}\label{classhiqp_1_1tasks_1_1TaskFullPose_aa15ec40a44969406e712c906da17a174}
+
+\item 
+int \hyperlink{classhiqp_1_1tasks_1_1TaskFullPose_aa3f9600219741a8bb7ffcb15bba19c70}{apply} (const \hyperlink{classhiqp_1_1HiQPTimePoint}{Hi\-Q\-P\-Time\-Point} \&sampling\-\_\-time, const K\-D\-L\-::\-Tree \&kdl\-\_\-tree, const K\-D\-L\-::\-Jnt\-Array\-Vel \&kdl\-\_\-joint\-\_\-pos\-\_\-vel)
+\begin{DoxyCompactList}\small\item\em {\itshape Pure virtual}. Calculates the task function and task jacobian values. \end{DoxyCompactList}\item 
+int \hyperlink{classhiqp_1_1tasks_1_1TaskFullPose_a1280f9a08af7083c28fc31cf66a61f55}{monitor} ()
+\begin{DoxyCompactList}\small\item\em {\itshape Pure virtual}. Computes all performance measures used when monitoring this task. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Additional Inherited Members}
+
+
+\subsection{Detailed Description}
+Represents a task that sets a specific joint configuration. 
+
+This task does not leave any redundancy available to other tasks. 
+
+\subsection{Member Function Documentation}
+\hypertarget{classhiqp_1_1tasks_1_1TaskFullPose_aa3f9600219741a8bb7ffcb15bba19c70}{\index{hiqp\-::tasks\-::\-Task\-Full\-Pose@{hiqp\-::tasks\-::\-Task\-Full\-Pose}!apply@{apply}}
+\index{apply@{apply}!hiqp::tasks::TaskFullPose@{hiqp\-::tasks\-::\-Task\-Full\-Pose}}
+\subsubsection[{apply}]{\setlength{\rightskip}{0pt plus 5cm}int hiqp\-::tasks\-::\-Task\-Full\-Pose\-::apply (
+\begin{DoxyParamCaption}
+\item[{const {\bf Hi\-Q\-P\-Time\-Point} \&}]{sampling\-\_\-time, }
+\item[{const K\-D\-L\-::\-Tree \&}]{kdl\-\_\-tree, }
+\item[{const K\-D\-L\-::\-Jnt\-Array\-Vel \&}]{kdl\-\_\-joint\-\_\-pos\-\_\-vel}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [virtual]}}}\label{classhiqp_1_1tasks_1_1TaskFullPose_aa3f9600219741a8bb7ffcb15bba19c70}
+
+
+{\itshape Pure virtual}. Calculates the task function and task jacobian values. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em kdl\-\_\-tree} & \-: reference to the kinematic dynamic tree of the robot \\
+\hline
+{\em kdl\-\_\-joint\-\_\-pos\-\_\-vel} & \-: reference to the current joint positions and velocities \\
+\hline
+{\em task\-\_\-fun\-\_\-val} & \-: reference to where the output controls are to be stored\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+0 if the calculation was successful 
+\end{DoxyReturn}
+
+
+Implements \hyperlink{classhiqp_1_1TaskFunction_a3c476e011c762b8a8f7470ec47f70a17}{hiqp\-::\-Task\-Function}.
+
+\hypertarget{classhiqp_1_1tasks_1_1TaskFullPose_a1280f9a08af7083c28fc31cf66a61f55}{\index{hiqp\-::tasks\-::\-Task\-Full\-Pose@{hiqp\-::tasks\-::\-Task\-Full\-Pose}!monitor@{monitor}}
+\index{monitor@{monitor}!hiqp::tasks::TaskFullPose@{hiqp\-::tasks\-::\-Task\-Full\-Pose}}
+\subsubsection[{monitor}]{\setlength{\rightskip}{0pt plus 5cm}int hiqp\-::tasks\-::\-Task\-Full\-Pose\-::monitor (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [virtual]}}}\label{classhiqp_1_1tasks_1_1TaskFullPose_a1280f9a08af7083c28fc31cf66a61f55}
+
+
+{\itshape Pure virtual}. Computes all performance measures used when monitoring this task. 
+
+\begin{DoxyReturn}{Returns}
+0 if the calculation was successful 
+\end{DoxyReturn}
+
+
+Implements \hyperlink{classhiqp_1_1TaskFunction_a47a3283a0c0ebafa17feeca96afe5af0}{hiqp\-::\-Task\-Function}.
+
+
+
+The documentation for this class was generated from the following files\-:\begin{DoxyCompactItemize}
+\item 
+include/hiqp/tasks/task\-\_\-full\-\_\-pose.\-h\item 
+src/tasks/task\-\_\-full\-\_\-pose.\-cpp\end{DoxyCompactItemize}

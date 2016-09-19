@@ -38,7 +38,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
       <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
-      <li><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li class="current"><a href="annotated.html"><span>Classes</span></a></li>
       <li><a href="files.html"><span>Files</span></a></li>
       <li>
@@ -76,15 +75,14 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow4" class="tabs3">
     <ul class="tablist">
       <li><a href="#index_a"><span>a</span></a></li>
-      <li><a href="#index_c"><span>c</span></a></li>
       <li><a href="#index_g"><span>g</span></a></li>
       <li><a href="#index_i"><span>i</span></a></li>
       <li><a href="#index_m"><span>m</span></a></li>
+      <li><a href="#index_p"><span>p</span></a></li>
       <li><a href="#index_r"><span>r</span></a></li>
       <li><a href="#index_s"><span>s</span></a></li>
       <li><a href="#index_t"><span>t</span></a></li>
-      <li><a href="#index_u"><span>u</span></a></li>
-      <li class="current"><a href="#index_~"><span>~</span></a></li>
+      <li class="current"><a href="#index_u"><span>u</span></a></li>
     </ul>
   </div>
 </div><!-- top -->
@@ -93,7 +91,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Pages</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Pages</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -106,23 +104,19 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 &#160;
 
 <h3><a class="anchor" id="index_a"></a>- a -</h3><ul>
+<li>addGeometricPrimitive()
+: <a class="el" href="classhiqp_1_1geometric__primitives_1_1GeometricPrimitiveMap.html#a6ddc5d3b4e8e44748fbb0c9e66957952">hiqp::geometric_primitives::GeometricPrimitiveMap</a>
+</li>
 <li>addTask()
 : <a class="el" href="classhiqp_1_1TaskManager.html#a6ae5db3755ca5231a99b1b0c5f06e00d">hiqp::TaskManager</a>
 </li>
 <li>apply()
-: <a class="el" href="classhiqp_1_1TaskFullPose.html#a7dcaa206ba1a24d205504ffaa3f55ac6">hiqp::TaskFullPose</a>
-, <a class="el" href="classhiqp_1_1TaskFunction.html#a3c476e011c762b8a8f7470ec47f70a17">hiqp::TaskFunction</a>
-, <a class="el" href="classhiqp_1_1TaskGeometricAlignment.html#a85bec9aead639a94c50b951df6bf076e">hiqp::TaskGeometricAlignment&lt; PrimitiveA, PrimitiveB &gt;</a>
-, <a class="el" href="classhiqp_1_1TaskGeometricProjection.html#a3eaed2bb6db4b6b6b53503a20d2a1895">hiqp::TaskGeometricProjection&lt; PrimitiveA, PrimitiveB &gt;</a>
-, <a class="el" href="classhiqp_1_1TaskJntConfig.html#a34dd3b5a79953fa6c0f970dcdd66873b">hiqp::TaskJntConfig</a>
-, <a class="el" href="classhiqp_1_1TaskJntLimits.html#aa140824f7bc5b80754f3b57b43d7aa69">hiqp::TaskJntLimits</a>
-</li>
-</ul>
-
-
-<h3><a class="anchor" id="index_c"></a>- c -</h3><ul>
-<li>clear()
-: <a class="el" href="classhiqp_1_1geometric__primitives_1_1GeometricPrimitiveMap.html#aed92b78b51ccd075d226b003f9576476">hiqp::geometric_primitives::GeometricPrimitiveMap</a>
+: <a class="el" href="classhiqp_1_1TaskFunction.html#a3c476e011c762b8a8f7470ec47f70a17">hiqp::TaskFunction</a>
+, <a class="el" href="classhiqp_1_1tasks_1_1TaskFullPose.html#aa3f9600219741a8bb7ffcb15bba19c70">hiqp::tasks::TaskFullPose</a>
+, <a class="el" href="classhiqp_1_1tasks_1_1TaskGeometricAlignment.html#aa46e561c924dd0a65f463a715ed387a3">hiqp::tasks::TaskGeometricAlignment&lt; PrimitiveA, PrimitiveB &gt;</a>
+, <a class="el" href="classhiqp_1_1tasks_1_1TaskGeometricProjection.html#a80d6bb74fb3faae77a6ef3e141846761">hiqp::tasks::TaskGeometricProjection&lt; PrimitiveA, PrimitiveB &gt;</a>
+, <a class="el" href="classhiqp_1_1tasks_1_1TaskJntConfig.html#a5e5ed2b1a16a96fbdaff3e95fd1b2329">hiqp::tasks::TaskJntConfig</a>
+, <a class="el" href="classhiqp_1_1tasks_1_1TaskJntLimits.html#a3ab9389dfc0e3646fbd1fd670d7285fe">hiqp::tasks::TaskJntLimits</a>
 </li>
 </ul>
 
@@ -148,39 +142,32 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 , <a class="el" href="classhiqp_1_1geometric__primitives_1_1GeometricSphere.html#aa291157616f08f80ded39aa29cd3589a">hiqp::geometric_primitives::GeometricSphere</a>
 , <a class="el" href="classhiqp_1_1ROSDynamicsController.html#a2308da73670325884a035055bb86b7d2">hiqp::ROSDynamicsController</a>
 , <a class="el" href="classhiqp_1_1ROSKinematicsController.html#a9acc590f4c514c1321f95f0667d1aae0">hiqp::ROSKinematicsController</a>
-, <a class="el" href="classhiqp_1_1TaskFullPose.html#aed1a9b16310f7a7c991732701bd03ce0">hiqp::TaskFullPose</a>
-, <a class="el" href="classhiqp_1_1TaskGeometricAlignment.html#a532c586ac698619c0f2d18fe44253bec">hiqp::TaskGeometricAlignment&lt; PrimitiveA, PrimitiveB &gt;</a>
-, <a class="el" href="classhiqp_1_1TaskGeometricProjection.html#a40985179abed77a08e2ff35ce3bd714d">hiqp::TaskGeometricProjection&lt; PrimitiveA, PrimitiveB &gt;</a>
-, <a class="el" href="classhiqp_1_1TaskJntConfig.html#a03d9d877da64b956d7afd91e536c7fcd">hiqp::TaskJntConfig</a>
-, <a class="el" href="classhiqp_1_1TaskJntLimits.html#a9b5ae3ada59d143d57d8abd12c8e1e5f">hiqp::TaskJntLimits</a>
 </li>
 </ul>
 
 
 <h3><a class="anchor" id="index_m"></a>- m -</h3><ul>
 <li>monitor()
-: <a class="el" href="classhiqp_1_1TaskFullPose.html#a46c3585f15b89f793b6a9debcb6e5db9">hiqp::TaskFullPose</a>
-, <a class="el" href="classhiqp_1_1TaskFunction.html#a47a3283a0c0ebafa17feeca96afe5af0">hiqp::TaskFunction</a>
-, <a class="el" href="classhiqp_1_1TaskGeometricAlignment.html#a1cede66f4e9b5e558dbcdaaf7e11e2c4">hiqp::TaskGeometricAlignment&lt; PrimitiveA, PrimitiveB &gt;</a>
-, <a class="el" href="classhiqp_1_1TaskGeometricProjection.html#a6e824a39011d6e5865e13dd956649a71">hiqp::TaskGeometricProjection&lt; PrimitiveA, PrimitiveB &gt;</a>
-, <a class="el" href="classhiqp_1_1TaskJntConfig.html#af4d673c3b78a3c461abce090c0871a63">hiqp::TaskJntConfig</a>
-, <a class="el" href="classhiqp_1_1TaskJntLimits.html#a1a2b92667aa173f74b2df4f1364ddcd9">hiqp::TaskJntLimits</a>
+: <a class="el" href="classhiqp_1_1TaskFunction.html#a47a3283a0c0ebafa17feeca96afe5af0">hiqp::TaskFunction</a>
+, <a class="el" href="classhiqp_1_1tasks_1_1TaskFullPose.html#a1280f9a08af7083c28fc31cf66a61f55">hiqp::tasks::TaskFullPose</a>
+, <a class="el" href="classhiqp_1_1tasks_1_1TaskGeometricAlignment.html#a1c01a7489e846175992a44a62a8a7436">hiqp::tasks::TaskGeometricAlignment&lt; PrimitiveA, PrimitiveB &gt;</a>
+, <a class="el" href="classhiqp_1_1tasks_1_1TaskGeometricProjection.html#a58d7416dfaa2ff0241065be68282848c">hiqp::tasks::TaskGeometricProjection&lt; PrimitiveA, PrimitiveB &gt;</a>
+, <a class="el" href="classhiqp_1_1tasks_1_1TaskJntConfig.html#a903a952db54532a9650c725141399774">hiqp::tasks::TaskJntConfig</a>
+, <a class="el" href="classhiqp_1_1tasks_1_1TaskJntLimits.html#ace02732e6cd3cc4087baf6e7df5e2723">hiqp::tasks::TaskJntLimits</a>
+</li>
+</ul>
+
+
+<h3><a class="anchor" id="index_p"></a>- p -</h3><ul>
+<li>project()
+: <a class="el" href="classhiqp_1_1tasks_1_1TaskGeometricProjection.html#a37272247434d8b14c819649f25234cc6">hiqp::tasks::TaskGeometricProjection&lt; PrimitiveA, PrimitiveB &gt;</a>
 </li>
 </ul>
 
 
 <h3><a class="anchor" id="index_r"></a>- r -</h3><ul>
-<li>removeGeometricPrimitive()
-: <a class="el" href="classhiqp_1_1geometric__primitives_1_1GeometricPrimitiveMap.html#a07d04c1a3bb164bb501bd03cc6bc1eae">hiqp::geometric_primitives::GeometricPrimitiveMap</a>
-</li>
 <li>removeTask()
 : <a class="el" href="classhiqp_1_1TaskManager.html#a1f58d497fa59e23506e6d7d60fe3693d">hiqp::TaskManager</a>
-</li>
-<li>ROSDynamicsController()
-: <a class="el" href="classhiqp_1_1ROSDynamicsController.html#ab25caf17b0f140092447b5209eb7ddd4">hiqp::ROSDynamicsController</a>
-</li>
-<li>ROSKinematicsController()
-: <a class="el" href="classhiqp_1_1ROSKinematicsController.html#a8d0a319248f8e3debef076389f832696">hiqp::ROSKinematicsController</a>
 </li>
 </ul>
 
@@ -198,24 +185,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 
 
 <h3><a class="anchor" id="index_t"></a>- t -</h3><ul>
-<li>TaskFullPose()
-: <a class="el" href="classhiqp_1_1TaskFullPose.html#a9791ec10bf86952b38726b4576dba015">hiqp::TaskFullPose</a>
-</li>
-<li>TaskGeometricAlignment()
-: <a class="el" href="classhiqp_1_1TaskGeometricAlignment.html#a8f089ad7dab000f343341a159c61a0ca">hiqp::TaskGeometricAlignment&lt; PrimitiveA, PrimitiveB &gt;</a>
-</li>
-<li>TaskGeometricProjection()
-: <a class="el" href="classhiqp_1_1TaskGeometricProjection.html#af75d2b163680a57fc5809c9b07e3e678">hiqp::TaskGeometricProjection&lt; PrimitiveA, PrimitiveB &gt;</a>
-</li>
-<li>TaskJntConfig()
-: <a class="el" href="classhiqp_1_1TaskJntConfig.html#a29b4fbc6207f5de40f3e880274f6f716">hiqp::TaskJntConfig</a>
-</li>
-<li>TaskJntLimits()
-: <a class="el" href="classhiqp_1_1TaskJntLimits.html#a82d969e4fafcdd5a0830700ef1b67204">hiqp::TaskJntLimits</a>
-</li>
-<li>TaskManager()
-: <a class="el" href="classhiqp_1_1TaskManager.html#a79ce349f194b18d0fb6177dde0903b2b">hiqp::TaskManager</a>
-</li>
 <li>topicCallback()
 : <a class="el" href="classhiqp_1_1ROSTopicSubscriber.html#addcc31d45f31fdfb386a8e1b437ef3db">hiqp::ROSTopicSubscriber</a>
 </li>
@@ -228,38 +197,10 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 , <a class="el" href="classhiqp_1_1ROSKinematicsController.html#aa4cc3905801b4097916731d0d7af2089">hiqp::ROSKinematicsController</a>
 </li>
 </ul>
-
-
-<h3><a class="anchor" id="index_~"></a>- ~ -</h3><ul>
-<li>~ROSDynamicsController()
-: <a class="el" href="classhiqp_1_1ROSDynamicsController.html#a007a61fdaa35652378b259ceb971d409">hiqp::ROSDynamicsController</a>
-</li>
-<li>~ROSKinematicsController()
-: <a class="el" href="classhiqp_1_1ROSKinematicsController.html#ab4550e7b5bfd5368c6fcad913bbe4769">hiqp::ROSKinematicsController</a>
-</li>
-<li>~TaskFullPose()
-: <a class="el" href="classhiqp_1_1TaskFullPose.html#a88c4631a941fa37850919c8e87cf09a8">hiqp::TaskFullPose</a>
-</li>
-<li>~TaskGeometricAlignment()
-: <a class="el" href="classhiqp_1_1TaskGeometricAlignment.html#a94c787691eeafd7ca1f7979c54aa79e4">hiqp::TaskGeometricAlignment&lt; PrimitiveA, PrimitiveB &gt;</a>
-</li>
-<li>~TaskGeometricProjection()
-: <a class="el" href="classhiqp_1_1TaskGeometricProjection.html#a53d6bb2b588b3667961ab97084dcd6ba">hiqp::TaskGeometricProjection&lt; PrimitiveA, PrimitiveB &gt;</a>
-</li>
-<li>~TaskJntConfig()
-: <a class="el" href="classhiqp_1_1TaskJntConfig.html#aae049672adb68630748475005fe49ff4">hiqp::TaskJntConfig</a>
-</li>
-<li>~TaskJntLimits()
-: <a class="el" href="classhiqp_1_1TaskJntLimits.html#af6d3deb66428b31eada36154640134c0">hiqp::TaskJntLimits</a>
-</li>
-<li>~TaskManager()
-: <a class="el" href="classhiqp_1_1TaskManager.html#a688ad548e2ef681b458c1fc90326f6e6">hiqp::TaskManager</a>
-</li>
-</ul>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Sep 14 2016 15:28:45 for HiQP_Controllers ROS Package by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Sep 14 2016 17:32:54 for HiQP_Controllers ROS Package by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

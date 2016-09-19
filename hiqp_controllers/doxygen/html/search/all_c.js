@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['update',['update',['../classhiqp_1_1ROSDynamicsController.html#a369911a027a38555eff59bf838a8a7dd',1,'hiqp::ROSDynamicsController::update()'],['../classhiqp_1_1ROSKinematicsController.html#aa4cc3905801b4097916731d0d7af2089',1,'hiqp::ROSKinematicsController::update()']]]
+  ['visualizer',['Visualizer',['../classhiqp_1_1Visualizer.html',1,'hiqp']]],
+  ['visualizer_2eh',['visualizer.h',['../visualizer_8h.html',1,'']]]
 ];

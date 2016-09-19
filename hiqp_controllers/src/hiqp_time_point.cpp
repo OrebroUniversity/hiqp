@@ -14,19 +14,14 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
-
-/*!
+/*
  * \file   hiqp_time_point.cpp
- * \Author Marcus A Johansson (marcus.adam.johansson@gmail.com)
+ * \author Marcus A Johansson (marcus.adam.johansson@gmail.com)
  * \date   July, 2016
  * \brief  Brief description of file.
  *
  * Detailed description of file.
  */
-
-
 
 #include <hiqp/hiqp_time_point.h>
 
@@ -34,12 +29,7 @@
 
 
 
-
-
-
 namespace hiqp {
-
-
 
 
 
@@ -55,6 +45,14 @@ HiQPTimePoint::HiQPTimePoint()
 
 HiQPTimePoint::HiQPTimePoint(unsigned int sec, unsigned int nsec)
 : sec_(sec), nsec_(nsec)
+{}
+
+
+
+
+
+HiQPTimePoint::HiQPTimePoint(const HiQPTimePoint& other)
+: sec_(other.getSec()), nsec_(other.getNSec())
 {}
 
 
@@ -79,9 +77,9 @@ double HiQPTimePoint::toSec() const
 
 HiQPTimePoint& HiQPTimePoint::operator=(const HiQPTimePoint& other)
 {
-	this->sec_ = other.getSec();
-	this->nsec_ = other.getNSec();
-	return *this;
+  this->sec_ = other.getSec();
+  this->nsec_ = other.getNSec();
+  return *this;
 }
 
 
@@ -90,10 +88,10 @@ HiQPTimePoint& HiQPTimePoint::operator=(const HiQPTimePoint& other)
 
 HiQPTimePoint HiQPTimePoint::operator+(const HiQPTimePoint& other) const
 {
-    unsigned int sec = sec_ + other.getSec();
-    unsigned int nsec = nsec_ + other.getNSec();
-    unsigned int overlap = nsec * 1e-9;
-    return HiQPTimePoint( sec + overlap, nsec - overlap * 1e9 );
+  unsigned int sec = sec_ + other.getSec();
+  unsigned int nsec = nsec_ + other.getNSec();
+  unsigned int overlap = nsec * 1e-9;
+  return HiQPTimePoint( sec + overlap, nsec - overlap * 1e9 );
 }
 
 
@@ -102,21 +100,21 @@ HiQPTimePoint HiQPTimePoint::operator+(const HiQPTimePoint& other) const
 
 HiQPTimePoint HiQPTimePoint::operator-(const HiQPTimePoint& other) const
 {
-    unsigned int sec = sec_ - other.getSec();
-    unsigned int nsec = 0;
-    unsigned int underlap = 0;
+  unsigned int sec = sec_ - other.getSec();
+  unsigned int nsec = 0;
+  unsigned int underlap = 0;
 
-    if (nsec_ >= other.getNSec())
-    {
-        nsec = nsec_ - other.getNSec();
-    }
-    else
-    {
-        nsec = 1e9 + nsec_ - other.getNSec();
-        sec -= 1;
-    }
+  if (nsec_ >= other.getNSec())
+  {
+    nsec = nsec_ - other.getNSec();
+  }
+  else
+  {
+    nsec = 1e9 + nsec_ - other.getNSec();
+    sec -= 1;
+  }
 
-    return HiQPTimePoint(sec, nsec);
+  return HiQPTimePoint(sec, nsec);
 }
 
 
@@ -125,14 +123,14 @@ HiQPTimePoint HiQPTimePoint::operator-(const HiQPTimePoint& other) const
 
 HiQPTimePoint& HiQPTimePoint::operator+=(const HiQPTimePoint& other)
 {
-    unsigned int sec = sec_ + other.getSec();
-    unsigned int nsec = nsec_ + other.getNSec();
-    unsigned int overlap = nsec * 1e-9;
+  unsigned int sec = sec_ + other.getSec();
+  unsigned int nsec = nsec_ + other.getNSec();
+  unsigned int overlap = nsec * 1e-9;
 
-    this->sec_ = sec + overlap;
-    this->nsec_ = nsec - overlap * 1e9;
+  this->sec_ = sec + overlap;
+  this->nsec_ = nsec - overlap * 1e9;
 
-    return *this;
+  return *this;
 }
 
 
@@ -141,24 +139,24 @@ HiQPTimePoint& HiQPTimePoint::operator+=(const HiQPTimePoint& other)
 
 HiQPTimePoint& HiQPTimePoint::operator-=(const HiQPTimePoint& other)
 {
-    unsigned int sec = sec_ - other.getSec();
-    unsigned int nsec = 0;
-    unsigned int underlap = 0;
+  unsigned int sec = sec_ - other.getSec();
+  unsigned int nsec = 0;
+  unsigned int underlap = 0;
 
-    if (nsec_ >= other.getNSec())
-    {
-        nsec = nsec_ - other.getNSec();
-    }
-    else
-    {
-        nsec = 1e9 + nsec_ - other.getNSec();
-        sec -= 1;
-    }
+  if (nsec_ >= other.getNSec())
+  {
+    nsec = nsec_ - other.getNSec();
+  }
+  else
+  {
+    nsec = 1e9 + nsec_ - other.getNSec();
+    sec -= 1;
+  }
 
-    this->sec_ = sec;
-    this->nsec_ = nsec;
+  this->sec_ = sec;
+  this->nsec_ = nsec;
 
-    return *this;
+  return *this;
 }
 
 

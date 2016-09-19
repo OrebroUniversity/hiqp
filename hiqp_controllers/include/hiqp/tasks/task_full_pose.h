@@ -14,31 +14,24 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
-
-/*!
+/*
  * \file   task_jnt_config.h
- * \Author Marcus A Johansson (marcus.adam.johansson@gmail.com)
+ * \author Marcus A Johansson (marcus.adam.johansson@gmail.com)
  * \date   July, 2016
  * \brief  Brief description of file.
  *
  * Detailed description of file.
  */
 
-
-
 #ifndef HIQP_TASK_FULL_POSE_H
 #define HIQP_TASK_FULL_POSE_H
-
-
-// HiQP Includes
-#include <hiqp/hiqp_time_point.h>
-#include <hiqp/task_function.h>
 
 // STL Includes
 #include <string>
 
+// HiQP Includes
+#include <hiqp/hiqp_time_point.h>
+#include <hiqp/task_function.h>
 
 
 
@@ -46,106 +39,54 @@
 
 namespace hiqp
 {
-
-
-
-
-
-
+namespace tasks
+{
 
 /*!
  * \class TaskFullPose
  * \brief Represents a task that sets a specific joint configuration
  *
  *  This task does not leave any redundancy available to other tasks.
- */	
+ */  
 class TaskFullPose : public TaskFunction
 {
-
 public:
 
-	/*!
-     * \brief Constructor
-     * Constructs my awesome task
-     */
-	TaskFullPose() {}
+  TaskFullPose() {}
 
+  ~TaskFullPose() noexcept {}
 
+  int init
+  (
+    const HiQPTimePoint& sampling_time,
+    const std::vector<std::string>& parameters,
+    const KDL::Tree& kdl_tree, 
+    unsigned int num_controls
+  );
 
+  int apply
+  (
+    const HiQPTimePoint& sampling_time,
+    const KDL::Tree& kdl_tree, 
+    const KDL::JntArrayVel& kdl_joint_pos_vel
+  );
 
-	/*!
-     * \brief Destructor
-     * Destructs my awesome task
-     */
-	~TaskFullPose() noexcept {}
-
-
-
-
-	/*!
-     * \brief <i>Pure virtual</i>. Initializes the task
-     *
-     * \return 0 upon success
-     */
-	int init
-     (
-          const HiQPTimePoint& sampling_time,
-          const std::vector<std::string>& parameters,
-          const KDL::Tree& kdl_tree, 
-          unsigned int num_controls
-     );
-
-
-
-
-	/*!
-     * \brief <i>Pure virtual</i>. Calculates the task function and task 
-     *        jacobian values.
-     *
-     * \param kdl_tree : reference to the kinematic dynamic tree of the robot
-     * \param joints_pos_vel : reference to the current joint positions and 
-     *                         velocities
-     *
-     * \return true if the calculation was successful
-     */
-	int apply
-	(
-          const HiQPTimePoint& sampling_time,
-		const KDL::Tree& kdl_tree, 
-		const KDL::JntArrayVel& kdl_joint_pos_vel
-	);
-
-
-
-
-
-     /*!
-     * \brief Computes all performance measures used when monitoring this task.
-     *
-     * \return 0 if the calculation was successful
-     */
-     int monitor();
-
+  int monitor();
 
 
 
 private:
+  // No copying of this class is allowed !
+  TaskFullPose(const TaskFullPose& other) = delete;
+  TaskFullPose(TaskFullPose&& other) = delete;
+  TaskFullPose& operator=(const TaskFullPose& other) = delete;
+  TaskFullPose& operator=(TaskFullPose&& other) noexcept = delete;
 
-	// No copying of this class is allowed !
-	TaskFullPose(const TaskFullPose& other) = delete;
-	TaskFullPose(TaskFullPose&& other) = delete;
-	TaskFullPose& operator=(const TaskFullPose& other) = delete;
-	TaskFullPose& operator=(TaskFullPose&& other) noexcept = delete;
+  std::vector<double>                desired_configuration_;
 
+}; // class TaskFullPose
 
-     std::vector<double>                desired_configuration_;
-
-};
-
-
-
-
-
+} // namespace tasks
 
 } // namespace hiqp
 

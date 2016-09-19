@@ -14,58 +14,38 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
-
-/*!
- * \file   ros_kinematic_controller.h
- * \Author Marcus A Johansson (marcus.adam.johansson@gmail.com)
+/*
+ * \file   ros_dynamics_controller.h
+ * \author Marcus A Johansson (marcus.adam.johansson@gmail.com)
  * \date   July, 2016
  * \brief  Brief description of file.
  *
  * Detailed description of file.
  */
 
-
-
-#ifndef HIQP_ROS_KINEMATIC_CONTROLLER_H
-#define HIQP_ROS_KINEMATIC_CONTROLLER_H
-
+#ifndef HIQP_ROS_DYNAMICS_CONTROLLER_H
+#define HIQP_ROS_DYNAMICS_CONTROLLER_H
 
 // ROS Includes
 #include <ros/ros.h>
 
 
 
-/*!
- * \namespace hiqp
- * 
- * namespace for HiQP-related stuff
- */
+
+
 namespace hiqp
 {
 
-
 /*!
  * \class ROSDynamicsController
- * \brief This is my awesome controller
- *
- *  It's awesome!
+ * \brief <i>not available yet</i>
  */	
 class ROSDynamicsController : public JointEffortController
 {
 public:
 
-	/*!
-     * \brief Constructor
-     * Constructs my awesome controller
-     */
 	ROSDynamicsController();
 
-	/*!
-     * \brief Destructor
-     * Destructs my awesome controller :(
-     */
 	~ROSDynamicsController() noexcept;
 
 	/*!
@@ -124,18 +104,16 @@ public:
 	void stopping(const ros::Time& time);
 
 
-private:
 
+private:
 	// No copying of this class is allowed !
 	ROSDynamicsController(const ROSDynamicsController& other) = delete;
 	ROSDynamicsController(ROSDynamicsController&& other) = delete;
 	ROSDynamicsController& operator=(const ROSDynamicsController& other) = delete;
 	ROSDynamicsController& operator=(ROSDynamicsController&& other) noexcept = delete;
 
+}; // class ROSDynamicsController
 
-
-};
-
-}
+} // namespace hiqp
 
 #endif // include guard

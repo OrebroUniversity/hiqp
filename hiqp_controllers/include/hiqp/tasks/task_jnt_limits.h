@@ -14,31 +14,24 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
-
-/*!
+/*
  * \file   task_jnt_limits.h
- * \Author Marcus A Johansson (marcus.adam.johansson@gmail.com)
+ * \author Marcus A Johansson (marcus.adam.johansson@gmail.com)
  * \date   July, 2016
  * \brief  Brief description of file.
  *
  * Detailed description of file.
  */
 
-
-
 #ifndef HIQP_TASK_JNT_LIMITS_H
 #define HIQP_TASK_JNT_LIMITS_H
-
-
-// HiQP Includes
-#include <hiqp/hiqp_time_point.h>
-#include <hiqp/task_function.h>
 
 // STL Includes
 #include <string>
 
+// HiQP Includes
+#include <hiqp/hiqp_time_point.h>
+#include <hiqp/task_function.h>
 
 
 
@@ -46,107 +39,60 @@
 
 namespace hiqp
 {
-
-
-
-
-
-
-
-/*!
- * \class TaskJntLimit
- * \brief Represents a task that limits joint velocities
- */	
-class TaskJntLimits : public TaskFunction
+namespace tasks
 {
 
+/*!
+ * \class TaskJntLimits
+ * \brief Task achieving velocity and position limitations of a specific joint.
+ */  
+class TaskJntLimits : public TaskFunction
+{
 public:
 
-	/*!
-     * \brief Constructor
-     * Constructs my awesome task
-     */
-	TaskJntLimits() {}
+  TaskJntLimits() {}
 
+  ~TaskJntLimits() noexcept {}
 
+  int init
+  (
+    const HiQPTimePoint& sampling_time,
+    const std::vector<std::string>& parameters,
+    const KDL::Tree& kdl_tree, 
+    unsigned int num_controls
+  );
 
+  int apply
+  (
+    const HiQPTimePoint& sampling_time,
+    const KDL::Tree& kdl_tree, 
+    const KDL::JntArrayVel& kdl_joint_pos_vel
+  );
 
-	/*!
-     * \brief Destructor
-     * Destructs my awesome task
-     */
-	~TaskJntLimits() noexcept {}
-
-
-
-
-	/*!
-     * \brief <i>Pure virtual</i>. Initializes the task
-     *
-     * \return 0 upon success
-     */
-	int init
-     (
-          const HiQPTimePoint& sampling_time,
-          const std::vector<std::string>& parameters,
-          const KDL::Tree& kdl_tree, 
-          unsigned int num_controls
-     );
-
-
-
-
-	/*!
-     * \brief <i>Pure virtual</i>. Calculates the task function and task 
-     *        jacobian values.
-     *
-     * \param kdl_tree : reference to the kinematic dynamic tree of the robot
-     * \param joints_pos_vel : reference to the current joint positions and 
-     *                         velocities
-     *
-     * \return true if the calculation was successful
-     */
-	int apply
-	(
-          const HiQPTimePoint& sampling_time,
-		const KDL::Tree& kdl_tree, 
-		const KDL::JntArrayVel& kdl_joint_pos_vel
-	);
-
-
-
-
-     /*!
-     * \brief <i>Pure virtual</i>. Computes all performance measures used when
-     *        monitoring this task.
-     *
-     * \return 0 if the calculation was successful
-     */
-     int monitor();
+  int monitor();
 
 
 
 private:
+  // No copying of this class is allowed !
+  TaskJntLimits(const TaskJntLimits& other) = delete;
+  TaskJntLimits(TaskJntLimits&& other) = delete;
+  TaskJntLimits& operator=(const TaskJntLimits& other) = delete;
+  TaskJntLimits& operator=(TaskJntLimits&& other) noexcept = delete;
 
-	// No copying of this class is allowed !
-	TaskJntLimits(const TaskJntLimits& other) = delete;
-	TaskJntLimits(TaskJntLimits&& other) = delete;
-	TaskJntLimits& operator=(const TaskJntLimits& other) = delete;
-	TaskJntLimits& operator=(TaskJntLimits&& other) noexcept = delete;
+  std::string              link_frame_name_;
 
-     std::string              link_frame_name_;
-     std::size_t              link_frame_q_nr_;
-     double                   dq_max_;
-     double                   jnt_upper_bound_;
-     double                   jnt_lower_bound_;
+  std::size_t              link_frame_q_nr_;
 
+  double                   dq_max_;
 
-};
+  double                   jnt_upper_bound_;
 
+  double                   jnt_lower_bound_;
 
+}; // class TaskJntLimits
 
-
-
+} // namespace tasks
 
 } // namespace hiqp
 

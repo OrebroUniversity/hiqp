@@ -38,7 +38,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
       <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
-      <li><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li><a href="annotated.html"><span>Classes</span></a></li>
       <li class="current"><a href="files.html"><span>Files</span></a></li>
       <li>
@@ -69,7 +68,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Pages</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Pages</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -124,7 +123,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="task__function_8h.html">hiqp/task_function.h</a>&gt;</span></div>
 <div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="task__dynamics_8h.html">hiqp/task_dynamics.h</a>&gt;</span></div>
 <div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="visualizer_8h.html">hiqp/visualizer.h</a>&gt;</span></div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="hiqp__time__point_8h.html">hiqp/hiqp_time_point.h</a>&gt;</span></div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;<span class="preprocessor">#include &lt;hiqp/hiqp_time_point.h&gt;</span></div>
 <div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;</div>
 <div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;<span class="preprocessor">#include &lt;hiqp/geometric_primitives/geometric_primitive_map.h&gt;</span></div>
 <div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;<span class="preprocessor">#include &lt;hiqp/geometric_primitives/geometric_point.h&gt;</span></div>
@@ -209,16 +208,15 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="ttc" id="classhiqp_1_1TaskFactory_html"><div class="ttname"><a href="classhiqp_1_1TaskFactory.html">hiqp::TaskFactory</a></div><div class="ttdoc">A factory for creating task function and task dynamics. (The process of creating and initializing the...</div><div class="ttdef"><b>Definition:</b> task_factory.h:61</div></div>
 <div class="ttc" id="task__function_8h_html"><div class="ttname"><a href="task__function_8h.html">task_function.h</a></div><div class="ttdoc">Brief description of file. </div></div>
 <div class="ttc" id="visualizer_8h_html"><div class="ttname"><a href="visualizer_8h.html">visualizer.h</a></div><div class="ttdoc">Brief description of file. </div></div>
-<div class="ttc" id="hiqp__time__point_8h_html"><div class="ttname"><a href="hiqp__time__point_8h.html">hiqp_time_point.h</a></div><div class="ttdoc">Brief description of file. </div></div>
-<div class="ttc" id="classhiqp_1_1TaskFunction_html"><div class="ttname"><a href="classhiqp_1_1TaskFunction.html">hiqp::TaskFunction</a></div><div class="ttdef"><b>Definition:</b> task_function.h:66</div></div>
-<div class="ttc" id="classhiqp_1_1HiQPTimePoint_html"><div class="ttname"><a href="classhiqp_1_1HiQPTimePoint.html">hiqp::HiQPTimePoint</a></div><div class="ttdoc">The time type used in this framework. </div><div class="ttdef"><b>Definition:</b> hiqp_time_point.h:54</div></div>
+<div class="ttc" id="classhiqp_1_1TaskFunction_html"><div class="ttname"><a href="classhiqp_1_1TaskFunction.html">hiqp::TaskFunction</a></div><div class="ttdoc">Abstract base class for all task function types. </div><div class="ttdef"><b>Definition:</b> task_function.h:70</div></div>
+<div class="ttc" id="classhiqp_1_1HiQPTimePoint_html"><div class="ttname"><a href="classhiqp_1_1HiQPTimePoint.html">hiqp::HiQPTimePoint</a></div><div class="ttdoc">The time type used in this framework. </div><div class="ttdef"><b>Definition:</b> hiqp_time_point.h:39</div></div>
 <div class="ttc" id="task__dynamics_8h_html"><div class="ttname"><a href="task__dynamics_8h.html">task_dynamics.h</a></div><div class="ttdoc">Brief description of file. </div></div>
-<div class="ttc" id="classhiqp_1_1TaskDynamics_html"><div class="ttname"><a href="classhiqp_1_1TaskDynamics.html">hiqp::TaskDynamics</a></div><div class="ttdef"><b>Definition:</b> task_dynamics.h:57</div></div>
+<div class="ttc" id="classhiqp_1_1TaskDynamics_html"><div class="ttname"><a href="classhiqp_1_1TaskDynamics.html">hiqp::TaskDynamics</a></div><div class="ttdoc">Abstract base class for all task dynamics types. </div><div class="ttdef"><b>Definition:</b> task_dynamics.h:61</div></div>
 <div class="ttc" id="classhiqp_1_1Visualizer_html"><div class="ttname"><a href="classhiqp_1_1Visualizer.html">hiqp::Visualizer</a></div><div class="ttdef"><b>Definition:</b> visualizer.h:60</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Sep 14 2016 15:28:45 for HiQP_Controllers ROS Package by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Sep 14 2016 17:32:53 for HiQP_Controllers ROS Package by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

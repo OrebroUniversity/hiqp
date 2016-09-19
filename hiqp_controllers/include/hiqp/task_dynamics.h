@@ -54,6 +54,10 @@ namespace hiqp
 
 class TaskFactory;
 
+/*!
+ * \class TaskDynamics
+ * \brief Abstract base class for all task dynamics types.
+ */ 
 class TaskDynamics
 {
 public:

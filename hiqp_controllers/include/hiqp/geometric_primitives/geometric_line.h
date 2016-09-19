@@ -60,98 +60,98 @@ class GeometricLine : public GeometricPrimitive
 {
 public:
 
-	GeometricLine
-	(
-		const std::string& name,
-		const std::string& frame_id,
-		bool visible,
-		const std::vector<double>& color
-	)
-	: GeometricPrimitive(name, frame_id, visible, color)
-	{}
+  GeometricLine
+  (
+    const std::string& name,
+    const std::string& frame_id,
+    bool visible,
+    const std::vector<double>& color
+  )
+  : GeometricPrimitive(name, frame_id, visible, color)
+  {}
 
-	~GeometricLine() noexcept {}
-
-
-	/*!
-	 * \brief Parses a set of parameters and initializes the line.
-	 *
-	 * \param parameters should be of size 6. <br />
-	 *   Indices 0-2 (required) defines the directional vector of the cylinder, <br />
-	 *   indices 3-5 (required) defines the position of a point on the cylinder's coaxial line.
-	 *
-	 * \return 0 on success, -1 if the wrong number of parameters was sent
-	*/
-	int init(const std::vector<double>& parameters)
-	{
-		int size = parameters.size();
-		if (size != 6)
-		{
-			printHiqpWarning("GeometricLine requires 6 parameters, got " 
-				+ std::to_string(size) + "! Initialization failed!");
-			return -1;
-		}
-
-		kdl_v_(0) = parameters.at(0);
-		kdl_v_(1) = parameters.at(1);
-		kdl_v_(2) = parameters.at(2);
-		
-		kdl_v_.Normalize();
-		
-		kdl_p_(0) = parameters.at(3);
-		kdl_p_(1) = parameters.at(4);
-		kdl_p_(2) = parameters.at(5);
-
-		l_ = -1; // infinitely long line
-
-		eigen_v_ << kdl_v_(0), kdl_v_(1), kdl_v_(2);
-		eigen_p_ << kdl_p_(0), kdl_p_(1), kdl_p_(2);
-
-		return 0;
-	}
+  ~GeometricLine() noexcept {}
 
 
+  /*!
+   * \brief Parses a set of parameters and initializes the line.
+   *
+   * \param parameters should be of size 6. <br />
+   *   Indices 0-2 (required) defines the directional vector of the cylinder, <br />
+   *   indices 3-5 (required) defines the position of a point on the cylinder's coaxial line.
+   *
+   * \return 0 on success, -1 if the wrong number of parameters was sent
+  */
+  int init(const std::vector<double>& parameters)
+  {
+    int size = parameters.size();
+    if (size != 6)
+    {
+      printHiqpWarning("GeometricLine requires 6 parameters, got " 
+        + std::to_string(size) + "! Initialization failed!");
+      return -1;
+    }
 
-	inline const KDL::Vector&      getDirectionKDL()    { return kdl_v_; }
-	inline const Eigen::Vector3d&  getDirectionEigen()  { return eigen_v_; }
+    kdl_v_(0) = parameters.at(0);
+    kdl_v_(1) = parameters.at(1);
+    kdl_v_(2) = parameters.at(2);
+    
+    kdl_v_.Normalize();
+    
+    kdl_p_(0) = parameters.at(3);
+    kdl_p_(1) = parameters.at(4);
+    kdl_p_(2) = parameters.at(5);
 
-	inline const KDL::Vector&      getOffsetKDL()    { return kdl_p_; }
-	inline const Eigen::Vector3d&  getOffsetEigen()  { return eigen_p_; }
+    l_ = -1; // infinitely long line
 
-	// inline double getLength() { return l_; }
+    eigen_v_ << kdl_v_(0), kdl_v_(1), kdl_v_(2);
+    eigen_p_ << kdl_p_(0), kdl_p_(1), kdl_p_(2);
 
-	inline bool isInfinite()
-	{ return (l_ < 0); }
+    return 0;
+  }
 
-	inline double getDirectionX() { return kdl_v_(0); }
-	inline double getDirectionY() { return kdl_v_(1); }
-	inline double getDirectionZ() { return kdl_v_(2); }
 
-	inline double getOffsetX() { return kdl_p_(0); }
-	inline double getOffsetY() { return kdl_p_(1); }
-	inline double getOffsetZ() { return kdl_p_(2); }
+
+  inline const KDL::Vector&      getDirectionKDL()    { return kdl_v_; }
+  inline const Eigen::Vector3d&  getDirectionEigen()  { return eigen_v_; }
+
+  inline const KDL::Vector&      getOffsetKDL()    { return kdl_p_; }
+  inline const Eigen::Vector3d&  getOffsetEigen()  { return eigen_p_; }
+
+  // inline double getLength() { return l_; }
+
+  inline bool isInfinite()
+  { return (l_ < 0); }
+
+  inline double getDirectionX() { return kdl_v_(0); }
+  inline double getDirectionY() { return kdl_v_(1); }
+  inline double getDirectionZ() { return kdl_v_(2); }
+
+  inline double getOffsetX() { return kdl_p_(0); }
+  inline double getOffsetY() { return kdl_p_(1); }
+  inline double getOffsetZ() { return kdl_p_(2); }
 
 
 protected:
 
-	KDL::Vector      kdl_v_; // the directional vector of the line
-	Eigen::Vector3d  eigen_v_;
+  KDL::Vector      kdl_v_; // the directional vector of the line
+  Eigen::Vector3d  eigen_v_;
 
-	KDL::Vector      kdl_p_; // the offset
-	Eigen::Vector3d  eigen_p_;
+  KDL::Vector      kdl_p_; // the offset
+  Eigen::Vector3d  eigen_p_;
 
-	double 		     l_; // the length of the line segment, 
-	                     // negative if the line is infinite
+  double          l_; // the length of the line segment, 
+                       // negative if the line is infinite
 
 
 
 private:
 
-	// No copying of this class is allowed !
-	GeometricLine(const GeometricLine& other) = delete;
-	GeometricLine(GeometricLine&& other) = delete;
-	GeometricLine& operator=(const GeometricLine& other) = delete;
-	GeometricLine& operator=(GeometricLine&& other) noexcept = delete;
+  // No copying of this class is allowed !
+  GeometricLine(const GeometricLine& other) = delete;
+  GeometricLine(GeometricLine&& other) = delete;
+  GeometricLine& operator=(const GeometricLine& other) = delete;
+  GeometricLine& operator=(GeometricLine&& other) noexcept = delete;
 
 
 };

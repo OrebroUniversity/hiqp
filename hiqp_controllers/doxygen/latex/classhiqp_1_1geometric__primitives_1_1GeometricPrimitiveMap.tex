@@ -16,12 +16,13 @@ A common map data structure for all geometric primitive types.
 \hypertarget{classhiqp_1_1geometric__primitives_1_1GeometricPrimitiveMap_ae59d213ebfa9f3d22678e048928cf565}{{\bfseries Geometric\-Primitive\-Map} (\hyperlink{classhiqp_1_1Visualizer}{Visualizer} $\ast$visualizer)}\label{classhiqp_1_1geometric__primitives_1_1GeometricPrimitiveMap_ae59d213ebfa9f3d22678e048928cf565}
 
 \item 
-\hypertarget{classhiqp_1_1geometric__primitives_1_1GeometricPrimitiveMap_a6ddc5d3b4e8e44748fbb0c9e66957952}{int {\bfseries add\-Geometric\-Primitive} (const std\-::string \&name, const std\-::string \&type, const std\-::string \&frame\-\_\-id, bool visible, const std\-::vector$<$ double $>$ \&color, const std\-::vector$<$ double $>$ \&parameters)}\label{classhiqp_1_1geometric__primitives_1_1GeometricPrimitiveMap_a6ddc5d3b4e8e44748fbb0c9e66957952}
+int \hyperlink{classhiqp_1_1geometric__primitives_1_1GeometricPrimitiveMap_a6ddc5d3b4e8e44748fbb0c9e66957952}{add\-Geometric\-Primitive} (const std\-::string \&name, const std\-::string \&type, const std\-::string \&frame\-\_\-id, bool visible, const std\-::vector$<$ double $>$ \&color, const std\-::vector$<$ double $>$ \&parameters)
+\item 
+\hypertarget{classhiqp_1_1geometric__primitives_1_1GeometricPrimitiveMap_a07d04c1a3bb164bb501bd03cc6bc1eae}{int {\bfseries remove\-Geometric\-Primitive} (std\-::string name)}\label{classhiqp_1_1geometric__primitives_1_1GeometricPrimitiveMap_a07d04c1a3bb164bb501bd03cc6bc1eae}
 
 \item 
-int \hyperlink{classhiqp_1_1geometric__primitives_1_1GeometricPrimitiveMap_a07d04c1a3bb164bb501bd03cc6bc1eae}{remove\-Geometric\-Primitive} (std\-::string name)
-\item 
-int \hyperlink{classhiqp_1_1geometric__primitives_1_1GeometricPrimitiveMap_aed92b78b51ccd075d226b003f9576476}{clear} ()
+\hypertarget{classhiqp_1_1geometric__primitives_1_1GeometricPrimitiveMap_aed92b78b51ccd075d226b003f9576476}{int {\bfseries clear} ()}\label{classhiqp_1_1geometric__primitives_1_1GeometricPrimitiveMap_aed92b78b51ccd075d226b003f9576476}
+
 \item 
 \hypertarget{classhiqp_1_1geometric__primitives_1_1GeometricPrimitiveMap_a51ccc8c0ff1434c8b8d1bcc2d0d9bbbf}{{\footnotesize template$<$typename Primitive\-Type $>$ }\\Primitive\-Type $\ast$ {\bfseries get\-Geometric\-Primitive} (const std\-::string \&name)}\label{classhiqp_1_1geometric__primitives_1_1GeometricPrimitiveMap_a51ccc8c0ff1434c8b8d1bcc2d0d9bbbf}
 
@@ -80,27 +81,23 @@ int \hyperlink{classhiqp_1_1geometric__primitives_1_1GeometricPrimitiveMap_aed92
 A common map data structure for all geometric primitive types. 
 
 \subsection{Member Function Documentation}
-\hypertarget{classhiqp_1_1geometric__primitives_1_1GeometricPrimitiveMap_aed92b78b51ccd075d226b003f9576476}{\index{hiqp\-::geometric\-\_\-primitives\-::\-Geometric\-Primitive\-Map@{hiqp\-::geometric\-\_\-primitives\-::\-Geometric\-Primitive\-Map}!clear@{clear}}
-\index{clear@{clear}!hiqp::geometric_primitives::GeometricPrimitiveMap@{hiqp\-::geometric\-\_\-primitives\-::\-Geometric\-Primitive\-Map}}
-\subsubsection[{clear}]{\setlength{\rightskip}{0pt plus 5cm}int hiqp\-::geometric\-\_\-primitives\-::\-Geometric\-Primitive\-Map\-::clear (
+\hypertarget{classhiqp_1_1geometric__primitives_1_1GeometricPrimitiveMap_a6ddc5d3b4e8e44748fbb0c9e66957952}{\index{hiqp\-::geometric\-\_\-primitives\-::\-Geometric\-Primitive\-Map@{hiqp\-::geometric\-\_\-primitives\-::\-Geometric\-Primitive\-Map}!add\-Geometric\-Primitive@{add\-Geometric\-Primitive}}
+\index{add\-Geometric\-Primitive@{add\-Geometric\-Primitive}!hiqp::geometric_primitives::GeometricPrimitiveMap@{hiqp\-::geometric\-\_\-primitives\-::\-Geometric\-Primitive\-Map}}
+\subsubsection[{add\-Geometric\-Primitive}]{\setlength{\rightskip}{0pt plus 5cm}int hiqp\-::geometric\-\_\-primitives\-::\-Geometric\-Primitive\-Map\-::add\-Geometric\-Primitive (
 \begin{DoxyParamCaption}
-{}
+\item[{const std\-::string \&}]{name, }
+\item[{const std\-::string \&}]{type, }
+\item[{const std\-::string \&}]{frame\-\_\-id, }
+\item[{bool}]{visible, }
+\item[{const std\-::vector$<$ double $>$ \&}]{color, }
+\item[{const std\-::vector$<$ double $>$ \&}]{parameters}
 \end{DoxyParamCaption}
-)}}\label{classhiqp_1_1geometric__primitives_1_1GeometricPrimitiveMap_aed92b78b51ccd075d226b003f9576476}
+)}}\label{classhiqp_1_1geometric__primitives_1_1GeometricPrimitiveMap_a6ddc5d3b4e8e44748fbb0c9e66957952}
 \begin{DoxyRefDesc}{Todo}
-\item[\hyperlink{todo__todo000002}{Todo}]primitives with dependencies to tasks shall not be deleted! \end{DoxyRefDesc}
-\hypertarget{classhiqp_1_1geometric__primitives_1_1GeometricPrimitiveMap_a07d04c1a3bb164bb501bd03cc6bc1eae}{\index{hiqp\-::geometric\-\_\-primitives\-::\-Geometric\-Primitive\-Map@{hiqp\-::geometric\-\_\-primitives\-::\-Geometric\-Primitive\-Map}!remove\-Geometric\-Primitive@{remove\-Geometric\-Primitive}}
-\index{remove\-Geometric\-Primitive@{remove\-Geometric\-Primitive}!hiqp::geometric_primitives::GeometricPrimitiveMap@{hiqp\-::geometric\-\_\-primitives\-::\-Geometric\-Primitive\-Map}}
-\subsubsection[{remove\-Geometric\-Primitive}]{\setlength{\rightskip}{0pt plus 5cm}int hiqp\-::geometric\-\_\-primitives\-::\-Geometric\-Primitive\-Map\-::remove\-Geometric\-Primitive (
-\begin{DoxyParamCaption}
-\item[{std\-::string}]{name}
-\end{DoxyParamCaption}
-)}}\label{classhiqp_1_1geometric__primitives_1_1GeometricPrimitiveMap_a07d04c1a3bb164bb501bd03cc6bc1eae}
-\begin{DoxyRefDesc}{Todo}
-\item[\hyperlink{todo__todo000001}{Todo}]primitives should have dependencies on tasks and not be removable if dependencies exists! \end{DoxyRefDesc}
+\item[\hyperlink{todo__todo000001}{Todo}]Add a Capsule primitive among the geometric primitives \end{DoxyRefDesc}
 
 
 The documentation for this class was generated from the following files\-:\begin{DoxyCompactItemize}
 \item 
 include/hiqp/geometric\-\_\-primitives/geometric\-\_\-primitive\-\_\-map.\-h\item 
-src/geometric\-\_\-primitives/\hyperlink{geometric__primitive__map_8cpp}{geometric\-\_\-primitive\-\_\-map.\-cpp}\end{DoxyCompactItemize}
+src/geometric\-\_\-primitives/geometric\-\_\-primitive\-\_\-map.\-cpp\end{DoxyCompactItemize}

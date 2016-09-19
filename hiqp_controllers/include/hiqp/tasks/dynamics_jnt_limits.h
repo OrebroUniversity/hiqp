@@ -14,11 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
-
-
-/*!
+/*
  * \file   dynamics_jnt_limits.h
  * \author Marcus A Johansson (marcus.adam.johansson@gmail.com)
  * \date   August, 2016
@@ -26,8 +22,6 @@
  *
  * Detailed description of file.
  */
-
-
 
 #ifndef HIQP_DYNAMICS_JNT_LIMITS_H
 #define HIQP_DYNAMICS_JNT_LIMITS_H
@@ -38,67 +32,57 @@
 
 
 
+
+
 namespace hiqp
 {
-
-
-
-
-
+namespace tasks
+{
 
 /*!
  * \class DynamicsJntLimits
  * \brief 
- */	
+ */  
 class DynamicsJntLimits : public TaskDynamics
 {
 public:
 
-	DynamicsJntLimits() {}
+  DynamicsJntLimits() {}
 
-	~DynamicsJntLimits() noexcept {}
+  ~DynamicsJntLimits() noexcept {}
 
-	int init
-	(
-		const HiQPTimePoint& sampling_time,
-		const std::vector<std::string>& parameters,
-    	const Eigen::VectorXd& e_initial,
-    	const Eigen::VectorXd& e_final
-	);
+  int init
+  (
+    const HiQPTimePoint& sampling_time,
+    const std::vector<std::string>& parameters,
+    const Eigen::VectorXd& e_initial,
+    const Eigen::VectorXd& e_final
+  );
 
-	int apply
-	(
-		const HiQPTimePoint& sampling_time,
-		const Eigen::VectorXd& e,
-		const Eigen::MatrixXd& J,
-		Eigen::VectorXd& e_dot_star
-	);
+  int apply
+  (
+    const HiQPTimePoint& sampling_time,
+    const Eigen::VectorXd& e,
+    const Eigen::MatrixXd& J,
+    Eigen::VectorXd& e_dot_star
+  );
 
-	int monitor();
+  int monitor();
 
 private:
 
-	// No copying of this class is allowed !
-	DynamicsJntLimits(const DynamicsJntLimits& other) = delete;
-	DynamicsJntLimits(DynamicsJntLimits&& other) = delete;
-	DynamicsJntLimits& operator=(const DynamicsJntLimits& other) = delete;
-	DynamicsJntLimits& operator=(DynamicsJntLimits&& other) noexcept = delete;
+  // No copying of this class is allowed !
+  DynamicsJntLimits(const DynamicsJntLimits& other) = delete;
+  DynamicsJntLimits(DynamicsJntLimits&& other) = delete;
+  DynamicsJntLimits& operator=(const DynamicsJntLimits& other) = delete;
+  DynamicsJntLimits& operator=(DynamicsJntLimits&& other) noexcept = delete;
 
-	double 						dq_max_;
+  double             dq_max_;
 
-};
+}; // class DynamicsJntLimits
 
-
-
-
-
-
+} // namespace tasks
 
 } // namespace hiqp
-
-
-
-
-
 
 #endif // include guard

@@ -59,69 +59,69 @@ class GeometricPlane : public GeometricPrimitive
 {
 public:
 
-	GeometricPlane
-	(
-		const std::string& name,
-		const std::string& frame_id,
-		bool visible,
-		const std::vector<double>& color
-	)
-	: GeometricPrimitive(name, frame_id, visible, color)
-	{}
+  GeometricPlane
+  (
+    const std::string& name,
+    const std::string& frame_id,
+    bool visible,
+    const std::vector<double>& color
+  )
+  : GeometricPrimitive(name, frame_id, visible, color)
+  {}
 
-	~GeometricPlane() noexcept {}
+  ~GeometricPlane() noexcept {}
 
-	/*!
-	 * \brief Parses a set of parameters and initializes the plane.
-	 *
-	 * \param parameters should be of size 4. <br />
-	 *   Indices 0-2 (required) defines the normal vector of the plane, <br />
-	 *   index 3 (required) defines the offset of the plane in the normal direction.
-	 *
-	 * \return 0 on success, -1 if the wrong number of parameters was sent
-	*/
-	int init(const std::vector<double>& parameters)
-	{
-		int size = parameters.size();
-		if (size != 4)
-		{
-			printHiqpWarning("GeometricPlane requires 4 parameters, got " 
-				+ std::to_string(size) + "! Initialization failed!");
-			return -1;
-		}
+  /*!
+   * \brief Parses a set of parameters and initializes the plane.
+   *
+   * \param parameters should be of size 4. <br />
+   *   Indices 0-2 (required) defines the normal vector of the plane, <br />
+   *   index 3 (required) defines the offset of the plane in the normal direction.
+   *
+   * \return 0 on success, -1 if the wrong number of parameters was sent
+  */
+  int init(const std::vector<double>& parameters)
+  {
+    int size = parameters.size();
+    if (size != 4)
+    {
+      printHiqpWarning("GeometricPlane requires 4 parameters, got " 
+        + std::to_string(size) + "! Initialization failed!");
+      return -1;
+    }
 
-		kdl_n_(0) = parameters.at(0);
-		kdl_n_(1) = parameters.at(1);
-		kdl_n_(2) = parameters.at(2);
+    kdl_n_(0) = parameters.at(0);
+    kdl_n_(1) = parameters.at(1);
+    kdl_n_(2) = parameters.at(2);
 
-		kdl_n_.Normalize();
+    kdl_n_.Normalize();
 
-		eigen_n_ << kdl_n_(0), kdl_n_(1), kdl_n_(2);
+    eigen_n_ << kdl_n_(0), kdl_n_(1), kdl_n_(2);
 
-		d_ = parameters.at(3);
+    d_ = parameters.at(3);
 
-		return 0;
-	}
+    return 0;
+  }
 
 
 
-	inline const KDL::Vector&      getNormalKDL()    { return kdl_n_; }
+  inline const KDL::Vector&      getNormalKDL()    { return kdl_n_; }
 
-	inline const Eigen::Vector3d&  getNormalEigen()  { return eigen_n_; }
+  inline const Eigen::Vector3d&  getNormalEigen()  { return eigen_n_; }
 
-	inline double getOffset() { return d_; }
+  inline double getOffset() { return d_; }
 
-	inline double getNormalX() { return kdl_n_(0); }
-	inline double getNormalY() { return kdl_n_(1); }
-	inline double getNormalZ() { return kdl_n_(2); }
+  inline double getNormalX() { return kdl_n_(0); }
+  inline double getNormalY() { return kdl_n_(1); }
+  inline double getNormalZ() { return kdl_n_(2); }
 
 
 protected:
 
-	KDL::Vector      kdl_n_; // the normal vector or the plane
-	Eigen::Vector3d  eigen_n_;
-	
-	double 		  d_; // the offset in the normal direction
+  KDL::Vector      kdl_n_; // the normal vector or the plane
+  Eigen::Vector3d  eigen_n_;
+  
+  double       d_; // the offset in the normal direction
 
 
 
@@ -129,11 +129,11 @@ protected:
 
 private:
 
-	// No copying of this class is allowed !
-	GeometricPlane(const GeometricPlane& other) = delete;
-	GeometricPlane(GeometricPlane&& other) = delete;
-	GeometricPlane& operator=(const GeometricPlane& other) = delete;
-	GeometricPlane& operator=(GeometricPlane&& other) noexcept = delete;
+  // No copying of this class is allowed !
+  GeometricPlane(const GeometricPlane& other) = delete;
+  GeometricPlane(GeometricPlane&& other) = delete;
+  GeometricPlane& operator=(const GeometricPlane& other) = delete;
+  GeometricPlane& operator=(GeometricPlane&& other) noexcept = delete;
 
 
 };

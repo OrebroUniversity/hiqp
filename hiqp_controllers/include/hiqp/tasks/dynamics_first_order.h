@@ -36,6 +36,8 @@
 
 namespace hiqp
 {
+namespace tasks
+{
 
 /*!
  * \class DynamicsFirstOrder
@@ -79,6 +81,8 @@ private:
   double lambda_;
 
 }; // class DynamicsFirstOrder
+
+} // namespace tasks
 
 } // namespace hiqp
 

@@ -38,7 +38,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
       <li class="current"><a href="pages.html"><span>Related&#160;Pages</span></a></li>
-      <li><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li><a href="annotated.html"><span>Classes</span></a></li>
       <li><a href="files.html"><span>Files</span></a></li>
       <li>
@@ -64,7 +63,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Pages</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Pages</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -80,19 +79,28 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><dl class="reflist">
-<dt><a class="anchor" id="_todo000002"></a>Member <a class="el" href="classhiqp_1_1geometric__primitives_1_1GeometricPrimitiveMap.html#aed92b78b51ccd075d226b003f9576476">hiqp::geometric_primitives::GeometricPrimitiveMap::clear</a>  ()</dt>
-<dd>primitives with dependencies to tasks shall not be deleted!  </dd>
-<dt><a class="anchor" id="_todo000001"></a>Member <a class="el" href="classhiqp_1_1geometric__primitives_1_1GeometricPrimitiveMap.html#a07d04c1a3bb164bb501bd03cc6bc1eae">hiqp::geometric_primitives::GeometricPrimitiveMap::removeGeometricPrimitive</a>  (std::string name)</dt>
-<dd>primitives should have dependencies on tasks and not be removable if dependencies exists!  </dd>
-<dt><a class="anchor" id="_todo000004"></a>Member <a class="el" href="classhiqp_1_1TaskManager.html#a1f58d497fa59e23506e6d7d60fe3693d">hiqp::TaskManager::removeTask</a>  (std::string task_name)</dt>
-<dd>removal of tasks must also delete task dynamics or else there's a memory leak!  </dd>
-<dt><a class="anchor" id="_todo000003"></a>Member <a class="el" href="classhiqp_1_1TaskManager.html#a688ad548e2ef681b458c1fc90326f6e6">hiqp::TaskManager::~TaskManager</a>  () noexcept</dt>
-<dd>cleanup of tasks and task dynamics is missing! </dd>
+<dt><a class="anchor" id="_todo000001"></a>Member <a class="el" href="classhiqp_1_1geometric__primitives_1_1GeometricPrimitiveMap.html#a6ddc5d3b4e8e44748fbb0c9e66957952">hiqp::geometric_primitives::GeometricPrimitiveMap::addGeometricPrimitive</a>  (const std::string &amp;name, const std::string &amp;type, const std::string &amp;frame_id, bool visible, const std::vector&lt; double &gt; &amp;color, const std::vector&lt; double &gt; &amp;parameters)</dt>
+<dd>Add a Capsule primitive among the geometric primitives  </dd>
+<dt><a class="anchor" id="_todo000002"></a>Member <a class="el" href="classhiqp_1_1TaskManager.html#a6ae5db3755ca5231a99b1b0c5f06e00d">hiqp::TaskManager::addTask</a>  (const std::string &amp;name, const std::string &amp;type, const std::vector&lt; std::string &gt; &amp;behaviour_parameters, unsigned int priority, bool visibility, const std::vector&lt; std::string &gt; &amp;parameters, const HiQPTimePoint &amp;sampling_time, const KDL::Tree &amp;kdl_tree, const KDL::JntArrayVel &amp;kdl_joint_pos_vel)</dt>
+<dd><p class="startdd">the add_task and update_task service calls shall be exchanged for a set_task service call </p>
+<p>TaskFunction objects shall be accessed through smart pointers </p>
+<p class="enddd">TaskDynamics objects shall be accessed through smart pointers  </p>
+</dd>
+<dt><a class="anchor" id="_todo000003"></a>Member <a class="el" href="classhiqp_1_1TaskManager.html#a1f58d497fa59e23506e6d7d60fe3693d">hiqp::TaskManager::removeTask</a>  (std::string task_name)</dt>
+<dd>refactor the remove_task service call to a unset_task service call  </dd>
+<dt><a class="anchor" id="_todo000004"></a>Member <a class="el" href="classhiqp_1_1tasks_1_1TaskGeometricProjection.html#a37272247434d8b14c819649f25234cc6">hiqp::tasks::TaskGeometricProjection&lt; PrimitiveA, PrimitiveB &gt;::project</a>  (GeometricPoint *point1, GeometricPoint *point2)</dt>
+<dd><p class="startdd">Implement point-capsule projection </p>
+<p>Implement cylinder-cylinder projection </p>
+<p>Implement cylinder-sphere projection </p>
+<p>Implement cylinder-capsule projection </p>
+<p>Implement sphere-capsule projection </p>
+<p class="enddd">Implement capsule-capsule projection </p>
+</dd>
 </dl>
 </div></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Sep 14 2016 15:28:45 for HiQP_Controllers ROS Package by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Sep 14 2016 17:32:54 for HiQP_Controllers ROS Package by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

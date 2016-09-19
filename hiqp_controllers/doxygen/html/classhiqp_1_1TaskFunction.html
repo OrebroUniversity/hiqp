@@ -38,7 +38,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
       <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
-      <li><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li class="current"><a href="annotated.html"><span>Classes</span></a></li>
       <li><a href="files.html"><span>Files</span></a></li>
       <li>
@@ -72,7 +71,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Pages</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Pages</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -83,7 +82,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><a class="el" href="namespacehiqp.html">hiqp</a></li><li class="navelem"><a class="el" href="classhiqp_1_1TaskFunction.html">TaskFunction</a></li>  </ul>
+<li class="navelem"><b>hiqp</b></li><li class="navelem"><a class="el" href="classhiqp_1_1TaskFunction.html">TaskFunction</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div class="header">
@@ -96,17 +95,22 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="title">hiqp::TaskFunction Class Reference<span class="mlabels"><span class="mlabel">abstract</span></span></div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p>Abstract base class for all task function types.  
+ <a href="classhiqp_1_1TaskFunction.html#details">More...</a></p>
+
+<p><code>#include &lt;<a class="el" href="task__function_8h_source.html">task_function.h</a>&gt;</code></p>
 <div class="dynheader">
 Inheritance diagram for hiqp::TaskFunction:</div>
 <div class="dyncontent">
  <div class="center">
   <img src="classhiqp_1_1TaskFunction.png" usemap="#hiqp::TaskFunction_map" alt=""/>
   <map id="hiqp::TaskFunction_map" name="hiqp::TaskFunction_map">
-<area href="classhiqp_1_1TaskFullPose.html" title="Represents a task that sets a specific joint configuration. " alt="hiqp::TaskFullPose" shape="rect" coords="0,56,327,80"/>
-<area href="classhiqp_1_1TaskGeometricAlignment.html" alt="hiqp::TaskGeometricAlignment&lt; PrimitiveA, PrimitiveB &gt;" shape="rect" coords="337,56,664,80"/>
-<area href="classhiqp_1_1TaskGeometricProjection.html" title="It&#39;s awesome! " alt="hiqp::TaskGeometricProjection&lt; PrimitiveA, PrimitiveB &gt;" shape="rect" coords="674,56,1001,80"/>
-<area href="classhiqp_1_1TaskJntConfig.html" title="Represents a task that sets a specific joint configuration. " alt="hiqp::TaskJntConfig" shape="rect" coords="1011,56,1338,80"/>
-<area href="classhiqp_1_1TaskJntLimits.html" alt="hiqp::TaskJntLimits" shape="rect" coords="1348,56,1675,80"/>
+<area href="classhiqp_1_1tasks_1_1TaskFullPose.html" title="Represents a task that sets a specific joint configuration. " alt="hiqp::tasks::TaskFullPose" shape="rect" coords="0,56,361,80"/>
+<area href="classhiqp_1_1tasks_1_1TaskGeometricAlignment.html" alt="hiqp::tasks::TaskGeometricAlignment&lt; PrimitiveA, PrimitiveB &gt;" shape="rect" coords="371,56,732,80"/>
+<area href="classhiqp_1_1tasks_1_1TaskGeometricProjection.html" alt="hiqp::tasks::TaskGeometricProjection&lt; PrimitiveA, PrimitiveB &gt;" shape="rect" coords="742,56,1103,80"/>
+<area href="classhiqp_1_1tasks_1_1TaskJntConfig.html" title="Represents a task that sets a specific joint configuration. " alt="hiqp::tasks::TaskJntConfig" shape="rect" coords="1113,56,1474,80"/>
+<area href="classhiqp_1_1tasks_1_1TaskJntLimits.html" title="Task achieving velocity and position limitations of a specific joint. " alt="hiqp::tasks::TaskJntLimits" shape="rect" coords="1484,56,1845,80"/>
 </map>
  </div></div>
 <table class="memberdecls">
@@ -191,7 +195,9 @@ std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><
 GeometricPrimitiveMap *&#160;</td><td class="memItemRight" valign="bottom"><b>geometric_primitive_map_</b></td></tr>
 <tr class="separator:a086192d37a36e72f781e9641cd35176d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Member Function Documentation</h2>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>Abstract base class for all task function types. </p>
+</div><h2 class="groupheader">Member Function Documentation</h2>
 <a class="anchor" id="a3c476e011c762b8a8f7470ec47f70a17"></a>
 <div class="memitem">
 <div class="memproto">
@@ -241,7 +247,7 @@ GeometricPrimitiveMap *&#160;</td><td class="memItemRight" valign="bottom"><b>ge
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>0 if the calculation was successful </dd></dl>
 
-<p>Implemented in <a class="el" href="classhiqp_1_1TaskFullPose.html#a7dcaa206ba1a24d205504ffaa3f55ac6">hiqp::TaskFullPose</a>, <a class="el" href="classhiqp_1_1TaskJntConfig.html#a34dd3b5a79953fa6c0f970dcdd66873b">hiqp::TaskJntConfig</a>, <a class="el" href="classhiqp_1_1TaskGeometricAlignment.html#a85bec9aead639a94c50b951df6bf076e">hiqp::TaskGeometricAlignment&lt; PrimitiveA, PrimitiveB &gt;</a>, <a class="el" href="classhiqp_1_1TaskGeometricProjection.html#a3eaed2bb6db4b6b6b53503a20d2a1895">hiqp::TaskGeometricProjection&lt; PrimitiveA, PrimitiveB &gt;</a>, and <a class="el" href="classhiqp_1_1TaskJntLimits.html#aa140824f7bc5b80754f3b57b43d7aa69">hiqp::TaskJntLimits</a>.</p>
+<p>Implemented in <a class="el" href="classhiqp_1_1tasks_1_1TaskFullPose.html#aa3f9600219741a8bb7ffcb15bba19c70">hiqp::tasks::TaskFullPose</a>, <a class="el" href="classhiqp_1_1tasks_1_1TaskGeometricAlignment.html#aa46e561c924dd0a65f463a715ed387a3">hiqp::tasks::TaskGeometricAlignment&lt; PrimitiveA, PrimitiveB &gt;</a>, <a class="el" href="classhiqp_1_1tasks_1_1TaskGeometricProjection.html#a80d6bb74fb3faae77a6ef3e141846761">hiqp::tasks::TaskGeometricProjection&lt; PrimitiveA, PrimitiveB &gt;</a>, <a class="el" href="classhiqp_1_1tasks_1_1TaskJntConfig.html#a5e5ed2b1a16a96fbdaff3e95fd1b2329">hiqp::tasks::TaskJntConfig</a>, and <a class="el" href="classhiqp_1_1tasks_1_1TaskJntLimits.html#a3ab9389dfc0e3646fbd1fd670d7285fe">hiqp::tasks::TaskJntLimits</a>.</p>
 
 </div>
 </div>
@@ -269,7 +275,7 @@ GeometricPrimitiveMap *&#160;</td><td class="memItemRight" valign="bottom"><b>ge
 <p><em>Pure virtual</em>. Computes all performance measures used when monitoring this task. </p>
 <dl class="section return"><dt>Returns</dt><dd>0 if the calculation was successful </dd></dl>
 
-<p>Implemented in <a class="el" href="classhiqp_1_1TaskFullPose.html#a46c3585f15b89f793b6a9debcb6e5db9">hiqp::TaskFullPose</a>, <a class="el" href="classhiqp_1_1TaskJntConfig.html#af4d673c3b78a3c461abce090c0871a63">hiqp::TaskJntConfig</a>, <a class="el" href="classhiqp_1_1TaskGeometricAlignment.html#a1cede66f4e9b5e558dbcdaaf7e11e2c4">hiqp::TaskGeometricAlignment&lt; PrimitiveA, PrimitiveB &gt;</a>, <a class="el" href="classhiqp_1_1TaskJntLimits.html#a1a2b92667aa173f74b2df4f1364ddcd9">hiqp::TaskJntLimits</a>, and <a class="el" href="classhiqp_1_1TaskGeometricProjection.html#a6e824a39011d6e5865e13dd956649a71">hiqp::TaskGeometricProjection&lt; PrimitiveA, PrimitiveB &gt;</a>.</p>
+<p>Implemented in <a class="el" href="classhiqp_1_1tasks_1_1TaskFullPose.html#a1280f9a08af7083c28fc31cf66a61f55">hiqp::tasks::TaskFullPose</a>, <a class="el" href="classhiqp_1_1tasks_1_1TaskGeometricAlignment.html#a1c01a7489e846175992a44a62a8a7436">hiqp::tasks::TaskGeometricAlignment&lt; PrimitiveA, PrimitiveB &gt;</a>, <a class="el" href="classhiqp_1_1tasks_1_1TaskGeometricProjection.html#a58d7416dfaa2ff0241065be68282848c">hiqp::tasks::TaskGeometricProjection&lt; PrimitiveA, PrimitiveB &gt;</a>, <a class="el" href="classhiqp_1_1tasks_1_1TaskJntConfig.html#a903a952db54532a9650c725141399774">hiqp::tasks::TaskJntConfig</a>, and <a class="el" href="classhiqp_1_1tasks_1_1TaskJntLimits.html#ace02732e6cd3cc4087baf6e7df5e2723">hiqp::tasks::TaskJntLimits</a>.</p>
 
 </div>
 </div>
@@ -279,7 +285,7 @@ GeometricPrimitiveMap *&#160;</td><td class="memItemRight" valign="bottom"><b>ge
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Sep 14 2016 15:28:45 for HiQP_Controllers ROS Package by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Sep 14 2016 17:32:54 for HiQP_Controllers ROS Package by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

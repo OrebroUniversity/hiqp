@@ -14,10 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
-
-/*!
+/*
  * \file   hiqp_time_point.h
  * \author Marcus A Johansson (marcus.adam.johansson@gmail.com)
  * \date   July, 2016
@@ -26,75 +23,57 @@
  * Detailed description of file.
  */
 
-
-
-
-
-
 #ifndef HIQP_TIME_POINT_H
 #define HIQP_TIME_POINT_H
 
-namespace hiqp {
 
 
 
 
-
-
-
-
-
-
+ namespace hiqp {
 
 /*!
  * \class HiQPTimePoint
  * \brief The time type used in this framework.
- *
  */  
-class HiQPTimePoint
-{
-public:
+ class HiQPTimePoint
+ {
+ public:
 
-	HiQPTimePoint();
+  HiQPTimePoint();
 
-    HiQPTimePoint(unsigned int sec, unsigned int nsec);
+  HiQPTimePoint(unsigned int sec, unsigned int nsec);
 
-    ~HiQPTimePoint();
+  HiQPTimePoint(const HiQPTimePoint& other);
 
-    double toSec() const;
+  ~HiQPTimePoint();
 
-    inline void setTimePoint(unsigned int sec, unsigned int nsec)
-    { this->sec_ = sec; this->nsec_ = nsec; }
+  double toSec() const;
 
-    inline unsigned int getSec() const { return sec_; }
+  inline void setTimePoint(unsigned int sec, unsigned int nsec)
+  { this->sec_ = sec; this->nsec_ = nsec; }
 
-    inline unsigned int getNSec() const { return nsec_; }
+  inline unsigned int getSec() const { return sec_; }
 
-    HiQPTimePoint& operator=(const HiQPTimePoint& other);
+  inline unsigned int getNSec() const { return nsec_; }
 
-    HiQPTimePoint operator+(const HiQPTimePoint& other) const;
+  HiQPTimePoint& operator=(const HiQPTimePoint& other);
 
-    HiQPTimePoint operator-(const HiQPTimePoint& other) const;
+  HiQPTimePoint operator+(const HiQPTimePoint& other) const;
 
-    HiQPTimePoint& operator+=(const HiQPTimePoint& other);
+  HiQPTimePoint operator-(const HiQPTimePoint& other) const;
 
-    HiQPTimePoint& operator-=(const HiQPTimePoint& other);
+  HiQPTimePoint& operator+=(const HiQPTimePoint& other);
+
+  HiQPTimePoint& operator-=(const HiQPTimePoint& other);
 
 private:
 
-    unsigned int sec_;
-    unsigned int nsec_;
+  unsigned int sec_;
+  
+  unsigned int nsec_;
 
-};
-
-
-
-
-
-
-
-
-
+}; // class HiQPTimePoint
 
 } // namespace hiqp
 

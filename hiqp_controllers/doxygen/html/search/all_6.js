@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['jointvelocitycontroller',['JointVelocityController',['../namespacehiqp.html#a7b250295f6797153486ce8ab085bd450',1,'hiqp']]],
-  ['jointvelocityinterface',['JointVelocityInterface',['../namespacehiqp.html#ac536ca3b4ba33489281fa5bec490799c',1,'hiqp']]]
+  ['monitor',['monitor',['../classhiqp_1_1TaskFunction.html#a47a3283a0c0ebafa17feeca96afe5af0',1,'hiqp::TaskFunction::monitor()'],['../classhiqp_1_1tasks_1_1TaskFullPose.html#a1280f9a08af7083c28fc31cf66a61f55',1,'hiqp::tasks::TaskFullPose::monitor()'],['../classhiqp_1_1tasks_1_1TaskGeometricAlignment.html#a1c01a7489e846175992a44a62a8a7436',1,'hiqp::tasks::TaskGeometricAlignment::monitor()'],['../classhiqp_1_1tasks_1_1TaskGeometricProjection.html#a58d7416dfaa2ff0241065be68282848c',1,'hiqp::tasks::TaskGeometricProjection::monitor()'],['../classhiqp_1_1tasks_1_1TaskJntConfig.html#a903a952db54532a9650c725141399774',1,'hiqp::tasks::TaskJntConfig::monitor()'],['../classhiqp_1_1tasks_1_1TaskJntLimits.html#ace02732e6cd3cc4087baf6e7df5e2723',1,'hiqp::tasks::TaskJntLimits::monitor()']]]
 ];

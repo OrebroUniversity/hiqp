@@ -14,12 +14,9 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
-
-/*!
+/*
  * \file   task_factory.cpp
- * \Author Marcus A Johansson (marcus.adam.johansson@gmail.com)
+ * \author Marcus A Johansson (marcus.adam.johansson@gmail.com)
  * \date   July, 2016
  * \brief  Brief description of file.
  *
@@ -41,8 +38,19 @@
 
 
 
-
 namespace hiqp {
+
+using tasks::TaskFullPose;
+using tasks::TaskJntLimits;
+using tasks::TaskJntConfig;
+using tasks::TaskGeometricProjection;
+using tasks::TaskGeometricAlignment;
+
+using tasks::DynamicsFirstOrder;
+using tasks::DynamicsMinimalJerk;
+using tasks::DynamicsJntLimits;
+
+
 
 
 
@@ -57,7 +65,6 @@ void TaskFactory::init
     visualizer_ = visualizer;
     num_controls_ = num_controls;
 }
-
 
 
 
@@ -183,8 +190,6 @@ int TaskFactory::buildTask
 
 
 
-
-
 TaskDynamics* TaskFactory::constructTaskDynamics
 (
     const std::vector<std::string>& parameters
@@ -243,7 +248,6 @@ TaskDynamics* TaskFactory::constructTaskDynamics
 
     return dynamics;
 }
-
 
 
 
@@ -368,10 +372,6 @@ TaskFunction* TaskFactory::constructTaskFunction
 
     return function;
 }
-
-
-
-
 
 
 

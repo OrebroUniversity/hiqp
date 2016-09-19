@@ -63,6 +63,10 @@ using geometric_primitives::GeometricPrimitiveMap;
 class TaskFactory;
 class TaskManager;
 
+/*!
+ * \class TaskFunction
+ * \brief Abstract base class for all task function types.
+ */ 
 class TaskFunction
 {
 public:

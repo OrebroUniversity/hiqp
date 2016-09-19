@@ -14,11 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
-
-
-/*!
+/*
  * \file   dynamics_minimal_jerk.h
  * \author Marcus A Johansson (marcus.adam.johansson@gmail.com)
  * \date   July, 2016
@@ -27,13 +23,10 @@
  * Detailed description of file.
  */
 
-
-
 #ifndef HIQP_DYNAMICS_MINIMAL_JERK_H
 #define HIQP_DYNAMICS_MINIMAL_JERK_H
 
 // STL Includes
-#include <chrono>
 
 // HiQP Includes
 #include <hiqp/hiqp_time_point.h>
@@ -41,77 +34,62 @@
 
 
 
+
 namespace hiqp
 {
-
-
-
-
-
+namespace tasks
+{
 
 /*!
  * \class DynamicsFirstOrder
  * \brief A general first-order task dynamics implementation that enforces an 
  *        exponential decay of the task function value
- */	
+ */  
 class DynamicsMinimalJerk : public TaskDynamics
 {
 public:
 
-	DynamicsMinimalJerk() {}
+  DynamicsMinimalJerk() {}
 
-	~DynamicsMinimalJerk() noexcept {}
+  ~DynamicsMinimalJerk() noexcept {}
 
-	int init
-	(
-		const HiQPTimePoint& sampling_time,
-		const std::vector<std::string>& parameters,
-    	const Eigen::VectorXd& e_initial,
-    	const Eigen::VectorXd& e_final
-	);
+  int init
+  (
+    const HiQPTimePoint& sampling_time,
+    const std::vector<std::string>& parameters,
+    const Eigen::VectorXd& e_initial,
+    const Eigen::VectorXd& e_final
+  );
 
-	int apply
-	(
-		const HiQPTimePoint& sampling_time,
-		const Eigen::VectorXd& e,
-		const Eigen::MatrixXd& J,
-		Eigen::VectorXd& e_dot_star
-	);
+  int apply
+  (
+    const HiQPTimePoint& sampling_time,
+    const Eigen::VectorXd& e,
+    const Eigen::MatrixXd& J,
+    Eigen::VectorXd& e_dot_star
+  );
 
-	int monitor();
+  int monitor();
 
 private:
+  // No copying of this class is allowed !
+  DynamicsMinimalJerk(const DynamicsMinimalJerk& other) = delete;
+  DynamicsMinimalJerk(DynamicsMinimalJerk&& other) = delete;
+  DynamicsMinimalJerk& operator=(const DynamicsMinimalJerk& other) = delete;
+  DynamicsMinimalJerk& operator=(DynamicsMinimalJerk&& other) noexcept = delete;
 
-	// No copying of this class is allowed !
-	DynamicsMinimalJerk(const DynamicsMinimalJerk& other) = delete;
-	DynamicsMinimalJerk(DynamicsMinimalJerk&& other) = delete;
-	DynamicsMinimalJerk& operator=(const DynamicsMinimalJerk& other) = delete;
-	DynamicsMinimalJerk& operator=(DynamicsMinimalJerk&& other) noexcept = delete;
+  HiQPTimePoint                time_start_;
 
+  double                       total_duration_;
 
+  Eigen::VectorXd              e_diff_;
 
-	HiQPTimePoint								time_start_;
+  double                       f_;
 
-	double 										total_duration_;
+}; // class DynamicsMinimalJerk
 
-	Eigen::VectorXd 							e_diff_;
-
-	double 										f_;
-
-
-};
-
-
-
-
-
-
+} // namespace tasks
 
 } // namespace hiqp
-
-
-
-
-
 
 #endif // include guard

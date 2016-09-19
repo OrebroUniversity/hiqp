@@ -38,7 +38,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
       <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
-      <li><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li><a href="annotated.html"><span>Classes</span></a></li>
       <li class="current"><a href="files.html"><span>Files</span></a></li>
       <li>
@@ -69,7 +68,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Pages</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Pages</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -173,7 +172,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;</div>
 <div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;</div>
 <div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;<span class="keyword">template</span>&lt;<span class="keyword">typename</span> Derived&gt;</div>
-<div class="line"><a name="l00107"></a><span class="lineno"><a class="line" href="namespacehiqp.html#a5762e31938369b2fdbd81ac2bd11ca0f">  107</a></span>&#160;Derived <a class="code" href="namespacehiqp.html#a5762e31938369b2fdbd81ac2bd11ca0f">pinv</a>(<span class="keyword">const</span> Eigen::MatrixBase&lt;Derived&gt;&amp; a)</div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;Derived pinv(<span class="keyword">const</span> Eigen::MatrixBase&lt;Derived&gt;&amp; a)</div>
 <div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;{</div>
 <div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;    <span class="keyword">typedef</span> <span class="keyword">typename</span> Eigen::MatrixBase&lt;Derived&gt;::RealScalar RealScalar;</div>
 <div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;    <span class="keywordflow">if</span> (a.rows() &lt; a.cols())</div>
@@ -191,8 +190,8 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;</div>
 <div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;</div>
 <div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;<span class="keyword">template</span>&lt;<span class="keyword">typename</span> Derived&gt;</div>
-<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;Derived <a class="code" href="namespacehiqp.html#a8fb181f069898cddd461b0a33f2f19d1">dls</a></div>
-<div class="line"><a name="l00134"></a><span class="lineno"><a class="line" href="namespacehiqp.html#a8fb181f069898cddd461b0a33f2f19d1">  134</a></span>&#160;(</div>
+<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;Derived dls</div>
+<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;(</div>
 <div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;    <span class="keyword">const</span> Eigen::MatrixBase&lt;Derived&gt;&amp; a, </div>
 <div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;    <span class="keywordtype">double</span> eta = 0.01</div>
 <div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;)</div>
@@ -204,7 +203,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;        <span class="keywordflow">return</span> a;</div>
 <div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;</div>
 <div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;    <span class="keywordflow">if</span> (r == c)</div>
-<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;        <span class="keywordflow">return</span> <a class="code" href="namespacehiqp.html#a5762e31938369b2fdbd81ac2bd11ca0f">pinv</a>(a);</div>
+<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;        <span class="keywordflow">return</span> pinv(a);</div>
 <div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;</div>
 <div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;    Derived a_ext(r+c, c);</div>
 <div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;    a_ext.block(0, 0, r, c) = a;</div>
@@ -212,7 +211,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;    Derived b = Eigen::MatrixXd::Zero(r+c, r);</div>
 <div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;    b.block(0, 0, r, r) = Eigen::MatrixXd::Identity(r, r);</div>
 <div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;</div>
-<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;    <span class="keywordflow">return</span> <a class="code" href="namespacehiqp.html#a5762e31938369b2fdbd81ac2bd11ca0f">pinv</a>(a_ext) * b;</div>
+<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;    <span class="keywordflow">return</span> pinv(a_ext) * b;</div>
 <div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;}</div>
 <div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;</div>
 <div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;</div>
@@ -232,12 +231,10 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;</div>
 <div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;</div>
 <div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="ttc" id="namespacehiqp_html_a5762e31938369b2fdbd81ac2bd11ca0f"><div class="ttname"><a href="namespacehiqp.html#a5762e31938369b2fdbd81ac2bd11ca0f">hiqp::pinv</a></div><div class="ttdeci">Derived pinv(const Eigen::MatrixBase&lt; Derived &gt; &amp;a)</div><div class="ttdoc">calculates the Moore-Penrose Pseudoinverse for any sized matrices. </div><div class="ttdef"><b>Definition:</b> hiqp_utils.h:107</div></div>
-<div class="ttc" id="namespacehiqp_html_a8fb181f069898cddd461b0a33f2f19d1"><div class="ttname"><a href="namespacehiqp.html#a8fb181f069898cddd461b0a33f2f19d1">hiqp::dls</a></div><div class="ttdeci">Derived dls(const Eigen::MatrixBase&lt; Derived &gt; &amp;a, double eta=0.01)</div><div class="ttdoc">calculates the Damped-Least-Square matrix. </div><div class="ttdef"><b>Definition:</b> hiqp_utils.h:134</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Sep 14 2016 15:28:45 for HiQP_Controllers ROS Package by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Sep 14 2016 17:32:53 for HiQP_Controllers ROS Package by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

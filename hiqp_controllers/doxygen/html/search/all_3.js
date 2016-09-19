@@ -1,6 +1,5 @@
 var searchData=
 [
-  ['geometric_5fprimitive_5fmap_2ecpp',['geometric_primitive_map.cpp',['../geometric__primitive__map_8cpp.html',1,'']]],
   ['geometricbox',['GeometricBox',['../classhiqp_1_1geometric__primitives_1_1GeometricBox.html',1,'hiqp::geometric_primitives']]],
   ['geometriccylinder',['GeometricCylinder',['../classhiqp_1_1geometric__primitives_1_1GeometricCylinder.html',1,'hiqp::geometric_primitives']]],
   ['geometricline',['GeometricLine',['../classhiqp_1_1geometric__primitives_1_1GeometricLine.html',1,'hiqp::geometric_primitives']]],

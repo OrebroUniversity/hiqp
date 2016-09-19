@@ -38,7 +38,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
       <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
-      <li><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li class="current"><a href="annotated.html"><span>Classes</span></a></li>
       <li><a href="files.html"><span>Files</span></a></li>
       <li>
@@ -72,7 +71,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Pages</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Pages</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -83,7 +82,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><a class="el" href="namespacehiqp.html">hiqp</a></li><li class="navelem"><a class="el" href="classhiqp_1_1TaskDynamics.html">TaskDynamics</a></li>  </ul>
+<li class="navelem"><b>hiqp</b></li><li class="navelem"><a class="el" href="classhiqp_1_1TaskDynamics.html">TaskDynamics</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div class="header">
@@ -95,15 +94,20 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="title">hiqp::TaskDynamics Class Reference<span class="mlabels"><span class="mlabel">abstract</span></span></div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p>Abstract base class for all task dynamics types.  
+ <a href="classhiqp_1_1TaskDynamics.html#details">More...</a></p>
+
+<p><code>#include &lt;<a class="el" href="task__dynamics_8h_source.html">task_dynamics.h</a>&gt;</code></p>
 <div class="dynheader">
 Inheritance diagram for hiqp::TaskDynamics:</div>
 <div class="dyncontent">
  <div class="center">
   <img src="classhiqp_1_1TaskDynamics.png" usemap="#hiqp::TaskDynamics_map" alt=""/>
   <map id="hiqp::TaskDynamics_map" name="hiqp::TaskDynamics_map">
-<area href="classhiqp_1_1DynamicsFirstOrder.html" title="A general first-order task dynamics implementation that enforces an exponential decay of the task fun..." alt="hiqp::DynamicsFirstOrder" shape="rect" coords="0,56,164,80"/>
-<area href="classhiqp_1_1DynamicsJntLimits.html" alt="hiqp::DynamicsJntLimits" shape="rect" coords="174,56,338,80"/>
-<area href="classhiqp_1_1DynamicsMinimalJerk.html" alt="hiqp::DynamicsMinimalJerk" shape="rect" coords="348,56,512,80"/>
+<area href="classhiqp_1_1tasks_1_1DynamicsFirstOrder.html" title="A general first-order task dynamics implementation that enforces an exponential decay of the task fun..." alt="hiqp::tasks::DynamicsFirstOrder" shape="rect" coords="0,56,198,80"/>
+<area href="classhiqp_1_1tasks_1_1DynamicsJntLimits.html" alt="hiqp::tasks::DynamicsJntLimits" shape="rect" coords="208,56,406,80"/>
+<area href="classhiqp_1_1tasks_1_1DynamicsMinimalJerk.html" alt="hiqp::tasks::DynamicsMinimalJerk" shape="rect" coords="416,56,614,80"/>
 </map>
  </div></div>
 <table class="memberdecls">
@@ -128,13 +132,15 @@ Protected Attributes</h2></td></tr>
 std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>performance_measures_</b></td></tr>
 <tr class="separator:acbef47a5ae066079eb530aa0d6b02569"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<hr/>The documentation for this class was generated from the following file:<ul>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>Abstract base class for all task dynamics types. </p>
+</div><hr/>The documentation for this class was generated from the following file:<ul>
 <li>include/hiqp/<a class="el" href="task__dynamics_8h_source.html">task_dynamics.h</a></li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Sep 14 2016 15:28:45 for HiQP_Controllers ROS Package by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Sep 14 2016 17:32:54 for HiQP_Controllers ROS Package by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

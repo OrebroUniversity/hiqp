@@ -38,7 +38,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
       <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
-      <li><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li><a href="annotated.html"><span>Classes</span></a></li>
       <li class="current"><a href="files.html"><span>Files</span></a></li>
       <li>
@@ -69,7 +68,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Pages</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Pages</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -104,67 +103,68 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="comment">// You should have received a copy of the GNU General Public License</span></div>
 <div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="comment">// along with this program.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</span></div>
 <div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;</div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;</div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;</div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;</div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;<span class="preprocessor">#ifndef HIQP_ROS_KINEMATIC_CONTROLLER_H</span></div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;<span class="preprocessor"></span><span class="preprocessor">#define HIQP_ROS_KINEMATIC_CONTROLLER_H</span></div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;<span class="preprocessor"></span></div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="comment">/*</span></div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="comment"> * \file   ros_dynamics_controller.h</span></div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="comment"> * \author Marcus A Johansson (marcus.adam.johansson@gmail.com)</span></div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="comment"> * \date   July, 2016</span></div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="comment"> * \brief  Brief description of file.</span></div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="comment"> * Detailed description of file.</span></div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<span class="comment"> */</span></div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;</div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;<span class="preprocessor">#ifndef HIQP_ROS_DYNAMICS_CONTROLLER_H</span></div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;<span class="preprocessor"></span><span class="preprocessor">#define HIQP_ROS_DYNAMICS_CONTROLLER_H</span></div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;<span class="preprocessor"></span></div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;<span class="comment">// ROS Includes</span></div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;<span class="preprocessor">#include &lt;ros/ros.h&gt;</span></div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;</div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;</div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;</div>
 <div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;</div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;<span class="comment">// ROS Includes</span></div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;<span class="preprocessor">#include &lt;ros/ros.h&gt;</span></div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;</div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;</div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;<span class="keyword">namespace </span>hiqp</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;{</div>
 <div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;</div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;</div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;<span class="keyword">namespace </span>hiqp</div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;{</div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;</div>
+<div class="line"><a name="l00043"></a><span class="lineno"><a class="line" href="classhiqp_1_1ROSDynamicsController.html">   43</a></span>&#160;<span class="keyword">class </span><a class="code" href="classhiqp_1_1ROSDynamicsController.html">ROSDynamicsController</a> : <span class="keyword">public</span> JointEffortController</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;{</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;<span class="keyword">public</span>:</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;</div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;    <a class="code" href="classhiqp_1_1ROSDynamicsController.html">ROSDynamicsController</a>();</div>
 <div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;</div>
-<div class="line"><a name="l00055"></a><span class="lineno"><a class="line" href="classhiqp_1_1ROSDynamicsController.html">   55</a></span>&#160;<span class="keyword">class </span><a class="code" href="classhiqp_1_1ROSDynamicsController.html">ROSDynamicsController</a> : <span class="keyword">public</span> JointEffortController</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;{</div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;<span class="keyword">public</span>:</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;</div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;    <a class="code" href="classhiqp_1_1ROSDynamicsController.html#ab25caf17b0f140092447b5209eb7ddd4">ROSDynamicsController</a>();</div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;</div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;    <a class="code" href="classhiqp_1_1ROSDynamicsController.html#a007a61fdaa35652378b259ceb971d409">~ROSDynamicsController</a>() noexcept;</div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;</div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="classhiqp_1_1ROSDynamicsController.html#a2308da73670325884a035055bb86b7d2">init</a>(<a class="code" href="namespacehiqp.html#ac536ca3b4ba33489281fa5bec490799c">JointVelocityInterface</a> *hw, </div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;             ros::NodeHandle &amp;controller_nh);</div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;</div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classhiqp_1_1ROSDynamicsController.html#aba55c2ae7df27d53ef5997ce51898ec0">starting</a>(<span class="keyword">const</span> ros::Time&amp; time);</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;    ~<a class="code" href="classhiqp_1_1ROSDynamicsController.html">ROSDynamicsController</a>() noexcept;</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;</div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="classhiqp_1_1ROSDynamicsController.html#a2308da73670325884a035055bb86b7d2">init</a>(JointVelocityInterface *hw, </div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;             ros::NodeHandle &amp;controller_nh);</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classhiqp_1_1ROSDynamicsController.html#aba55c2ae7df27d53ef5997ce51898ec0">starting</a>(<span class="keyword">const</span> ros::Time&amp; time);</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;</div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classhiqp_1_1ROSDynamicsController.html#a369911a027a38555eff59bf838a8a7dd">update</a>(<span class="keyword">const</span> ros::Time&amp; time, <span class="keyword">const</span> ros::Duration&amp; period);</div>
 <div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;</div>
-<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classhiqp_1_1ROSDynamicsController.html#a369911a027a38555eff59bf838a8a7dd">update</a>(<span class="keyword">const</span> ros::Time&amp; time, <span class="keyword">const</span> ros::Duration&amp; period);</div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classhiqp_1_1ROSDynamicsController.html#aa8305ffc7cfd4eb1727e2133fc37aef9">stopping</a>(<span class="keyword">const</span> ros::Time&amp; time);</div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;</div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;</div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;</div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;<span class="keyword">private</span>:</div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;    <span class="comment">// No copying of this class is allowed !</span></div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;    <a class="code" href="classhiqp_1_1ROSDynamicsController.html">ROSDynamicsController</a>(<span class="keyword">const</span> <a class="code" href="classhiqp_1_1ROSDynamicsController.html">ROSDynamicsController</a>&amp; other) = <span class="keyword">delete</span>;</div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;    <a class="code" href="classhiqp_1_1ROSDynamicsController.html">ROSDynamicsController</a>(<a class="code" href="classhiqp_1_1ROSDynamicsController.html">ROSDynamicsController</a>&amp;&amp; other) = <span class="keyword">delete</span>;</div>
+<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;    <a class="code" href="classhiqp_1_1ROSDynamicsController.html">ROSDynamicsController</a>&amp; operator=(<span class="keyword">const</span> <a class="code" href="classhiqp_1_1ROSDynamicsController.html">ROSDynamicsController</a>&amp; other) = <span class="keyword">delete</span>;</div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;    <a class="code" href="classhiqp_1_1ROSDynamicsController.html">ROSDynamicsController</a>&amp; operator=(<a class="code" href="classhiqp_1_1ROSDynamicsController.html">ROSDynamicsController</a>&amp;&amp; other) noexcept = <span class="keyword">delete</span>;</div>
 <div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;</div>
-<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classhiqp_1_1ROSDynamicsController.html#aa8305ffc7cfd4eb1727e2133fc37aef9">stopping</a>(<span class="keyword">const</span> ros::Time&amp; time);</div>
-<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;</div>
-<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;</div>
-<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;<span class="keyword">private</span>:</div>
-<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;</div>
-<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;    <span class="comment">// No copying of this class is allowed !</span></div>
-<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;    <a class="code" href="classhiqp_1_1ROSDynamicsController.html#ab25caf17b0f140092447b5209eb7ddd4">ROSDynamicsController</a>(<span class="keyword">const</span> <a class="code" href="classhiqp_1_1ROSDynamicsController.html">ROSDynamicsController</a>&amp; other) = <span class="keyword">delete</span>;</div>
-<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;    <a class="code" href="classhiqp_1_1ROSDynamicsController.html#ab25caf17b0f140092447b5209eb7ddd4">ROSDynamicsController</a>(<a class="code" href="classhiqp_1_1ROSDynamicsController.html">ROSDynamicsController</a>&amp;&amp; other) = <span class="keyword">delete</span>;</div>
-<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;    <a class="code" href="classhiqp_1_1ROSDynamicsController.html">ROSDynamicsController</a>&amp; operator=(<span class="keyword">const</span> <a class="code" href="classhiqp_1_1ROSDynamicsController.html">ROSDynamicsController</a>&amp; other) = <span class="keyword">delete</span>;</div>
-<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;    <a class="code" href="classhiqp_1_1ROSDynamicsController.html">ROSDynamicsController</a>&amp; operator=(<a class="code" href="classhiqp_1_1ROSDynamicsController.html">ROSDynamicsController</a>&amp;&amp; other) noexcept = <span class="keyword">delete</span>;</div>
-<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;</div>
-<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;</div>
-<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;</div>
-<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;};</div>
-<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;</div>
-<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;}</div>
-<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;</div>
-<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;<span class="preprocessor">#endif // include guard</span></div>
+<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;}; <span class="comment">// class ROSDynamicsController</span></div>
+<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;</div>
+<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;} <span class="comment">// namespace hiqp</span></div>
+<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;</div>
+<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;<span class="preprocessor">#endif // include guard</span></div>
 <div class="ttc" id="classhiqp_1_1ROSDynamicsController_html_a369911a027a38555eff59bf838a8a7dd"><div class="ttname"><a href="classhiqp_1_1ROSDynamicsController.html#a369911a027a38555eff59bf838a8a7dd">hiqp::ROSDynamicsController::update</a></div><div class="ttdeci">void update(const ros::Time &amp;time, const ros::Duration &amp;period)</div><div class="ttdoc">Called every time the controller is updated by the ros::controller_manager. </div></div>
-<div class="ttc" id="classhiqp_1_1ROSDynamicsController_html"><div class="ttname"><a href="classhiqp_1_1ROSDynamicsController.html">hiqp::ROSDynamicsController</a></div><div class="ttdoc">This is my awesome controller. </div><div class="ttdef"><b>Definition:</b> ros_dynamics_controller.h:55</div></div>
+<div class="ttc" id="classhiqp_1_1ROSDynamicsController_html"><div class="ttname"><a href="classhiqp_1_1ROSDynamicsController.html">hiqp::ROSDynamicsController</a></div><div class="ttdoc">not available yet </div><div class="ttdef"><b>Definition:</b> ros_dynamics_controller.h:43</div></div>
 <div class="ttc" id="classhiqp_1_1ROSDynamicsController_html_a2308da73670325884a035055bb86b7d2"><div class="ttname"><a href="classhiqp_1_1ROSDynamicsController.html#a2308da73670325884a035055bb86b7d2">hiqp::ROSDynamicsController::init</a></div><div class="ttdeci">bool init(JointVelocityInterface *hw, ros::NodeHandle &amp;controller_nh)</div><div class="ttdoc">Called every time the controller is initialized by the ros::controller_manager. </div></div>
 <div class="ttc" id="classhiqp_1_1ROSDynamicsController_html_aa8305ffc7cfd4eb1727e2133fc37aef9"><div class="ttname"><a href="classhiqp_1_1ROSDynamicsController.html#aa8305ffc7cfd4eb1727e2133fc37aef9">hiqp::ROSDynamicsController::stopping</a></div><div class="ttdeci">void stopping(const ros::Time &amp;time)</div><div class="ttdoc">Called every time the controller is stopped by the ros::controller_manager. </div></div>
-<div class="ttc" id="namespacehiqp_html_ac536ca3b4ba33489281fa5bec490799c"><div class="ttname"><a href="namespacehiqp.html#ac536ca3b4ba33489281fa5bec490799c">hiqp::JointVelocityInterface</a></div><div class="ttdeci">hardware_interface::VelocityJointInterface JointVelocityInterface</div><div class="ttdef"><b>Definition:</b> ros_kinematics_controller.h:100</div></div>
-<div class="ttc" id="classhiqp_1_1ROSDynamicsController_html_a007a61fdaa35652378b259ceb971d409"><div class="ttname"><a href="classhiqp_1_1ROSDynamicsController.html#a007a61fdaa35652378b259ceb971d409">hiqp::ROSDynamicsController::~ROSDynamicsController</a></div><div class="ttdeci">~ROSDynamicsController() noexcept</div><div class="ttdoc">Destructor Destructs my awesome controller :(. </div></div>
-<div class="ttc" id="classhiqp_1_1ROSDynamicsController_html_ab25caf17b0f140092447b5209eb7ddd4"><div class="ttname"><a href="classhiqp_1_1ROSDynamicsController.html#ab25caf17b0f140092447b5209eb7ddd4">hiqp::ROSDynamicsController::ROSDynamicsController</a></div><div class="ttdeci">ROSDynamicsController()</div><div class="ttdoc">Constructor Constructs my awesome controller. </div></div>
 <div class="ttc" id="classhiqp_1_1ROSDynamicsController_html_aba55c2ae7df27d53ef5997ce51898ec0"><div class="ttname"><a href="classhiqp_1_1ROSDynamicsController.html#aba55c2ae7df27d53ef5997ce51898ec0">hiqp::ROSDynamicsController::starting</a></div><div class="ttdeci">void starting(const ros::Time &amp;time)</div><div class="ttdoc">Called every time the controller is started by the ros::controller_manager. </div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Sep 14 2016 15:28:45 for HiQP_Controllers ROS Package by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Sep 14 2016 17:32:53 for HiQP_Controllers ROS Package by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

@@ -5,7 +5,7 @@
 %%For: 
 %Magnification: 1.00
 %%Orientation: Portrait
-%%BoundingBox: 0 0 500 23.880597
+%%BoundingBox: 0 0 500 21.680217
 %%Pages: 0
 %%BeginSetup
 %%EndSetup
@@ -19,7 +19,7 @@
 /marginwidth 10 def
 /distx 20 def
 /disty 40 def
-/boundaspect 20.937500 def  % aspect ratio of the BoundingBox (width/height)
+/boundaspect 23.062500 def  % aspect ratio of the BoundingBox (width/height)
 /boundx 500 def
 /boundy boundx boundaspect div def
 /xspacing 0 def
@@ -174,11 +174,11 @@
 boxfont setfont
 1 boundaspect scale
 (hiqp::TaskFunction) cw
-(hiqp::TaskFullPose) cw
-(hiqp::TaskGeometricAlignment< PrimitiveA, PrimitiveB >) cw
-(hiqp::TaskGeometricProjection< PrimitiveA, PrimitiveB >) cw
-(hiqp::TaskJntConfig) cw
-(hiqp::TaskJntLimits) cw
+(hiqp::tasks::TaskFullPose) cw
+(hiqp::tasks::TaskGeometricAlignment< PrimitiveA, PrimitiveB >) cw
+(hiqp::tasks::TaskGeometricProjection< PrimitiveA, PrimitiveB >) cw
+(hiqp::tasks::TaskJntConfig) cw
+(hiqp::tasks::TaskJntLimits) cw
 /boxwidth boxwidth marginwidth 2 mul add def
 /xspacing boxwidth distx add def
 /yspacing boxheight disty add def
@@ -191,11 +191,11 @@ boundx scalefactor div boundy scalefactor div scale
 % ----- classes -----
 
  (hiqp::TaskFunction) 2.000000 1.000000 box
- (hiqp::TaskFullPose) 0.000000 0.000000 box
- (hiqp::TaskGeometricAlignment< PrimitiveA, PrimitiveB >) 1.000000 0.000000 box
- (hiqp::TaskGeometricProjection< PrimitiveA, PrimitiveB >) 2.000000 0.000000 box
- (hiqp::TaskJntConfig) 3.000000 0.000000 box
- (hiqp::TaskJntLimits) 4.000000 0.000000 box
+ (hiqp::tasks::TaskFullPose) 0.000000 0.000000 box
+ (hiqp::tasks::TaskGeometricAlignment< PrimitiveA, PrimitiveB >) 1.000000 0.000000 box
+ (hiqp::tasks::TaskGeometricProjection< PrimitiveA, PrimitiveB >) 2.000000 0.000000 box
+ (hiqp::tasks::TaskJntConfig) 3.000000 0.000000 box
+ (hiqp::tasks::TaskJntLimits) 4.000000 0.000000 box
 
 % ----- relations -----
 

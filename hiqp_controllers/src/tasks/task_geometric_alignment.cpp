@@ -14,19 +14,14 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
-
-/*!
+/*
  * \file   task_geometric_alignment.cpp
- * \Author Marcus A Johansson (marcus.adam.johansson@gmail.com)
+ * \author Marcus A Johansson (marcus.adam.johansson@gmail.com)
  * \date   July, 2016
  * \brief  Brief description of file.
  *
  * Detailed description of file.
  */
-
-
 
 #include <hiqp/tasks/task_geometric_alignment.h>
 
@@ -39,15 +34,8 @@
 
 #include <hiqp/hiqp_utils.h>
 
-// Orocos KDL Includes
-//#include <kdl/treefksolverpos_recursive.hpp>
-//#include <kdl/treejnttojacsolver.hpp>
-
 #include <iostream>
 #include <cmath>
-//#include <string>
-//#include <sstream>
-
 
 
 
@@ -55,14 +43,8 @@
 
 namespace hiqp
 {
-
-
-
-
-
-
-
-
+namespace tasks
+{
 
 
 
@@ -151,10 +133,7 @@ int TaskGeometricAlignment<GeometricLine, GeometricSphere>::align
 
 
 
-
-
-
-
+} // namespace tasks
 
 } // namespace hiqp
 

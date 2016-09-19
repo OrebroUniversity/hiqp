@@ -57,74 +57,74 @@ class GeometricPrimitiveMap
 {
 public:
 
-	GeometricPrimitiveMap(Visualizer* visualizer)
-	: visualizer_(visualizer)
-	{}
+  GeometricPrimitiveMap(Visualizer* visualizer)
+  : visualizer_(visualizer)
+  {}
 
-	~GeometricPrimitiveMap() noexcept {}
+  ~GeometricPrimitiveMap() noexcept {}
 
-	int addGeometricPrimitive
-	(
-		const std::string& name,
-        const std::string& type,
-        const std::string& frame_id,
-        bool visible,
-        const std::vector<double>& color,
-        const std::vector<double>& parameters
-    );
+  int addGeometricPrimitive
+  (
+    const std::string& name,
+    const std::string& type,
+    const std::string& frame_id,
+    bool visible,
+    const std::vector<double>& color,
+    const std::vector<double>& parameters
+  );
 
-    int removeGeometricPrimitive( std::string name);
+  int removeGeometricPrimitive( std::string name);
 
-    int clear();
+  int clear();
 
-	template<typename PrimitiveType>
-	PrimitiveType* getGeometricPrimitive(const std::string& name);
+  template<typename PrimitiveType>
+  PrimitiveType* getGeometricPrimitive(const std::string& name);
 
-	template<typename PrimitiveType>
-	void updateGeometricPrimitive
-	(
-		const std::string& name, 
-		const std::vector<double>& parameters
-	);
+  template<typename PrimitiveType>
+  void updateGeometricPrimitive
+  (
+    const std::string& name, 
+    const std::vector<double>& parameters
+  );
 
-	void redrawAllPrimitives();
+  void redrawAllPrimitives();
 
-	void addDependencyToPrimitive(const std::string& name, const std::string& id);
+  void addDependencyToPrimitive(const std::string& name, const std::string& id);
 
-	void removeDependency(const std::string& id);
+  void removeDependency(const std::string& id);
 
 
 
 
 private:
-	// No copying of this class is allowed !
-	GeometricPrimitiveMap(const GeometricPrimitiveMap& other) = delete;
-	GeometricPrimitiveMap(GeometricPrimitiveMap&& other) = delete;
-	GeometricPrimitiveMap& operator=(const GeometricPrimitiveMap& other) = delete;
-	GeometricPrimitiveMap& operator=(GeometricPrimitiveMap&& other) noexcept = delete;
+  // No copying of this class is allowed !
+  GeometricPrimitiveMap(const GeometricPrimitiveMap& other) = delete;
+  GeometricPrimitiveMap(GeometricPrimitiveMap&& other) = delete;
+  GeometricPrimitiveMap& operator=(const GeometricPrimitiveMap& other) = delete;
+  GeometricPrimitiveMap& operator=(GeometricPrimitiveMap&& other) noexcept = delete;
 
-	typedef std::map< std::string, std::vector< std::string> >   
-		DependencyMap;
+  typedef std::map< std::string, std::vector< std::string> >   
+    DependencyMap;
 
-	typedef std::map< std::string, std::vector< std::string> >::iterator 
-		DependencyMapIterator;
+  typedef std::map< std::string, std::vector< std::string> >::iterator 
+    DependencyMapIterator;
 
-	typedef std::pair< std::string, std::vector< std::string> >  
-		DependencyMapElement;
+  typedef std::pair< std::string, std::vector< std::string> >  
+    DependencyMapElement;
 
 
-	std::map< std::string, std::size_t> 			visual_id_map_;
+  std::map< std::string, std::size_t>           visual_id_map_;
 
-	DependencyMap 									dependency_map_;
+  DependencyMap                                 dependency_map_;
 
-	std::map< std::string, GeometricPoint* > 		point_map_;
-	std::map< std::string, GeometricLine* > 	    line_map_;
-	std::map< std::string, GeometricPlane* > 		plane_map_;
-	std::map< std::string, GeometricBox* > 			box_map_;
-	std::map< std::string, GeometricCylinder* > 	cylinder_map_;
-	std::map< std::string, GeometricSphere* > 		sphere_map_;
+  std::map< std::string, GeometricPoint* >      point_map_;
+  std::map< std::string, GeometricLine* >       line_map_;
+  std::map< std::string, GeometricPlane* >      plane_map_;
+  std::map< std::string, GeometricBox* >        box_map_;
+  std::map< std::string, GeometricCylinder* >   cylinder_map_;
+  std::map< std::string, GeometricSphere* >     sphere_map_;
 
-	Visualizer* 								    visualizer_;
+  Visualizer*                                   visualizer_;
 
 }; // class GeometricPrimitiveMap
 

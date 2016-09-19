@@ -7,24 +7,20 @@
 
 var indexSectionsWithContent =
 {
-  0: "acdghijmprstuv~",
+  0: "acdghimprstuv",
   1: "cdghrtv",
-  2: "h",
-  3: "cdghrtv",
-  4: "acdgimprstu~",
-  5: "j",
-  6: "t"
+  2: "hrtv",
+  3: "agimprstu",
+  4: "t"
 };
 
 var indexSectionNames =
 {
   0: "all",
   1: "classes",
-  2: "namespaces",
-  3: "files",
-  4: "functions",
-  5: "typedefs",
-  6: "pages"
+  2: "files",
+  3: "functions",
+  4: "pages"
 };
 
 function convertToId(search)

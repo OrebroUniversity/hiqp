@@ -14,9 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
-
 /*
  * \file   geometric_primitive.h
  * \author Marcus A Johansson (marcus.adam.johansson@gmail.com)
@@ -26,25 +23,22 @@
  * Detailed description of file.
  */
 
-
-
 #ifndef HIQP_GEOMETRIC_PRIMITIVE_H
 #define HIQP_GEOMETRIC_PRIMITIVE_H
 
+// STL Includes
 #include <string>
 #include <vector>
 #include <cassert>
+
+
+
 
 
 namespace hiqp
 {
 namespace geometric_primitives
 {
-
-
-
-
-
 
 /*!
  * \class GeometricPrimitive
@@ -54,71 +48,63 @@ class GeometricPrimitive
 {
 public:
 
-	GeometricPrimitive
-	(
-		const std::string& name,
-		const std::string& frame_id,
-		bool visible,
-		const std::vector<double>& color
-	)
-	: name_(name), frame_id_(frame_id), visible_(visible)
-	{
-		r_ = color.at(0);
-		g_ = color.at(1);
-		b_ = color.at(2);
-		a_ = color.at(3);
-	}
+  GeometricPrimitive
+  (
+    const std::string& name,
+    const std::string& frame_id,
+    bool visible,
+    const std::vector<double>& color
+  )
+  : name_(name), frame_id_(frame_id), visible_(visible)
+  {
+    r_ = color.at(0);
+    g_ = color.at(1);
+    b_ = color.at(2);
+    a_ = color.at(3);
+  }
 
-	~GeometricPrimitive() noexcept {};
+  ~GeometricPrimitive() noexcept {};
 
-	/*! \brief Needs to be specified by the inheriting class */
-	virtual int init(const std::vector<double>& parameters) = 0;
+  /*! \brief Needs to be specified by the inheriting class */
+  virtual int init(const std::vector<double>& parameters) = 0;
 
 
-	inline void 		setId(unsigned int id) { id_ = id; }
-	inline unsigned int getId() { return id_; }
+  inline void     			setId(unsigned int id) { id_ = id; }
+  inline unsigned int 	getId() { return id_; }
 
-	inline std::string 	getName() { return name_; }
-	inline std::string 	getFrameId() { return frame_id_; }
-	inline bool 		isVisible() { return visible_; }
+  inline std::string   	getName() { return name_; }
+  inline std::string   	getFrameId() { return frame_id_; }
+  inline bool     			isVisible() { return visible_; }
 
-	inline double 		getRedComponent() { return r_; }
-	inline double 		getGreenComponent() { return g_; }
-	inline double 		getBlueComponent() { return b_; }
-	inline double 		getAlphaComponent() { return a_; }
+  inline double     		getRedComponent() { return r_; }
+  inline double     		getGreenComponent() { return g_; }
+  inline double     		getBlueComponent() { return b_; }
+  inline double     		getAlphaComponent() { return a_; }
+
 
 
 protected:
 
-	std::string		name_;
+  std::string    				name_;
 
-	std::string 	frame_id_;
+  std::string   				frame_id_;
 
-	bool 			visible_;
+  bool       						visible_;
 
-	unsigned int    id_;
+  unsigned int    			id_;
 
-	double 			r_, g_, b_, a_;
-
-
-
+  double       					r_, g_, b_, a_;
 
 
 
 private:
+  // No copying of this class is allowed !
+  GeometricPrimitive(const GeometricPrimitive& other) = delete;
+  GeometricPrimitive(GeometricPrimitive&& other) = delete;
+  GeometricPrimitive& operator=(const GeometricPrimitive& other) = delete;
+  GeometricPrimitive& operator=(GeometricPrimitive&& other) noexcept = delete;
 
-	// No copying of this class is allowed !
-	GeometricPrimitive(const GeometricPrimitive& other) = delete;
-	GeometricPrimitive(GeometricPrimitive&& other) = delete;
-	GeometricPrimitive& operator=(const GeometricPrimitive& other) = delete;
-	GeometricPrimitive& operator=(GeometricPrimitive&& other) noexcept = delete;
-
-};
-
-
-
-
-
+}; // class GeometricPrimitive
 
 } // namespace geometric_primitives
 
