@@ -48,7 +48,7 @@ int DynamicsMinimalJerk::init
   const Eigen::VectorXd& e_final
 )
 {
-  if (parameters.size() != 2)
+  if (parameters.size() != 3)
     return -1;
 
   performance_measures_.resize(e_initial.rows());
@@ -56,9 +56,12 @@ int DynamicsMinimalJerk::init
   time_start_ = sampling_time;
 
   total_duration_ = std::stod( parameters.at(1) );
+  gain_ = std::stod( parameters.at(2) );
 
   f_ = 30 / total_duration_;
 
+  e_initial_ = e_initial;
+  e_final_ = e_final;
   e_diff_ = e_final - e_initial;
 
   std::cout << "f_ = " << f_ << "\n";
@@ -79,21 +82,25 @@ int DynamicsMinimalJerk::apply
   Eigen::VectorXd& e_dot_star
 )
 {
-  double d = (sampling_time - time_start_).toSec();
-
-  double tau = d / total_duration_;
-
-  double t = tau*tau - 2*tau*tau*tau + tau*tau*tau*tau;
+  double tau = (sampling_time - time_start_).toSec() / total_duration_;
 
   if (tau > 1)
   {
-    e_dot_star = 0*e; // first order wth gain -1
+    e_dot_star = 0*e;
     std::cout << "e = " << e << "\n";
   }
   else
   {
-    e_dot_star = f_ * e_diff_ * t; // minimal jerk
+    double T = 10*tau*tau*tau - 15*tau*tau*tau*tau + 6*tau*tau*tau*tau*tau;
+    double t = f_ * (tau*tau - 2*tau*tau*tau + tau*tau*tau*tau);
+
+    Eigen::VectorXd e_star = e_initial_ + e_diff_ * T;
+
+    e_dot_star = e_diff_ * t - gain_ * (e - e_star); // minimal jerk + first order
   }
+
+
+
 
   //std::cout << "total_duration_ = " << total_duration_ << "\n";
   //std::cout << "d = " << d << "\n";

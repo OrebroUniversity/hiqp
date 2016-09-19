@@ -4,13 +4,13 @@ library(ggplot2)
 
 ### Calculate C
 tf <- 10
-e0 <- 0.0668497
+e0 <- 0.0668265
 C <- 40/sqrt(3) * e0/(tf*tf)
 
 
 
 ### Load raw data
-rawdata <- read.csv("f20t10K0.csv", header=FALSE)
+rawdata <- read.csv("f20t5K0.csv", header=FALSE)
 Jdata <- rawdata[rawdata$V2=='J',]
 qdotdata <- rawdata[rawdata$V2=='qdot',]
 t <- Jdata[,c("V1")]
@@ -77,4 +77,6 @@ for (dde_ in dde) {
 sigma <- sum(abs(ddde*dt))
 rate <- sigma/C
 
+#ggplot(data.frame(x=t,y=de),aes(x,y)) + geom_line()
+#ggplot(data.frame(x=t,y=dde),aes(x,y)) + geom_line()
 ggplot(data.frame(x=t,y=ddde),aes(x,y)) + geom_line()

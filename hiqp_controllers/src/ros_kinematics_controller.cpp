@@ -146,29 +146,29 @@ void ROSKinematicsController::update
 
     setControls();
 
-    // logfile_ << sampling_time_.toSec() << ",qdot";
-    // for (auto&& c : output_controls_)
-    // {
-    //   logfile_ << "," << c;
-    // }
-    // logfile_ << "\n";
+    logfile_ << sampling_time_.toSec() << ",qdot";
+    for (auto&& c : output_controls_)
+    {
+      logfile_ << "," << c;
+    }
+    logfile_ << "\n";
 
-    // std::vector<TaskMonitoringData> data;
-    // task_manager_.getTaskMonitoringData(data);
+    std::vector<TaskMonitoringData> data;
+    task_manager_.getTaskMonitoringData(data);
 
-    // for (auto&& d : data)
-    // {
-    //   if (d.task_name_.compare("minjerk_task") == 0 && 
-    //       d.measure_tag_.compare("J") == 0)
-    //   {
-    //     logfile_ << sampling_time_.toSec() << ",J";
-    //     for (auto&& pm : d.performance_measures_)
-    //     {
-    //       logfile_ << "," << pm;
-    //     }
-    //     logfile_ << "\n";
-    //   }
-    // }
+    for (auto&& d : data)
+    {
+      if (d.task_name_.compare("minjerk_task") == 0 && 
+          d.measure_tag_.compare("J") == 0)
+      {
+        logfile_ << sampling_time_.toSec() << ",J";
+        for (auto&& pm : d.performance_measures_)
+        {
+          logfile_ << "," << pm;
+        }
+        logfile_ << "\n";
+      }
+    }
 
     time_since_last_sampling_ = 0;
   }

@@ -82,6 +82,10 @@ private:
 
   double                       total_duration_;
 
+  double                       gain_;
+
+  Eigen::VectorXd              e_initial_;
+  Eigen::VectorXd              e_final_;
   Eigen::VectorXd              e_diff_;
 
   double                       f_;

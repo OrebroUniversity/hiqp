@@ -4,7 +4,7 @@ yumi:
       publish_rate: 50  
   hiqp_kinematics_controller:
     type: hiqp_controllers/ROSKinematicsController
-    fps: 1000
+    fps: 20
     joints:
       - yumi_joint_1_r
       - yumi_joint_2_r

@@ -233,14 +233,14 @@ TaskDynamics* TaskFactory::constructTaskDynamics
 
     else if (parameters.at(0).compare("DynamicsMinimalJerk") == 0)
     {
-        if (size == 2)
+        if (size == 3)
         {
             dynamics = new DynamicsMinimalJerk();
         }
         else
         {
             printHiqpWarning("DynamicsMinimalJerk requires "
-                + std::to_string(2) 
+                + std::to_string(3) 
                 + " parameters, got " 
                 + std::to_string(size) + "!");
         }

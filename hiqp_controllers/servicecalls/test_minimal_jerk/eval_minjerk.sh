@@ -18,7 +18,7 @@ parameters: [0.0, 0, 0.2]"
 rosservice call /yumi/hiqp_kinematics_controller/add_task \
 "name: 'minjerk_task'
 type: 'TaskGeometricProjection'
-behaviour: ['DynamicsMinimalJerk', '5.0']
+behaviour: ['DynamicsMinimalJerk', '10.0', '0.1']
 priority: 3
 visibility: 0
 parameters: ['point', 'point', 'mypoint1 = mypoint2']"
