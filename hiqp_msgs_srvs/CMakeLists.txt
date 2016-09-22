@@ -18,6 +18,7 @@ add_message_files(
   Vector3d.msg
   PerfMeasMsg.msg
   MonitorDataMsg.msg
+  StringArray.msg
   )
 
 

@@ -107,14 +107,17 @@ bool TaskManager::getKinematicControls
 
   for (TaskMapElement&& element : tasks_)
   {
-    element.second->computeTaskMetrics(sampling_time,
-                                       kdl_tree,
-                                       kdl_joint_pos_vel);
+    if (element.second->isActive()) 
+    {
+      element.second->computeTaskMetrics(sampling_time,
+                                         kdl_tree,
+                                         kdl_joint_pos_vel);
 
-    solver_->appendStage(element.second->priority_, 
-                         element.second->e_dot_star_, 
-                         element.second->J_,
-                         element.second->task_types_);
+      solver_->appendStage(element.second->priority_, 
+                           element.second->e_dot_star_, 
+                           element.second->J_,
+                           element.second->task_types_);
+    }
   }
 
   solver_->solve(controls);
@@ -171,6 +174,7 @@ int TaskManager::addTask
   const std::vector<std::string>& behaviour_parameters,
   unsigned int priority,
   bool visibility,
+  bool active,
   const std::vector<std::string>& parameters,
   const HiQPTimePoint& sampling_time,
   const KDL::Tree& kdl_tree,
@@ -186,6 +190,7 @@ int TaskManager::addTask
     type, 
     priority, 
     visibility, 
+    active, 
     parameters, 
     behaviour_parameters,
     sampling_time,
@@ -221,6 +226,7 @@ int TaskManager::updateTask
   const std::vector<std::string>& behaviour_parameters,
   unsigned int priority,
   bool visibility,
+  bool active,
   const std::vector<std::string>& parameters,
   const HiQPTimePoint& sampling_time,
   const KDL::Tree& kdl_tree,
@@ -291,6 +297,7 @@ int TaskManager::updateTask
 
   function->setPriority(priority);
   function->setVisibility(visibility);
+  function->setIsActive(active);
 
   function->init(
     sampling_time, 

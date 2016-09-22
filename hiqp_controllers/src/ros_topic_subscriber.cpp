@@ -33,9 +33,12 @@
 #include <hiqp/geometric_primitives/geometric_cylinder.h>
 
 #include <hiqp_msgs_srvs/Vector3d.h>
+#include <hiqp_msgs_srvs/StringArray.h>
 
 // STL Includes
 #include <iostream>
+#include <string>
+#include <vector>
 
 // Wintracker Includes
 #include <geometry_msgs/PoseStamped.h>
@@ -111,11 +114,29 @@ void ROSTopicSubscriber::topicCallback<hiqp_msgs_srvs::Vector3d>
 
 }
 
+template<>
+void ROSTopicSubscriber::topicCallback<hiqp_msgs_srvs::StringArray>
+(
+	const hiqp_msgs_srvs::StringArray& msg
+)
+{
+	std::vector<std::string>::const_iterator it = msg.params.cbegin();
+
+	if ((*it).compare("set_cyl_pos") == 0) {
+		
+	} else if ((*it).compare("goto_start_pos") == 0) {
+
+	} else if ((*it).compare("grab_cylinder") == 0) {
+
+	}
+
+}
 
 
 
 
 }
+
 
 
 

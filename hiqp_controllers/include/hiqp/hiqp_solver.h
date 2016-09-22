@@ -85,7 +85,11 @@ public:
     const std::vector<int>& constraint_signs
   )
   {
+    //std::cout << "appendStage : constraint_signs.size() = "
+    //<< constraint_signs.size() << "\n";
+
     StageMapIterator it = stages_map_.find(priority_level);
+
 
     // if there's no stage for this priority level
     if (it == stages_map_.end())

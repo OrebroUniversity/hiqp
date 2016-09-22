@@ -17,15 +17,28 @@
 
 
 
-string       name          # the name to be associated with this task instantiation
-string       type          # the name of the task class (e.g. TaskPoP)
-string[]     behaviour     # the class name of the behaviour along with its parameters
-uint16       priority      # the task priority (1 is highest)
-bool         visibility    # whether or not the task should be visible initially
-bool         active        # whether or not the task should be active initially
-string[]     parameters    # a list of strings that is passed to the init function of the task class
 
----
+cmake_minimum_required(VERSION 2.8.3)
+project(hiqp_experiment_rosnode)
 
-#uint16       task_id       # the unique identifier associated with the created task
-bool         success       # true if the task creation was successful
+set(CMAKE_CXX_FLAGS "-O3 -std=c++11")
+
+## Find catkin and any catkin packages
+find_package(catkin REQUIRED COMPONENTS roscpp rospy std_msgs hiqp_msgs_srvs)
+
+## Declare ROS messages and services
+
+## Generate added messages and services
+generate_messages(DEPENDENCIES std_msgs)
+
+## Declare a catkin package
+catkin_package()
+
+
+
+include_directories(include ${catkin_INCLUDE_DIRS})
+
+add_executable(run_experiment src/main.cpp)
+
+target_link_libraries(run_experiment ${catkin_LIBRARIES})
+add_dependencies(run_experiment hiqp_msgs_srvs)

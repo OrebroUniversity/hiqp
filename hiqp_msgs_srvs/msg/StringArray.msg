@@ -17,15 +17,5 @@
 
 
 
-string       name          # the name to be associated with this task instantiation
-string       type          # the name of the task class (e.g. TaskPoP)
-string[]     behaviour     # the class name of the behaviour along with its parameters
-uint16       priority      # the task priority (1 is highest)
-bool         visibility    # whether or not the task should be visible initially
-bool         active        # whether or not the task should be active initially
-string[]     parameters    # a list of strings that is passed to the init function of the task class
 
----
-
-#uint16       task_id       # the unique identifier associated with the created task
-bool         success       # true if the task creation was successful
+string[]        params

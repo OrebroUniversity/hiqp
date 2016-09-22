@@ -89,7 +89,7 @@ private:
 	ROSTopicSubscriber& operator=(const ROSTopicSubscriber& other) = delete;
 	ROSTopicSubscriber& operator=(ROSTopicSubscriber&& other) noexcept = delete;
 
-	ros::Subscriber 			sub;
+	ros::Subscriber 					sub;
 
 	GeometricPrimitiveMap* 		primitive_map_;
 

@@ -62,7 +62,7 @@ class TaskFactory
 {
 public:
 
-    TaskFactory() {}
+  TaskFactory() {}
 
 	~TaskFactory() noexcept {}
 
@@ -79,6 +79,7 @@ public:
     	const std::string& type,
     	unsigned int priority,
     	bool visibility,
+      bool active,
     	const std::vector<std::string>& parameters,
     	const std::vector<std::string>& behaviour_parameters,
     	const HiQPTimePoint& sampling_time,

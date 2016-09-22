@@ -71,7 +71,9 @@ class TaskFunction
 {
 public:
 
-    TaskFunction() {}
+    TaskFunction() 
+    : is_active_(true)
+    {}
 
     ~TaskFunction() noexcept {}
 
@@ -183,6 +185,9 @@ protected:
     inline bool getVisibility()
     { return visibility_; }
 
+    inline bool isActive()
+    { return is_active_; }
+
 
 
 
@@ -222,6 +227,9 @@ private:
 
     inline void setVisibility(bool visibility) 
     { visibility_ = visibility; }
+
+    inline void setIsActive(bool is_active) 
+    { is_active_ = is_active; }
 
 
     /*
@@ -303,6 +311,8 @@ private:
     unsigned int            priority_;
 
     bool                    visibility_;
+
+    bool                    is_active_;
 
 
 

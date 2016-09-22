@@ -77,6 +77,7 @@ int TaskFactory::buildTask
     const std::string& type,
     unsigned int priority,
     bool visibility,
+    bool active,
     const std::vector<std::string>& parameters,
     const std::vector<std::string>& behaviour_parameters,
     const HiQPTimePoint& sampling_time,
@@ -134,6 +135,7 @@ int TaskFactory::buildTask
     function->setDynamicsId(dynamics_id);
 	function->setPriority(priority);
 	function->setVisibility(visibility);
+    function->setIsActive(active);
     function->setTaskDynamics(dynamics);
     int init_result = function->init(sampling_time, 
                                      parameters, 

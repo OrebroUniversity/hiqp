@@ -38,6 +38,7 @@
 #include <hiqp_msgs_srvs/PerfMeasMsg.h>
 #include <hiqp_msgs_srvs/MonitorDataMsg.h>
 #include <hiqp_msgs_srvs/Vector3d.h>
+ #include <hiqp_msgs_srvs/StringArray.h>
 
 #include <geometry_msgs/PoseStamped.h> // teleoperation magnet sensors
 
@@ -146,36 +147,36 @@ void ROSKinematicsController::update
 
     setControls();
 
-    logfile_ << sampling_time_.toSec() << ",qdot";
-    for (auto&& c : output_controls_)
-    {
-      logfile_ << "," << c;
-    }
-    logfile_ << "\n";
+    // logfile_ << sampling_time_.toSec() << ",qdot";
+    // for (auto&& c : output_controls_)
+    // {
+    //   logfile_ << "," << c;
+    // }
+    // logfile_ << "\n";
 
-    std::vector<TaskMonitoringData> data;
-    task_manager_.getTaskMonitoringData(data);
+    // std::vector<TaskMonitoringData> data;
+    // task_manager_.getTaskMonitoringData(data);
 
-    for (auto&& d : data)
-    {
-      if (d.task_name_.compare("minjerk_task") == 0 && 
-          d.measure_tag_.compare("J") == 0)
-      {
-        logfile_ << sampling_time_.toSec() << ",J";
-        for (auto&& pm : d.performance_measures_)
-        {
-          logfile_ << "," << pm;
-        }
-        logfile_ << "\n";
-      }
-    }
+    // for (auto&& d : data)
+    // {
+    //   if (d.task_name_.compare("minjerk_task") == 0 && 
+    //       d.measure_tag_.compare("J") == 0)
+    //   {
+    //     logfile_ << sampling_time_.toSec() << ",J";
+    //     for (auto&& pm : d.performance_measures_)
+    //     {
+    //       logfile_ << "," << pm;
+    //     }
+    //     logfile_ << "\n";
+    //   }
+    // }
 
     time_since_last_sampling_ = 0;
   }
 
   task_manager_.getGeometricPrimitiveMap()->redrawAllPrimitives();
 
-  //performMonitoring();
+  performMonitoring();
 
   return;
 }
@@ -208,12 +209,14 @@ bool ROSKinematicsController::addTask
     hiqp_msgs_srvs::AddTask::Response& res
 )
 {
-  int retval = task_manager_.addTask(req.name, req.type, req.behaviour,
-                     req.priority, req.visibility, 
-                     req.parameters,
-                     sampling_time_,
-                     kdl_tree_,
-                     kdl_joint_pos_vel_);
+  int retval = task_manager_.addTask(
+    req.name, req.type, req.behaviour,
+    req.priority, req.visibility, req.active, 
+    req.parameters,
+    sampling_time_,
+    kdl_tree_,
+    kdl_joint_pos_vel_
+  );
 
   res.success = (retval < 0 ? false : true);
 
@@ -232,7 +235,7 @@ bool ROSKinematicsController::updateTask
 {
   
   int retval = task_manager_.updateTask(req.name, req.type, req.behaviour,
-                        req.priority, req.visibility, 
+                        req.priority, req.visibility, req.active, 
                         req.parameters,
                         sampling_time_,
                         kdl_tree_,
@@ -478,12 +481,18 @@ void ROSKinematicsController::addAllTopicSubscriptions()
   // Setup topic subscription
   topic_subscriber_.init( task_manager_.getGeometricPrimitiveMap() );
   
+  /*
   topic_subscriber_.addSubscription<geometry_msgs::PoseStamped>(
     controller_nh_, "/wintracker/pose", 100
   );
 
   topic_subscriber_.addSubscription<hiqp_msgs_srvs::Vector3d>(
     controller_nh_, "/yumi/hiqp_controllers/vector3d", 100
+  );
+  */
+
+  topic_subscriber_.addSubscription<hiqp_msgs_srvs::StringArray>(
+    controller_nh_, "/yumi/hiqp_kinematics_controller/experiment_commands", 100
   );
 }
 
@@ -717,6 +726,7 @@ void ROSKinematicsController::loadJointLimitsFromParamServer()
             "TaskJntLimits",
             std::vector<std::string>(),
             1,
+            1,
             false,
             parameters,
             sampling_time_,
@@ -865,7 +875,12 @@ void ROSKinematicsController::loadTasksFromParamServer()
           int visilibity__ = static_cast<int>(
             hiqp_preload_tasks[i]["visibility"] );
 
-          bool visibility = (visibility == 0 ? false : true);
+          bool visibility = (visilibity__ == 0 ? false : true);
+
+          int active__ = static_cast<int>(
+            hiqp_preload_tasks[i]["active"] );
+
+          bool active = (active__ == 0 ? false : true);
 
           XmlRpc::XmlRpcValue& parameters_xml = 
             hiqp_preload_tasks[i]["parameters"];
@@ -892,6 +907,7 @@ void ROSKinematicsController::loadTasksFromParamServer()
             behaviour,
             priority,
             visibility,
+            active,
             parameters,
             sampling_time_,
             kdl_tree_,

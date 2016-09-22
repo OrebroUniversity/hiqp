@@ -22,6 +22,7 @@ string       type          # the name of the task class (e.g. TaskPoP)
 string[]     behaviour     # the class name of the behaviour along with its parameters
 uint16       priority      # the task priority (1 is highest)
 bool         visibility    # whether or not the task should be visible
+bool         active        # whether or not the task should be visible
 string[]     parameters    # a list of strings that is passed to the init function of the task class
 
 ---

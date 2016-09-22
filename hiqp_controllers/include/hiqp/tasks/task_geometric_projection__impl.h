@@ -121,6 +121,7 @@ int TaskGeometricProjection<PrimitiveA, PrimitiveB>::init
     return -4;
   }
 
+  task_types_.clear();
   task_types_.insert(task_types_.begin(), 1, sign);
 
   return 0;
