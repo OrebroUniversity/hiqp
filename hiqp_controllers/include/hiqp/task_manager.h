@@ -170,6 +170,12 @@ public:
 
   int removeAllTasks();
 
+  inline void activateTask(const std::string& name)
+  { tasks_.find(name)->second->setIsActive(true); }
+
+  inline void deactivateTask(const std::string& name)
+  { tasks_.find(name)->second->setIsActive(false); }
+
   int addGeometricPrimitive
   (
     const std::string& name,
@@ -186,7 +192,6 @@ public:
 
   inline GeometricPrimitiveMap* getGeometricPrimitiveMap()
   { return geometric_primitive_map_; }
-
 
 
  private:

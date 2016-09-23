@@ -28,7 +28,9 @@
 #include <vector>
 
 // HiQP Includes
-#include <hiqp/geometric_primitives/geometric_primitive_map.h>
+//#include <hiqp/geometric_primitives/geometric_primitive_map.h>
+#include <hiqp/geometric_primitives/geometric_cylinder.h>
+#include <hiqp/task_manager.h>
 
 // ROS Includes
 #include "ros/ros.h"
@@ -53,9 +55,14 @@ public:
 
 	~ROSTopicSubscriber() {}
 
-	int init(GeometricPrimitiveMap* primitive_map)
+	int init
+	(
+		//GeometricPrimitiveMap* primitive_map, 
+		TaskManager* task_manager
+	)
 	{
-		primitive_map_ = primitive_map;
+		//primitive_map_ = primitive_map;
+		task_manager_ = task_manager;
 	}
 
 	template<typename ROSMessageType>
@@ -91,7 +98,9 @@ private:
 
 	ros::Subscriber 					sub;
 
-	GeometricPrimitiveMap* 		primitive_map_;
+	//GeometricPrimitiveMap* 		primitive_map_;
+
+	TaskManager* 							task_manager_;
 
 }; // class ROSTopicSubscriber
 

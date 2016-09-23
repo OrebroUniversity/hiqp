@@ -479,7 +479,7 @@ void ROSKinematicsController::performMonitoring()
 void ROSKinematicsController::addAllTopicSubscriptions()
 {
   // Setup topic subscription
-  topic_subscriber_.init( task_manager_.getGeometricPrimitiveMap() );
+  topic_subscriber_.init( &task_manager_ );//task_manager_.getGeometricPrimitiveMap(),
   
   /*
   topic_subscriber_.addSubscription<geometry_msgs::PoseStamped>(

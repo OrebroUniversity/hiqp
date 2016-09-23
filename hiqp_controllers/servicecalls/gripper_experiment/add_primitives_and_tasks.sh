@@ -14,7 +14,7 @@ type: 'point'
 frame_id: 'world'
 visible: true
 color: [1.0, 0.0, 1.0, 1.0]
-parameters: [0.0, 0.5, 0.5]"
+parameters: [0.1, 0.2, 0.2]"
 
 rosservice call /yumi/hiqp_kinematics_controller/add_primitive \
 "name: 'experiment_gripper_line_z'
@@ -71,7 +71,7 @@ behaviour: ['DynamicsFirstOrder', '5']
 priority: 2
 visibility: 0
 active: 0
-parameters: ['point', 'point', 'experiment_gripper_point = experiment_cylinder']"
+parameters: ['point', 'cylinder', 'experiment_gripper_point = experiment_cylinder']"
 
 rosservice call /yumi/hiqp_kinematics_controller/add_task \
 "name: 'bring_gripper_point_above_floor'

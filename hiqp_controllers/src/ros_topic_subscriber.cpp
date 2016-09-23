@@ -59,6 +59,7 @@ void ROSTopicSubscriber::topicCallback<geometry_msgs::PoseStamped>
 	const geometry_msgs::PoseStamped& msg
 )
 {
+	/*
 	std::vector<double> point_params;
 	point_params.push_back(msg.pose.position.x);
 	point_params.push_back(msg.pose.position.y);
@@ -67,7 +68,7 @@ void ROSTopicSubscriber::topicCallback<geometry_msgs::PoseStamped>
 
 	point_params.push_back(0.05);
 	primitive_map_->updateGeometricPrimitive<GeometricSphere>("teleop_sphere", point_params);
-
+*/
 	/*
 	std::cout << "pos = (" 
 		<< msg.pose.position.x << ", "
@@ -92,6 +93,7 @@ void ROSTopicSubscriber::topicCallback<hiqp_msgs_srvs::Vector3d>
 	const hiqp_msgs_srvs::Vector3d& msg
 )
 {
+	/*
 	GeometricCylinder* cylinder = primitive_map_->getGeometricPrimitive<GeometricCylinder>("thecylinder");
 
 	if (cylinder == nullptr)
@@ -111,6 +113,7 @@ void ROSTopicSubscriber::topicCallback<hiqp_msgs_srvs::Vector3d>
 	primitive_map_->updateGeometricPrimitive<GeometricCylinder>("thecylinder", params);
 
 	std::cout << "Updated thecylinder\n";
+	*/
 
 }
 
@@ -120,14 +123,49 @@ void ROSTopicSubscriber::topicCallback<hiqp_msgs_srvs::StringArray>
 	const hiqp_msgs_srvs::StringArray& msg
 )
 {
-	std::vector<std::string>::const_iterator it = msg.params.cbegin();
+	if (msg.params.size() == 0) return;
 
-	if ((*it).compare("set_cyl_pos") == 0) {
-		
-	} else if ((*it).compare("goto_start_pos") == 0) {
+	if (msg.params.at(0).compare("set_cyl_pos") == 0) {
+		if (msg.params.size() != 3) return;
+		double x = std::stod( msg.params.at(1) );
+		double y = std::stod( msg.params.at(2) );
 
-	} else if ((*it).compare("grab_cylinder") == 0) {
+		GeometricCylinder* cyl = task_manager_->getGeometricPrimitiveMap()->getGeometricPrimitive
+			<GeometricCylinder>("experiment_cylinder");
+		std::vector<double> cyl_params = {
+			cyl->getDirectionX(), cyl->getDirectionY(), cyl->getDirectionZ(), 
+			x, y, cyl->getOffsetZ(), cyl->getRadius(), cyl->getHeight()
+		};
+		cyl->init(cyl_params);
 
+	} else if (msg.params.at(0).compare("goto_start_pos") == 0) {
+		if (msg.params.size() != 4) return;
+
+		double x = std::stod( msg.params.at(1) );
+		double y = std::stod( msg.params.at(2) );
+		double z = std::stod( msg.params.at(3) );
+
+		GeometricPoint* point = task_manager_->getGeometricPrimitiveMap()->getGeometricPrimitive
+			<GeometricPoint>("experiment_starting_point");
+		std::vector<double> point_params = {x, y, z};
+		point->init(point_params);
+
+		task_manager_->deactivateTask("bring_back_to_start");
+		task_manager_->deactivateTask("bring_gripper_point_to_cylinder");
+		task_manager_->deactivateTask("bring_gripper_point_above_floor");
+		task_manager_->deactivateTask("bring_gripper_point_under_plane");
+
+		task_manager_->activateTask("bring_back_to_start");
+
+	} else if (msg.params.at(0).compare("grab_cylinder") == 0) {
+		task_manager_->deactivateTask("bring_back_to_start");
+		task_manager_->deactivateTask("bring_gripper_point_to_cylinder");
+		task_manager_->deactivateTask("bring_gripper_point_above_floor");
+		task_manager_->deactivateTask("bring_gripper_point_under_plane");
+
+		task_manager_->activateTask("bring_gripper_point_to_cylinder");
+		task_manager_->activateTask("bring_gripper_point_above_floor");
+		task_manager_->activateTask("bring_gripper_point_under_plane");
 	}
 
 }
