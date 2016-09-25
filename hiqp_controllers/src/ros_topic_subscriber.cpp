@@ -126,15 +126,16 @@ void ROSTopicSubscriber::topicCallback<hiqp_msgs_srvs::StringArray>
 	if (msg.params.size() == 0) return;
 
 	if (msg.params.at(0).compare("set_cyl_pos") == 0) {
-		if (msg.params.size() != 3) return;
+		if (msg.params.size() != 4) return;
 		double x = std::stod( msg.params.at(1) );
 		double y = std::stod( msg.params.at(2) );
+		double z = std::stod( msg.params.at(3) );
 
 		GeometricCylinder* cyl = task_manager_->getGeometricPrimitiveMap()->getGeometricPrimitive
 			<GeometricCylinder>("experiment_cylinder");
 		std::vector<double> cyl_params = {
 			cyl->getDirectionX(), cyl->getDirectionY(), cyl->getDirectionZ(), 
-			x, y, cyl->getOffsetZ(), cyl->getRadius(), cyl->getHeight()
+			x, y, z, cyl->getRadius(), cyl->getHeight()
 		};
 		cyl->init(cyl_params);
 
@@ -154,6 +155,8 @@ void ROSTopicSubscriber::topicCallback<hiqp_msgs_srvs::StringArray>
 		task_manager_->deactivateTask("bring_gripper_point_to_cylinder");
 		task_manager_->deactivateTask("bring_gripper_point_above_floor");
 		task_manager_->deactivateTask("bring_gripper_point_under_plane");
+		task_manager_->deactivateTask("align_gripper_with_floor");
+		task_manager_->deactivateTask("align_gripper_with_cylinder");
 
 		task_manager_->activateTask("bring_back_to_start");
 
@@ -162,10 +165,14 @@ void ROSTopicSubscriber::topicCallback<hiqp_msgs_srvs::StringArray>
 		task_manager_->deactivateTask("bring_gripper_point_to_cylinder");
 		task_manager_->deactivateTask("bring_gripper_point_above_floor");
 		task_manager_->deactivateTask("bring_gripper_point_under_plane");
+		task_manager_->deactivateTask("align_gripper_with_floor");
+		task_manager_->deactivateTask("align_gripper_with_cylinder");
 
 		task_manager_->activateTask("bring_gripper_point_to_cylinder");
 		task_manager_->activateTask("bring_gripper_point_above_floor");
 		task_manager_->activateTask("bring_gripper_point_under_plane");
+		task_manager_->activateTask("align_gripper_with_floor");
+		task_manager_->activateTask("align_gripper_with_cylinder");
 	}
 
 }
