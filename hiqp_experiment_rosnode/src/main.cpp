@@ -1,5 +1,6 @@
 
 #include <iostream>
+#include <fstream>
 #include <string>
 #include <vector>
 #include <sstream>
@@ -115,6 +116,13 @@ void manualInput(ros::NodeHandle *n)
 }
 
 
+struct ExperimentResultType {
+  bool success;
+  int spy;
+  int spz;
+  int cpx;
+  int cpy;
+};
 
 /*
       The starting position grid:
@@ -133,6 +141,9 @@ void fsm(ros::NodeHandle *n)
 {
   ros::Publisher publisher = n->advertise<hiqp_msgs_srvs::StringArray>
     ("/yumi/hiqp_kinematics_controller/experiment_commands", 1000);
+
+  std::ofstream ofs;
+  ofs.open("results.csv");
 
   std::string input;
   std::cout << "input: ";
@@ -217,6 +228,9 @@ void fsm(ros::NodeHandle *n)
                   VALUES.getUnderPlane() < task_value_limit)
               {
                 stagnation_reached = true;
+                ofs << spx << "," << spy << "," << spz << ","
+                    << cpx << "," << cpy << "," << cpz << ","
+                    << "success" << std::endl << std::flush;
               }
 
               ros::Duration elap_time = end_time - start_time;
@@ -227,6 +241,10 @@ void fsm(ros::NodeHandle *n)
                 std::cout << "e_flo = " << VALUES.getAboveFloor() << "\n";
                 std::cout << "e_pla = " << VALUES.getUnderPlane() << "\n";
                 stagnation_reached = true;
+
+                ofs << spx << "," << spy << "," << spz << ","
+                    << cpx << "," << cpy << "," << cpz << ","
+                    << "failure" << std::endl << std::flush;
               }
             }
 
@@ -242,6 +260,8 @@ void fsm(ros::NodeHandle *n)
     }
 
   }
+
+  ofs.close();
 }
 
 

@@ -125,6 +125,9 @@ void ROSTopicSubscriber::topicCallback<hiqp_msgs_srvs::StringArray>
 {
 	if (msg.params.size() == 0) return;
 
+
+
+
 	if (msg.params.at(0).compare("set_cyl_pos") == 0) {
 		if (msg.params.size() != 4) return;
 		double x = std::stod( msg.params.at(1) );
@@ -138,6 +141,9 @@ void ROSTopicSubscriber::topicCallback<hiqp_msgs_srvs::StringArray>
 			x, y, z, cyl->getRadius(), cyl->getHeight()
 		};
 		cyl->init(cyl_params);
+
+
+
 
 	} else if (msg.params.at(0).compare("goto_start_pos") == 0) {
 		if (msg.params.size() != 4) return;
@@ -159,6 +165,9 @@ void ROSTopicSubscriber::topicCallback<hiqp_msgs_srvs::StringArray>
 		task_manager_->deactivateTask("align_gripper_with_cylinder");
 
 		task_manager_->activateTask("bring_back_to_start");
+
+
+
 
 	} else if (msg.params.at(0).compare("grab_cylinder") == 0) {
 		task_manager_->deactivateTask("bring_back_to_start");
