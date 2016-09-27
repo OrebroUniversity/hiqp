@@ -215,30 +215,6 @@
 	},
 	"buffers":
 	[
-		{
-			"file": "hiqp_controllers/servicecalls/gripper_experiment/add_primitives_and_tasks.sh",
-			"settings":
-			{
-				"buffer_size": 3133,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "hiqp_controllers/src/ros_topic_subscriber.cpp",
-			"settings":
-			{
-				"buffer_size": 5488,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "hiqp_experiment_rosnode/src/main.cpp",
-			"settings":
-			{
-				"buffer_size": 7753,
-				"line_ending": "Unix"
-			}
-		}
 	],
 	"build_system": "",
 	"build_system_choices":
@@ -297,13 +273,17 @@
 	],
 	"file_history":
 	[
-		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/src/ros_topic_subscriber.cpp",
-		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/src/ros_kinematics_controller.cpp",
-		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/include/hiqp/ros_topic_subscriber.h",
+		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/src/task_manager.cpp",
 		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/include/hiqp/task_manager.h",
 		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/servicecalls/gripper_experiment/add_primitives_and_tasks.sh",
+		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/src/ros_topic_subscriber.cpp",
 		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_experiment_rosnode/src/main.cpp",
-		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/src/task_manager.cpp",
+		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/servicecalls/list_all_tasks.sh",
+		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/src/ros_kinematics_controller.cpp",
+		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/include/hiqp/ros_kinematics_controller.h",
+		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_msgs_srvs/srv/ListAllTasks.srv",
+		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_msgs_srvs/CMakeLists.txt",
+		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/include/hiqp/ros_topic_subscriber.h",
 		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/include/hiqp/geometric_primitives/geometric_primitive_map.h",
 		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/include/hiqp/geometric_primitives/geometric_cylinder.h",
 		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_msgs_srvs/msg/MonitorDataMsg.msg",
@@ -326,10 +306,8 @@
 		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/include/hiqp/tasks/dynamics_minimal_jerk.h",
 		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_rostopicsender/CMakeLists.txt",
 		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_msgs_srvs/msg/StringArray.msg",
-		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_msgs_srvs/CMakeLists.txt",
 		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/include/hiqp/task_function.h",
 		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/src/tasks/dynamics_minimal_jerk.cpp",
-		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/include/hiqp/ros_kinematics_controller.h",
 		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/include/hiqp/tasks/task_geometric_projection.h",
 		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/src/tasks/task_geometric_projection.cpp",
 		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/src/geometric_primitives/geometric_primitive_map.cpp",
@@ -422,9 +400,7 @@
 		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/servicecalls/test_primitives/test_point.sh",
 		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/servicecalls/test_primitives/test_sphere.sh",
 		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_msgs_srvs/srv/RemoveGeometricPrimitive.srv",
-		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_msgs_srvs/srv/RemoveAllGeometricPrimitives.srv",
-		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_msgs_srvs/srv/RemoveAllTasks.srv",
-		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/hiqp_controllers_plugins.xml"
+		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_msgs_srvs/srv/RemoveAllGeometricPrimitives.srv"
 	],
 	"find":
 	{
@@ -526,96 +502,8 @@
 	"groups":
 	[
 		{
-			"selected": 1,
 			"sheets":
 			[
-				{
-					"buffer": 0,
-					"file": "hiqp_controllers/servicecalls/gripper_experiment/add_primitives_and_tasks.sh",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 3133,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								2934,
-								2934
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/ShellScript/Shell-Unix-Generic.sublime-syntax"
-						},
-						"translation.x": 0.0,
-						"translation.y": 734.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 1,
-					"type": "text"
-				},
-				{
-					"buffer": 1,
-					"file": "hiqp_controllers/src/ros_topic_subscriber.cpp",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 5488,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								5470,
-								5470
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/C++/C++.sublime-syntax",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 1443.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 0,
-					"type": "text"
-				},
-				{
-					"buffer": 2,
-					"file": "hiqp_experiment_rosnode/src/main.cpp",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 7753,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								7167,
-								7167
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/C++/C++.sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 2340.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 2,
-					"type": "text"
-				}
 			]
 		}
 	],

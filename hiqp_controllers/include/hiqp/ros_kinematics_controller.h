@@ -58,6 +58,7 @@
 #include <hiqp_msgs_srvs/UpdateTask.h>
 #include <hiqp_msgs_srvs/RemoveTask.h>
 #include <hiqp_msgs_srvs/RemoveAllTasks.h>
+#include <hiqp_msgs_srvs/ListAllTasks.h>
 #include <hiqp_msgs_srvs/AddGeometricPrimitive.h>
 #include <hiqp_msgs_srvs/RemoveGeometricPrimitive.h>
 #include <hiqp_msgs_srvs/RemoveAllGeometricPrimitives.h>
@@ -209,6 +210,12 @@ private:
     hiqp_msgs_srvs::RemoveAllTasks::Response& res
   );
 
+  bool listAllTasks
+  (
+    hiqp_msgs_srvs::ListAllTasks::Request& req, 
+    hiqp_msgs_srvs::ListAllTasks::Response& res
+  );
+
   bool addGeometricPrimitive
   (
     hiqp_msgs_srvs::AddGeometricPrimitive::Request& req, 
@@ -255,6 +262,7 @@ private:
   ros::ServiceServer                                update_task_service_;
   ros::ServiceServer                                remove_task_service_;
   ros::ServiceServer                                remove_all_tasks_service_;
+  ros::ServiceServer                                list_all_tasks_service_;
   ros::ServiceServer                                add_geomprim_service_;
   ros::ServiceServer                                remove_geomprim_service_;
   ros::ServiceServer                                remove_all_geomprims_service_;

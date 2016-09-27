@@ -23,6 +23,8 @@
  * Detailed description of file.
  */
 
+#include <iomanip> // std::setw
+
 #include <hiqp/task_manager.h>
  
 #include <hiqp/hiqp_utils.h>
@@ -357,6 +359,41 @@ int TaskManager::removeAllTasks
 
   tasks_.clear();
   task_dynamics_.clear();
+  return 0;
+}
+
+
+
+
+int TaskManager::listAllTasks
+()
+{
+  std::cout << "LISTING ALL REGISTERED TASKS:\n";
+  TaskMapIterator it = tasks_.begin();
+
+  int longest_name_length = 0;
+  while (it != tasks_.end())
+  {
+    if (it->first.size() > longest_name_length)
+      longest_name_length = it->first.size();
+    ++it;
+  }
+
+  std::cout << "Priority | Unique name"; 
+  for (int i=0; i<longest_name_length-11; ++i)
+    std::cout << " ";
+  std::cout << " | Active\n";
+  std::cout << "-------------------------------\n";
+
+  it = tasks_.begin();
+  while (it != tasks_.end())
+  {
+    std::cout 
+      << std::setw(8) << it->second->getPriority() << " | "
+      << std::setw(longest_name_length) << it->first << " | "
+      << std::setw(6) << it->second->isActive() << "\n";
+    ++it;
+  }
   return 0;
 }
 

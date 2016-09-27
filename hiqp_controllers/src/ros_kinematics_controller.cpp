@@ -292,6 +292,21 @@ bool ROSKinematicsController::removeAllTasks
 
 
 
+bool ROSKinematicsController::listAllTasks
+(
+    hiqp_msgs_srvs::ListAllTasks::Request& req, 
+    hiqp_msgs_srvs::ListAllTasks::Response& res
+)
+{
+  task_manager_.listAllTasks();
+  res.success = true;
+  return true;
+}
+
+
+
+
+
 bool ROSKinematicsController::addGeometricPrimitive
 (
     hiqp_msgs_srvs::AddGeometricPrimitive::Request& req, 
@@ -528,6 +543,13 @@ void ROSKinematicsController::advertiseAllServices()
   (
     "remove_all_tasks",
     &ROSKinematicsController::removeAllTasks,
+    this
+  );
+
+  list_all_tasks_service_ = controller_nh_.advertiseService
+  (
+    "list_all_tasks",
+    &ROSKinematicsController::listAllTasks,
     this
   );
 

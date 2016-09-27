@@ -14,6 +14,10 @@
 #include <hiqp_msgs_srvs/MonitorDataMsg.h>
 #include <hiqp_msgs_srvs/StringArray.h>
 
+
+
+
+
 void splitString(const std::string& s, std::vector<std::string>& v)
 {
   std::istringstream iss(s);
@@ -22,6 +26,38 @@ void splitString(const std::string& s, std::vector<std::string>& v)
             std::istream_iterator<std::string>(),
             std::back_inserter(v));
 }
+
+
+
+
+
+std::vector<std::string> explode(const std::string& str, const char& ch) {
+    std::string next;
+    std::vector<std::string> result;
+
+    // For each character in the string
+    for (std::string::const_iterator it = str.begin(); it != str.end(); it++) {
+        // If we've hit the terminal character
+        if (*it == ch) {
+            // If we have some characters accumulated
+            if (!next.empty()) {
+                // Add them to the result vector
+                result.push_back(next);
+                next.clear();
+            }
+        } else {
+            // Accumulate the next character into the sequence
+            next += *it;
+        }
+    }
+    if (!next.empty())
+         result.push_back(next);
+    return result;
+}
+
+
+
+
 
 struct MonitoredAtomics {
   std::atomic<double> e_atstartpos_;
@@ -116,13 +152,29 @@ void manualInput(ros::NodeHandle *n)
 }
 
 
-struct ExperimentResultType {
-  bool success;
-  int spy;
-  int spz;
-  int cpx;
-  int cpy;
+struct TestCase {
+  TestCase(double sx, double sy, double sz, double cx, double cy, double cz)
+  : spx(sx), spy(sy), spz(sz), cpx(cx), cpy(cy), cpz(cz)
+  {}
+
+  double spx;
+  double spy;
+  double spz;
+
+  double cpx;
+  double cpy;
+  double cpz;
 };
+
+std::vector<TestCase>::iterator findTestCase(std::vector<TestCase>& test_cases, double sy, double sz, double cx, double cy)
+{
+  std::vector<TestCase>::iterator it = test_cases.begin();
+  for (; it != test_cases.end(); ++it) {
+    if (it->spy == sy && it->spz == sz && it->cpx == cx && it->cpy == cy)
+      break;
+  }
+  return it;
+}
 
 /*
       The starting position grid:
@@ -142,8 +194,69 @@ void fsm(ros::NodeHandle *n)
   ros::Publisher publisher = n->advertise<hiqp_msgs_srvs::StringArray>
     ("/yumi/hiqp_kinematics_controller/experiment_commands", 1000);
 
+
+
+
+
+
+  // generate all test cases
+  double startpos_x    = 0.2;
+  double startpos_y[5] = {-0.45, -0.225, 0, 0.225, 0.45};
+  double startpos_z[5] = {0.25, 0.425, 0.6, 0.775, 0.95};
+
+  double cylpos_x[5] = {0.077, 0.191, 0.305, 0.419, 0.533};
+  double cylpos_y[5] = {-0.533, -0.3415, -0.15, 0.0415, 0.233};
+  double cylpos_z    = 0.115;
+
+  std::vector<TestCase> test_cases;
+
+  for (int spyidx = 0; spyidx < 5; ++spyidx) {
+    for (int spzidx = 0; spzidx < 5; ++spzidx) {
+      for (int cpxidx = 0; cpxidx < 5; ++cpxidx) {
+        for (int cpyidx = 0; cpyidx < 5; ++cpyidx) {
+          test_cases.push_back( TestCase(startpos_x,
+                                         startpos_y[spyidx],
+                                         startpos_z[spzidx],
+                                         cylpos_x[cpxidx],
+                                         cylpos_y[cpyidx],
+                                         cylpos_z) );
+        }
+      }
+    }
+  }
+
+  std::cout << "Generated " << test_cases.size() << " test cases.\n";
+
+
+
+
+
+  // Read old test cases and remove them from the generated ones
+  std::ifstream ifs;
+  ifs.open("results_old.csv");
+  std::string line;
+  int n_removals = 0;
+  while (std::getline(ifs, line))
+  {
+    std::vector<std::string> split_line = explode(line, ',');
+    std::vector<TestCase>::iterator pos = findTestCase(test_cases,
+                                   std::stod(split_line.at(1)),
+                                   std::stod(split_line.at(2)),
+                                   std::stod(split_line.at(3)),
+                                   std::stod(split_line.at(4)));
+    test_cases.erase(pos);
+    n_removals--;
+  }
+  ifs.close();
+  std::cout << "Removed " << n_removals << " test cases.\n";
+
+
+
+
+
+  // ready to go
   std::ofstream ofs;
-  ofs.open("results.csv");
+  ofs.open("results_new.csv");
 
   std::string input;
   std::cout << "input: ";
@@ -152,116 +265,102 @@ void fsm(ros::NodeHandle *n)
 
     double task_value_limit = 0.01;
 
-    double startpos_x    = 0.2;
-    double startpos_y[5] = {-0.45, -0.225, 0, 0.225, 0.45};
-    double startpos_z[5] = {0.25, 0.425, 0.6, 0.775, 0.95};
+    for (int i = 0; i<5*5*5*5; ++i)
+    {
+      double spx = test_cases.at(i).spx;
+      double spy = test_cases.at(i).spy;
+      double spz = test_cases.at(i).spz;
+      double cpx = test_cases.at(i).cpx;
+      double cpy = test_cases.at(i).cpy;
+      double cpz = test_cases.at(i).cpz;
 
-    double cylpos_x[5] = {0.077, 0.191, 0.305, 0.419, 0.533};
-    double cylpos_y[5] = {-0.533, -0.3415, -0.15, 0.0415, 0.233};
-    double cylpos_z    = 0.115;
+      // goto start position
+      {
+        hiqp_msgs_srvs::StringArray msg;
+        msg.params.push_back("goto_start_pos");
+        msg.params.push_back(std::to_string(spx));
+        msg.params.push_back(std::to_string(spy));
+        msg.params.push_back(std::to_string(spz));
+        publisher.publish(msg);
+      }
 
-    // cycle through all test cases
-    for (int spyidx = 0; spyidx < 5; ++spyidx) {
-      for (int spzidx = 0; spzidx < 5; ++spzidx) {
-        for (int cpxidx = 0; cpxidx < 5; ++cpxidx) {
-          for (int cpyidx = 0; cpyidx < 5; ++cpyidx) {
+      std::cout << "sent: goto_start_position\n";
+      while (VALUES.getStartPos() > task_value_limit) {}
+      ros::Duration(1.5).sleep();
+      std::cout << "start position reached\n";
 
-            double spx = startpos_x;
-            double spy = startpos_y[spyidx];
-            double spz = startpos_z[spzidx];
-            double cpx = cylpos_x[cpxidx];
-            double cpy = cylpos_y[cpyidx];
-            double cpz = cylpos_z;
+      // set cylinder position
+      {
+        hiqp_msgs_srvs::StringArray msg;
+        msg.params.push_back("set_cyl_pos");
+        msg.params.push_back(std::to_string(cpx));
+        msg.params.push_back(std::to_string(cpy));
+        msg.params.push_back(std::to_string(cpz));
+        publisher.publish(msg);
+      }
 
-            // goto start position
-            {
-              hiqp_msgs_srvs::StringArray msg;
-              msg.params.push_back("goto_start_pos");
-              msg.params.push_back(std::to_string(spx));
-              msg.params.push_back(std::to_string(spy));
-              msg.params.push_back(std::to_string(spz));
-              publisher.publish(msg);
-            }
+      std::cout << "sent: set_cyl_pos\n";
+      ros::Duration(1.5).sleep();
+      std::cout << "waited for 0.5 seconds\n";
 
-            std::cout << "sent: goto_start_position\n";
-            while (VALUES.getStartPos() > task_value_limit) {}
-            ros::Duration(1.5).sleep();
-            std::cout << "start position reached\n";
+      // grab cylinder
+      {
+        hiqp_msgs_srvs::StringArray msg;
+        msg.params.push_back("grab_cylinder");
+        publisher.publish(msg);
+      }
 
-            // set cylinder position
-            {
-              hiqp_msgs_srvs::StringArray msg;
-              msg.params.push_back("set_cyl_pos");
-              msg.params.push_back(std::to_string(cpx));
-              msg.params.push_back(std::to_string(cpy));
-              msg.params.push_back(std::to_string(cpz));
-              publisher.publish(msg);
-            }
+      std::cout << "sent: grab_cylinder\n";
 
-            std::cout << "sent: set_cyl_pos\n";
-            ros::Duration(1.5).sleep();
-            std::cout << "waited for 0.5 seconds\n";
+      // await test results
+      double e_cyl = 0;
+      double t_cyl = 0;
 
-            // grab cylinder
-            {
-              hiqp_msgs_srvs::StringArray msg;
-              msg.params.push_back("grab_cylinder");
-              publisher.publish(msg);
-            }
+      bool stagnation_reached = false;
+      bool success = false;
+      ros::Time start_time = ros::Time::now();
+      ros::Time end_time;
 
-            std::cout << "sent: grab_cylinder\n";
+      while (!stagnation_reached)
+      {
+        end_time = ros::Time::now();
 
-            // await test results
-            double e_cyl = 0;
-            double t_cyl = 0;
+        if (VALUES.getAtCylinder() < task_value_limit &&
+            VALUES.getAboveFloor() > task_value_limit &&
+            VALUES.getUnderPlane() < task_value_limit)
+        {
+          success = true;
+          stagnation_reached = true;
+        }
 
-            bool stagnation_reached = false;
-            ros::Time start_time = ros::Time::now();
-            ros::Time end_time;
-
-            while (!stagnation_reached)
-            {
-              end_time = ros::Time::now();
-
-              if (VALUES.getAtCylinder() < task_value_limit &&
-                  VALUES.getAboveFloor() > task_value_limit &&
-                  VALUES.getUnderPlane() < task_value_limit)
-              {
-                stagnation_reached = true;
-                ofs << spx << "," << spy << "," << spz << ","
-                    << cpx << "," << cpy << "," << cpz << ","
-                    << "success" << std::endl << std::flush;
-              }
-
-              ros::Duration elap_time = end_time - start_time;
-              if (elap_time.toSec() >= 10)
-              {
-                std::cout << "- - - task timeout!\n";
-                std::cout << "e_cyl = " << VALUES.getAtCylinder() << "\n";
-                std::cout << "e_flo = " << VALUES.getAboveFloor() << "\n";
-                std::cout << "e_pla = " << VALUES.getUnderPlane() << "\n";
-                stagnation_reached = true;
-
-                ofs << spx << "," << spy << "," << spz << ","
-                    << cpx << "," << cpy << "," << cpz << ","
-                    << "failure" << std::endl << std::flush;
-              }
-            }
-
-            ros::Duration(0.5).sleep();
-            std::cout << "stagnation reached\n\n";
-
-
-            ros::Duration(0.25).sleep();
-
-          }
+        ros::Duration elap_time = end_time - start_time;
+        if (elap_time.toSec() >= 10)
+        {
+          std::cout << "- - - task timeout!\n";
+          std::cout << "e_cyl = " << VALUES.getAtCylinder() << "\n";
+          std::cout << "e_flo = " << VALUES.getAboveFloor() << "\n";
+          std::cout << "e_pla = " << VALUES.getUnderPlane() << "\n";
+          stagnation_reached = true;
         }
       }
+
+      ros::Duration(0.5).sleep();
+      std::cout << "stagnation reached\n\n";
+
+      ofs << spx << "," << spy << "," << spz << ","
+          << cpx << "," << cpy << "," << cpz << ","
+          << (success ? "success" : "failure") << std::endl << std::flush;
+
+      ros::Duration(0.25).sleep();
     }
 
   }
 
   ofs.close();
+
+
+
+  
 }
 
 

@@ -170,6 +170,8 @@ public:
 
   int removeAllTasks();
 
+  int listAllTasks();
+
   inline void activateTask(const std::string& name)
   { tasks_.find(name)->second->setIsActive(true); }
 
