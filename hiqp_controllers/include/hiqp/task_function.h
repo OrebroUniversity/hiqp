@@ -287,7 +287,7 @@ private:
     )
     {
         apply(sampling_time, kdl_tree, kdl_joint_pos_vel);
-
+        
         task_dynamics_->apply(sampling_time, e_, J_, e_dot_star_);
 
         return 0;

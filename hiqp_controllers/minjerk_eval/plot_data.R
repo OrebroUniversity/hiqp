@@ -22,11 +22,11 @@ p2 <- ggplot(data.frame(x=t_f, y=t_SC), aes(x=x, y=y)) + geom_line() +
   xlab("freq [Hz]") + ylab("deviance from C") + labs(title = "SC as function of f")
 
 p3 <- ggplot(data.frame(x=f_tf, y=f_efe0), aes(x=x, y=y)) + geom_line() +
-  xlab("duration [s]") + ylab("final error [%]") + labs(title = "efe0 as function of t_f")
+  xlab("duration [s]") + ylab("final error [%]") + labs(title = "Rate of task fulfillment")
 
 p4 <- ggplot(data.frame(x=f_tf, y=f_SC), aes(x=x, y=y)) + geom_line() +
-  xlab("duration [s]") + ylab("deviance from C") + labs(title = "SC as function of t_f")
+  xlab("duration [s]") + ylab("Sigma over C") + labs(title = "Rate of jerk consistency")
 
-multiplot(p1, p2, p3, p4, cols=2)
+multiplot(p3, p4, cols=2)
 
 #grid.arrange(p1, p2, ncol = 2, main = "Main title")

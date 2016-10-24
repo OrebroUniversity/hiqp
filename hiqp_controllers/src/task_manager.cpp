@@ -123,7 +123,7 @@ bool TaskManager::getKinematicControls
   }
 
   solver_->solve(controls);
-  
+
   return true;
 }
 

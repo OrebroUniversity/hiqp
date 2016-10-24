@@ -89,6 +89,8 @@ int TaskFullPose::init
     for (int i=0; i<num_controls; ++i) 
       J_(j, i) = (j==i ? -1 : 0);
 
+  std::cout << "init TaskFullPose\n";
+
   return 0;
 }
 
@@ -111,6 +113,8 @@ int TaskFullPose::apply
   {
     e_(i) = desired_configuration_.at(i) - q(i);
   }
+
+  std::cout << "apply TaskFullPose\n";
 
   return 0;
 }
