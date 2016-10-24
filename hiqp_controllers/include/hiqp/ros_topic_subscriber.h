@@ -28,7 +28,7 @@
 #include <vector>
 
 // HiQP Includes
-#include <hiqp/geometric_primitives/geometric_primitive_map.h>
+//#include <hiqp/geometric_primitives/geometric_primitive_map.h>
 #include <hiqp/geometric_primitives/geometric_cylinder.h>
 #include <hiqp/task_manager.h>
 
@@ -98,7 +98,7 @@ private:
 
 	ros::Subscriber 					sub;
 
-	GeometricPrimitiveMap* 		primitive_map_;
+	//GeometricPrimitiveMap* 		primitive_map_;
 
 	TaskManager* 							task_manager_;
 
