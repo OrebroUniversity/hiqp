@@ -59,7 +59,7 @@ void ROSTopicSubscriber::topicCallback<geometry_msgs::PoseStamped>
 	const geometry_msgs::PoseStamped& msg
 )
 {
-	/*
+	
 	std::vector<double> point_params;
 	point_params.push_back(msg.pose.position.x);
 	point_params.push_back(msg.pose.position.y);
@@ -68,8 +68,8 @@ void ROSTopicSubscriber::topicCallback<geometry_msgs::PoseStamped>
 
 	point_params.push_back(0.05);
 	primitive_map_->updateGeometricPrimitive<GeometricSphere>("teleop_sphere", point_params);
-*/
-	/*
+
+	
 	std::cout << "pos = (" 
 		<< msg.pose.position.x << ", "
 		<< msg.pose.position.y << ", "
@@ -79,7 +79,7 @@ void ROSTopicSubscriber::topicCallback<geometry_msgs::PoseStamped>
 		<< msg.pose.orientation.y << ", "
 		<< msg.pose.orientation.z << ", "
 		<< msg.pose.orientation.w << ")\n\n";
-		*/
+		
 }
 
 

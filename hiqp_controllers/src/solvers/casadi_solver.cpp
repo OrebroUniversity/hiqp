@@ -82,15 +82,15 @@ int CasADiSolver::solve
 )
 {
 
-	StageMapIterator it2 = stages_map_.begin();
+	// StageMapIterator it2 = stages_map_.begin();
 	
-	while (it2 != stages_map_.end())
-	{
-		std::cout << *it2;
-		// std::cout << "priority = " << it2->first << "\n";
-		// std::cout << "e_dot_star_ = " << it2->second.e_dot_star_ << "\n\n";
-		it2++;
-	}
+	// while (it2 != stages_map_.end())
+	// {
+	// 	std::cout << *it2;
+	// 	// std::cout << "priority = " << it2->first << "\n";
+	// 	// std::cout << "e_dot_star_ = " << it2->second.e_dot_star_ << "\n\n";
+	// 	it2++;
+	// }
 
 
 	unsigned int solutionSize = solution.size();

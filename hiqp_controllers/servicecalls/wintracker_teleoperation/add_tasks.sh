@@ -4,4 +4,5 @@ type: 'TaskGeometricProjection'
 behaviour: ['DynamicsFirstOrder', '10']
 priority: 1
 visibility: 0
+active: 1
 parameters: ['point', 'point', 'teleop_point = teleop_point2']"

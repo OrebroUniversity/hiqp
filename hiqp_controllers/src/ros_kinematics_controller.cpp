@@ -496,19 +496,19 @@ void ROSKinematicsController::addAllTopicSubscriptions()
   // Setup topic subscription
   topic_subscriber_.init( &task_manager_ );//task_manager_.getGeometricPrimitiveMap(),
   
-  /*
+  
   topic_subscriber_.addSubscription<geometry_msgs::PoseStamped>(
     controller_nh_, "/wintracker/pose", 100
   );
 
-  topic_subscriber_.addSubscription<hiqp_msgs_srvs::Vector3d>(
-    controller_nh_, "/yumi/hiqp_controllers/vector3d", 100
-  );
-  */
+  //topic_subscriber_.addSubscription<hiqp_msgs_srvs::Vector3d>(
+  //  controller_nh_, "/yumi/hiqp_controllers/vector3d", 100
+  //);
+  
 
-  topic_subscriber_.addSubscription<hiqp_msgs_srvs::StringArray>(
-    controller_nh_, "/yumi/hiqp_kinematics_controller/experiment_commands", 100
-  );
+  //topic_subscriber_.addSubscription<hiqp_msgs_srvs::StringArray>(
+  //  controller_nh_, "/yumi/hiqp_kinematics_controller/experiment_commands", 100
+  //);
 }
 
 
@@ -749,7 +749,7 @@ void ROSKinematicsController::loadJointLimitsFromParamServer()
             std::vector<std::string>(),
             1,
             1,
-            false,
+            true,
             parameters,
             sampling_time_,
             kdl_tree_,
