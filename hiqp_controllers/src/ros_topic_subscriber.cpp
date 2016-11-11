@@ -59,16 +59,16 @@ void ROSTopicSubscriber::topicCallback<geometry_msgs::PoseStamped>
 	const geometry_msgs::PoseStamped& msg
 )
 {
-	
 	std::vector<double> point_params;
 	point_params.push_back(msg.pose.position.x);
 	point_params.push_back(msg.pose.position.y);
 	point_params.push_back(msg.pose.position.z);
-	primitive_map_->updateGeometricPrimitive<GeometricPoint>("teleop_point", point_params);
+	task_manager_->getGeometricPrimitiveMap()
+	             ->updateGeometricPrimitive<GeometricPoint>("teleop_point", point_params);
 
-	point_params.push_back(0.05);
-	primitive_map_->updateGeometricPrimitive<GeometricSphere>("teleop_sphere", point_params);
-
+	point_params.push_back(0.03);
+	task_manager_->getGeometricPrimitiveMap()
+	             ->updateGeometricPrimitive<GeometricSphere>("teleop_sphere", point_params);
 	
 	std::cout << "pos = (" 
 		<< msg.pose.position.x << ", "
