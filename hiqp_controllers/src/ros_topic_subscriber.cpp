@@ -134,8 +134,9 @@ void ROSTopicSubscriber::topicCallback<hiqp_msgs_srvs::StringArray>
 		double y = std::stod( msg.params.at(2) );
 		double z = std::stod( msg.params.at(3) );
 
-		GeometricCylinder* cyl = task_manager_->getGeometricPrimitiveMap()->getGeometricPrimitive
-			<GeometricCylinder>("experiment_cylinder");
+		std::shared_ptr<GeometricCylinder> cyl = 
+			task_manager_->getGeometricPrimitiveMap()->getGeometricPrimitive
+				<GeometricCylinder>("experiment_cylinder");
 		std::vector<double> cyl_params = {
 			cyl->getDirectionX(), cyl->getDirectionY(), cyl->getDirectionZ(), 
 			x, y, z, cyl->getRadius(), cyl->getHeight()
@@ -152,7 +153,7 @@ void ROSTopicSubscriber::topicCallback<hiqp_msgs_srvs::StringArray>
 		double y = std::stod( msg.params.at(2) );
 		double z = std::stod( msg.params.at(3) );
 
-		GeometricPoint* point = task_manager_->getGeometricPrimitiveMap()->getGeometricPrimitive
+		std::shared_ptr<GeometricPoint> point = task_manager_->getGeometricPrimitiveMap()->getGeometricPrimitive
 			<GeometricPoint>("experiment_starting_point");
 		std::vector<double> point_params = {x, y, z};
 		point->init(point_params);

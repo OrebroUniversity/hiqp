@@ -53,8 +53,8 @@ namespace tasks
 template<>
 int TaskGeometricAlignment<GeometricLine, GeometricLine>::align
 (
-	GeometricLine* line1,
-	GeometricLine* line2
+	std::shared_ptr<GeometricLine> line1,
+	std::shared_ptr<GeometricLine> line2
 )
 {
 	KDL::Vector v1 = pose_a_.M * line1->getDirectionKDL();
@@ -70,8 +70,8 @@ int TaskGeometricAlignment<GeometricLine, GeometricLine>::align
 template<>
 int TaskGeometricAlignment<GeometricLine, GeometricPlane>::align
 (
-	GeometricLine* line,
-	GeometricPlane* plane
+	std::shared_ptr<GeometricLine> line,
+	std::shared_ptr<GeometricPlane> plane
 )
 {
 	KDL::Vector v1 = pose_a_.M * line->getDirectionKDL();
@@ -87,8 +87,8 @@ int TaskGeometricAlignment<GeometricLine, GeometricPlane>::align
 template<>
 int TaskGeometricAlignment<GeometricLine, GeometricCylinder>::align
 (
-	GeometricLine* line,
-	GeometricCylinder* cylinder
+	std::shared_ptr<GeometricLine> line,
+	std::shared_ptr<GeometricCylinder> cylinder
 )
 {
 	KDL::Vector v1 = - (pose_a_.M * line->getDirectionKDL());
@@ -113,8 +113,8 @@ int TaskGeometricAlignment<GeometricLine, GeometricCylinder>::align
 template<>
 int TaskGeometricAlignment<GeometricLine, GeometricSphere>::align
 (
-	GeometricLine* line,
-	GeometricSphere* sphere
+	std::shared_ptr<GeometricLine> line,
+	std::shared_ptr<GeometricSphere> sphere
 )
 {
 	KDL::Vector v1 = pose_a_.M * line->getDirectionKDL();

@@ -59,9 +59,9 @@ template<typename PrimitiveA, typename PrimitiveB>
 int TaskGeometricAlignment<PrimitiveA, PrimitiveB>::init
 (
   const HiQPTimePoint& sampling_time,
-    const std::vector<std::string>& parameters,
-    const KDL::Tree& kdl_tree, 
-    unsigned int num_controls
+  const std::vector<std::string>& parameters,
+  const KDL::Tree& kdl_tree, 
+  unsigned int num_controls
 )
 {
 

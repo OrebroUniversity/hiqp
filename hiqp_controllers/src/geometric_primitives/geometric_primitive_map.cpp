@@ -30,17 +30,10 @@
 #include <hiqp/geometric_primitives/geometric_primitive_map.h>
 #include <hiqp/hiqp_utils.h>
 
-
-
-
-
 namespace hiqp
 {
 namespace geometric_primitives
 {
-
-
-
 
 /// \todo Add a Capsule primitive among the geometric primitives
 int GeometricPrimitiveMap::addGeometricPrimitive
@@ -53,83 +46,69 @@ int GeometricPrimitiveMap::addGeometricPrimitive
   const std::vector<double>& parameters
 )
 {
-  if (visual_id_map_.find(name) != visual_id_map_.end())
+  if (std::find(all_primitive_names_.begin(), all_primitive_names_.end(), name)
+      != all_primitive_names_.end())
   {
     printHiqpWarning("A primitive with name '" + name 
       + "' already exists. No new primitive was added!");
     return -1;
   }
 
-  std::size_t id = 0;
   bool success = false;
 
   if (type.compare("point") == 0)
   {
-    GeometricPoint* point = new GeometricPoint(name, frame_id, visible, color);
-    if (point->init(parameters) == 0)
+    auto primitive = std::make_shared<GeometricPoint>(name, frame_id, visible, color);
+    if (primitive->init(parameters) == 0)
     {
-      point_map_.insert( 
-        std::pair< std::string, GeometricPoint* >( name, point ) );
-      id = visualizer_->add(point);
+      point_map_.emplace( name, primitive );
       success = true;
     }
   }
   else if (type.compare("line") == 0)
   {
-    GeometricLine* line = new GeometricLine(name, frame_id, visible, color);
-    if (line->init(parameters) == 0)
+    auto primitive = std::make_shared<GeometricLine>(name, frame_id, visible, color);
+    if (primitive->init(parameters) == 0)
     {
-      line_map_.insert( 
-        std::pair< std::string, GeometricLine* >( name, line ) );
-      id = visualizer_->add(line);
+      line_map_.emplace( name, primitive );
       success = true;
     }
 
   }
   else if (type.compare("plane") == 0)
   {
-    GeometricPlane* plane = new GeometricPlane(name, frame_id, visible, color);
-    if (plane->init(parameters) == 0)
+    auto primitive = std::make_shared<GeometricPlane>(name, frame_id, visible, color);
+    if (primitive->init(parameters) == 0)
     {
-      plane_map_.insert( 
-        std::pair< std::string, GeometricPlane* > ( name, plane ) );
-      id = visualizer_->add(plane);
+      plane_map_.emplace( name, primitive );
       success = true;
     }
 
   }
   else if (type.compare("box") == 0)
   {
-    GeometricBox* box = new GeometricBox(name, frame_id, visible, color);
-    if (box->init(parameters) == 0)
+    auto primitive = std::make_shared<GeometricBox>(name, frame_id, visible, color);
+    if (primitive->init(parameters) == 0)
     {
-      box_map_.insert( 
-        std::pair< std::string, GeometricBox* > ( name, box ) );
-      id = visualizer_->add(box);
+      box_map_.emplace( name, primitive );
       success = true;
     }
   }
   else if (type.compare("cylinder") == 0)
   {
-    GeometricCylinder* cylinder = new GeometricCylinder(
-      name, frame_id, visible, color);
-    if (cylinder->init(parameters) == 0)
+    auto primitive = std::make_shared<GeometricCylinder>(name, frame_id, visible, color);
+    if (primitive->init(parameters) == 0)
     {
-      cylinder_map_.insert( 
-        std::pair< std::string, GeometricCylinder* > ( name, cylinder ) );
-      id = visualizer_->add(cylinder);
+      cylinder_map_.emplace( name, primitive );
       success = true;
     }
   }
   else if (type.compare("sphere") == 0)
   {
-    GeometricSphere* sphere = new GeometricSphere(
-      name, frame_id, visible, color);
-    if (sphere->init(parameters) == 0)
+    auto primitive = std::make_shared<GeometricSphere>(name, frame_id, visible, color);
+    if (primitive->init(parameters) == 0)
     {
-      sphere_map_.insert( 
-        std::pair< std::string, GeometricSphere* > ( name, sphere ) );
-      id = visualizer_->add(sphere);
+      sphere_map_.emplace( name, primitive );
       success = true;
     }
   }
@@ -140,9 +119,16 @@ int GeometricPrimitiveMap::addGeometricPrimitive
     return -2;
   }
 
-  if (!success) return -3;
+  if (success)
+  {
+    all_primitive_names_.push_back(name);
+    dependency_map_.emplace( name, std::vector<std::string>() );
+  } 
+  else
+  {
+    return -3;
+  }
 
-  visual_id_map_.insert( std::pair< std::string, std::size_t >( name, id ) );
   return 0;
 }
 
@@ -155,37 +141,22 @@ int GeometricPrimitiveMap::removeGeometricPrimitive
   std::string name
 )
 {
-  std::size_t id = 0;
-  std::map<std::string, std::size_t>::iterator it = visual_id_map_.find(name);
-  if (it == visual_id_map_.end())
+  if (std::find(all_primitive_names_.begin(), all_primitive_names_.end(), name)
+      == all_primitive_names_.end())
   {
     printHiqpWarning("While trying to remove primitive with name '" + name 
-      + "', could not find that primitive. No action taken!");
+      + "', could not find that primitive. No primitive was removed!");
     return -1;
   }
 
-  DependencyMapIterator it2 = dependency_map_.find(name);
-  if (it2 != dependency_map_.end())
+  std::string dependencies = getDependenciesAsString(name);
+  if (dependencies.size() > 0)
   {
-    if (!it2->second.empty())
-    {
-      std::stringstream ss;
-      std::copy(
-        it2->second.begin(), 
-        it2->second.end(),
-        std::ostream_iterator< std::string >(ss, ", ")
-        );
-      printHiqpWarning("Geometric primitive '" + name + 
-        "' has the following dependencies: " + ss.str() + 
+    printHiqpWarning("Geometric primitive '" + name + 
+        "' has the following dependencies: " + dependencies + 
         " and could not be deleted. Remove the dependencies first!");
       return -2;
-    }
   }
-
-  id = it->second;
-  visualizer_->remove(id);
-
-  visual_id_map_.erase(name);
 
   point_map_.erase(name);
   line_map_.erase(name);
@@ -193,6 +164,12 @@ int GeometricPrimitiveMap::removeGeometricPrimitive
   box_map_.erase(name);
   cylinder_map_.erase(name);
   sphere_map_.erase(name);
+  dependency_map_.erase(name);
+  
+  all_primitive_names_.erase(
+    std::remove(all_primitive_names_.begin(), all_primitive_names_.end(), name), 
+    all_primitive_names_.end()
+  );
 
   printHiqpInfo("Removed geometric primitive '" + name + "'.");
 
@@ -204,56 +181,37 @@ int GeometricPrimitiveMap::removeGeometricPrimitive
 int GeometricPrimitiveMap::clear
 ()
 {
-  std::vector<int> ids;
-  std::vector<std::string> names;
+  std::vector<std::string> names_to_remove;
 
-  std::map<std::string, std::size_t>::iterator it = visual_id_map_.begin();
-  while (it != visual_id_map_.end())
+  for (auto&& name : all_primitive_names_)
   {
-    bool shouldRemove = true;
-
-    DependencyMapIterator it2 = dependency_map_.find(it->first);
-    if (it2 != dependency_map_.end())
+    std::string dependencies = getDependenciesAsString(name);
+    if (dependencies.size() > 0)
     {
-      if (!it2->second.empty())
-      {
-        std::stringstream ss;
-        std::copy(
-          it2->second.begin(), 
-          it2->second.end(),
-          std::ostream_iterator< std::string >(ss, ", ")
-          );
-        printHiqpWarning("Geometric primitive '" + it->first + 
-          "' has the following dependencies: " + ss.str() + 
+      printHiqpWarning("Geometric primitive '" + name + 
+          "' has the following dependencies: " + dependencies + 
           " and could not be deleted. Remove the dependencies first!");
-        shouldRemove = false;
-      }
     }
-
-    if (shouldRemove)
+    else
     {
-      ids.push_back(it->second); 
-      names.push_back(it->first);
+      names_to_remove.push_back(name);
     }
-
-    ++it;
   }
 
-  visualizer_->removeMany(ids);
-
-  std::vector<std::string>::iterator it3 = names.begin();
-  while (it3 != names.end())
+  for (auto&& name : names_to_remove)
   {
-    visual_id_map_.erase(*it3);
+    point_map_.erase(name);
+    line_map_.erase(name);
+    plane_map_.erase(name);
+    box_map_.erase(name);
+    cylinder_map_.erase(name);
+    sphere_map_.erase(name);
+    dependency_map_.erase(name);
 
-    point_map_.erase(*it3);
-    line_map_.erase(*it3);
-    plane_map_.erase(*it3);
-    box_map_.erase(*it3);
-    cylinder_map_.erase(*it3);
-    sphere_map_.erase(*it3);
-
-    ++it3;
+    all_primitive_names_.erase(
+      std::remove(all_primitive_names_.begin(), all_primitive_names_.end(), name), 
+      all_primitive_names_.end()
+    );
   }
 
   return 0;
@@ -265,25 +223,24 @@ int GeometricPrimitiveMap::clear
 
 void GeometricPrimitiveMap::addDependencyToPrimitive
 (
-  const std::string& name, 
-  const std::string& id
+  const std::string& primitive_name, 
+  const std::string& dependency_name
 )
 {
-  DependencyMapIterator it = dependency_map_.find(name);
+  DependencyMap::iterator it = dependency_map_.find(primitive_name);
 
   if (it == dependency_map_.end())
   {
-    it = dependency_map_.insert( DependencyMapElement( 
-      name, std::vector<std::string>() 
-      ) ).first;
+    printHiqpWarning("Trying to add dependency to geometric primitive '" 
+      + primitive_name + "'. No such primitive found. No dependency was added!");
   }
 
   std::vector<std::string>::iterator it2 = std::find(
-    it->second.begin(), it->second.end(), id
-    );
+    it->second.begin(), it->second.end(), dependency_name
+  );
 
   if (it2 == it->second.end())
-    it->second.push_back(id);
+    it->second.push_back(dependency_name);
 }
 
 
@@ -292,107 +249,113 @@ void GeometricPrimitiveMap::addDependencyToPrimitive
 
 void GeometricPrimitiveMap::removeDependency
 (
-  const std::string& id
+  const std::string& dependency_name
 )
 {
-  DependencyMapIterator it = dependency_map_.begin();
-  while (it != dependency_map_.end())
+  for (auto&& kv : dependency_map_)
   {
-    it->second.erase(
-      std::remove(
-        it->second.begin(), 
-        it->second.end(), 
-        id)
-      , 
-      it->second.end()
-      );
-
-    ++it;
+    kv.second.erase(std::remove(kv.second.begin(), kv.second.end(), dependency_name),
+                    kv.second.end());
   }
+
+  // DependencyMap::iterator it = dependency_map_.begin();
+  // while (it != dependency_map_.end())
+  // {
+  //   it->second.erase(
+  //     std::remove(
+  //       it->second.begin(), 
+  //       it->second.end(), 
+  //       dependency_name)
+  //     , 
+  //     it->second.end()
+  //     );
+
+  //   ++it;
+  // }
 }
 
 
 
 
 
-void GeometricPrimitiveMap::redrawAllPrimitives()
-{
-  {
-    std::map< std::string, GeometricPoint* >::iterator it;
-    it = point_map_.begin();
-    while (it != point_map_.end())
-    {
-      std::size_t id = visual_id_map_.find(it->first)->second;
-      visualizer_->update(id, it->second);
-      ++it;
-    }
-  }
+// void GeometricPrimitiveMap::redrawAllPrimitives()
+// {
+//   {
+//     std::map< std::string, GeometricPoint* >::iterator it;
+//     it = point_map_.begin();
+//     while (it != point_map_.end())
+//     {
+//       std::size_t id = visual_id_map_.find(it->first)->second;
+//       visualizer_->update(id, it->second);
+//       ++it;
+//     }
+//   }
 
 
 
-  {
-    std::map< std::string, GeometricLine* >::iterator it;
-    it = line_map_.begin();
-    while (it != line_map_.end())
-    {
-      std::size_t id = visual_id_map_.find(it->first)->second;
-      visualizer_->update(id, it->second);
-      ++it;
-    }
-  }
+//   {
+//     std::map< std::string, GeometricLine* >::iterator it;
+//     it = line_map_.begin();
+//     while (it != line_map_.end())
+//     {
+//       std::size_t id = visual_id_map_.find(it->first)->second;
+//       visualizer_->update(id, it->second);
+//       ++it;
+//     }
+//   }
 
 
 
-  {
-    std::map< std::string, GeometricPlane* >::iterator it;
-    it = plane_map_.begin();
-    while (it != plane_map_.end())
-    {
-      std::size_t id = visual_id_map_.find(it->first)->second;
-      visualizer_->update(id, it->second);
-      ++it;
-    }
-  }
+//   {
+//     std::map< std::string, GeometricPlane* >::iterator it;
+//     it = plane_map_.begin();
+//     while (it != plane_map_.end())
+//     {
+//       std::size_t id = visual_id_map_.find(it->first)->second;
+//       visualizer_->update(id, it->second);
+//       ++it;
+//     }
+//   }
 
 
 
-  {
-    std::map< std::string, GeometricBox* >::iterator it;
-    it = box_map_.begin();
-    while (it != box_map_.end())
-    {
-      std::size_t id = visual_id_map_.find(it->first)->second;
-      visualizer_->update(id, it->second);
-      ++it;
-    }
-  }
+//   {
+//     std::map< std::string, GeometricBox* >::iterator it;
+//     it = box_map_.begin();
+//     while (it != box_map_.end())
+//     {
+//       std::size_t id = visual_id_map_.find(it->first)->second;
+//       visualizer_->update(id, it->second);
+//       ++it;
+//     }
+//   }
 
 
 
-  {
-    std::map< std::string, GeometricCylinder* >::iterator it;
-    it = cylinder_map_.begin();
-    while (it != cylinder_map_.end())
-    {
-      std::size_t id = visual_id_map_.find(it->first)->second;
-      visualizer_->update(id, it->second);
-      ++it;
-    }
-  }
+//   {
+//     std::map< std::string, GeometricCylinder* >::iterator it;
+//     it = cylinder_map_.begin();
+//     while (it != cylinder_map_.end())
+//     {
+//       std::size_t id = visual_id_map_.find(it->first)->second;
+//       visualizer_->update(id, it->second);
+//       ++it;
+//     }
+//   }
 
 
 
-  {
-    std::map< std::string, GeometricSphere* >::iterator it;
-    it = sphere_map_.begin();
-    while (it != sphere_map_.end())
-    {
-      std::size_t id = visual_id_map_.find(it->first)->second;
-      visualizer_->update(id, it->second);
-      ++it;
-    }
-  }
-}
+//   {
+//     std::map< std::string, GeometricSphere* >::iterator it;
+//     it = sphere_map_.begin();
+//     while (it != sphere_map_.end())
+//     {
+//       std::size_t id = visual_id_map_.find(it->first)->second;
+//       visualizer_->update(id, it->second);
+//       ++it;
+//     }
+//   }
+// }
 
 
 
@@ -409,15 +372,13 @@ void GeometricPrimitiveMap::redrawAllPrimitives()
 ////////////////////////////////////////////////////////////////////////////////
 
 template<>
-GeometricPoint* 
+std::shared_ptr<GeometricPoint>
 GeometricPrimitiveMap::getGeometricPrimitive<GeometricPoint>
 (
   const std::string& name
 )
 {
-  std::map< std::string, GeometricPoint* >::iterator it = 
-  point_map_.find(name);
-
+  PointMap::iterator it = point_map_.find(name);
   if (it  == point_map_.end())   return nullptr;
   else                           return it->second;
 }
@@ -427,15 +388,13 @@ GeometricPrimitiveMap::getGeometricPrimitive<GeometricPoint>
 
 
 template<>
-GeometricLine* 
+std::shared_ptr<GeometricLine>
 GeometricPrimitiveMap::getGeometricPrimitive<GeometricLine>
 (
   const std::string& name
 )
 {
-  std::map< std::string, GeometricLine* >::iterator it = 
-  line_map_.find(name);
-
+  LineMap::iterator it = line_map_.find(name);
   if (it  == line_map_.end())   return nullptr;
   else                          return it->second;
 }
@@ -445,15 +404,13 @@ GeometricPrimitiveMap::getGeometricPrimitive<GeometricLine>
 
 
 template<>
-GeometricPlane* 
+std::shared_ptr<GeometricPlane>
 GeometricPrimitiveMap::getGeometricPrimitive<GeometricPlane>
 (
   const std::string& name
 )
 {
-  std::map< std::string, GeometricPlane* >::iterator it = 
-  plane_map_.find(name);
-
+  PlaneMap::iterator it = plane_map_.find(name);
   if (it  == plane_map_.end())   return nullptr;
   else                           return it->second;
 }
@@ -463,15 +420,13 @@ GeometricPrimitiveMap::getGeometricPrimitive<GeometricPlane>
 
 
 template<>
-GeometricBox* 
+std::shared_ptr<GeometricBox>
 GeometricPrimitiveMap::getGeometricPrimitive<GeometricBox>
 (
   const std::string& name
 )
 {
-  std::map< std::string, GeometricBox* >::iterator it = 
-  box_map_.find(name);
-
+  BoxMap::iterator it = box_map_.find(name);
   if (it  == box_map_.end())     return nullptr;
   else                           return it->second;
 }
@@ -481,15 +436,13 @@ GeometricPrimitiveMap::getGeometricPrimitive<GeometricBox>
 
 
 template<>
-GeometricCylinder* 
+std::shared_ptr<GeometricCylinder>
 GeometricPrimitiveMap::getGeometricPrimitive<GeometricCylinder>
 (
   const std::string& name
 )
 {
-  std::map< std::string, GeometricCylinder* >::iterator it = 
-  cylinder_map_.find(name);
-
+  CylinderMap::iterator it = cylinder_map_.find(name);
   if (it  == cylinder_map_.end())     return nullptr;
   else                                return it->second;
 }
@@ -499,15 +452,13 @@ GeometricPrimitiveMap::getGeometricPrimitive<GeometricCylinder>
 
 
 template<>
-GeometricSphere* 
+std::shared_ptr<GeometricSphere>
 GeometricPrimitiveMap::getGeometricPrimitive<GeometricSphere>
 (
   const std::string& name
 )
 {
-  std::map< std::string, GeometricSphere* >::iterator it = 
-  sphere_map_.find(name);
-
+  SphereMap::iterator it = sphere_map_.find(name);
   if (it  == sphere_map_.end())       return nullptr;
   else                                return it->second;
 }
@@ -533,16 +484,13 @@ void GeometricPrimitiveMap::updateGeometricPrimitive<GeometricPoint>
   const std::vector<double>& parameters
 )
 {
-  std::map< std::string, GeometricPoint* >::iterator it = 
-  point_map_.find(name);
-
+  PointMap::iterator it = point_map_.find(name);
   if (it == point_map_.end()) 
   {
     printHiqpWarning("Couldn't update GeometricPoint with name '" + 
       name + "'. The point was not found!");
     return;
   }
-
   it->second->init(parameters);
 }
 
@@ -557,16 +505,13 @@ void GeometricPrimitiveMap::updateGeometricPrimitive<GeometricLine>
   const std::vector<double>& parameters
 )
 {
-  std::map< std::string, GeometricLine* >::iterator it = 
-  line_map_.find(name);
-
+  LineMap::iterator it = line_map_.find(name);
   if (it == line_map_.end()) 
   {
     printHiqpWarning("Couldn't update GeometricLine with name '" + 
       name + "'. The line was not found!");
     return;
   }
-
   it->second->init(parameters);
 }
 
@@ -581,16 +526,13 @@ void GeometricPrimitiveMap::updateGeometricPrimitive<GeometricPlane>
   const std::vector<double>& parameters
 )
 {
-  std::map< std::string, GeometricPlane* >::iterator it = 
-  plane_map_.find(name);
-
+  PlaneMap::iterator it = plane_map_.find(name);
   if (it == plane_map_.end()) 
   {
     printHiqpWarning("Couldn't update GeometricPlane with name '" + 
       name + "'. The plane was not found!");
     return;
   }
-
   it->second->init(parameters);
 }
 
@@ -605,16 +547,13 @@ void GeometricPrimitiveMap::updateGeometricPrimitive<GeometricBox>
   const std::vector<double>& parameters
 )
 {
-  std::map< std::string, GeometricBox* >::iterator it = 
-  box_map_.find(name);
-
+  BoxMap::iterator it = box_map_.find(name);
   if (it == box_map_.end()) 
   {
     printHiqpWarning("Couldn't update GeometricBox with name '" + 
       name + "'. The box was not found!");
     return;
   }
-
   it->second->init(parameters);
 }
 
@@ -629,16 +568,13 @@ void GeometricPrimitiveMap::updateGeometricPrimitive<GeometricCylinder>
   const std::vector<double>& parameters
 )
 {
-  std::map< std::string, GeometricCylinder* >::iterator it = 
-  cylinder_map_.find(name);
-
+  CylinderMap::iterator it = cylinder_map_.find(name);
   if (it == cylinder_map_.end()) 
   {
     printHiqpWarning("Couldn't update GeometricCylinder with name '" + 
       name + "'. The cylinder was not found!");
     return;
   }
-
   it->second->init(parameters);
 }
 
@@ -653,16 +589,13 @@ void GeometricPrimitiveMap::updateGeometricPrimitive<GeometricSphere>
   const std::vector<double>& parameters
 )
 {
-  std::map< std::string, GeometricSphere* >::iterator it = 
-  sphere_map_.find(name);
-
+  SphereMap::iterator it = sphere_map_.find(name);
   if (it == sphere_map_.end()) 
   {
     printHiqpWarning("Couldn't update GeometricSphere with name '" + 
       name + "'. The sphere was not found!");
     return;
   }
-
   it->second->init(parameters);
 }
 
@@ -670,6 +603,36 @@ void GeometricPrimitiveMap::updateGeometricPrimitive<GeometricSphere>
 
 
 
+
+////////////////////////////////////////////////////////////////////////////////
+//  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
+// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
+//-  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  
+////////////////////////////////////////////////////////////////////////////////
+//
+//                              P R I V A T E
+//
+////////////////////////////////////////////////////////////////////////////////
+
+std::string GeometricPrimitiveMap::getDependenciesAsString
+(
+  std::string name
+)
+{
+  DependencyMap::iterator it = dependency_map_.find(name);
+  if (it != dependency_map_.end())
+  {
+    if (!it->second.empty())
+    {
+      std::stringstream ss;
+      std::copy(it->second.begin(), it->second.end(),
+        std::ostream_iterator< std::string >(ss, ", ")
+      );
+      return ss.str();
+    }
+  }
+  return std::string();
+}
 
 
 

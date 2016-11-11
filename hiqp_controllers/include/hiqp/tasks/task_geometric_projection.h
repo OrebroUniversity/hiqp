@@ -73,7 +73,7 @@ public:
 
   int monitor();
 
-  int project(PrimitiveA* first, PrimitiveB* second);
+  int project(std::shared_ptr<PrimitiveA> first, std::shared_ptr<PrimitiveB> second);
 
 
 
@@ -97,13 +97,13 @@ private:
     int q_nr
   );
 
-  PrimitiveA*              primitive_a_;
-  KDL::Frame               pose_a_;
-  KDL::Jacobian            jacobian_a_;
+  std::shared_ptr<PrimitiveA>  primitive_a_;
+  KDL::Frame                   pose_a_;
+  KDL::Jacobian                jacobian_a_;
 
-  PrimitiveB*              primitive_b_;
-  KDL::Frame               pose_b_;
-  KDL::Jacobian            jacobian_b_;
+  std::shared_ptr<PrimitiveB>  primitive_b_;
+  KDL::Frame                   pose_b_;
+  KDL::Jacobian                jacobian_b_;
 
 }; // class TaskGeometricProjection
 

@@ -28,21 +28,16 @@
 
 // STL Includes
 #include <map>
+#include <memory>
 
 // HiQP Includes
-#include <hiqp/visualizer.h>
-
 #include <hiqp/geometric_primitives/geometric_point.h>
 #include <hiqp/geometric_primitives/geometric_line.h>
 #include <hiqp/geometric_primitives/geometric_plane.h>
 #include <hiqp/geometric_primitives/geometric_box.h>
 #include <hiqp/geometric_primitives/geometric_cylinder.h>
 #include <hiqp/geometric_primitives/geometric_sphere.h>
-
-
-
-
-
+#include <hiqp/geometric_primitives/geometric_primitive_visitor.h>
 
 namespace hiqp
 {
@@ -57,14 +52,11 @@ class GeometricPrimitiveMap
 {
 public:
 
-  GeometricPrimitiveMap(Visualizer* visualizer)
-  : visualizer_(visualizer)
-  {}
+  GeometricPrimitiveMap() {}
 
   ~GeometricPrimitiveMap() noexcept {}
 
-  int addGeometricPrimitive
-  (
+  int addGeometricPrimitive(
     const std::string& name,
     const std::string& type,
     const std::string& frame_id,
@@ -73,12 +65,12 @@ public:
     const std::vector<double>& parameters
   );
 
-  int removeGeometricPrimitive( std::string name);
+  int removeGeometricPrimitive(std::string name);
 
   int clear();
 
   template<typename PrimitiveType>
-  PrimitiveType* getGeometricPrimitive(const std::string& name);
+  std::shared_ptr<PrimitiveType> getGeometricPrimitive(const std::string& name);
 
   template<typename PrimitiveType>
   void updateGeometricPrimitive
@@ -87,44 +79,40 @@ public:
     const std::vector<double>& parameters
   );
 
-  void redrawAllPrimitives();
+  //void redrawAllPrimitives();
 
   void addDependencyToPrimitive(const std::string& name, const std::string& id);
 
   void removeDependency(const std::string& id);
 
-
-
+  void acceptVisitor(const GeometricPrimitiveVisitor& visitor);
 
 private:
-  // No copying of this class is allowed !
+
   GeometricPrimitiveMap(const GeometricPrimitiveMap& other) = delete;
   GeometricPrimitiveMap(GeometricPrimitiveMap&& other) = delete;
   GeometricPrimitiveMap& operator=(const GeometricPrimitiveMap& other) = delete;
   GeometricPrimitiveMap& operator=(GeometricPrimitiveMap&& other) noexcept = delete;
 
-  typedef std::map< std::string, std::vector< std::string> >   
-    DependencyMap;
+  std::string getDependenciesAsString(std::string name);
 
-  typedef std::map< std::string, std::vector< std::string> >::iterator 
-    DependencyMapIterator;
+  typedef std::map< std::string, std::vector< std::string> >          DependencyMap;
+  typedef std::map< std::string, std::shared_ptr<GeometricPoint> >    PointMap;
+  typedef std::map< std::string, std::shared_ptr<GeometricLine> >     LineMap;
+  typedef std::map< std::string, std::shared_ptr<GeometricPlane> >    PlaneMap;
+  typedef std::map< std::string, std::shared_ptr<GeometricBox> >      BoxMap;
+  typedef std::map< std::string, std::shared_ptr<GeometricCylinder> > CylinderMap;
+  typedef std::map< std::string, std::shared_ptr<GeometricSphere> >   SphereMap;
 
-  typedef std::pair< std::string, std::vector< std::string> >  
-    DependencyMapElement;
+  DependencyMap   dependency_map_;
+  PointMap        point_map_;
+  LineMap         line_map_;
+  PlaneMap        plane_map_;
+  BoxMap          box_map_;
+  CylinderMap     cylinder_map_;
+  SphereMap       sphere_map_;
 
-
-  std::map< std::string, std::size_t>           visual_id_map_;
-
-  DependencyMap                                 dependency_map_;
-
-  std::map< std::string, GeometricPoint* >      point_map_;
-  std::map< std::string, GeometricLine* >       line_map_;
-  std::map< std::string, GeometricPlane* >      plane_map_;
-  std::map< std::string, GeometricBox* >        box_map_;
-  std::map< std::string, GeometricCylinder* >   cylinder_map_;
-  std::map< std::string, GeometricSphere* >     sphere_map_;
-
-  Visualizer*                                   visualizer_;
+  std::vector<std::string> all_primitive_names_;
 
 }; // class GeometricPrimitiveMap
 

@@ -174,7 +174,7 @@ void ROSKinematicsController::update
     time_since_last_sampling_ = 0;
   }
 
-  task_manager_.getGeometricPrimitiveMap()->redrawAllPrimitives();
+  //task_manager_.getGeometricPrimitiveMap()->redrawAllPrimitives();
 
   performMonitoring();
 

@@ -54,7 +54,7 @@ TaskManager::TaskManager
 {
   solver_ = new CasADiSolver();
 
-  geometric_primitive_map_ = new GeometricPrimitiveMap(visualizer_);
+  geometric_primitive_map_ = new GeometricPrimitiveMap();
 
   task_factory_ = new TaskFactory();
 }

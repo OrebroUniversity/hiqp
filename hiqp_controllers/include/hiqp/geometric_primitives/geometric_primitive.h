@@ -29,7 +29,7 @@
 // STL Includes
 #include <string>
 #include <vector>
-#include <cassert>
+#include <atomic>
 
 
 
@@ -61,6 +61,8 @@ public:
     g_ = color.at(1);
     b_ = color.at(2);
     a_ = color.at(3);
+    unique_id_ = n_instances_;
+    ++n_instances_;
   }
 
   ~GeometricPrimitive() noexcept {};
@@ -69,8 +71,7 @@ public:
   virtual int init(const std::vector<double>& parameters) = 0;
 
 
-  inline void     			setId(unsigned int id) { id_ = id; }
-  inline unsigned int 	getId() { return id_; }
+  inline unsigned int 	getId() { return reinterpret_cast<unsigned int>(unique_id_); }
 
   inline std::string   	getName() { return name_; }
   inline std::string   	getFrameId() { return frame_id_; }
@@ -85,15 +86,17 @@ public:
 
 protected:
 
-  std::string    				name_;
+  std::string    				                       name_;
 
-  std::string   				frame_id_;
+  std::string   				                       frame_id_;
 
-  bool       						visible_;
+  bool       						                       visible_;
 
-  unsigned int    			id_;
+  unsigned int                                 unique_id_;
 
-  double       					r_, g_, b_, a_;
+  static std::atomic<unsigned int>             n_instances_;
+
+  double       					                       r_, g_, b_, a_;
 
 
 

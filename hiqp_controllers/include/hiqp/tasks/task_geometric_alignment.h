@@ -82,18 +82,18 @@ private:
   TaskGeometricAlignment& operator=(const TaskGeometricAlignment& other) = delete;
   TaskGeometricAlignment& operator=(TaskGeometricAlignment&& other) noexcept = delete;
 
-  int align(PrimitiveA* first, PrimitiveB* second);
+  int align(std::shared_ptr<PrimitiveA> first, std::shared_ptr<PrimitiveB> second);
 
   // v1 must relate to primitive_a_, and v2 to primitive_b_ !
   int alignVectors(const KDL::Vector& v1, const KDL::Vector v2);
 
-  PrimitiveA*              primitive_a_;
-  KDL::Frame               pose_a_;
-  KDL::Jacobian            jacobian_a_;
+  std::shared_ptr<PrimitiveA>  primitive_a_;
+  KDL::Frame                   pose_a_;
+  KDL::Jacobian                jacobian_a_;
 
-  PrimitiveB*              primitive_b_;
-  KDL::Frame               pose_b_;
-  KDL::Jacobian            jacobian_b_;
+  std::shared_ptr<PrimitiveB>  primitive_b_;
+  KDL::Frame                   pose_b_;
+  KDL::Jacobian                jacobian_b_;
 
   double                   delta_; // the angular error margin
 
