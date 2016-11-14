@@ -21,7 +21,7 @@ namespace hiqp
 namespace geometric_primitives
 {
 
-std::atomic<unsigned int> GeometricPrimitive::n_instances_(0u);
+//std::atomic<unsigned int> GeometricPrimitive::n_instances_(0u);
 
 }
 

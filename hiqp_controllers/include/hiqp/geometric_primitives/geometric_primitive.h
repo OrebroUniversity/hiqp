@@ -14,15 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-/*
- * \file   geometric_primitive.h
- * \author Marcus A Johansson (marcus.adam.johansson@gmail.com)
- * \date   July, 2016
- * \brief  Brief description of file.
- *
- * Detailed description of file.
- */
-
 #ifndef HIQP_GEOMETRIC_PRIMITIVE_H
 #define HIQP_GEOMETRIC_PRIMITIVE_H
 
@@ -31,83 +22,68 @@
 #include <vector>
 #include <atomic>
 
-
-
-
-
 namespace hiqp
 {
 namespace geometric_primitives
 {
 
-/*!
- * \class GeometricPrimitive
- * \brief Abstract base class for all geometric primitives.
- */ 
-class GeometricPrimitive
-{
-public:
-
-  GeometricPrimitive
-  (
-    const std::string& name,
-    const std::string& frame_id,
-    bool visible,
-    const std::vector<double>& color
-  )
-  : name_(name), frame_id_(frame_id), visible_(visible)
+  /*!
+   * \class GeometricPrimitive
+   * \brief Abstract base class for all geometric primitives.
+   */ 
+  class GeometricPrimitive
   {
-    r_ = color.at(0);
-    g_ = color.at(1);
-    b_ = color.at(2);
-    a_ = color.at(3);
-    unique_id_ = n_instances_;
-    ++n_instances_;
-  }
+  public:
+    GeometricPrimitive
+    (
+      const std::string& name,
+      const std::string& frame_id,
+      bool visible,
+      const std::vector<double>& color
+    )
+    : name_(name), frame_id_(frame_id), visible_(visible), visual_id_(-1)
+    {
+      r_ = color.at(0);
+      g_ = color.at(1);
+      b_ = color.at(2);
+      a_ = color.at(3);
+      //unique_id_ = n_instances_;
+      //++n_instances_;
+    }
 
-  ~GeometricPrimitive() noexcept {};
+    ~GeometricPrimitive() noexcept {};
 
-  /*! \brief Needs to be specified by the inheriting class */
-  virtual int init(const std::vector<double>& parameters) = 0;
+    /*! \brief Needs to be specified by the inheriting class */
+    virtual int init(const std::vector<double>& parameters) = 0;
 
+    inline int            setVisualId(int visual_id) { visual_id_ = visual_id; }
+    inline int            getVisualId() { return visual_id_; }
+    //inline unsigned int 	getId() { return reinterpret_cast<unsigned int>(unique_id_); }
 
-  inline unsigned int 	getId() { return reinterpret_cast<unsigned int>(unique_id_); }
+    inline std::string   	getName() { return name_; }
+    inline std::string   	getFrameId() { return frame_id_; }
+    inline bool     			isVisible() { return visible_; }
 
-  inline std::string   	getName() { return name_; }
-  inline std::string   	getFrameId() { return frame_id_; }
-  inline bool     			isVisible() { return visible_; }
+    inline double     		getRedComponent() { return r_; }
+    inline double     		getGreenComponent() { return g_; }
+    inline double     		getBlueComponent() { return b_; }
+    inline double     		getAlphaComponent() { return a_; }
 
-  inline double     		getRedComponent() { return r_; }
-  inline double     		getGreenComponent() { return g_; }
-  inline double     		getBlueComponent() { return b_; }
-  inline double     		getAlphaComponent() { return a_; }
+  protected:
+    std::string    				               name_;
+    std::string   				               frame_id_;
+    bool       						               visible_;
+    int                                  visual_id_;
+    //unsigned int                         unique_id_;
+    //static std::atomic<unsigned int>     n_instances_;
+    double       					               r_, g_, b_, a_;
 
-
-
-protected:
-
-  std::string    				                       name_;
-
-  std::string   				                       frame_id_;
-
-  bool       						                       visible_;
-
-  unsigned int                                 unique_id_;
-
-  static std::atomic<unsigned int>             n_instances_;
-
-  double       					                       r_, g_, b_, a_;
-
-
-
-private:
-  // No copying of this class is allowed !
-  GeometricPrimitive(const GeometricPrimitive& other) = delete;
-  GeometricPrimitive(GeometricPrimitive&& other) = delete;
-  GeometricPrimitive& operator=(const GeometricPrimitive& other) = delete;
-  GeometricPrimitive& operator=(GeometricPrimitive&& other) noexcept = delete;
-
-}; // class GeometricPrimitive
+  private:
+    GeometricPrimitive(const GeometricPrimitive& other) = delete;
+    GeometricPrimitive(GeometricPrimitive&& other) = delete;
+    GeometricPrimitive& operator=(const GeometricPrimitive& other) = delete;
+    GeometricPrimitive& operator=(GeometricPrimitive&& other) noexcept = delete;
+  }; // class GeometricPrimitive
 
 } // namespace geometric_primitives
 

@@ -21,34 +21,82 @@ namespace hiqp
 namespace geometric_primitives
 {
 
-  void visit(std::shared_ptr<GeometricPoint> point) const
+  void GeometricPrimitiveVisualizer::visit
+  (
+    std::shared_ptr<GeometricPoint> point
+  ) const
   {
-    
+    int id = point->getVisualId();
+    if (id < 0) {
+      point->setVisualId(visualizer_->add(point));
+    } else {
+      visualizer_->update(id, point);
+    }
   }
 
-  void visit(std::shared_ptr<GeometricLine> line) const
+  void GeometricPrimitiveVisualizer::visit
+  (
+    std::shared_ptr<GeometricLine> line
+  ) const
   {
-
+    int id = line->getVisualId();
+    if (id < 0) {
+      line->setVisualId(visualizer_->add(line));
+    } else {
+      visualizer_->update(id, line);
+    }
   }
 
-  void visit(std::shared_ptr<GeometricPlane> plane) const
+  void GeometricPrimitiveVisualizer::visit
+  (
+    std::shared_ptr<GeometricPlane> plane
+  ) const
   {
-
+    int id = plane->getVisualId();
+    if (id < 0) {
+      plane->setVisualId(visualizer_->add(plane));
+    } else {
+      visualizer_->update(id, plane);
+    }
   }
 
-  void visit(std::shared_ptr<GeometricBox> box) const
+  void GeometricPrimitiveVisualizer::visit
+  (
+    std::shared_ptr<GeometricBox> box
+  ) const
   {
-
+    int id = box->getVisualId();
+    if (id < 0) {
+      box->setVisualId(visualizer_->add(box));
+    } else {
+      visualizer_->update(id, box);
+    }
   }
 
-  void visit(std::shared_ptr<GeometricCylinder> cylinder) const
+  void GeometricPrimitiveVisualizer::visit
+  (
+    std::shared_ptr<GeometricCylinder> cylinder
+  ) const
   {
-
+    int id = cylinder->getVisualId();
+    if (id < 0) {
+      cylinder->setVisualId(visualizer_->add(cylinder));
+    } else {
+      visualizer_->update(id, cylinder);
+    }
   }
 
-  void visit(std::shared_ptr<GeometricSphere> sphere) const
+  void GeometricPrimitiveVisualizer::visit
+  (
+    std::shared_ptr<GeometricSphere> sphere
+  ) const
   {
-
+    int id = sphere->getVisualId();
+    if (id < 0) {
+      sphere->setVisualId(visualizer_->add(sphere));
+    } else {
+      visualizer_->update(id, sphere);
+    }
   }
 
 } // snamespace geometric_primitives

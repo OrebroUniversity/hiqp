@@ -14,113 +14,72 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
-
-/*!
- * \file   ros_visualizer.h
- * \Author Marcus A Johansson (marcus.adam.johansson@gmail.com)
- * \date   July, 2016
- * \brief  Brief description of file.
- *
- * Detailed description of file.
- */
-
 #ifndef HIQP_ROS_VISUALIZER_H
 #define HIQP_ROS_VISUALIZER_H
-
 
 // HiQP Includes
 #include <hiqp/visualizer.h>
 
-
-
 // ROS Includes
 #include <ros/ros.h>
-
-
-
-
-
 
 namespace hiqp
 {
 
+	class ROSVisualizer : public Visualizer
+	{
+	public:
+		ROSVisualizer();
+		~ROSVisualizer() noexcept {}
 
+		int init(ros::NodeHandle* controller_nh);
 
+		int add(std::shared_ptr<GeometricPoint> point);
+		int add(std::shared_ptr<GeometricLine> line);
+		int add(std::shared_ptr<GeometricPlane> plane);
+		int add(std::shared_ptr<GeometricBox> box);
+		int add(std::shared_ptr<GeometricCylinder> cylinder);
+		int add(std::shared_ptr<GeometricSphere> sphere);
 
+		void update(int id, std::shared_ptr<GeometricPoint> point);
+		void update(int id, std::shared_ptr<GeometricLine> line);
+		void update(int id, std::shared_ptr<GeometricPlane> plane);
+		void update(int id, std::shared_ptr<GeometricBox> box);
+		void update(int id, std::shared_ptr<GeometricCylinder> cylinder);
+		void update(int id, std::shared_ptr<GeometricSphere> sphere);
 
+		void remove(int id);
 
-class ROSVisualizer : public Visualizer
-{
-public:
+		void removeMany(const std::vector<int>& ids);
 
-	ROSVisualizer();
+	private:
+		ROSVisualizer(const ROSVisualizer& other) = delete;
+		ROSVisualizer(ROSVisualizer&& other) = delete;
+		ROSVisualizer& operator=(const ROSVisualizer& other) = delete;
+		ROSVisualizer& operator=(ROSVisualizer&& other) noexcept = delete;
 
-	~ROSVisualizer() noexcept {}
+		int apply(int id, std::shared_ptr<GeometricPoint> point, int action);
+		int apply(int id, std::shared_ptr<GeometricLine> line, int action);
+		int apply(int id, std::shared_ptr<GeometricPlane> plane, int action);
+		int apply(int id, std::shared_ptr<GeometricBox> box, int action);
+		int apply(int id, std::shared_ptr<GeometricCylinder> cylinder, int action);
+		int apply(int id, std::shared_ptr<GeometricSphere> sphere, int action);
 
-	int init(ros::NodeHandle* controller_nh);
+		enum {ACTION_ADD = 0, ACTION_MODIFY = 1};
 
+		const std::string 			kNamespace = "/yumi";
+		const double 						kInfiniteLength = 12;
+		const double 						kPointRadius    = 0.002;
+		const double 						kLineRadius     = 0.0005;
+		const double 						kPlaneThickness = 0.001;
 
+		ros::NodeHandle*        controller_nh_;
 
-	int add(GeometricPoint* point);
-	int add(GeometricLine* line);
-	int add(GeometricPlane* plane);
-	int add(GeometricBox* box);
-	int add(GeometricCylinder* cylinder);
-	int add(GeometricSphere* sphere);
+		ros::Publisher 					marker_array_pub_;
 
-	void update(int id, GeometricPoint* point);
-	void update(int id, GeometricLine* line);
-	void update(int id, GeometricPlane* plane);
-	void update(int id, GeometricBox* box);
-	void update(int id, GeometricCylinder* cylinder);
-	void update(int id, GeometricSphere* sphere);
-
-	void remove(int id);
-
-	void removeMany(const std::vector<int>& ids);
-
-private:
-
-	// No copying of this class is allowed !
-	ROSVisualizer(const ROSVisualizer& other) = delete;
-	ROSVisualizer(ROSVisualizer&& other) = delete;
-	ROSVisualizer& operator=(const ROSVisualizer& other) = delete;
-	ROSVisualizer& operator=(ROSVisualizer&& other) noexcept = delete;
-
-	int apply(int id, GeometricPoint* point, int action);
-	int apply(int id, GeometricLine* line, int action);
-	int apply(int id, GeometricPlane* plane, int action);
-	int apply(int id, GeometricBox* box, int action);
-	int apply(int id, GeometricCylinder* cylinder, int action);
-	int apply(int id, GeometricSphere* sphere, int action);
-
-	enum {ACTION_ADD = 0, ACTION_MODIFY = 1};
-
-	const std::string 					kNamespace = "/yumi";
-	const double 						kInfiniteLength = 12;
-	const double 						kPointRadius    = 0.002;
-	const double 						kLineRadius     = 0.0005;
-	const double 						kPlaneThickness = 0.001;
-
-	ros::NodeHandle*                    controller_nh_;
-
-	ros::Publisher 						marker_array_pub_;
-
-	std::size_t 						next_id_;
-
-};
-
-
-
-
+		std::size_t 						next_id_;
+	};
 
 } // namespace hiqp
-
-
-
-
-
 
 #endif // include guard

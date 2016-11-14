@@ -266,6 +266,7 @@ int TaskGeometricProjection<GeometricPoint, GeometricBox>::project
 	std::cout << "x_prim = (" << x_prim.x() << ", " << x_prim.y() << ", " << x_prim.z() << ")\n";
 	std::cout << "p_prim = (" << p_prim.x() << ", " <<p_prim.y() << ", " << p_prim.z() << ")\n";
 
+	/*
 	GeometricPoint cpoint( "c", "world", true, {0, 0.0, 1.0, 0.5} );
 	std::vector<double> ppos2;
 	ppos2.push_back(c.x()); 
@@ -296,7 +297,7 @@ int TaskGeometricProjection<GeometricPoint, GeometricBox>::project
 	ppos.push_back(p_prim.z());
 	projpoint.init( ppos );
 	getVisualizer()->update(1234, &projpoint);
-
+*/
 	
 
 	KDL::Vector d = p - p_prim;

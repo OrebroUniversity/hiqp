@@ -75,6 +75,7 @@ add_library(${PROJECT_NAME} src/hiqp_utils.cpp
 
                             src/geometric_primitives/geometric_primitive_map.cpp
                             src/geometric_primitives/geometric_primitive.cpp
+                            src/geometric_primitives/geometric_primitive_visualizer.cpp
 
                             src/solvers/casadi_solver.cpp
 

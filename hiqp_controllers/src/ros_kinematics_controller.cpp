@@ -33,6 +33,7 @@
 #include <XmlRpcException.h> 
 
 #include <hiqp/ros_kinematics_controller.h>
+#include <hiqp/geometric_primitives/geometric_primitive_visualizer.h>
 #include <hiqp/hiqp_utils.h>
 
 #include <hiqp_msgs_srvs/PerfMeasMsg.h>
@@ -175,6 +176,8 @@ void ROSKinematicsController::update
   }
 
   //task_manager_.getGeometricPrimitiveMap()->redrawAllPrimitives();
+  geometric_primitives::GeometricPrimitiveVisualizer geom_prim_vis(&ros_visualizer_);
+  task_manager_.getGeometricPrimitiveMap()->acceptVisitor(geom_prim_vis);
 
   performMonitoring();
 

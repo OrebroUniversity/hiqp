@@ -278,6 +278,23 @@ void GeometricPrimitiveMap::removeDependency
 
 
 
+void GeometricPrimitiveMap::acceptVisitor
+(
+  const GeometricPrimitiveVisitor& visitor
+)
+{
+  for (auto&& kv : point_map_) visitor.visit(kv.second);
+  for (auto&& kv : line_map_) visitor.visit(kv.second);
+  for (auto&& kv : plane_map_) visitor.visit(kv.second);
+  for (auto&& kv : box_map_) visitor.visit(kv.second);
+  for (auto&& kv : cylinder_map_) visitor.visit(kv.second);
+  for (auto&& kv : sphere_map_) visitor.visit(kv.second);
+}
+
+
+
+
+
 // void GeometricPrimitiveMap::redrawAllPrimitives()
 // {
 //   {

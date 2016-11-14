@@ -14,19 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
-
-/*!
- * \file   ros_visualizer.cpp
- * \Author Marcus A Johansson (marcus.adam.johansson@gmail.com)
- * \date   July, 2016
- * \brief  Brief description of file.
- *
- * Detailed description of file.
- */
-
-
 #include <iostream>
 #include <cmath>
  
@@ -36,11 +23,6 @@
 #include <visualization_msgs/MarkerArray.h>
 
 #include <Eigen/Dense>
-
-
-
-
-
 
 namespace hiqp
 {
@@ -79,7 +61,7 @@ int ROSVisualizer::init
 int ROSVisualizer::apply
 (
 	int id,
-	GeometricPoint* point,
+	std::shared_ptr<GeometricPoint> point,
 	int action
 )
 {
@@ -135,7 +117,7 @@ int ROSVisualizer::apply
 int ROSVisualizer::apply
 (
 	int id,
-	GeometricLine* line,
+	std::shared_ptr<GeometricLine> line,
 	int action
 )
 {
@@ -200,7 +182,7 @@ int ROSVisualizer::apply
 int ROSVisualizer::apply
 (
 	int id,
-	GeometricPlane* plane,
+	std::shared_ptr<GeometricPlane> plane,
 	int action
 )
 {
@@ -269,7 +251,7 @@ std::string dtostr(double d)
 int ROSVisualizer::apply
 (
 	int id,
-	GeometricBox* box,
+	std::shared_ptr<GeometricBox> box,
 	int action
 )
 {
@@ -363,7 +345,7 @@ int ROSVisualizer::apply
 int ROSVisualizer::apply
 (
 	int id,
-	GeometricCylinder* cylinder,
+	std::shared_ptr<GeometricCylinder> cylinder,
 	int action
 )
 {
@@ -428,7 +410,7 @@ int ROSVisualizer::apply
 int ROSVisualizer::apply
 (
 	int id,
-	GeometricSphere* sphere,
+	std::shared_ptr<GeometricSphere> sphere,
 	int action
 )
 {
@@ -489,7 +471,7 @@ int ROSVisualizer::apply
 
 int ROSVisualizer::add
 (
-    GeometricPoint* point
+    std::shared_ptr<GeometricPoint> point
 )
 {
 	return apply(0, point, ACTION_ADD);
@@ -501,7 +483,7 @@ int ROSVisualizer::add
 
 int ROSVisualizer::add
 (
-    GeometricLine* line
+    std::shared_ptr<GeometricLine> line
 )
 {
 	return apply(0, line, ACTION_ADD);
@@ -513,7 +495,7 @@ int ROSVisualizer::add
 
 int ROSVisualizer::add
 (
-    GeometricPlane* plane
+    std::shared_ptr<GeometricPlane> plane
 )
 {
 	return apply(0, plane, ACTION_ADD);
@@ -525,7 +507,7 @@ int ROSVisualizer::add
 
 int ROSVisualizer::add
 (
-    GeometricBox* box
+    std::shared_ptr<GeometricBox> box
 )
 {
 	return apply(0, box, ACTION_ADD);
@@ -537,7 +519,7 @@ int ROSVisualizer::add
 
 int ROSVisualizer::add
 (
-    GeometricCylinder* cylinder
+    std::shared_ptr<GeometricCylinder> cylinder
 )
 {
 	return apply(0, cylinder, ACTION_ADD);
@@ -549,7 +531,7 @@ int ROSVisualizer::add
 
 int ROSVisualizer::add
 (
-    GeometricSphere* sphere
+    std::shared_ptr<GeometricSphere> sphere
 )
 {
 	return apply(0, sphere, ACTION_ADD);
@@ -568,7 +550,7 @@ int ROSVisualizer::add
 void ROSVisualizer::update
 (
 	int id, 
-	GeometricPoint* point
+	std::shared_ptr<GeometricPoint> point
 )
 {
 	apply(id, point, ACTION_MODIFY);
@@ -581,7 +563,7 @@ void ROSVisualizer::update
 void ROSVisualizer::update
 (
 	int id, 
-	GeometricLine* line
+	std::shared_ptr<GeometricLine> line
 )
 {
 	apply(id, line, ACTION_MODIFY);
@@ -594,7 +576,7 @@ void ROSVisualizer::update
 void ROSVisualizer::update
 (
 	int id, 
-	GeometricPlane* plane
+	std::shared_ptr<GeometricPlane> plane
 )
 {
 	apply(id, plane, ACTION_MODIFY);
@@ -607,7 +589,7 @@ void ROSVisualizer::update
 void ROSVisualizer::update
 (
 	int id, 
-	GeometricBox* box
+	std::shared_ptr<GeometricBox> box
 )
 {
 	apply(id, box, ACTION_MODIFY);
@@ -620,7 +602,7 @@ void ROSVisualizer::update
 void ROSVisualizer::update
 (
 	int id, 
-	GeometricCylinder* cylinder
+	std::shared_ptr<GeometricCylinder> cylinder
 )
 {
 	apply(id, cylinder, ACTION_MODIFY);
@@ -633,7 +615,7 @@ void ROSVisualizer::update
 void ROSVisualizer::update
 (
 	int id, 
-	GeometricSphere* sphere
+	std::shared_ptr<GeometricSphere> sphere
 )
 {
 	apply(id, sphere, ACTION_MODIFY);

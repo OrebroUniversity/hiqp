@@ -28,7 +28,7 @@ namespace geometric_primitives {
 
 class GeometricPrimitiveVisualizer : public GeometricPrimitiveVisitor {
 public:
-  GeometricPrimitiveVisualizer(std::shared_ptr<Visualizer> visualizer)
+  GeometricPrimitiveVisualizer(Visualizer* visualizer)
   : visualizer_(visualizer)
   {}
 
@@ -47,7 +47,7 @@ private:
   GeometricPrimitiveVisualizer& operator=(const GeometricPrimitiveVisualizer& other) = delete;
   GeometricPrimitiveVisualizer& operator=(GeometricPrimitiveVisualizer&& other) noexcept = delete;
 
-  std::shared_ptr<Visualizer> visualizer_;
+  Visualizer* visualizer_;
 };
 
 } // namespace geometric_primitives
