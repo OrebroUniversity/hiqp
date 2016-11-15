@@ -54,7 +54,7 @@
 #include <hiqp/ros_topic_subscriber.h>
 #include <hiqp/hiqp_time_point.h>
 
-#include <hiqp_msgs_srvs/AddTask.h>
+#include <hiqp_msgs_srvs/SetTask.h>
 #include <hiqp_msgs_srvs/UpdateTask.h>
 #include <hiqp_msgs_srvs/RemoveTask.h>
 #include <hiqp_msgs_srvs/RemoveAllTasks.h>
@@ -186,10 +186,10 @@ private:
 
 
   // These are callback functions for ROS service calls
-  bool addTask
+  bool setTask
   (
-    hiqp_msgs_srvs::AddTask::Request& req, 
-    hiqp_msgs_srvs::AddTask::Response& res
+    hiqp_msgs_srvs::SetTask::Request& req, 
+    hiqp_msgs_srvs::SetTask::Response& res
   );
 
   bool updateTask
@@ -245,7 +245,7 @@ private:
 
 
   bool                                              is_active_;
-  HiQPTimePoint                                     sampling_time_;
+  //HiQPTimePoint                                     sampling_time_;
   double                                            fps_; // Hz
   double                                            time_since_last_sampling_; // seconds
 
@@ -271,11 +271,14 @@ private:
   JointHandleMap                                    joint_handles_map_;
   std::mutex                                        handles_mutex_;
 
+  std::shared_ptr<Visualizer>                       visualizer_;
   ROSVisualizer                                     ros_visualizer_;
   TaskManager                                       task_manager_;
 
-  KDL::Tree                                         kdl_tree_;
-  KDL::JntArrayVel                                  kdl_joint_pos_vel_;
+  //KDL::Tree                                         kdl_tree_;
+  //KDL::JntArrayVel                                  kdl_joint_pos_vel_;
+  RobotState                                        robot_state_data_;
+  RobotStatePtr                                     robot_state_ptr_;
 
   std::vector<double>                               output_controls_;
   unsigned int                                      n_controls_;

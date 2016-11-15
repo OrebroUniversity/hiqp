@@ -14,15 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-/*
- * \file   ros_kinematics_controller.cpp
- * \author Marcus A Johansson (marcus.adam.johansson@gmail.com)
- * \date   July, 2016
- * \brief  Brief description of file.
- *
- * Detailed description of file.
- */
-
 #include <pluginlib/class_list_macros.h> // to allow the controller to be loaded as a plugin
 
 #include <iostream>
@@ -43,16 +34,8 @@
 
 #include <geometry_msgs/PoseStamped.h> // teleoperation magnet sensors
 
-
-
-
-
 namespace hiqp
 {
-
-
-
-
 
 ////////////////////////////////////////////////////////////////////////////////
 //  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
@@ -65,13 +48,8 @@ namespace hiqp
 ////////////////////////////////////////////////////////////////////////////////
 
 ROSKinematicsController::ROSKinematicsController()
-: is_active_(true), monitoring_active_(false), task_manager_(&ros_visualizer_)
-{
-}
-
-
-
-
+: visualizer_(&ros_visualizer_), robot_state_ptr_(&robot_state_data_),
+  is_active_(true), monitoring_active_(false), task_manager_(visualizer_) {}
 
 ROSKinematicsController::~ROSKinematicsController() noexcept {}
 
@@ -141,10 +119,8 @@ void ROSKinematicsController::update
   {
     sampleJointValues();
 
-    task_manager_.getKinematicControls(sampling_time_,
-                       kdl_tree_, 
-                       kdl_joint_pos_vel_,
-                       output_controls_);
+    task_manager_.getVelocityControls(robot_state_ptr_,
+                                      output_controls_);
 
     setControls();
 
@@ -206,49 +182,20 @@ void ROSKinematicsController::update
 
 
 
-bool ROSKinematicsController::addTask
+bool ROSKinematicsController::setTask
 (
-  hiqp_msgs_srvs::AddTask::Request& req, 
-    hiqp_msgs_srvs::AddTask::Response& res
+  hiqp_msgs_srvs::SetTask::Request& req, 
+  hiqp_msgs_srvs::SetTask::Response& res
 )
 {
-  int retval = task_manager_.addTask(
-    req.name, req.type, req.behaviour,
-    req.priority, req.visibility, req.active, 
-    req.parameters,
-    sampling_time_,
-    kdl_tree_,
-    kdl_joint_pos_vel_
-  );
+  int retval = task_manager_.setTask(
+    req.name, req.priority, req.visible, req.active,
+    req.def_params, req.dyn_params, robot_state_ptr_);
 
   res.success = (retval < 0 ? false : true);
 
   return true;
 }
-
-
-
-
-
-bool ROSKinematicsController::updateTask
-(
-    hiqp_msgs_srvs::UpdateTask::Request& req, 
-    hiqp_msgs_srvs::UpdateTask::Response& res
-)
-{
-  
-  int retval = task_manager_.updateTask(req.name, req.type, req.behaviour,
-                        req.priority, req.visibility, req.active, 
-                        req.parameters,
-                        sampling_time_,
-                        kdl_tree_,
-                        kdl_joint_pos_vel_);
-
-  res.success = (retval < 0 ? false : true);
-
-  return true;
-}
-
 
 
 
@@ -345,12 +292,9 @@ bool ROSKinematicsController::removeGeometricPrimitive
   if (task_manager_.removeGeometricPrimitive(req.name) == 0)
     res.success = true;
 
-  if (res.success)
-  {
+  if (res.success) {
     printHiqpInfo("Removed primitive '" + req.name + "' successfully!");
-  }
-  else
-  {
+  } else {
     printHiqpInfo("Couldn't remove primitive '" + req.name + "'!");  
   }
 
@@ -399,8 +343,8 @@ void ROSKinematicsController::sampleJointValues()
 {
   // Lock the mutex and read all joint positions from the handles
 
-  KDL::JntArray& q = kdl_joint_pos_vel_.q;
-  KDL::JntArray& qdot = kdl_joint_pos_vel_.qdot;
+  KDL::JntArray& q = robot_state_data_.kdl_jnt_array_vel_.q;
+  KDL::JntArray& qdot = robot_state_data_.kdl_jnt_array_vel_.qdot;
   handles_mutex_.lock();
 
   for (auto&& handle : joint_handles_map_)
@@ -409,7 +353,7 @@ void ROSKinematicsController::sampleJointValues()
     qdot(handle.first) = handle.second.getVelocity();
   }
   ros::Time t = ros::Time::now();
-  sampling_time_.setTimePoint(t.sec, t.nsec);
+  robot_state_data_.sampling_time_.setTimePoint(t.sec, t.nsec);
 
   handles_mutex_.unlock();
 }
@@ -476,9 +420,11 @@ void ROSKinematicsController::performMonitoring()
         //per_msg.task_id = it->task_id_;
         per_msg.task_name = it->task_name_;
         per_msg.measure_tag = it->measure_tag_;
-        per_msg.data.insert(per_msg.data.begin(),
-                          it->performance_measures_.cbegin(),
-                          it->performance_measures_.cend());
+        for (int i=0; i<it->performance_measures_.size(); ++i)
+          per_msg.data.push_back(it->performance_measures_(i));
+        //per_msg.data.insert(per_msg.data.begin(),
+        //                  it->performance_measures_.cbegin(),
+        //                  it->performance_measures_.cend());
 
         mon_msg.data.push_back(per_msg);
         ++it;
@@ -523,17 +469,17 @@ void ROSKinematicsController::advertiseAllServices()
   // Advertise available ROS services and link the callback functions
   add_task_service_ = controller_nh_.advertiseService
   (
-    "add_task",
-    &ROSKinematicsController::addTask,
+    "set_task",
+    &ROSKinematicsController::setTask,
     this
   );
 
-  update_task_service_ = controller_nh_.advertiseService
-  (
-    "update_task",
-    &ROSKinematicsController::updateTask,
-    this
-  );
+  // update_task_service_ = controller_nh_.advertiseService
+  // (
+  //   "update_task",
+  //   &ROSKinematicsController::updateTask,
+  //   this
+  // );
 
   remove_task_service_ = controller_nh_.advertiseService
   (
@@ -602,7 +548,7 @@ int ROSKinematicsController::loadJointsAndSetJointHandlesMap()
   {
     try
     {
-      unsigned int q_nr = kdl_getQNrFromJointName(kdl_tree_, name);
+      unsigned int q_nr = kdl_getQNrFromJointName(robot_state_data_.kdl_tree_, name);
       joint_handles_map_.insert( 
         JointHandleMapEntry(q_nr, hardware_interface_->getHandle(name))
       );
@@ -618,7 +564,7 @@ int ROSKinematicsController::loadJointsAndSetJointHandlesMap()
 
   // Set the joint position and velocity and the control vectors to all zero
   unsigned int n_joint_names = joint_names.size();
-  n_controls_ = kdl_tree_.getNrOfJoints();
+  n_controls_ = robot_state_data_.kdl_tree_.getNrOfJoints();
   if (n_joint_names > n_controls_)
   {
     ROS_ERROR_STREAM("In ROSKinematicsController: The .yaml file"
@@ -626,7 +572,7 @@ int ROSKinematicsController::loadJointsAndSetJointHandlesMap()
       << " Could not succeffully initialize controller. Aborting!\n");
     return -3;
   }
-  kdl_joint_pos_vel_.resize(n_controls_);
+  robot_state_data_.kdl_jnt_array_vel_.resize(n_controls_);
   output_controls_ = std::vector<double>(n_controls_, 0.0);
 
   return 0;
@@ -699,7 +645,7 @@ int ROSKinematicsController::loadUrdfAndSetupKdlTree()
     if (controller_nh_.searchParam("robot_description", full_parameter_path))
     {
         controller_nh_.getParam(full_parameter_path, robot_urdf);
-        ROS_ASSERT(kdl_parser::treeFromString(robot_urdf, kdl_tree_));
+        ROS_ASSERT(kdl_parser::treeFromString(robot_urdf, robot_state_data_.kdl_tree_));
     }
     else
     {
@@ -708,7 +654,7 @@ int ROSKinematicsController::loadUrdfAndSetupKdlTree()
         return -1;
     }
     printHiqpInfo("Loaded the robot's urdf model and initialized the KDL tree successfully");
-    std::cout << kdl_tree_ << "\n";
+    std::cout << robot_state_data_.kdl_tree_ << "\n";
 
     return 0;
 }
@@ -746,18 +692,11 @@ void ROSKinematicsController::loadJointLimitsFromParamServer()
           parameters.push_back( std::to_string(
             static_cast<double>(limitations[2]) ) );
 
-          task_manager_.addTask(
-            link_frame + "_jntlimits",
-            "TaskJntLimits",
+          task_manager_.setTask(link_frame + "_jntlimits", 1, true, true,
             std::vector<std::string>(),
-            1,
-            1,
-            true,
-            parameters,
-            sampling_time_,
-            kdl_tree_,
-            kdl_joint_pos_vel_
-          );
+            std::vector<std::string>(),
+            //parameters,
+            robot_state_ptr_);
         }
         catch (const XmlRpc::XmlRpcException& e)
         {
@@ -923,21 +862,14 @@ void ROSKinematicsController::loadTasksFromParamServer()
           // std::cout << "parameters = ";
           // for (auto&& s : parameters) std::cout << s << ", ";
           // std::cout << "\n";
-
-
-
-          task_manager_.addTask(
-            name,
-            type,
-            behaviour,
-            priority,
-            visibility,
-            active,
-            parameters,
-            sampling_time_,
-            kdl_tree_,
-            kdl_joint_pos_vel_
-          );
+          
+          task_manager_.setTask(name,
+                                priority,
+                                visibility,
+                                active,
+                                parameters,
+                                behaviour,
+                                robot_state_ptr_);
 
         }
         catch (const XmlRpc::XmlRpcException& e)

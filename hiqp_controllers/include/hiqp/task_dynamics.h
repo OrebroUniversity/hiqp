@@ -14,120 +14,78 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
-
-/*!
- * \file   task_dynamics.h
- * \Author Marcus A Johansson (marcus.adam.johansson@gmail.com)
- * \date   July, 2016
- * \brief  Brief description of file.
- *
- * Detailed description of file.
- */
-
-
-
 #ifndef HIQP_TASK_DYNAMICS_H
 #define HIQP_TASK_DYNAMICS_H
 
-// HiQP Includes
-#include <hiqp/hiqp_time_point.h>
-
-// STL Includes
 #include <vector>
-#include <chrono>
+#include <memory>
 
-// Eigen Includes
+#include <hiqp/geometric_primitives/geometric_primitive_map.h>
+#include <hiqp/robot_state.h>
+#include <hiqp/visualizer.h>
+
 #include <Eigen/Dense>
-
-
-
-
 
 namespace hiqp
 {
-	
 
+  using geometric_primitives::GeometricPrimitiveMap;
 
+  class Task;
 
+  /*! \brief A definition of the task dynamics.
+   *  \author Marcus A Johansson */ 
+  class TaskDynamics
+  {
+  public:
+    TaskDynamics(std::shared_ptr<GeometricPrimitiveMap> geom_prim_map,
+                 std::shared_ptr<Visualizer> visualizer)
+     : geometric_primitive_map_(geom_prim_map), visualizer_(visualizer) 
+    {}
 
-class TaskFactory;
+    ~TaskDynamics() noexcept {}
 
-/*!
- * \class TaskDynamics
- * \brief Abstract base class for all task dynamics types.
- */ 
-class TaskDynamics
-{
-public:
+    virtual int init(const std::vector<std::string>& parameters,
+                     RobotStatePtr robot_state,
+                     const Eigen::VectorXd& e_initial,
+                     const Eigen::VectorXd& e_final) = 0;
 
-	TaskDynamics() {}
-	~TaskDynamics() noexcept {}
+    virtual int update(RobotStatePtr robot_state,
+                       const Eigen::VectorXd& e,
+                       const Eigen::MatrixXd& J) = 0;
 
-	virtual int init
-	(
-		const HiQPTimePoint& sampling_time,
-		const std::vector<std::string>& parameters,
-    	const Eigen::VectorXd& e_initial,
-   	 	const Eigen::VectorXd& e_final
-	) = 0;
+    virtual int monitor() = 0;
 
-	virtual int apply
-	(
-		const HiQPTimePoint& sampling_time,
-		const Eigen::VectorXd& e,
-		const Eigen::MatrixXd& J,
-		Eigen::VectorXd& e_dot_star
-	) = 0;
+  protected:
+      Eigen::VectorXd          e_dot_star_;
+      Eigen::VectorXd          performance_measures_;
 
-	virtual int monitor() = 0;
+      inline std::string  getTaskName()                      { return task_name_; }
+      inline unsigned int getPriority()                      { return priority_; }
+      inline bool         getActive()                        { return active_; }
+      inline bool         getVisible()                       { return visible_; }
+      inline std::shared_ptr<Visualizer> 
+                          getVisualizer()                    { return visualizer_; }
+      inline std::shared_ptr<GeometricPrimitiveMap> 
+                          getGeometricPrimitiveMap()         { return geometric_primitive_map_; }
 
+  private:
+    friend         Task;
 
+    std::shared_ptr<GeometricPrimitiveMap>    geometric_primitive_map_;
+    std::shared_ptr<Visualizer>               visualizer_;
 
-	inline const std::string& getDynamicsTypeName()
-	{ return dynamics_type_name_; }
+    std::string                               task_name_;
+    unsigned int                              priority_;
+    bool                                      visible_;
+    bool                                      active_;
 
-
-
-protected:
-
-    std::vector<double>             performance_measures_;
-
-
-
-
-
-private:
-
-	// No copying of this class is allowed !
-	TaskDynamics(const TaskDynamics& other) = delete;
-	TaskDynamics(TaskDynamics&& other) = delete;
-	TaskDynamics& operator=(const TaskDynamics& other) = delete;
-	TaskDynamics& operator=(TaskDynamics&& other) noexcept = delete;
-
-	void setDynamicsTypeName(const std::string& name)
-	{ dynamics_type_name_ = name; }
-
-	std::string 					dynamics_type_name_;
-
-	friend TaskFactory;
-
-
-};
-
-
-
-
-
-
-
+    TaskDynamics(const TaskDynamics& other) = delete;
+    TaskDynamics(TaskDynamics&& other) = delete;
+    TaskDynamics& operator=(const TaskDynamics& other) = delete;
+    TaskDynamics& operator=(TaskDynamics&& other) noexcept = delete;
+  };
 
 } // namespace hiqp
-
-
-
-
-
 
 #endif // include guard

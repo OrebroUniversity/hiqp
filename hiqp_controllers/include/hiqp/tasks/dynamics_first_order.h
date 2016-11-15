@@ -26,61 +26,45 @@
 #ifndef HIQP_DYNAMICS_FIRST_ORDER_H
 #define HIQP_DYNAMICS_FIRST_ORDER_H
 
-// HiQP Includes
-#include <hiqp/hiqp_time_point.h>
+#include <hiqp/robot_state.h>
 #include <hiqp/task_dynamics.h>
-
-
-
-
 
 namespace hiqp
 {
 namespace tasks
 {
 
-/*!
- * \class DynamicsFirstOrder
- * \brief A general first-order task dynamics implementation that enforces an 
- *        exponential decay of the task function value
- */  
-class DynamicsFirstOrder : public TaskDynamics
-{
-public:
+  /*! \brief A general first-order task dynamics implementation that enforces an 
+   *        exponential decay of the task performance value */  
+  class DynamicsFirstOrder : public TaskDynamics
+  {
+  public:
 
-  DynamicsFirstOrder() {}
+    DynamicsFirstOrder(std::shared_ptr<GeometricPrimitiveMap> geom_prim_map,
+                       std::shared_ptr<Visualizer> visualizer)
+     : TaskDynamics(geom_prim_map, visualizer) {}
 
-  ~DynamicsFirstOrder() noexcept {}
+    ~DynamicsFirstOrder() noexcept {}
 
-  int init
-  (
-    const HiQPTimePoint& sampling_time,
-    const std::vector<std::string>& parameters,
-      const Eigen::VectorXd& e_initial,
-      const Eigen::VectorXd& e_final
-  );
+    int init(const std::vector<std::string>& parameters,
+             RobotStatePtr robot_state,
+             const Eigen::VectorXd& e_initial,
+             const Eigen::VectorXd& e_final);
 
-  int apply
-  (
-    const HiQPTimePoint& sampling_time,
-    const Eigen::VectorXd& e,
-    const Eigen::MatrixXd& J,
-    Eigen::VectorXd& e_dot_star
-  );
+    int update(RobotStatePtr robot_state,
+               const Eigen::VectorXd& e,
+               const Eigen::MatrixXd& J);
 
-  int monitor();
+    int monitor();
 
-private:
+  private:
+    DynamicsFirstOrder(const DynamicsFirstOrder& other) = delete;
+    DynamicsFirstOrder(DynamicsFirstOrder&& other) = delete;
+    DynamicsFirstOrder& operator=(const DynamicsFirstOrder& other) = delete;
+    DynamicsFirstOrder& operator=(DynamicsFirstOrder&& other) noexcept = delete;
 
-  // No copying of this class is allowed !
-  DynamicsFirstOrder(const DynamicsFirstOrder& other) = delete;
-  DynamicsFirstOrder(DynamicsFirstOrder&& other) = delete;
-  DynamicsFirstOrder& operator=(const DynamicsFirstOrder& other) = delete;
-  DynamicsFirstOrder& operator=(DynamicsFirstOrder&& other) noexcept = delete;
-
-  double lambda_;
-
-}; // class DynamicsFirstOrder
+    double lambda_;
+  };
 
 } // namespace tasks
 

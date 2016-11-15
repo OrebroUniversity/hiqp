@@ -14,91 +14,34 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-/*
- * \file   task_manager.cpp
- * \author Marcus A Johansson (marcus.adam.johansson@gmail.com)
- * \date   July, 2016
- * \brief  Brief description of file.
- *
- * Detailed description of file.
- */
-
 #include <iomanip> // std::setw
 
 #include <hiqp/task_manager.h>
- 
 #include <hiqp/hiqp_utils.h>
-
-#include <hiqp/tasks/task_geometric_projection.h>
-#include <hiqp/tasks/dynamics_first_order.h>
+//#include <hiqp/tasks/task_geometric_projection.h>
+//#include <hiqp/tasks/dynamics_first_order.h>
 
 #include <Eigen/Dense>
 
-
-
-
-
 namespace hiqp {
 
-
-
-
-
-TaskManager::TaskManager
-(
-  Visualizer* visualizer
-)
-: //next_task_id_(0), 
-  next_task_dynamics_id_(0),
-  visualizer_(visualizer)
-{
+TaskManager::TaskManager(std::shared_ptr<Visualizer> visualizer)
+: visualizer_(visualizer) {
+  geometric_primitive_map_ = std::make_shared<GeometricPrimitiveMap>();
   solver_ = new CasADiSolver();
-
-  geometric_primitive_map_ = new GeometricPrimitiveMap();
-
-  task_factory_ = new TaskFactory();
 }
 
-
-
-
-
-TaskManager::~TaskManager() noexcept
-{
+TaskManager::~TaskManager() noexcept {
   delete solver_;
-  delete geometric_primitive_map_;
-  delete task_factory_;
 }
 
-
-
-
-
-void TaskManager::init
-(
-  unsigned int num_controls
-)
-{ 
-  num_controls_ = num_controls; 
-  task_factory_->init(geometric_primitive_map_, visualizer_, num_controls_);
+void TaskManager::init(unsigned int n_controls) {
+  n_controls_ = n_controls; 
 }
 
-
-
-
-
-
-
-bool TaskManager::getKinematicControls
-(
-  const HiQPTimePoint& sampling_time,
-  const KDL::Tree& kdl_tree,
-  const KDL::JntArrayVel& kdl_joint_pos_vel,
-  std::vector<double> &controls
-)
-{
-  if (tasks_.size() < 1) 
-  {
+bool TaskManager::getVelocityControls(RobotStatePtr robot_state,
+                                      std::vector<double> &controls) {
+  if (task_map_.size() < 1) {
     for (int i=0; i<controls.size(); ++i)
       controls.at(i) = 0;
     
@@ -107,18 +50,13 @@ bool TaskManager::getKinematicControls
 
   solver_->clearStages();
 
-  for (TaskMapElement&& element : tasks_)
-  {
-    if (element.second->isActive()) 
-    {
-      element.second->computeTaskMetrics(sampling_time,
-                                         kdl_tree,
-                                         kdl_joint_pos_vel);
-
-      solver_->appendStage(element.second->priority_, 
-                           element.second->e_dot_star_, 
-                           element.second->J_,
-                           element.second->task_types_);
+  for (auto&& kv : task_map_) {
+    if (kv.second->getActive()) {
+      kv.second->update(robot_state);
+      solver_->appendStage(kv.second->getPriority(), 
+                           kv.second->getDynamics(), 
+                           kv.second->getJacobian(),
+                           kv.second->getTaskTypes());
     }
   }
 
@@ -127,214 +65,48 @@ bool TaskManager::getKinematicControls
   return true;
 }
 
-
-
-void TaskManager::getTaskMonitoringData
-(
-  std::vector<TaskMonitoringData>& data
-)
-{
-  for (TaskMapElement&& element : tasks_)
-  {
-    // computes the custom performance measures
-    element.second->monitor();
-
-    // copies the e and e_dot_star_ values onto double-vectors
-    element.second->monitorFunctionAndDynamics();
-
-    data.push_back( 
-      TaskMonitoringData(element.second->getTaskName(),
-                         "e",
-                         element.second->measures_e_ ) );
-
-    data.push_back( 
-      TaskMonitoringData(element.second->getTaskName(),
-                         "de*",
-                         element.second->measures_e_dot_star_ ) );
-
-    data.push_back( 
-      TaskMonitoringData(element.second->getTaskName(),
-                         "J",
-                         element.second->measures_J_ ) );
-
-    data.push_back( 
-      TaskMonitoringData(element.second->getTaskName(),
-                         "PM",
-                         element.second->performance_measures_ ) );
+void TaskManager::getTaskMonitoringData(std::vector<TaskMonitoringData>& data) {
+  for (auto&& kv : task_map_) {
+    kv.second->monitor();
+    data.push_back(TaskMonitoringData(kv.second->getTaskName(), "e", kv.second->getValue()));
+    data.push_back(TaskMonitoringData(kv.second->getTaskName(), "de*", kv.second->getDynamics()));
+    data.push_back(TaskMonitoringData(kv.second->getTaskName(), "J", kv.second->getJacobian()));
+    data.push_back(TaskMonitoringData(kv.second->getTaskName(), "PM", kv.second->getPerformanceMeasures()));
   }
 }
 
+int TaskManager::setTask(const std::string& task_name,
+                         unsigned int priority,
+                         bool visible,
+                         bool active,
+                         const std::vector<std::string>& def_params,
+                         const std::vector<std::string>& dyn_params,
+                         RobotStatePtr robot_state) {  
+  std::shared_ptr<Task> task;
 
-
-/// \todo the add_task and update_task service calls shall be exchanged for a set_task service call
-/// \todo TaskFunction objects shall be accessed through smart pointers 
-/// \todo TaskDynamics objects shall be accessed through smart pointers 
-int TaskManager::addTask
-(
-  const std::string& name,
-  const std::string& type,
-  const std::vector<std::string>& behaviour_parameters,
-  unsigned int priority,
-  bool visibility,
-  bool active,
-  const std::vector<std::string>& parameters,
-  const HiQPTimePoint& sampling_time,
-  const KDL::Tree& kdl_tree,
-  const KDL::JntArrayVel& kdl_joint_pos_vel
-)
-{
-
-  TaskDynamics* dynamics = nullptr;
-  TaskFunction* function = nullptr;
-
-  int result = task_factory_->buildTask(
-    name,
-    type, 
-    priority, 
-    visibility, 
-    active, 
-    parameters, 
-    behaviour_parameters,
-    sampling_time,
-    kdl_tree,
-    kdl_joint_pos_vel,
-    next_task_dynamics_id_,
-    dynamics,
-    function
-  );
-
-  if (result == 0)
-  {
-    task_dynamics_[next_task_dynamics_id_] = dynamics;
-    next_task_dynamics_id_++;
-    tasks_.insert( TaskMapElement(name, function) );
-
-    printHiqpInfo("Added task '" + name + "'");
-
-    return 0;
+  TaskMap::iterator it = task_map_.find(task_name);
+  if (it == task_map_.end()) {
+    task = std::make_shared<Task>(geometric_primitive_map_, visualizer_, n_controls_);
+  } else {
+    task = it->second;
   }
 
-  return -1;
-}
+  task->setTaskName(task_name);
+  task->setPriority(priority);
+  task->setVisible(visible);
+  task->setActive(active);
 
-
-
-
-
-int TaskManager::updateTask
-(
-  const std::string& name,
-  const std::string& type,
-  const std::vector<std::string>& behaviour_parameters,
-  unsigned int priority,
-  bool visibility,
-  bool active,
-  const std::vector<std::string>& parameters,
-  const HiQPTimePoint& sampling_time,
-  const KDL::Tree& kdl_tree,
-  const KDL::JntArrayVel& kdl_joint_pos_vel
-)
-{
-  TaskMapIterator it = tasks_.find(name);
-
-
-  // Safety check 1
-  if (it == tasks_.end())
-  {
-    printHiqpWarning("While trying to update task '" + name 
-      + "', couldn't find a task with that name. The task was not updated.");
+  if (task->init(def_params, dyn_params, robot_state) != 0) {
     return -1;
+  } else {
+    task_map_.emplace(task_name, task);
+    printHiqpInfo("Added task '" + task_name + "'");
   }
-
-  TaskFunction* function = it->second;
-
-
-  // Safety check 2
-  if (function->getTaskType().compare(type) != 0)
-  {
-    printHiqpWarning("While trying to update task '" + name 
-      + "', task type can not be changed via update. "
-      + "Please remove the task and add a new one. The task was not updated.");
-    return -2;
-  }
-
-  std::size_t dynamics_id = function->getDynamicsId();
-
-
-  // Safety check 3
-  TaskDynamics* dynamics = nullptr;
-  try
-  {
-    dynamics = task_dynamics_.at(dynamics_id);
-  }
-  catch (const std::out_of_range& oor)
-  {
-    printHiqpWarning("While trying to update task '" + name 
-      + "', couldn't find the task dynamics instance. Contact the framework developer. "
-      + "The task was not updated.");
-    return -3;
-  }
-
-
-  // Safety check 4
-  if (behaviour_parameters.size() <= 0)
-  {
-    printHiqpWarning("While trying to update task '" + name 
-      + "', behaviour parameters should have at least one entry. "
-      + "The task was not updated.");
-    return -4;
-  }
-  
-
-  // Safety check 5
-  std::string dyn_type = behaviour_parameters.at(0);
-  if (dynamics->getDynamicsTypeName().compare(dyn_type) != 0)
-  {
-    printHiqpWarning("While trying to update task '" + name 
-      + "', task behaviour type can not be changed via update. "
-      + "Please remove the task and add a new one. "
-      + "The task was not updated.");
-    return -5;
-  }
-
-  function->setPriority(priority);
-  function->setVisibility(visibility);
-  function->setIsActive(active);
-
-  function->init(
-    sampling_time, 
-    parameters, 
-    kdl_tree, 
-    num_controls_
-  );
-
-  function->computeInitialState(
-    sampling_time, 
-    kdl_tree, 
-    kdl_joint_pos_vel
-  );
-
-  dynamics->init(
-    sampling_time, 
-    behaviour_parameters, 
-    function->getInitialState(),
-    function->getFinalState(kdl_tree)
-  );
-
-  printHiqpInfo("Updated task '" + name + "'");
   return 0;
 }
 
-
-
-
-/// \todo refactor the remove_task service call to a unset_task service call
-int TaskManager::removeTask
-(
-  std::string task_name
-)
-{
-  if (tasks_.erase(task_name) == 1) 
+int TaskManager::removeTask(std::string task_name) {
+  if (task_map_.erase(task_name) == 1) 
   {
     geometric_primitive_map_->removeDependency(task_name);
     return 0;
@@ -343,37 +115,22 @@ int TaskManager::removeTask
   return -1;
 }
 
-
-
-
-
-int TaskManager::removeAllTasks
-()
-{
-  TaskMapIterator it = tasks_.begin();
-  while (it != tasks_.end())
-  {
+int TaskManager::removeAllTasks() {
+  TaskMap::iterator it = task_map_.begin();
+  while (it != task_map_.end()) {
     geometric_primitive_map_->removeDependency(it->first);
     ++it;
   }
-
-  tasks_.clear();
-  task_dynamics_.clear();
+  task_map_.clear();
   return 0;
 }
 
-
-
-
-int TaskManager::listAllTasks
-()
-{
+int TaskManager::listAllTasks() {
   std::cout << "LISTING ALL REGISTERED TASKS:\n";
-  TaskMapIterator it = tasks_.begin();
+  TaskMap::iterator it = task_map_.begin();
 
   int longest_name_length = 0;
-  while (it != tasks_.end())
-  {
+  while (it != task_map_.end()) {
     if (it->first.size() > longest_name_length)
       longest_name_length = it->first.size();
     ++it;
@@ -385,13 +142,12 @@ int TaskManager::listAllTasks
   std::cout << " | Active\n";
   std::cout << "-------------------------------\n";
 
-  it = tasks_.begin();
-  while (it != tasks_.end())
-  {
+  it = task_map_.begin();
+  while (it != task_map_.end()) {
     std::cout 
       << std::setw(8) << it->second->getPriority() << " | "
       << std::setw(longest_name_length) << it->first << " | "
-      << std::setw(6) << it->second->isActive() << "\n";
+      << std::setw(6) << it->second->getActive() << "\n";
     ++it;
   }
   return 0;

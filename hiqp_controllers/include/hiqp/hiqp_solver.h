@@ -45,14 +45,10 @@ namespace hiqp
 
 
 
-struct HiQPStage
-{
+struct HiQPStage {
   int nRows;
-
   Eigen::VectorXd e_dot_star_;
-
   Eigen::MatrixXd J_;
-
   std::vector<int> constraint_signs_;
 };
 
@@ -63,17 +59,13 @@ struct HiQPStage
 class HiQPSolver
 {
 public:
-
   HiQPSolver() {}
-
   ~HiQPSolver() noexcept {}
 
   virtual int solve(std::vector<double>& solution) = 0;
 
-  int clearStages()
-  {
+  int clearStages() {
     stages_map_.clear();
-
     return 0;
   }
 

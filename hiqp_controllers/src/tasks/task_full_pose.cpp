@@ -14,24 +14,11 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-/*
- * \file   task_full_pose.cpp
- * \author Marcus A Johansson (marcus.adam.johansson@gmail.com)
- * \date   July, 2016
- * \brief  Brief description of file.
- *
- * Detailed description of file.
- */
-
 #include <hiqp/tasks/task_full_pose.h>
 
 #include <hiqp/hiqp_utils.h>
 
 #include <iostream>
-
-
-
-
 
 namespace hiqp
 {
@@ -41,31 +28,27 @@ namespace tasks
 
 
 
-int TaskFullPose::init
-(
-  const HiQPTimePoint& sampling_time,
-  const std::vector<std::string>& parameters,
-  const KDL::Tree& kdl_tree, 
-  unsigned int num_controls
-)
+int TaskFullPose::init(const std::vector<std::string>& parameters,
+                       RobotStatePtr robot_state,
+                       unsigned int n_controls)
 {
   int size = parameters.size();
-  if (size != 0 && size != num_controls)
+  if (size != 0 && size != n_controls)
   {
     printHiqpWarning("TaskFullPose requires 0 or " 
-      + std::to_string(num_controls) + " parameters, got " 
+      + std::to_string(n_controls) + " parameters, got " 
       + std::to_string(size) + "! Initialization failed!");
     return -1;
   }
 
   if (size == 0)
   {
-    desired_configuration_ = std::vector<double>(num_controls, 0);
+    desired_configuration_ = std::vector<double>(n_controls, 0);
   }
   else
   {
     desired_configuration_.resize(0);
-    for (int i=0; i < num_controls; ++i)
+    for (int i=0; i < n_controls; ++i)
     {
       desired_configuration_.push_back( std::stod( parameters.at(i) ) );
     }
@@ -73,20 +56,19 @@ int TaskFullPose::init
 
 /*
   e_.resize(1);
-  J_.resize(1, num_controls);
+  J_.resize(1, n_controls);
   e_dot_star_.resize(1);
   performance_measures_.resize(1);
   task_types_.insert(task_types_.begin(), 1, 0);
 */
 
-  e_.resize(num_controls);
-  J_.resize(num_controls, num_controls);
-  e_dot_star_.resize(num_controls);
+  e_.resize(n_controls);
+  J_.resize(n_controls, n_controls);
   performance_measures_.resize(0);
-  task_types_.insert(task_types_.begin(), num_controls, 0);
+  task_types_.insert(task_types_.begin(), n_controls, 0);
 
-  for (int j=0; j<num_controls; ++j)
-    for (int i=0; i<num_controls; ++i) 
+  for (int j=0; j<n_controls; ++j)
+    for (int i=0; i<n_controls; ++i) 
       J_(j, i) = (j==i ? -1 : 0);
 
   std::cout << "init TaskFullPose\n";
@@ -98,14 +80,9 @@ int TaskFullPose::init
 
 
 
-int TaskFullPose::apply
-(
-  const HiQPTimePoint& sampling_time,
-  const KDL::Tree& kdl_tree, 
-  const KDL::JntArrayVel& kdl_joint_pos_vel
-)
+int TaskFullPose::update(RobotStatePtr robot_state)
 {
-  const KDL::JntArray &q = kdl_joint_pos_vel.q;
+  const KDL::JntArray &q = robot_state->kdl_jnt_array_vel_.q;
 
   double diff = 0;
 

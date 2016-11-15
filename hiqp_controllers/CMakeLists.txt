@@ -70,8 +70,9 @@ add_library(${PROJECT_NAME} src/hiqp_utils.cpp
                             src/ros_kinematics_controller.cpp
                             src/ros_topic_subscriber.cpp
                             src/ros_visualizer.cpp
-                            src/task_factory.cpp
+                            #src/task_factory.cpp
                             src/task_manager.cpp
+                            src/task.cpp
 
                             src/geometric_primitives/geometric_primitive_map.cpp
                             src/geometric_primitives/geometric_primitive.cpp
@@ -80,13 +81,13 @@ add_library(${PROJECT_NAME} src/hiqp_utils.cpp
                             src/solvers/casadi_solver.cpp
 
                             src/tasks/dynamics_first_order.cpp
-                            src/tasks/dynamics_jnt_limits.cpp
-                            src/tasks/dynamics_minimal_jerk.cpp
+                            #src/tasks/dynamics_jnt_limits.cpp
+                            #src/tasks/dynamics_minimal_jerk.cpp
                             src/tasks/task_full_pose.cpp
-                            src/tasks/task_geometric_projection.cpp
-                            src/tasks/task_geometric_alignment.cpp
-                            src/tasks/task_jnt_config.cpp
-                            src/tasks/task_jnt_limits.cpp
+                            #src/tasks/task_geometric_projection.cpp
+                            #src/tasks/task_geometric_alignment.cpp
+                            #src/tasks/task_jnt_config.cpp
+                            #src/tasks/task_jnt_limits.cpp
 )
 
 target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} ${orocos_kdl_LIBRARIES} ${CASADI_LIBRARIES} ${GUROBI_LIBS})

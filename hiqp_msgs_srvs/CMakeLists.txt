@@ -26,7 +26,7 @@ add_message_files(
 add_service_files(
   FILES
   AddGeometricPrimitive.srv
-  AddTask.srv
+  SetTask.srv
   RemoveAllGeometricPrimitives.srv
   RemoveAllTasks.srv
   RemoveGeometricPrimitive.srv

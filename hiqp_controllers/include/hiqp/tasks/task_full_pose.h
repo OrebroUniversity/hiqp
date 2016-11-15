@@ -14,77 +14,48 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-/*
- * \file   task_jnt_config.h
- * \author Marcus A Johansson (marcus.adam.johansson@gmail.com)
- * \date   July, 2016
- * \brief  Brief description of file.
- *
- * Detailed description of file.
- */
-
 #ifndef HIQP_TASK_FULL_POSE_H
 #define HIQP_TASK_FULL_POSE_H
 
-// STL Includes
 #include <string>
 
-// HiQP Includes
-#include <hiqp/hiqp_time_point.h>
-#include <hiqp/task_function.h>
-
-
-
-
+#include <hiqp/robot_state.h>
+#include <hiqp/task_definition.h>
 
 namespace hiqp
 {
 namespace tasks
 {
 
-/*!
- * \class TaskFullPose
- * \brief Represents a task that sets a specific joint configuration
- *
- *  This task does not leave any redundancy available to other tasks.
- */  
-class TaskFullPose : public TaskFunction
-{
-public:
+  /*! \brief Represents a task that sets a specific joint configuration
+   *  This task does not leave any redundancy available to other tasks.
+   *  \author Marcus A Johansson */  
+  class TaskFullPose : public TaskDefinition
+  {
+  public:
 
-  TaskFullPose() {}
+    TaskFullPose(std::shared_ptr<GeometricPrimitiveMap> geom_prim_map,
+                 std::shared_ptr<Visualizer> visualizer)
+     : TaskDefinition(geom_prim_map, visualizer) {}
 
-  ~TaskFullPose() noexcept {}
+    ~TaskFullPose() noexcept {}
 
-  int init
-  (
-    const HiQPTimePoint& sampling_time,
-    const std::vector<std::string>& parameters,
-    const KDL::Tree& kdl_tree, 
-    unsigned int num_controls
-  );
+    int init(const std::vector<std::string>& parameters,
+             RobotStatePtr robot_state,
+             unsigned int n_controls);
 
-  int apply
-  (
-    const HiQPTimePoint& sampling_time,
-    const KDL::Tree& kdl_tree, 
-    const KDL::JntArrayVel& kdl_joint_pos_vel
-  );
+    int update(RobotStatePtr robot_state);
 
-  int monitor();
+    int monitor();
 
+  private:
+    TaskFullPose(const TaskFullPose& other) = delete;
+    TaskFullPose(TaskFullPose&& other) = delete;
+    TaskFullPose& operator=(const TaskFullPose& other) = delete;
+    TaskFullPose& operator=(TaskFullPose&& other) noexcept = delete;
 
-
-private:
-  // No copying of this class is allowed !
-  TaskFullPose(const TaskFullPose& other) = delete;
-  TaskFullPose(TaskFullPose&& other) = delete;
-  TaskFullPose& operator=(const TaskFullPose& other) = delete;
-  TaskFullPose& operator=(TaskFullPose&& other) noexcept = delete;
-
-  std::vector<double>                desired_configuration_;
-
-}; // class TaskFullPose
+    std::vector<double>                desired_configuration_;
+  };
 
 } // namespace tasks
 
