@@ -23,7 +23,6 @@
 
 #include <hiqp/geometric_primitives/geometric_primitive_map.h>
 #include <hiqp/visualizer.h>
-//#include <hiqp/task.h>
 #include <hiqp/robot_state.h>
 
 #include <Eigen/Dense>

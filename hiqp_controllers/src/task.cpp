@@ -15,9 +15,9 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <hiqp/task.h>
-
 #include <hiqp/tasks/task_full_pose.h>
 #include <hiqp/tasks/dynamics_first_order.h>
+#include <hiqp/hiqp_utils.h>
 
 namespace hiqp {
 
@@ -34,11 +34,17 @@ namespace hiqp {
                  const std::vector<std::string>& dyn_params,
                  RobotStatePtr robot_state)
   {
-    if (def_params.size() <= 0 || dyn_params.size() <= 0)
+    if (def_params.size() <= 0) {
+      printHiqpWarning("No (zero) task definition parameters found!");
       return -1;
+    }
+    if (dyn_params.size() <= 0) {
+      printHiqpWarning("No (zero) task dynamics parameters found!");
+      return -2;
+    }
 
-    if (constructDefinition(def_params) != 0) return -2;
-    if (constructDynamics(dyn_params) != 0) return -3;
+    if (constructDefinition(def_params) != 0) return -3;
+    if (constructDynamics(dyn_params) != 0) return -4;
 
     def_->task_name_ = task_name_;
     def_->priority_ = priority_;
@@ -68,9 +74,10 @@ namespace hiqp {
   {
     std::string type = def_params.at(0);
 
-    if (type.compare("TDefFullPose")) {
+    if (type.compare("TDefFullPose") == 0) {
       def_ = std::make_shared<TaskFullPose>(geom_prim_map_, visualizer_);
     } else {
+      printHiqpWarning("The task definition type name '" + type + "' was not understood!");
       return -1;
     }
 
@@ -81,9 +88,10 @@ namespace hiqp {
   {
     std::string type = dyn_params.at(0);
 
-    if (type.compare("TDynFirstOrder")) {
+    if (type.compare("TDynFirstOrder") == 0) {
       dyn_ = std::make_shared<DynamicsFirstOrder>(geom_prim_map_, visualizer_);
     } else {
+      printHiqpWarning("The task dynamics type name '" + type + "' was not understood!");
       return -1;
     }
 

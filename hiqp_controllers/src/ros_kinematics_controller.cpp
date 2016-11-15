@@ -155,7 +155,7 @@ void ROSKinematicsController::update
   geometric_primitives::GeometricPrimitiveVisualizer geom_prim_vis(&ros_visualizer_);
   task_manager_.getGeometricPrimitiveMap()->acceptVisitor(geom_prim_vis);
 
-  performMonitoring();
+  //performMonitoring();
 
   return;
 }

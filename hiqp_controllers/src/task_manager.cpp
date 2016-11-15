@@ -98,6 +98,7 @@ int TaskManager::setTask(const std::string& task_name,
 
   if (task->init(def_params, dyn_params, robot_state) != 0) {
     return -1;
+    printHiqpInfo("The task '" + task_name + "' was NOT added!");
   } else {
     task_map_.emplace(task_name, task);
     printHiqpInfo("Added task '" + task_name + "'");

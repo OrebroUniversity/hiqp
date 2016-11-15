@@ -25,89 +25,56 @@ namespace hiqp
 namespace tasks
 {
 
-
-
-
-int TaskFullPose::init(const std::vector<std::string>& parameters,
-                       RobotStatePtr robot_state,
-                       unsigned int n_controls)
-{
-  int size = parameters.size();
-  if (size != 0 && size != n_controls)
-  {
-    printHiqpWarning("TaskFullPose requires 0 or " 
-      + std::to_string(n_controls) + " parameters, got " 
-      + std::to_string(size) + "! Initialization failed!");
-    return -1;
-  }
-
-  if (size == 0)
-  {
-    desired_configuration_ = std::vector<double>(n_controls, 0);
-  }
-  else
-  {
-    desired_configuration_.resize(0);
-    for (int i=0; i < n_controls; ++i)
-    {
-      desired_configuration_.push_back( std::stod( parameters.at(i) ) );
+  int TaskFullPose::init(const std::vector<std::string>& parameters,
+                         RobotStatePtr robot_state,
+                         unsigned int n_controls) {
+    int size = parameters.size();
+    if (size != 1 && size != n_controls + 1) {
+      printHiqpWarning("TaskFullPose requires 1 or " 
+        + std::to_string(n_controls+1) + " parameters, got " 
+        + std::to_string(size) + "! Initialization failed!");
+      return -1;
     }
+
+    if (size == 1) {
+      desired_configuration_ = std::vector<double>(n_controls, 0);
+    } else {
+      desired_configuration_.resize(0);
+      for (int i=1; i < n_controls+1; ++i) {
+        desired_configuration_.push_back( std::stod( parameters.at(i) ) );
+      }
+    }
+
+    e_.resize(n_controls);
+    J_.resize(n_controls, n_controls);
+    performance_measures_.resize(0);
+    task_types_.insert(task_types_.begin(), n_controls, 0);
+
+    for (int j=0; j<n_controls; ++j)
+      for (int i=0; i<n_controls; ++i) 
+        J_(j, i) = (j==i ? -1 : 0);
+
+    // std::cout << "--- init ---\n";
+    // std::cout << "init e_ = " << e_ << "\n";
+    // std::cout << "init J_ = " << J_ << "\n";
+
+    return 0;
   }
 
-/*
-  e_.resize(1);
-  J_.resize(1, n_controls);
-  e_dot_star_.resize(1);
-  performance_measures_.resize(1);
-  task_types_.insert(task_types_.begin(), 1, 0);
-*/
-
-  e_.resize(n_controls);
-  J_.resize(n_controls, n_controls);
-  performance_measures_.resize(0);
-  task_types_.insert(task_types_.begin(), n_controls, 0);
-
-  for (int j=0; j<n_controls; ++j)
-    for (int i=0; i<n_controls; ++i) 
-      J_(j, i) = (j==i ? -1 : 0);
-
-  std::cout << "init TaskFullPose\n";
-
-  return 0;
-}
-
-
-
-
-
-int TaskFullPose::update(RobotStatePtr robot_state)
-{
-  const KDL::JntArray &q = robot_state->kdl_jnt_array_vel_.q;
-
-  double diff = 0;
-
-  for (int i=0; i<q.rows(); ++i)
-  {
-    e_(i) = desired_configuration_.at(i) - q(i);
+  int TaskFullPose::update(RobotStatePtr robot_state) {
+    const KDL::JntArray &q = robot_state->kdl_jnt_array_vel_.q;
+    double diff = 0;
+    for (int i=0; i<q.rows(); ++i) {
+      e_(i) = desired_configuration_.at(i) - q(i);
+    }
+    // std::cout << "--- update ---\n";
+    // std::cout << "update e_ = " << e_ << "\n";
+    return 0;
   }
 
-  std::cout << "apply TaskFullPose\n";
-
-  return 0;
-}
-
-
-
-
-
-int TaskFullPose::monitor()
-{
-  return 0;
-}
-
-
-
-
+  int TaskFullPose::monitor() {
+    return 0;
+  }
 
 } // namespace tasks
 
