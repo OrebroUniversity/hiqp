@@ -16,13 +16,30 @@
 
 #include <hiqp/task.h>
 #include <hiqp/tasks/task_full_pose.h>
+#include <hiqp/tasks/task_jnt_config.h>
+#include <hiqp/tasks/task_jnt_limits.h>
+#include <hiqp/tasks/task_geometric_projection.h>
+#include <hiqp/tasks/task_geometric_alignment.h>
 #include <hiqp/tasks/dynamics_first_order.h>
+#include <hiqp/tasks/dynamics_jnt_limits.h>
+#include <hiqp/tasks/dynamics_minimal_jerk.h>
 #include <hiqp/hiqp_utils.h>
+
+#include <hiqp/geometric_primitives/geometric_point.h>
 
 namespace hiqp {
 
   using tasks::TaskFullPose;
+  using tasks::TaskJntConfig;
+  using tasks::TaskJntLimits;
+  using tasks::TaskGeometricProjection;
+  using tasks::TaskGeometricAlignment;
+
   using tasks::DynamicsFirstOrder;
+  using tasks::DynamicsJntLimits;
+  using tasks::DynamicsMinimalJerk;
+
+  using geometric_primitives::GeometricPoint;
 
   Task::Task(std::shared_ptr<GeometricPrimitiveMap> geom_prim_map,
              std::shared_ptr<Visualizer> visualizer,
@@ -76,6 +93,22 @@ namespace hiqp {
 
     if (type.compare("TDefFullPose") == 0) {
       def_ = std::make_shared<TaskFullPose>(geom_prim_map_, visualizer_);
+    } else if (type.compare("TDefJntConfig") == 0) {
+      def_ = std::make_shared<TaskJntConfig>(geom_prim_map_, visualizer_);
+    } else if (type.compare("TDefJntLimits") == 0) {
+      def_ = std::make_shared<TaskJntLimits>(geom_prim_map_, visualizer_);
+    } else if (type.compare("TDefGeomProj") == 0) {
+      std::string prim_type1 = def_params.at(1);
+      std::string prim_type2 = def_params.at(2);
+      if (prim_type1.compare("point") == 0 && prim_type2.compare("point") == 0) {
+        def_ = std::make_shared< TaskGeometricProjection<GeometricPoint, GeometricPoint> >(geom_prim_map_, visualizer_);
+      }
+    } else if (type.compare("TDefGeomAlign") == 0) {
+      std::string prim_type1 = def_params.at(1);
+      std::string prim_type2 = def_params.at(2);
+      if (prim_type1.compare("line") == 0 && prim_type2.compare("line") == 0) {
+        def_ = std::make_shared< TaskGeometricAlignment<GeometricLine, GeometricLine> >(geom_prim_map_, visualizer_);
+      }
     } else {
       printHiqpWarning("The task definition type name '" + type + "' was not understood!");
       return -1;
@@ -90,6 +123,10 @@ namespace hiqp {
 
     if (type.compare("TDynFirstOrder") == 0) {
       dyn_ = std::make_shared<DynamicsFirstOrder>(geom_prim_map_, visualizer_);
+    } else if (type.compare("TDynJntLimits") == 0) {
+      dyn_ = std::make_shared<DynamicsJntLimits>(geom_prim_map_, visualizer_);
+    } else if (type.compare("TDynMinJerk") == 0) {
+      dyn_ = std::make_shared<DynamicsMinimalJerk>(geom_prim_map_, visualizer_);
     } else {
       printHiqpWarning("The task dynamics type name '" + type + "' was not understood!");
       return -1;

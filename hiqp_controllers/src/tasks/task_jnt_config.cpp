@@ -14,24 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-/*
- * \file   task_jnt_config.cpp
- * \author Marcus A Johansson (marcus.adam.johansson@gmail.com)
- * \date   July, 2016
- * \brief  Brief description of file.
- *
- * Detailed description of file.
- */
-
 #include <hiqp/tasks/task_jnt_config.h>
-
 #include <hiqp/hiqp_utils.h>
 
 #include <iostream>
-
-
-
-
 
 namespace hiqp
 {
@@ -39,29 +25,19 @@ namespace tasks
 {
 
 
-
-
-
-int TaskJntConfig::init
-(
-  const HiQPTimePoint& sampling_time,
-  const std::vector<std::string>& parameters,
-  const KDL::Tree& kdl_tree, 
-  unsigned int num_controls
-)
-{
-
+int TaskJntConfig::init(const std::vector<std::string>& parameters,
+                        RobotStatePtr robot_state,
+                        unsigned int n_controls) {
   int size = parameters.size();
-  if (size != 2)
-  {
-    printHiqpWarning("TaskJntConfig requires 2 parameters, got " 
+  if (size != 3) {
+    printHiqpWarning("TaskJntConfig requires 3 parameters, got " 
       + std::to_string(size) + "! Initialization failed!");
     return -1;
   }
 
-  link_name_ = parameters.at(0);
+  link_name_ = parameters.at(1);
 
-  joint_q_nr_ = kdl_getQNrFromLinkName(kdl_tree, link_name_);
+  joint_q_nr_ = kdl_getQNrFromLinkName(robot_state->kdl_tree_, link_name_);
 
   if (joint_q_nr_ < 0)
   {
@@ -69,15 +45,14 @@ int TaskJntConfig::init
     return -2;
   }
 
-  desired_configuration_ = std::stod( parameters.at(1) );
+  desired_configuration_ = std::stod( parameters.at(2) );
 
   e_.resize(1);
-  J_.resize(1, num_controls);
-  e_dot_star_.resize(1);
+  J_.resize(1, n_controls);
   performance_measures_.resize(0);
   task_types_.insert(task_types_.begin(), 1, 0);
 
-  for (int i=0; i<num_controls; ++i) 
+  for (int i=0; i<n_controls; ++i) 
     J_(0, i) = 0;
 
   J_(0, joint_q_nr_) = -1;
@@ -85,34 +60,15 @@ int TaskJntConfig::init
   return 0;
 }
 
-
-
-
-
-int TaskJntConfig::apply
-(
-  const HiQPTimePoint& sampling_time,
-  const KDL::Tree& kdl_tree, 
-  const KDL::JntArrayVel& kdl_joint_pos_vel
-)
-{
-  const KDL::JntArray &q = kdl_joint_pos_vel.q;
-
+int TaskJntConfig::update(RobotStatePtr robot_state) {
+  const KDL::JntArray &q = robot_state->kdl_jnt_array_vel_.q;
   e_(0) = desired_configuration_ - q(joint_q_nr_);
-
   return 0;
 }
 
-
-
-
-int TaskJntConfig::monitor()
-{
+int TaskJntConfig::monitor() {
   return 0;
 }
-
-
-
 
 
 } // namespace tasks

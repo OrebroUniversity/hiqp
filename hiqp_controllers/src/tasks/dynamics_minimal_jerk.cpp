@@ -14,117 +14,60 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-/*
- * \file   dynamics_minimal_jerk.cpp
- * \author Marcus A Johansson (marcus.adam.johansson@gmail.com)
- * \date   July, 2016
- * \brief  Brief description of file.
- *
- * Detailed description of file.
- */
-
 #include <hiqp/hiqp_utils.h>
 
 #include <hiqp/tasks/dynamics_minimal_jerk.h>
-
-
-
-
 
 namespace hiqp
 {
 namespace tasks
 {
 
+  int DynamicsMinimalJerk::init(const std::vector<std::string>& parameters,
+                                RobotStatePtr robot_state,
+                                const Eigen::VectorXd& e_initial,
+                                const Eigen::VectorXd& e_final) {
+    if (parameters.size() != 3)
+      return -1;
 
+    performance_measures_.resize(e_initial.rows());
 
+    time_start_ = robot_state->sampling_time_;
 
+    total_duration_ = std::stod( parameters.at(1) );
+    gain_ = std::stod( parameters.at(2) );
 
-int DynamicsMinimalJerk::init
-(
-  const HiQPTimePoint& sampling_time,
-  const std::vector<std::string>& parameters,
-  const Eigen::VectorXd& e_initial,
-  const Eigen::VectorXd& e_final
-)
-{
-  if (parameters.size() != 3)
-    return -1;
+    f_ = 30 / total_duration_;
 
-  performance_measures_.resize(e_initial.rows());
+    e_initial_ = e_initial;
+    e_final_ = e_final;
+    e_diff_ = e_final - e_initial;
 
-  time_start_ = sampling_time;
-
-  total_duration_ = std::stod( parameters.at(1) );
-  gain_ = std::stod( parameters.at(2) );
-
-  f_ = 30 / total_duration_;
-
-  e_initial_ = e_initial;
-  e_final_ = e_final;
-  e_diff_ = e_final - e_initial;
-
-  std::cout << "f_ = " << f_ << "\n";
-  std::cout << "e_diff_ = " << e_diff_ << "\n";
-
-  return 0;
-}
-
-
-
-
-
-int DynamicsMinimalJerk::apply
-(
-  const HiQPTimePoint& sampling_time,
-  const Eigen::VectorXd& e,
-  const Eigen::MatrixXd& J,
-  Eigen::VectorXd& e_dot_star
-)
-{
-  double tau = (sampling_time - time_start_).toSec() / total_duration_;
-
-  if (tau > 1)
-  {
-    e_dot_star = 0*e;
-    std::cout << "e = " << e << "\n";
-  }
-  else
-  {
-    double T = 10*tau*tau*tau - 15*tau*tau*tau*tau + 6*tau*tau*tau*tau*tau;
-    double t = f_ * (tau*tau - 2*tau*tau*tau + tau*tau*tau*tau);
-
-    Eigen::VectorXd e_star = e_initial_ + e_diff_ * T;
-
-    e_dot_star = e_diff_ * t - gain_ * (e - e_star); // minimal jerk + first order
+    return 0;
   }
 
+  int DynamicsMinimalJerk::update(RobotStatePtr robot_state,
+                                  const Eigen::VectorXd& e,
+                                  const Eigen::MatrixXd& J) {
+    double tau = (robot_state->sampling_time_ - time_start_).toSec() / total_duration_;
 
+    if (tau > 1) {
+      e_dot_star_ = 0*e;
+    } else {
+      double T = 10*tau*tau*tau - 15*tau*tau*tau*tau + 6*tau*tau*tau*tau*tau;
+      double t = f_ * (tau*tau - 2*tau*tau*tau + tau*tau*tau*tau);
 
+      Eigen::VectorXd e_star = e_initial_ + e_diff_ * T;
 
-  //std::cout << "total_duration_ = " << total_duration_ << "\n";
-  //std::cout << "d = " << d << "\n";
-  //std::cout << "tau = " << tau << "\n";
+      e_dot_star_ = e_diff_ * t - gain_ * (e - e_star); // minimal jerk + first order
+    }
 
-  //std::cout << "J = " << J << "\n";
-  //std::cout << "I = " << Eigen::VectorXd::Ones(J.cols()) << "\n";
-  //std::cout << "e_dot_star = " << e_dot_star << "\n\n\n";
+    return 0;
+  }
 
-  return 0;
-}
-
-
-
-
-
-int DynamicsMinimalJerk::monitor()
-{
-  return 0;
-}
-
-
-
-
+  int DynamicsMinimalJerk::monitor() {
+    return 0;
+  }
 
 } // namespace tasks
 

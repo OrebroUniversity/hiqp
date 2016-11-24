@@ -14,79 +14,38 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-/*
- * \file   dynamics_jnt_limits.cpp
- * \author Marcus A Johansson (marcus.adam.johansson@gmail.com)
- * \date   August, 2016
- * \brief  Brief description of file.
- *
- * Detailed description of file.
- */
-
 #include <hiqp/hiqp_utils.h>
 
 #include <hiqp/tasks/dynamics_jnt_limits.h>
-
-
-
-
 
 namespace hiqp
 {
 namespace tasks
 {
 
+  int DynamicsJntLimits::init(const std::vector<std::string>& parameters,
+                              RobotStatePtr robot_state,
+                              const Eigen::VectorXd& e_initial,
+                              const Eigen::VectorXd& e_final) {
+    e_dot_star_.resize(4);
+    dq_max_ = std::stod( parameters.at(1) );
+    performance_measures_.resize(0);
+    return 0;
+  }
 
+  int DynamicsJntLimits::update(RobotStatePtr robot_state,
+                                const Eigen::VectorXd& e,
+                                const Eigen::MatrixXd& J) {
+    e_dot_star_(0) = -dq_max_;
+    e_dot_star_(1) = dq_max_;
+    e_dot_star_(2) = -e(2); // first order dynamics with gain = -1
+    e_dot_star_(3) = -e(3); // first order dynamics with gain = -1
+    return 0;
+  }
 
-
-
-int DynamicsJntLimits::init
-(
-  const HiQPTimePoint& sampling_time,
-  const std::vector<std::string>& parameters,
-  const Eigen::VectorXd& e_initial,
-  const Eigen::VectorXd& e_final
-)
-{
-  dq_max_ = std::stod( parameters.at(1) );
-
-  performance_measures_.resize(0);
-    
-  return 0;
-}
-
-
-
-
-
-int DynamicsJntLimits::apply
-(
-  const HiQPTimePoint& sampling_time,
-  const Eigen::VectorXd& e,
-  const Eigen::MatrixXd& J,
-  Eigen::VectorXd& e_dot_star
-)
-{
-  e_dot_star(0) = -dq_max_;
-  e_dot_star(1) = dq_max_;
-  e_dot_star(2) = -e(2); // first order dynamics with gain = -1
-  e_dot_star(3) = -e(3); // first order dynamics with gain = -1
-
-  return 0;
-}
-
-
-
-
-
-int DynamicsJntLimits::monitor()
-{
-  return 0;
-}
-
-
-
-
+  int DynamicsJntLimits::monitor() {
+    return 0;
+  }
 
 } // namespace tasks
 

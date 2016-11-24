@@ -14,45 +14,15 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
-
-/*!
- * \file   task_pop.cpp
- * \Author Marcus A Johansson (marcus.adam.johansson@gmail.com)
- * \date   July, 2016
- * \brief  Brief description of file.
- *
- * Detailed description of file.
- */
-
-
-
-// HiQP Includes
 #include <hiqp/hiqp_utils.h>
-
 #include <hiqp/solvers/casadi_solver.h>
 
-// CasADi Includes
 #include <casadi/casadi.hpp>
 
-// Eigen Includes
 #include <Eigen/Dense>
-
-
-
-
-
-
-
-
-
 
 namespace hiqp
 {
-
-
-
 
 // For debugging purposes
 std::ostream& operator<<(std::ostream& os, const HiQPStage& stage)
@@ -70,28 +40,23 @@ std::ostream& operator<<(std::ostream& os, const HiQPStage& stage)
 	return os;
 }
 
-
 const double kDampingFactor = 1e-5; // dont set to zero!
-
-
-
 
 int CasADiSolver::solve
 (
 	std::vector<double>& solution
 )
 {
-
-	StageMapIterator it2 = stages_map_.begin();
+	// StageMapIterator it2 = stages_map_.begin();
 	
-  std::cout << "--- casadi solve ---\n";
-	while (it2 != stages_map_.end())
-	{
-		std::cout << *it2;
-		// std::cout << "priority = " << it2->first << "\n";
-		// std::cout << "e_dot_star_ = " << it2->second.e_dot_star_ << "\n\n";
-		it2++;
-	}
+  // std::cout << "--- casadi solve ---\n";
+	// while (it2 != stages_map_.end())
+	// {
+	// 	std::cout << *it2;
+	// 	// std::cout << "priority = " << it2->first << "\n";
+	// 	// std::cout << "e_dot_star_ = " << it2->second.e_dot_star_ << "\n\n";
+	// 	it2++;
+	// }
 
 
 	unsigned int solutionSize = solution.size();

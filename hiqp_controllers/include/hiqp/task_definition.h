@@ -40,7 +40,8 @@ namespace hiqp
   {
   public:
     TaskDefinition(std::shared_ptr<GeometricPrimitiveMap> geom_prim_map,
-                   std::shared_ptr<Visualizer> visualizer) {}
+                   std::shared_ptr<Visualizer> visualizer) 
+    : geometric_primitive_map_(geom_prim_map), visualizer_(visualizer) {}
 
     ~TaskDefinition() noexcept {}
 

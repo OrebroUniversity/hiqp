@@ -14,90 +14,65 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-/*
- * \file   task_geometric_alignment.h
- * \author Marcus A Johansson (marcus.adam.johansson@gmail.com)
- * \date   July, 2016
- * \brief  Brief description of file.
- *
- * Detailed description of file.
- */
-
 #ifndef HIQP_TASK_GEOMETRIC_ALIGNMENT_H
 #define HIQP_TASK_GEOMETRIC_ALIGNMENT_H
 
-// STL Includes
 #include <string>
 #include <vector>
 
-// HiQP Includes
-#include <hiqp/hiqp_time_point.h>
-#include <hiqp/task_function.h>
+#include <hiqp/robot_state.h>
+#include <hiqp/task_definition.h>
 
-
-
-
+#include <kdl/treefksolverpos_recursive.hpp>
+#include <kdl/treejnttojacsolver.hpp>
 
 namespace hiqp
 {
 namespace tasks
 {
 
-/*!
- * \class TaskGeometricAlignment
- * \brief 
- */  
-template<typename PrimitiveA, typename PrimitiveB>
-class TaskGeometricAlignment : public TaskFunction
-{
-public:
-     
-  TaskGeometricAlignment();
+  /*! \brief 
+   *  \author Marcus A Johansson */  
+  template<typename PrimitiveA, typename PrimitiveB>
+  class TaskGeometricAlignment : public TaskDefinition {
+  public:
+    TaskGeometricAlignment(std::shared_ptr<GeometricPrimitiveMap> geom_prim_map,
+                           std::shared_ptr<Visualizer> visualizer);
+    ~TaskGeometricAlignment() noexcept = default;
 
-  ~TaskGeometricAlignment() noexcept;
+    int init(const std::vector<std::string>& parameters,
+             RobotStatePtr robot_state,
+             unsigned int n_controls);
 
-  int init
-  (
-    const HiQPTimePoint& sampling_time,
-    const std::vector<std::string>& parameters,
-    const KDL::Tree& kdl_tree, 
-    unsigned int num_controls
-  );
+    int update(RobotStatePtr robot_state);
 
-  int apply
-  (
-    const HiQPTimePoint& sampling_time,
-    const KDL::Tree& kdl_tree, 
-    const KDL::JntArrayVel& kdl_joint_pos_vel
-  );
+    int monitor();
 
-  int monitor();
+  private:
+    TaskGeometricAlignment(const TaskGeometricAlignment& other) = delete;
+    TaskGeometricAlignment(TaskGeometricAlignment&& other) = delete;
+    TaskGeometricAlignment& operator=(const TaskGeometricAlignment& other) = delete;
+    TaskGeometricAlignment& operator=(TaskGeometricAlignment&& other) noexcept = delete;
 
+    int align(std::shared_ptr<PrimitiveA> first, std::shared_ptr<PrimitiveB> second);
 
+    // v1 must relate to primitive_a_, and v2 to primitive_b_ !
+    int alignVectors(const KDL::Vector& v1, const KDL::Vector v2);
 
-private:
-  // No copying of this class is allowed !
-  TaskGeometricAlignment(const TaskGeometricAlignment& other) = delete;
-  TaskGeometricAlignment(TaskGeometricAlignment&& other) = delete;
-  TaskGeometricAlignment& operator=(const TaskGeometricAlignment& other) = delete;
-  TaskGeometricAlignment& operator=(TaskGeometricAlignment&& other) noexcept = delete;
+    std::shared_ptr<KDL::TreeFkSolverPos_recursive>  fk_solver_pos_;
+    std::shared_ptr<KDL::TreeJntToJacSolver>         fk_solver_jac_;
 
-  int align(std::shared_ptr<PrimitiveA> first, std::shared_ptr<PrimitiveB> second);
+    std::shared_ptr<PrimitiveA>  primitive_a_;
+    KDL::Frame                   pose_a_;
+    KDL::Jacobian                jacobian_a_;
 
-  // v1 must relate to primitive_a_, and v2 to primitive_b_ !
-  int alignVectors(const KDL::Vector& v1, const KDL::Vector v2);
+    std::shared_ptr<PrimitiveB>  primitive_b_;
+    KDL::Frame                   pose_b_;
+    KDL::Jacobian                jacobian_b_;
 
-  std::shared_ptr<PrimitiveA>  primitive_a_;
-  KDL::Frame                   pose_a_;
-  KDL::Jacobian                jacobian_a_;
+    double                   delta_; // the angular error margin
 
-  std::shared_ptr<PrimitiveB>  primitive_b_;
-  KDL::Frame                   pose_b_;
-  KDL::Jacobian                jacobian_b_;
-
-  double                   delta_; // the angular error margin
-
-}; // class TaskGeometricAlignment
+  }; // class TaskGeometricAlignment
 
 } // namespace tasks
 

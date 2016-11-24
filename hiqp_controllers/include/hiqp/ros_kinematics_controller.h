@@ -1,4 +1,4 @@
-  // The HiQP Control Framework, an optimal control framework targeted at robotics
+// The HiQP Control Framework, an optimal control framework targeted at robotics
 // Copyright (C) 2016 Marcus A Johansson
 //
 // This program is free software: you can redistribute it and/or modify
