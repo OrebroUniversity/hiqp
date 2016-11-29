@@ -40,7 +40,7 @@ std::ostream& operator<<(std::ostream& os, const HiQPStage& stage)
 	return os;
 }
 
-const double kDampingFactor = 1e-5; // dont set to zero!
+const double kDampingFactor = 1e-3; // dont set to zero!
 
 int CasADiSolver::solve
 (

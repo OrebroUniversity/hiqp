@@ -21,11 +21,9 @@
  * \file   geometric_line.h
  * \author Marcus A Johansson (marcus.adam.johansson@gmail.com)
  * \date   July, 2016
- * \brief  Brief description of file.
+ * \brief 
  *
- * Detailed description of file.
  */
-
 
 
 #ifndef HIQP_GEOMETRIC_LINE_H
@@ -54,7 +52,9 @@ namespace geometric_primitives
 
 /*!
  * \class GeometricLine
- * \brief Parameters: [dir.x, dir.y, dir.z, offset.x, offset.y, offset.z]
+ * \brief Implements a line defined by an arbitrary point and a directional vector. Parameters: [dir.x, dir.y, dir.z, offset.x, offset.y, offset.z]
+ *
+ * The offset variables define the point on the line, the direction variables the direction (not necessarily unitary)
  */  
 class GeometricLine : public GeometricPrimitive
 {

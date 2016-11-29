@@ -30,4 +30,4 @@ priority: 2
 visible: 1
 active: 1
 def_params: ['TDefGeomProj', 'point', 'point', 'teleop_point = teleop_point2']
-dyn_params: ['TDynFirstOrder', '1.0']"
+dyn_params: ['TDynFirstOrder', '10.0']"
