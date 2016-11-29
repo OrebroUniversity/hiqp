@@ -26,6 +26,8 @@
 #include <hiqp/hiqp_utils.h>
 
 #include <hiqp/geometric_primitives/geometric_point.h>
+#include <hiqp/geometric_primitives/geometric_line.h>
+#include <hiqp/geometric_primitives/geometric_cylinder.h>
 
 namespace hiqp {
 
@@ -102,12 +104,38 @@ namespace hiqp {
       std::string prim_type2 = def_params.at(2);
       if (prim_type1.compare("point") == 0 && prim_type2.compare("point") == 0) {
         def_ = std::make_shared< TaskGeometricProjection<GeometricPoint, GeometricPoint> >(geom_prim_map_, visualizer_);
+      } else if (prim_type1.compare("point") == 0 && prim_type2.compare("line") == 0) {
+        def_ = std::make_shared< TaskGeometricProjection<GeometricPoint, GeometricLine> >(geom_prim_map_, visualizer_);
+      } else if (prim_type1.compare("point") == 0 && prim_type2.compare("plane") == 0) {
+        def_ = std::make_shared< TaskGeometricProjection<GeometricPoint, GeometricPlane> >(geom_prim_map_, visualizer_);
+      } else if (prim_type1.compare("point") == 0 && prim_type2.compare("box") == 0) {
+        def_ = std::make_shared< TaskGeometricProjection<GeometricPoint, GeometricBox> >(geom_prim_map_, visualizer_);
+      } else if (prim_type1.compare("point") == 0 && prim_type2.compare("cylinder") == 0) {
+        def_ = std::make_shared< TaskGeometricProjection<GeometricPoint, GeometricCylinder> >(geom_prim_map_, visualizer_);
+      } else if (prim_type1.compare("point") == 0 && prim_type2.compare("sphere") == 0) {
+        def_ = std::make_shared< TaskGeometricProjection<GeometricPoint, GeometricSphere> >(geom_prim_map_, visualizer_);
+      } else if (prim_type1.compare("sphere") == 0 && prim_type2.compare("plane") == 0) {
+        def_ = std::make_shared< TaskGeometricProjection<GeometricSphere, GeometricPlane> >(geom_prim_map_, visualizer_);
+      } else if (prim_type1.compare("sphere") == 0 && prim_type2.compare("sphere") == 0) {
+        def_ = std::make_shared< TaskGeometricProjection<GeometricSphere, GeometricSphere> >(geom_prim_map_, visualizer_);
+      } else {
+        printHiqpWarning("TDefGeomProj does not support primitive combination of types '" + prim_type1 + "' and '" + prim_type2 + "'!");
+        return -1;
       }
     } else if (type.compare("TDefGeomAlign") == 0) {
       std::string prim_type1 = def_params.at(1);
       std::string prim_type2 = def_params.at(2);
       if (prim_type1.compare("line") == 0 && prim_type2.compare("line") == 0) {
         def_ = std::make_shared< TaskGeometricAlignment<GeometricLine, GeometricLine> >(geom_prim_map_, visualizer_);
+      } else if (prim_type1.compare("line") == 0 && prim_type2.compare("plane") == 0) {
+        def_ = std::make_shared< TaskGeometricAlignment<GeometricLine, GeometricPlane> >(geom_prim_map_, visualizer_);
+      } else if (prim_type1.compare("line") == 0 && prim_type2.compare("cylinder") == 0) {
+        def_ = std::make_shared< TaskGeometricAlignment<GeometricLine, GeometricCylinder> >(geom_prim_map_, visualizer_);
+      } else if (prim_type1.compare("line") == 0 && prim_type2.compare("sphere") == 0) {
+        def_ = std::make_shared< TaskGeometricAlignment<GeometricLine, GeometricSphere> >(geom_prim_map_, visualizer_);
+      } else {
+        printHiqpWarning("TDefGeomAlign does not support primitive combination of types '" + prim_type1 + "' and '" + prim_type2 + "'!");
+        return -1;
       }
     } else {
       printHiqpWarning("The task definition type name '" + type + "' was not understood!");
