@@ -25,6 +25,7 @@
 #include <hiqp/geometric_primitives/geometric_box.h>
 #include <hiqp/geometric_primitives/geometric_cylinder.h>
 #include <hiqp/geometric_primitives/geometric_sphere.h>
+#include <hiqp/geometric_primitives/geometric_frame.h>
 
 namespace hiqp {
 
@@ -41,6 +42,7 @@ public:
   virtual void visit(std::shared_ptr<GeometricBox> box) const = 0;
   virtual void visit(std::shared_ptr<GeometricCylinder> cylinder) const = 0;
   virtual void visit(std::shared_ptr<GeometricSphere> sphere) const = 0;
+  virtual void visit(std::shared_ptr<GeometricFrame> frame) const = 0;
 
 private:
   GeometricPrimitiveVisitor(const GeometricPrimitiveVisitor& other) = delete;

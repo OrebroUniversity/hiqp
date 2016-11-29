@@ -25,6 +25,7 @@
 #include <hiqp/geometric_primitives/geometric_box.h>
 #include <hiqp/geometric_primitives/geometric_cylinder.h>
 #include <hiqp/geometric_primitives/geometric_sphere.h>
+#include <hiqp/geometric_primitives/geometric_frame.h>
 
 namespace hiqp
 {
@@ -35,6 +36,7 @@ namespace hiqp
 	using geometric_primitives::GeometricBox;
 	using geometric_primitives::GeometricCylinder;
 	using geometric_primitives::GeometricSphere;
+	using geometric_primitives::GeometricFrame;
 
 	class Visualizer
 	{
@@ -48,6 +50,7 @@ namespace hiqp
 		virtual int add(std::shared_ptr<GeometricBox> box) = 0;
 		virtual int add(std::shared_ptr<GeometricCylinder> cylinder) = 0;
 		virtual int add(std::shared_ptr<GeometricSphere> sphere) = 0;
+		virtual int add(std::shared_ptr<GeometricFrame> frame) = 0;
 
 		virtual void update(int id, std::shared_ptr<GeometricPoint> point) = 0;
 		virtual void update(int id, std::shared_ptr<GeometricLine> line) = 0;
@@ -55,6 +58,7 @@ namespace hiqp
 		virtual void update(int id, std::shared_ptr<GeometricBox> box) = 0;
 		virtual void update(int id, std::shared_ptr<GeometricCylinder> cylinder) = 0;
 		virtual void update(int id, std::shared_ptr<GeometricSphere> sphere) = 0;
+		virtual void update(int id, std::shared_ptr<GeometricFrame> frame) = 0;
 
 		virtual void remove(int id) = 0;
 

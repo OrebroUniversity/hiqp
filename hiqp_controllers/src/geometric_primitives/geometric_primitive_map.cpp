@@ -112,6 +112,15 @@ int GeometricPrimitiveMap::addGeometricPrimitive
       success = true;
     }
   }
+  else if (type.compare("frame") == 0)
+  {
+    auto primitive = std::make_shared<GeometricFrame>(name, frame_id, visible, color);
+    if (primitive->init(parameters) == 0)
+    {
+      frame_map_.emplace( name, primitive );
+      success = true;
+    }
+  }
   else
   {
     printHiqpWarning("Couldn't parse geometric type '" + type + 
@@ -164,6 +173,7 @@ int GeometricPrimitiveMap::removeGeometricPrimitive
   box_map_.erase(name);
   cylinder_map_.erase(name);
   sphere_map_.erase(name);
+  frame_map_.erase(name);
   dependency_map_.erase(name);
   
   all_primitive_names_.erase(
@@ -206,6 +216,7 @@ int GeometricPrimitiveMap::clear
     box_map_.erase(name);
     cylinder_map_.erase(name);
     sphere_map_.erase(name);
+    frame_map_.erase(name);
     dependency_map_.erase(name);
 
     all_primitive_names_.erase(
@@ -289,91 +300,8 @@ void GeometricPrimitiveMap::acceptVisitor
   for (auto&& kv : box_map_) visitor.visit(kv.second);
   for (auto&& kv : cylinder_map_) visitor.visit(kv.second);
   for (auto&& kv : sphere_map_) visitor.visit(kv.second);
+  for (auto&& kv : frame_map_) visitor.visit(kv.second);
 }
-
-
-
-
-
-// void GeometricPrimitiveMap::redrawAllPrimitives()
-// {
-//   {
-//     std::map< std::string, GeometricPoint* >::iterator it;
-//     it = point_map_.begin();
-//     while (it != point_map_.end())
-//     {
-//       std::size_t id = visual_id_map_.find(it->first)->second;
-//       visualizer_->update(id, it->second);
-//       ++it;
-//     }
-//   }
-
-
-
-//   {
-//     std::map< std::string, GeometricLine* >::iterator it;
-//     it = line_map_.begin();
-//     while (it != line_map_.end())
-//     {
-//       std::size_t id = visual_id_map_.find(it->first)->second;
-//       visualizer_->update(id, it->second);
-//       ++it;
-//     }
-//   }
-
-
-
-//   {
-//     std::map< std::string, GeometricPlane* >::iterator it;
-//     it = plane_map_.begin();
-//     while (it != plane_map_.end())
-//     {
-//       std::size_t id = visual_id_map_.find(it->first)->second;
-//       visualizer_->update(id, it->second);
-//       ++it;
-//     }
-//   }
-
-
-
-//   {
-//     std::map< std::string, GeometricBox* >::iterator it;
-//     it = box_map_.begin();
-//     while (it != box_map_.end())
-//     {
-//       std::size_t id = visual_id_map_.find(it->first)->second;
-//       visualizer_->update(id, it->second);
-//       ++it;
-//     }
-//   }
-
-
-
-//   {
-//     std::map< std::string, GeometricCylinder* >::iterator it;
-//     it = cylinder_map_.begin();
-//     while (it != cylinder_map_.end())
-//     {
-//       std::size_t id = visual_id_map_.find(it->first)->second;
-//       visualizer_->update(id, it->second);
-//       ++it;
-//     }
-//   }
-
-
-
-//   {
-//     std::map< std::string, GeometricSphere* >::iterator it;
-//     it = sphere_map_.begin();
-//     while (it != sphere_map_.end())
-//     {
-//       std::size_t id = visual_id_map_.find(it->first)->second;
-//       visualizer_->update(id, it->second);
-//       ++it;
-//     }
-//   }
-// }
-
 
 
 
@@ -477,6 +405,22 @@ GeometricPrimitiveMap::getGeometricPrimitive<GeometricSphere>
 {
   SphereMap::iterator it = sphere_map_.find(name);
   if (it  == sphere_map_.end())       return nullptr;
+  else                                return it->second;
+}
+
+
+
+
+
+template<>
+std::shared_ptr<GeometricFrame>
+GeometricPrimitiveMap::getGeometricPrimitive<GeometricFrame>
+(
+  const std::string& name
+)
+{
+  FrameMap::iterator it = frame_map_.find(name);
+  if (it  == frame_map_.end())        return nullptr;
   else                                return it->second;
 }
 
@@ -608,6 +552,27 @@ void GeometricPrimitiveMap::updateGeometricPrimitive<GeometricSphere>
 {
   SphereMap::iterator it = sphere_map_.find(name);
   if (it == sphere_map_.end()) 
+  {
+    printHiqpWarning("Couldn't update GeometricSphere with name '" + 
+      name + "'. The sphere was not found!");
+    return;
+  }
+  it->second->init(parameters);
+}
+
+
+
+
+
+template<>
+void GeometricPrimitiveMap::updateGeometricPrimitive<GeometricFrame>
+(
+  const std::string& name, 
+  const std::vector<double>& parameters
+)
+{
+  FrameMap::iterator it = frame_map_.find(name);
+  if (it == frame_map_.end()) 
   {
     printHiqpWarning("Couldn't update GeometricSphere with name '" + 
       name + "'. The sphere was not found!");

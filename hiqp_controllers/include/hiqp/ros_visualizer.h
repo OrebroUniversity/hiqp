@@ -40,6 +40,7 @@ namespace hiqp
 		int add(std::shared_ptr<GeometricBox> box);
 		int add(std::shared_ptr<GeometricCylinder> cylinder);
 		int add(std::shared_ptr<GeometricSphere> sphere);
+		int add(std::shared_ptr<GeometricFrame> frame);
 
 		void update(int id, std::shared_ptr<GeometricPoint> point);
 		void update(int id, std::shared_ptr<GeometricLine> line);
@@ -47,6 +48,7 @@ namespace hiqp
 		void update(int id, std::shared_ptr<GeometricBox> box);
 		void update(int id, std::shared_ptr<GeometricCylinder> cylinder);
 		void update(int id, std::shared_ptr<GeometricSphere> sphere);
+		void update(int id, std::shared_ptr<GeometricFrame> frame);
 
 		void remove(int id);
 
@@ -64,6 +66,7 @@ namespace hiqp
 		int apply(int id, std::shared_ptr<GeometricBox> box, int action);
 		int apply(int id, std::shared_ptr<GeometricCylinder> cylinder, int action);
 		int apply(int id, std::shared_ptr<GeometricSphere> sphere, int action);
+		int apply(int id, std::shared_ptr<GeometricFrame> frame, int action);
 
 		enum {ACTION_ADD = 0, ACTION_MODIFY = 1};
 
@@ -72,6 +75,8 @@ namespace hiqp
 		const double 						kPointRadius    = 0.002;
 		const double 						kLineRadius     = 0.0005;
 		const double 						kPlaneThickness = 0.001;
+		const double 						kFrameArrowRadius = 0.005;
+		const double 						kFrameArrowLength = 0.1;
 
 		ros::NodeHandle*        controller_nh_;
 
