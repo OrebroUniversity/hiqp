@@ -667,51 +667,47 @@ void ROSKinematicsController::loadJointLimitsFromParamServer()
 {
   XmlRpc::XmlRpcValue hiqp_preload_jnt_limits;
   if (!controller_nh_.getParam("hiqp_preload_jnt_limits", hiqp_preload_jnt_limits))
-    {
-      ROS_WARN_STREAM("No hiqp_preload_jnt_limits parameter found on "
-        << "the parameter server. No joint limits were loaded!");
-  }
-  else
   {
+    ROS_WARN_STREAM("No hiqp_preload_jnt_limits parameter found on "
+      << "the parameter server. No joint limits were loaded!");
+  } else {
     bool parsing_success = true;
-      for (int i=0; i<hiqp_preload_jnt_limits.size(); ++i)
-      {
-        try {
-          std::string link_frame = static_cast<std::string>(
-            hiqp_preload_jnt_limits[i]["link_frame"] );
+    for (int i=0; i<hiqp_preload_jnt_limits.size(); ++i) {
+      try {
+        std::string link_frame = static_cast<std::string>(
+          hiqp_preload_jnt_limits[i]["link_frame"] );
 
-          XmlRpc::XmlRpcValue& limitations = 
-            hiqp_preload_jnt_limits[i]["limitations"];
+        XmlRpc::XmlRpcValue& limitations = 
+        hiqp_preload_jnt_limits[i]["limitations"];
 
-          std::vector<std::string> parameters;
-          parameters.push_back(link_frame);
-          parameters.push_back( std::to_string(
-            static_cast<double>(limitations[0]) ) );
-          parameters.push_back( std::to_string(
-            static_cast<double>(limitations[1]) ) );
-          parameters.push_back( std::to_string(
-            static_cast<double>(limitations[2]) ) );
+        std::vector<std::string> def_params;
+        def_params.push_back("TDefJntLimits");
+        def_params.push_back(link_frame);
+        def_params.push_back( std::to_string(
+          static_cast<double>(limitations[1]) ) );
+        def_params.push_back( std::to_string(
+          static_cast<double>(limitations[2]) ) );
+        
+        std::vector<std::string> dyn_params;
+        dyn_params.push_back("TDynJntLimits");
+        dyn_params.push_back( std::to_string(
+          static_cast<double>(limitations[0]) ) );
 
-          task_manager_.setTask(link_frame + "_jntlimits", 1, true, true,
-            std::vector<std::string>(),
-            std::vector<std::string>(),
-            //parameters,
-            robot_state_ptr_);
-        }
-        catch (const XmlRpc::XmlRpcException& e)
-        {
-          ROS_WARN_STREAM("Error while loading "
-            << "hiqp_preload_jnt_limits parameter from the "
-            << "parameter server. XmlRcpException thrown with message: "
-            << e.getMessage());
-          parsing_success = false;
-          break;
-        }
+        task_manager_.setTask(link_frame + "_jntlimits", 1, true, true,
+          def_params, dyn_params, robot_state_ptr_);
+      } catch (const XmlRpc::XmlRpcException& e) {
+        ROS_WARN_STREAM("Error while loading "
+          << "hiqp_preload_jnt_limits parameter from the "
+          << "parameter server. XmlRcpException thrown with message: "
+          << e.getMessage());
+        parsing_success = false;
+        break;
+      }
     }
 
-      if (parsing_success)
-        ROS_INFO_STREAM("Loaded and initiated joint limit tasks from .yaml "
-          << "file successfully!");
+    if (parsing_success)
+      ROS_INFO_STREAM("Loaded and initiated joint limit tasks from .yaml "
+        << "file successfully!");
   }
 }
 
@@ -722,72 +718,47 @@ void ROSKinematicsController::loadJointLimitsFromParamServer()
 void ROSKinematicsController::loadGeometricPrimitivesFromParamServer()
 {
   XmlRpc::XmlRpcValue hiqp_preload_geometric_primitives;
-  if (!controller_nh_.getParam(
-    "hiqp_preload_geometric_primitives", 
-    hiqp_preload_geometric_primitives)
-    )
-    {
-      ROS_WARN_STREAM("No hiqp_preload_geometric_primitives parameter "
-        << "found on the parameter server. No geometric primitives "
-        << "were loaded!");
-  }
-  else
-  {
+  if (!controller_nh_.getParam("hiqp_preload_geometric_primitives", hiqp_preload_geometric_primitives)) {
+    ROS_WARN_STREAM("No hiqp_preload_geometric_primitives parameter "
+      << "found on the parameter server. No geometric primitives "
+      << "were loaded!");
+  } else {
     bool parsing_success = true;
-    for (int i=0; i<hiqp_preload_geometric_primitives.size(); ++i)
-      {
-        try {
-          std::string name = static_cast<std::string>(
-            hiqp_preload_geometric_primitives[i]["name"] );
+    for (int i=0; i<hiqp_preload_geometric_primitives.size(); ++i) {
+      try {
+        std::string name = static_cast<std::string>(hiqp_preload_geometric_primitives[i]["name"] );
+        std::string type = static_cast<std::string>(hiqp_preload_geometric_primitives[i]["type"] );
+        std::string frame_id = static_cast<std::string>(hiqp_preload_geometric_primitives[i]["frame_id"] );
+        bool visible = static_cast<bool>(hiqp_preload_geometric_primitives[i]["visible"] );
 
-          std::string type = static_cast<std::string>(
-            hiqp_preload_geometric_primitives[i]["type"] );
+        XmlRpc::XmlRpcValue& color_xml = hiqp_preload_geometric_primitives[i]["color"];
+        XmlRpc::XmlRpcValue& parameters_xml = hiqp_preload_geometric_primitives[i]["parameters"];
 
-          std::string frame_id = static_cast<std::string>(
-            hiqp_preload_geometric_primitives[i]["frame_id"] );
+        std::vector<double> color;
+        color.push_back( static_cast<double>(color_xml[0]) );
+        color.push_back( static_cast<double>(color_xml[1]) );
+        color.push_back( static_cast<double>(color_xml[2]) );
+        color.push_back( static_cast<double>(color_xml[3]) );
 
-          bool visible = static_cast<bool>(
-            hiqp_preload_geometric_primitives[i]["visible"] );
-
-          XmlRpc::XmlRpcValue& color_xml = 
-            hiqp_preload_geometric_primitives[i]["color"];
-
-          XmlRpc::XmlRpcValue& parameters_xml = 
-            hiqp_preload_geometric_primitives[i]["parameters"];
-
-          std::vector<double> color;
-          color.push_back( static_cast<double>(color_xml[0]) );
-          color.push_back( static_cast<double>(color_xml[1]) );
-          color.push_back( static_cast<double>(color_xml[2]) );
-          color.push_back( static_cast<double>(color_xml[3]) );
-
-          std::vector<double> parameters;
-          for (int j=0; j<parameters_xml.size(); ++j)
-          {
-            parameters.push_back( 
-              static_cast<double>(parameters_xml[j]) 
-            );
-          }
-
-          task_manager_.addGeometricPrimitive(
-            name, type, frame_id, visible, color, parameters
-          );
-
+        std::vector<double> parameters;
+        for (int j=0; j<parameters_xml.size(); ++j){
+          parameters.push_back(static_cast<double>(parameters_xml[j]));
         }
-        catch (const XmlRpc::XmlRpcException& e)
-        {
-          ROS_WARN_STREAM("Error while loading "
-            << "hiqp_preload_geometric_primitives parameter from the "
-            << "parameter server. XmlRcpException thrown with message: "
-            << e.getMessage());
-          parsing_success = false;
-          break;
-        }
+
+        task_manager_.addGeometricPrimitive(name, type, frame_id, visible, color, parameters);
+      } catch (const XmlRpc::XmlRpcException& e) {
+        ROS_WARN_STREAM("Error while loading "
+          << "hiqp_preload_geometric_primitives parameter from the "
+          << "parameter server. XmlRcpException thrown with message: "
+          << e.getMessage());
+        parsing_success = false;
+        break;
       }
+    }
 
-      if (parsing_success)
-        ROS_INFO_STREAM("Loaded and initiated geometric primitives from "
-          << ".yaml file successfully!");
+    if (parsing_success)
+      ROS_INFO_STREAM("Loaded and initiated geometric primitives from "
+        << ".yaml file successfully!");
   }
 }
 
@@ -795,96 +766,47 @@ void ROSKinematicsController::loadGeometricPrimitivesFromParamServer()
 
 
 
-void ROSKinematicsController::loadTasksFromParamServer()
-{
+void ROSKinematicsController::loadTasksFromParamServer() {
   XmlRpc::XmlRpcValue hiqp_preload_tasks;
-  if (!controller_nh_.getParam("hiqp_preload_tasks", hiqp_preload_tasks))
-    {
-      ROS_WARN_STREAM("No hiqp_preload_tasks parameter found on "
-        << "the parameter server. No joint limits were loaded!");
-  }
-  else
-  {
+  if (!controller_nh_.getParam("hiqp_preload_tasks", hiqp_preload_tasks)) {
+    ROS_WARN_STREAM("No hiqp_preload_tasks parameter found on "
+      << "the parameter server. No joint limits were loaded!");
+  } else {
     bool parsing_success = true;
-      for (int i=0; i<hiqp_preload_tasks.size(); ++i)
-      {
-        try {
+    for (int i=0; i<hiqp_preload_tasks.size(); ++i) {
+      try {
 
-          std::string name = static_cast<std::string>(
-            hiqp_preload_tasks[i]["name"] );
+        std::string name = static_cast<std::string>( hiqp_preload_tasks[i]["name"] );
 
-          std::string type = static_cast<std::string>(
-            hiqp_preload_tasks[i]["type"] );
-
-          XmlRpc::XmlRpcValue& behaviour_xml = 
-            hiqp_preload_tasks[i]["behaviour"];
-
-          std::vector<std::string> behaviour;
-
-          for (int j=0; j<behaviour_xml.size(); ++j)
-          {
-            behaviour.push_back(
-              static_cast<std::string>( behaviour_xml[j] ));
-          }
-
-          // std::cout << "behaviour_xml.size() = " << behaviour_xml.size() << "\n";
-          // std::cout << "behaviour_xml[1] = " << static_cast<std::string>(behaviour_xml[1]) << "\n";
-          // std::cout << "behaviour = ";
-          // for (auto&& s : behaviour) std::cout << s << ", ";
-          // std::cout << "\n";
-
-          unsigned int priority = static_cast<int>(
-            hiqp_preload_tasks[i]["priority"] );
-
-          int visilibity__ = static_cast<int>(
-            hiqp_preload_tasks[i]["visibility"] );
-
-          bool visibility = (visilibity__ == 0 ? false : true);
-
-          int active__ = static_cast<int>(
-            hiqp_preload_tasks[i]["active"] );
-
-          bool active = (active__ == 0 ? false : true);
-
-          XmlRpc::XmlRpcValue& parameters_xml = 
-            hiqp_preload_tasks[i]["parameters"];
-
-          std::vector<std::string> parameters;
-
-          for (int j=0; j<parameters_xml.size(); ++j)
-          {
-            parameters.push_back(
-              static_cast<std::string>( parameters_xml[j] ));
-          }
-
-          // std::cout << "parameters_xml.size() = " << parameters_xml.size() << "\n";
-          // std::cout << "parameters_xml[2] = " << static_cast<std::string>(parameters_xml[2]) << "\n";
-          // std::cout << "parameters = ";
-          // for (auto&& s : parameters) std::cout << s << ", ";
-          // std::cout << "\n";
-          
-          task_manager_.setTask(name,
-                                priority,
-                                visibility,
-                                active,
-                                parameters,
-                                behaviour,
-                                robot_state_ptr_);
-
+        XmlRpc::XmlRpcValue& def_params_xml = hiqp_preload_tasks[i]["def_params"];
+        std::vector<std::string> def_params;
+        for (int j=0; j<def_params_xml.size(); ++j) {
+          def_params.push_back( static_cast<std::string>( def_params_xml[j] ));
         }
-        catch (const XmlRpc::XmlRpcException& e)
-        {
-          ROS_WARN_STREAM("Error while loading "
-            << "hiqp_preload_tasks parameter from the "
-            << "parameter server. XmlRcpException thrown with message: "
-            << e.getMessage());
-          parsing_success = false;
-          break;
+
+        XmlRpc::XmlRpcValue& dyn_params_xml = hiqp_preload_tasks[i]["dyn_params"];
+        std::vector<std::string> dyn_params;
+        for (int j=0; j<dyn_params_xml.size(); ++j) {
+          dyn_params.push_back( static_cast<std::string>( dyn_params_xml[j] ));
         }
+
+        unsigned int priority = static_cast<int>( hiqp_preload_tasks[i]["priority"] );
+        bool visible = static_cast<bool>( hiqp_preload_tasks[i]["visible"] );
+        bool active = static_cast<bool>( hiqp_preload_tasks[i]["active"] );
+        
+        task_manager_.setTask(name, priority, visible, active, def_params, dyn_params, robot_state_ptr_);
+      } catch (const XmlRpc::XmlRpcException& e) {
+        ROS_WARN_STREAM("Error while loading "
+          << "hiqp_preload_tasks parameter from the "
+          << "parameter server. XmlRcpException thrown with message: "
+          << e.getMessage());
+        parsing_success = false;
+        break;
+      }
     }
 
-      if (parsing_success)
-        ROS_INFO("Loaded and initiated tasks from .yaml file successfully!");
+    if (parsing_success)
+      ROS_INFO("Loaded and initiated tasks from .yaml file successfully!");
   }
 }
 
