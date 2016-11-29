@@ -62,12 +62,25 @@ namespace geometric_primitives
 
       q_ = Eigen::Quaternion<double>(w, x, y, z);
 
+      Eigen::Vector3d ax = q_._transformVector(Eigen::Vector3d(1,0,0));
+      axis_x_ = KDL::Vector(ax(0), ax(1), ax(2));
+
+      Eigen::Vector3d ay = q_._transformVector(Eigen::Vector3d(0,1,0));
+      axis_y_ = KDL::Vector(ay(0), ay(1), ay(2));
+
+      Eigen::Vector3d az = q_._transformVector(Eigen::Vector3d(0,1,0));
+      axis_z_ = KDL::Vector(az(0), az(1), az(2));
+
       return 0;
     }
 
     inline const KDL::Vector& getCenterKDL() { return kdl_c_; }
     inline const Eigen::Vector3d& getCenterEigen() { return eigen_c_; }
     inline const Eigen::Quaternion<double>& getQuaternionEigen() { return q_; }
+
+    inline const KDL::Vector& getAxisXKDL() { return axis_x_; }
+    inline const KDL::Vector& getAxisYKDL() { return axis_y_; }
+    inline const KDL::Vector& getAxisZKDL() { return axis_z_; }
 
     inline double getX() { return kdl_c_(0); }
     inline double getY() { return kdl_c_(1); }
@@ -81,6 +94,10 @@ namespace geometric_primitives
   protected:
     KDL::Vector        kdl_c_;
     Eigen::Vector3d    eigen_c_;
+
+    KDL::Vector        axis_x_;
+    KDL::Vector        axis_y_;
+    KDL::Vector        axis_z_;
 
     Eigen::Quaternion<double> q_;
 

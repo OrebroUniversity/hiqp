@@ -41,7 +41,7 @@ namespace hiqp {
   using tasks::DynamicsJntLimits;
   using tasks::DynamicsMinimalJerk;
 
-  using geometric_primitives::GeometricPoint;
+  //using geometric_primitives::GeometricPoint;
 
   Task::Task(std::shared_ptr<GeometricPrimitiveMap> geom_prim_map,
              std::shared_ptr<Visualizer> visualizer,
@@ -118,6 +118,8 @@ namespace hiqp {
         def_ = std::make_shared< TaskGeometricProjection<GeometricSphere, GeometricPlane> >(geom_prim_map_, visualizer_);
       } else if (prim_type1.compare("sphere") == 0 && prim_type2.compare("sphere") == 0) {
         def_ = std::make_shared< TaskGeometricProjection<GeometricSphere, GeometricSphere> >(geom_prim_map_, visualizer_);
+      } else if (prim_type1.compare("frame") == 0 && prim_type2.compare("frame") == 0) {
+        def_ = std::make_shared< TaskGeometricProjection<GeometricFrame, GeometricFrame> >(geom_prim_map_, visualizer_);
       } else {
         printHiqpWarning("TDefGeomProj does not support primitive combination of types '" + prim_type1 + "' and '" + prim_type2 + "'!");
         return -1;
@@ -133,6 +135,8 @@ namespace hiqp {
         def_ = std::make_shared< TaskGeometricAlignment<GeometricLine, GeometricCylinder> >(geom_prim_map_, visualizer_);
       } else if (prim_type1.compare("line") == 0 && prim_type2.compare("sphere") == 0) {
         def_ = std::make_shared< TaskGeometricAlignment<GeometricLine, GeometricSphere> >(geom_prim_map_, visualizer_);
+      } else if (prim_type1.compare("frame") == 0 && prim_type2.compare("frame") == 0) {
+        def_ = std::make_shared< TaskGeometricAlignment<GeometricFrame, GeometricFrame> >(geom_prim_map_, visualizer_);
       } else {
         printHiqpWarning("TDefGeomAlign does not support primitive combination of types '" + prim_type1 + "' and '" + prim_type2 + "'!");
         return -1;

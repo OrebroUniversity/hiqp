@@ -31,6 +31,7 @@
 #include <hiqp/geometric_primitives/geometric_box.h>
 #include <hiqp/geometric_primitives/geometric_cylinder.h>
 #include <hiqp/geometric_primitives/geometric_sphere.h>
+#include <hiqp/geometric_primitives/geometric_frame.h>
 
 #include <hiqp/hiqp_utils.h>
 
@@ -467,6 +468,47 @@ int TaskGeometricProjection<GeometricSphere, GeometricSphere>::project
 	{
 		KDL::Vector Jp2p1 = getVelocityJacobianForTwoPoints(p1__, p2__, q_nr);
 
+		J_(0, q_nr) = 2 * dot(d, Jp2p1);
+	}
+	
+	return 0;
+}
+
+
+
+
+
+
+
+///////////////////////////////////////////////////////////////////////////////
+//  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  
+// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
+//-  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
+///////////////////////////////////////////////////////////////////////////////
+//
+//                                 F R A M E
+//
+///////////////////////////////////////////////////////////////////////////////
+
+template<>
+int TaskGeometricProjection<GeometricFrame, GeometricFrame>::project
+(
+	std::shared_ptr<GeometricFrame> frame1, 
+	std::shared_ptr<GeometricFrame> frame2
+)
+{
+	KDL::Vector p1__ = pose_a_.M * frame1->getCenterKDL();
+	KDL::Vector p1 = pose_a_.p + p1__;
+
+	KDL::Vector p2__ = pose_b_.M * frame2->getCenterKDL();
+	KDL::Vector p2 = pose_b_.p + p2__;
+
+	KDL::Vector d = p2 - p1;
+	e_(0) = KDL::dot(d, d);
+
+	// The task jacobian is J = 2 (p2-p1)^T (Jp2 - Jp1)
+	for (int q_nr = 0; q_nr < jacobian_a_.columns(); ++q_nr) {
+		KDL::Vector Jp2p1 = getVelocityJacobianForTwoPoints(p1__, p2__, q_nr);
 		J_(0, q_nr) = 2 * dot(d, Jp2p1);
 	}
 	

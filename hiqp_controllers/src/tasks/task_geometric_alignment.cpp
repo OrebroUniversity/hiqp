@@ -31,6 +31,7 @@
 #include <hiqp/geometric_primitives/geometric_box.h>
 #include <hiqp/geometric_primitives/geometric_cylinder.h>
 #include <hiqp/geometric_primitives/geometric_sphere.h>
+#include <hiqp/geometric_primitives/geometric_frame.h>
 
 #include <hiqp/hiqp_utils.h>
 
@@ -127,6 +128,41 @@ int TaskGeometricAlignment<GeometricLine, GeometricSphere>::align
 	v2.Normalize();
 
 	return alignVectors(v1, v2);
+}
+
+
+
+
+
+template<>
+int TaskGeometricAlignment<GeometricFrame, GeometricFrame>::align
+(
+	std::shared_ptr<GeometricFrame> frame1,
+	std::shared_ptr<GeometricFrame> frame2
+)
+{
+	KDL::Vector ax1 = pose_a_.M * frame1->getAxisXKDL();
+	KDL::Vector ax2 = pose_b_.M * frame2->getAxisXKDL();
+	KDL::Vector ay1 = pose_a_.M * frame1->getAxisYKDL();
+	KDL::Vector ay2 = pose_b_.M * frame2->getAxisYKDL();
+
+	double d1 = KDL::dot(ax1, ax2);
+	double d2 = KDL::dot(ay1, ay2);
+
+	e_(0) = d1 - std::cos(delta_);
+	e_(1) = d2 - std::cos(delta_);
+
+  KDL::Vector v1 = ax1 * ax2;
+  KDL::Vector v2 = ay1 * ay2;
+
+  for (int q_nr = 0; q_nr < jacobian_a_.columns(); ++q_nr) {
+  	KDL::Vector Ja = jacobian_a_.getColumn(q_nr).rot;
+    KDL::Vector Jb = jacobian_b_.getColumn(q_nr).rot;
+    J_(0, q_nr) = KDL::dot( v1, (Ja - Jb) );
+    J_(1, q_nr) = KDL::dot( v2, (Ja - Jb) );
+  }
+
+  return 0;
 }
 
 
