@@ -482,9 +482,9 @@ namespace hiqp
     marker.scale.x = kFrameArrowLength;
     marker.scale.y = 2*kFrameArrowRadius;
     marker.scale.z = 2*kFrameArrowRadius;
-    marker.color.r = 0.5*frame->getRedComponent() + 0.5;
-    marker.color.g = 0.5*frame->getGreenComponent();
-    marker.color.b = 0.5*frame->getBlueComponent();
+    marker.color.r = 1.0;//0.5*frame->getRedComponent() + 0.5;
+    marker.color.g = 0.0;//0.5*frame->getGreenComponent();
+    marker.color.b = 0.0;//0.5*frame->getBlueComponent();
     marker.color.a = frame->getAlphaComponent();
     marker.lifetime = ros::Duration(0);
     marker_array.markers.push_back(marker);
@@ -501,16 +501,18 @@ namespace hiqp
     marker.pose.position.x = frame->getX();
     marker.pose.position.y = frame->getY();
     marker.pose.position.z = frame->getZ();
-    marker.pose.orientation.x = frame->getQX();
-    marker.pose.orientation.y = frame->getQY();
-    marker.pose.orientation.z = frame->getQZ();
-    marker.pose.orientation.w = frame->getQW();
+    Eigen::Quaternion<double> rotq(0.70710678118, 0, 0, 0.70710678118);
+    Eigen::Quaternion<double> resq = frame->getQuaternionEigen()*rotq;
+    marker.pose.orientation.x = resq.x();
+    marker.pose.orientation.y = resq.y();
+    marker.pose.orientation.z = resq.z();
+    marker.pose.orientation.w = resq.w();
     marker.scale.x = kFrameArrowLength;
     marker.scale.y = 2*kFrameArrowRadius;
     marker.scale.z = 2*kFrameArrowRadius;
-    marker.color.r = 0.5*frame->getRedComponent();
-    marker.color.g = 0.5*frame->getGreenComponent() + 0.5;
-    marker.color.b = 0.5*frame->getBlueComponent();
+    marker.color.r = 0.0;//0.5*frame->getRedComponent() + 0.5;
+    marker.color.g = 1.0;//0.5*frame->getGreenComponent();
+    marker.color.b = 0.0;//0.5*frame->getBlueComponent();
     marker.color.a = frame->getAlphaComponent();
     marker.lifetime = ros::Duration(0);
     marker_array.markers.push_back(marker);
@@ -527,16 +529,18 @@ namespace hiqp
     marker.pose.position.x = frame->getX();
     marker.pose.position.y = frame->getY();
     marker.pose.position.z = frame->getZ();
-    marker.pose.orientation.x = frame->getQX() + 0.7071;
-    marker.pose.orientation.y = frame->getQY();
-    marker.pose.orientation.z = frame->getQZ() + 0.7071;
-    marker.pose.orientation.w = frame->getQW();
+    Eigen::Quaternion<double> rotq(0.70710678118, 0, -0.70710678118, 0);
+    Eigen::Quaternion<double> resq = frame->getQuaternionEigen()*rotq;
+    marker.pose.orientation.x = resq.x();
+    marker.pose.orientation.y = resq.y();
+    marker.pose.orientation.z = resq.z();
+    marker.pose.orientation.w = resq.w();
     marker.scale.x = kFrameArrowLength;
     marker.scale.y = 2*kFrameArrowRadius;
     marker.scale.z = 2*kFrameArrowRadius;
-    marker.color.r = 0.5*frame->getRedComponent();
-    marker.color.g = 0.5*frame->getGreenComponent();
-    marker.color.b = 0.5*frame->getBlueComponent() + 0.5;
+    marker.color.r = 0.0;//0.5*frame->getRedComponent() + 0.5;
+    marker.color.g = 0.0;//0.5*frame->getGreenComponent();
+    marker.color.b = 1.0;//0.5*frame->getBlueComponent();
     marker.color.a = frame->getAlphaComponent();
     marker.lifetime = ros::Duration(0);
     marker_array.markers.push_back(marker);
@@ -637,6 +641,18 @@ int ROSVisualizer::add
 
 
 
+int ROSVisualizer::add
+(
+  std::shared_ptr<GeometricFrame> frame
+  )
+{
+  return apply(0, frame, ACTION_ADD);
+}
+
+
+
+
+
 ////////////////////////////////////////////////////////////////////////////////
 // 																			  //
 //								U P D A T E                                   //
@@ -715,6 +731,18 @@ void ROSVisualizer::update
   )
 {
 	apply(id, sphere, ACTION_MODIFY);
+}
+
+
+
+
+void ROSVisualizer::update
+(
+  int id, 
+  std::shared_ptr<GeometricFrame> frame
+  )
+{
+  apply(id, frame, ACTION_MODIFY);
 }
 
 

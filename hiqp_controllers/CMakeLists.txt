@@ -22,7 +22,7 @@ cmake_minimum_required(VERSION 2.8.6)
 project(hiqp_controllers)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake_modules)
-set(CMAKE_CXX_FLAGS "-O3 -std=c++11")
+set(CMAKE_CXX_FLAGS "-O3 -std=c++11 -Wl,-z,defs")
 
 set(GUROBI_INCLUDE_DIR "$ENV{GUROBI_HOME}/include") 
 set(GUROBI_LIB_DIR "$ENV{GUROBI_HOME}/lib")

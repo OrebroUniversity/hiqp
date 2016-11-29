@@ -75,8 +75,8 @@ namespace hiqp
 		const double 						kPointRadius    = 0.002;
 		const double 						kLineRadius     = 0.0005;
 		const double 						kPlaneThickness = 0.001;
-		const double 						kFrameArrowRadius = 0.005;
-		const double 						kFrameArrowLength = 0.1;
+		const double 						kFrameArrowRadius = 0.0017;
+		const double 						kFrameArrowLength = 0.04;
 
 		ros::NodeHandle*        controller_nh_;
 
