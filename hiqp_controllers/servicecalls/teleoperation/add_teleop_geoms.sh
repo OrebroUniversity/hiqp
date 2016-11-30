@@ -12,4 +12,4 @@ type: 'frame'
 frame_id: 'gripper_r_base'
 visible: true
 color: [0, 0, 0, 1]
-parameters: [0, 0, 0.1, 1, 0, 0, 0]"
+parameters: [0, 0, 0, 1, 0, 0, 0]"

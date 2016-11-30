@@ -16,4 +16,4 @@ priority: 4
 visible: 1
 active: 1
 def_params: ['TDefGeomProj', 'frame', 'frame', 'teleop_wintracker_frame = teleop_gripper_frame']
-dyn_params: ['TDynFirstOrder', '1.0']"
+dyn_params: ['TDynFirstOrder', '10.0']"
