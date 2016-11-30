@@ -26,7 +26,7 @@
 #include <hiqp/robot_state.h>
 #include <hiqp/geometric_primitives/geometric_primitive_map.h>
 #include <hiqp/solvers/casadi_solver.h>
-
+#include <hiqp/solvers/gurobi_solver.h>
 #include <kdl/tree.hpp>
 #include <kdl/jntarrayvel.hpp>
 

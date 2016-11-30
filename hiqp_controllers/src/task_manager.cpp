@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <iomanip> // std::setw
-
+#include <ros/console.h>
 #include <hiqp/task_manager.h>
 #include <hiqp/hiqp_utils.h>
 //#include <hiqp/tasks/task_geometric_projection.h>
@@ -28,7 +28,8 @@ namespace hiqp {
 TaskManager::TaskManager(std::shared_ptr<Visualizer> visualizer)
 : visualizer_(visualizer) {
   geometric_primitive_map_ = std::make_shared<GeometricPrimitiveMap>();
-  solver_ = new CasADiSolver();
+
+  solver_ = new GurobiSolver();
 }
 
 TaskManager::~TaskManager() noexcept {
@@ -60,7 +61,12 @@ bool TaskManager::getVelocityControls(RobotStatePtr robot_state,
     }
   }
 
-  solver_->solve(controls);
+  if(!solver_->solve(controls))
+    {
+      ROS_WARN("Unable to solve HQP - setting solution to zero!");
+       for (int i=0; i<controls.size(); ++i)
+      controls.at(i) = 0;
+   }
 
   return true;
 }
@@ -75,6 +81,7 @@ void TaskManager::getTaskMonitoringData(std::vector<TaskMonitoringData>& data) {
   }
 }
 
+/// \bug Adding consecutive tasks with the same name results in a segfault
 int TaskManager::setTask(const std::string& task_name,
                          unsigned int priority,
                          bool visible,
@@ -88,7 +95,6 @@ int TaskManager::setTask(const std::string& task_name,
   if (it == task_map_.end()) {
     task = std::make_shared<Task>(geometric_primitive_map_, visualizer_, n_controls_);
   } else {
-    task = it->second;
   }
 
   task->setTaskName(task_name);

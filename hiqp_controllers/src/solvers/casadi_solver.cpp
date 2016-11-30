@@ -42,7 +42,7 @@ std::ostream& operator<<(std::ostream& os, const HiQPStage& stage)
 
 const double kDampingFactor = 1e-3; // dont set to zero!
 
-int CasADiSolver::solve
+bool CasADiSolver::solve
 (
 	std::vector<double>& solution
 )

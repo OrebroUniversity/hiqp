@@ -280,7 +280,7 @@ bool ROSKinematicsController::addGeometricPrimitive
 
 
 
-
+/// \bug Removing primitive doesn't remove visualization
 bool ROSKinematicsController::removeGeometricPrimitive
 (
     hiqp_msgs_srvs::RemoveGeometricPrimitive::Request& req, 
@@ -665,7 +665,7 @@ int ROSKinematicsController::loadUrdfAndSetupKdlTree()
 
 
 
-
+/// \bug Having both, joint limits and avoidance tasks at the highest hierarchy level can cause an infeasible problem (e.g., via starting with yumi_hiqp_preload.yaml tasks)
 void ROSKinematicsController::loadJointLimitsFromParamServer()
 {
   XmlRpc::XmlRpcValue hiqp_preload_jnt_limits;

@@ -59,7 +59,7 @@ add_library(${PROJECT_NAME} src/hiqp_utils.cpp
                             src/geometric_primitives/geometric_primitive_visualizer.cpp
 
                             src/solvers/casadi_solver.cpp
-
+                            src/solvers/gurobi_solver.cpp
                             src/tasks/dynamics_first_order.cpp
                             src/tasks/dynamics_jnt_limits.cpp
                             src/tasks/dynamics_minimal_jerk.cpp
