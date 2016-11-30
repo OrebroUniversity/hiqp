@@ -447,7 +447,7 @@ void ROSKinematicsController::addAllTopicSubscriptions()
   
   
   topic_subscriber_.addSubscription<geometry_msgs::PoseStamped>(
-    controller_nh_, "/wintracker/pose", 100
+    controller_nh_, "/wintracker_rebase/pose", 100
   );
 
   //topic_subscriber_.addSubscription<hiqp_msgs_srvs::Vector3d>(
