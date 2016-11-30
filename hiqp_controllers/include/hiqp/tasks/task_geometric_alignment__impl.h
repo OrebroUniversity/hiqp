@@ -38,6 +38,9 @@ namespace tasks
     if (parameters.size() != 5)
       return -1;
 
+    std::string prim_type1 = parameters.at(1);
+    std::string prim_type2 = parameters.at(2);
+
     std::stringstream ss(parameters.at(3));
     std::vector<std::string> args(
       std::istream_iterator<std::string>{ss},
@@ -46,9 +49,14 @@ namespace tasks
     if (args.size() != 3)
       return -2;
 
-    e_.resize(1);
-    J_.resize(1, n_controls);
-    performance_measures_.resize(1);
+    unsigned int n_task_dimensions = 1;
+    if (prim_type1.compare("frame") == 0 && prim_type2.compare("frame") == 0) {
+      n_task_dimensions = 2;
+    }
+    
+    e_.resize(n_task_dimensions);
+    J_.resize(n_task_dimensions, n_controls);
+    performance_measures_.resize(n_task_dimensions);
 
     fk_solver_pos_ = std::make_shared<KDL::TreeFkSolverPos_recursive>(robot_state->kdl_tree_);
     fk_solver_jac_ = std::make_shared<KDL::TreeJntToJacSolver>(robot_state->kdl_tree_);
@@ -74,7 +82,7 @@ namespace tasks
     }
 
     delta_ = std::stod( parameters.at(4) );
-    task_types_.insert(task_types_.begin(), 1, sign);
+    task_types_.insert(task_types_.begin(), n_task_dimensions, sign);
     return 0;
   }
 

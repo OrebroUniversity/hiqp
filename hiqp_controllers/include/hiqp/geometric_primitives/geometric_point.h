@@ -14,54 +14,30 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-/*
- * \file   geometric_point.h
- * \author Marcus A Johansson (marcus.adam.johansson@gmail.com)
- * \date   July, 2016
- * \brief  Brief description of file.
- *
- * Detailed description of file.
- */
-
 #ifndef HIQP_GEOMETRIC_POINT_H
 #define HIQP_GEOMETRIC_POINT_H
 
-// HiQP Includes
 #include <hiqp/geometric_primitives/geometric_primitive.h>
 #include <hiqp/hiqp_utils.h>
 
-// Orocos KDL Includes
 #include <kdl/frames.hpp>
 
-// Eigen Includes
 #include <Eigen/Dense>
-
-
-
-
 
 namespace hiqp
 {
 namespace geometric_primitives
 {
 
-/*!
- * \class GeometricPoint
- * \brief Parameters: [x, y, z]
- */ 
-class GeometricPoint : public GeometricPrimitive
-{
+/*! \brief Parameters: [x, y, z]
+ *  \author Marcus A Johansson */ 
+class GeometricPoint : public GeometricPrimitive {
 public:
-
-  GeometricPoint
-  (
-    const std::string& name,
-    const std::string& frame_id,
-    bool visible,
-    const std::vector<double>& color
-  )
-  : GeometricPrimitive(name, frame_id, visible, color)
-  {}
+  GeometricPoint(const std::string& name,
+                 const std::string& frame_id,
+                 bool visible,
+                 const std::vector<double>& color)
+  : GeometricPrimitive(name, frame_id, visible, color) {}
   
   ~GeometricPoint() noexcept {}
 

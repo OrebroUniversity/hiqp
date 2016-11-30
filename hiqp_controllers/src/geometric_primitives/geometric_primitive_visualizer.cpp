@@ -99,6 +99,19 @@ namespace geometric_primitives
     }
   }
 
+  void GeometricPrimitiveVisualizer::visit
+  (
+    std::shared_ptr<GeometricFrame> frame
+  ) const
+  {
+    int id = frame->getVisualId();
+    if (id < 0) {
+      frame->setVisualId(visualizer_->add(frame));
+    } else {
+      visualizer_->update(id, frame);
+    }
+  }
+
 } // snamespace geometric_primitives
 
 } // namespace hiqp

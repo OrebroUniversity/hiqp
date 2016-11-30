@@ -40,6 +40,7 @@ public:
   void visit(std::shared_ptr<GeometricBox> box) const;
   void visit(std::shared_ptr<GeometricCylinder> cylinder) const;
   void visit(std::shared_ptr<GeometricSphere> sphere) const;
+  void visit(std::shared_ptr<GeometricFrame> frame) const;
 
 private:
   GeometricPrimitiveVisualizer(const GeometricPrimitiveVisualizer& other) = delete;

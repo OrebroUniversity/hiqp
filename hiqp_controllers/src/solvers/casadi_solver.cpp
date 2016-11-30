@@ -49,7 +49,7 @@ int CasADiSolver::solve
 {
 	// StageMapIterator it2 = stages_map_.begin();
 	
-  // std::cout << "--- casadi solve ---\n";
+ //  std::cout << "--- casadi solve ---\n";
 	// while (it2 != stages_map_.end())
 	// {
 	// 	std::cout << *it2;

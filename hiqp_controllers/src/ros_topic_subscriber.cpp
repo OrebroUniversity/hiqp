@@ -14,20 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
-
-/*!
- * \file   ros_topic_subscriber.cpp
- * \Author Marcus A Johansson (marcus.adam.johansson@gmail.com)
- * \date   July, 2016
- * \brief  Brief description of file.
- *
- * Detailed description of file.
- */
-
-
-// HiQP Includes
 #include <hiqp/ros_topic_subscriber.h>
 #include <hiqp/geometric_primitives/geometric_point.h>
 #include <hiqp/geometric_primitives/geometric_cylinder.h>
@@ -35,51 +21,62 @@
 #include <hiqp_msgs_srvs/Vector3d.h>
 #include <hiqp_msgs_srvs/StringArray.h>
 
-// STL Includes
 #include <iostream>
 #include <string>
 #include <vector>
 
-// Wintracker Includes
 #include <geometry_msgs/PoseStamped.h>
-
-
-
 
 namespace hiqp
 {
 
-
-
-
-
 template<>
-void ROSTopicSubscriber::topicCallback<geometry_msgs::PoseStamped>
-(
-	const geometry_msgs::PoseStamped& msg
-)
-{
-	std::vector<double> point_params;
-	point_params.push_back(msg.pose.position.x);
-	point_params.push_back(msg.pose.position.y);
-	point_params.push_back(msg.pose.position.z);
-	task_manager_->getGeometricPrimitiveMap()
-	             ->updateGeometricPrimitive<GeometricPoint>("teleop_point", point_params);
+void ROSTopicSubscriber::topicCallback<geometry_msgs::PoseStamped>(const geometry_msgs::PoseStamped& msg) {
 
-	point_params.push_back(0.03);
+	double x = msg.pose.position.x;
+	if (x > 1.8) x = 1.8;
+	if (x < 0) x = 0;
+
+	double y = msg.pose.position.y;
+	if (y > 1.8) y = 1.8;
+	if (y < -1.8) y = -1.8;
+
+	double z = msg.pose.position.z;
+	if (z > 2.8) z = 2.8;
+	if (z < -0.5) z = -0.5;
+
+	std::vector<double> wintracker_frame_params;
+	wintracker_frame_params.push_back(x);
+	wintracker_frame_params.push_back(y);
+	wintracker_frame_params.push_back(z);
+	wintracker_frame_params.push_back(msg.pose.orientation.w);
+	wintracker_frame_params.push_back(msg.pose.orientation.x);
+	wintracker_frame_params.push_back(msg.pose.orientation.y);
+	wintracker_frame_params.push_back(msg.pose.orientation.z);
 	task_manager_->getGeometricPrimitiveMap()
-	             ->updateGeometricPrimitive<GeometricSphere>("teleop_sphere", point_params);
-	
-	std::cout << "pos = (" 
-		<< msg.pose.position.x << ", "
-		<< msg.pose.position.y << ", "
-		<< msg.pose.position.z << ")\n"
-		<< "rot = ("
-		<< msg.pose.orientation.x << ", "
-		<< msg.pose.orientation.y << ", "
-		<< msg.pose.orientation.z << ", "
-		<< msg.pose.orientation.w << ")\n\n";
-		
+	             ->updateGeometricPrimitive<GeometricFrame>("teleop_wintracker_frame", wintracker_frame_params);
+
+
+
+	// BELOW IS OLD TELEOP CODE
+	// std::vector<double> point_params;
+	// point_params.push_back(msg.pose.position.x);
+	// point_params.push_back(msg.pose.position.y);
+	// point_params.push_back(msg.pose.position.z);
+	// task_manager_->getGeometricPrimitiveMap()
+	//              ->updateGeometricPrimitive<GeometricPoint>("teleop_point", point_params);
+	// point_params.push_back(0.03);
+	// task_manager_->getGeometricPrimitiveMap()
+	//              ->updateGeometricPrimitive<GeometricSphere>("teleop_sphere", point_params);
+	// std::cout << "pos = (" 
+	// 	<< msg.pose.position.x << ", "
+	// 	<< msg.pose.position.y << ", "
+	// 	<< msg.pose.position.z << ")\n"
+	// 	<< "rot = ("
+	// 	<< msg.pose.orientation.x << ", "
+	// 	<< msg.pose.orientation.y << ", "
+	// 	<< msg.pose.orientation.z << ", "
+	// 	<< msg.pose.orientation.w << ")\n\n";
 }
 
 
