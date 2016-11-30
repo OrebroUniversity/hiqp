@@ -61,24 +61,24 @@ namespace hiqp {
     void monitor() {if (def_) def_->monitor(); if (dyn_) dyn_->monitor();}
 
     /*! \brief Returns the performance value as a vector. */
-    Eigen::VectorXd getValue()      
+    Eigen::VectorXd getValue() const      
       { if (def_) return def_->e_; else return Eigen::VectorXd(); }
 
     /*! \brief Returns the task jacobian as a matrix. */
-    Eigen::MatrixXd getJacobian()   
+    Eigen::MatrixXd getJacobian() const   
       { if (def_) return def_->J_; else return Eigen::MatrixXd(); }
 
     /*! \brief Returns the task dynamics as a vector. */
-    Eigen::VectorXd getDynamics()   
+    Eigen::VectorXd getDynamics() const   
       { if (dyn_) return dyn_->e_dot_star_; else return Eigen::VectorXd(); }
 
     /*! \brief Returns the task types (leq/eq/geq task) for each dimension of the task space. Returns a vector or -1, 0 or 1 for leq, eq and geq tasks respectively. */
     /// \TODO Change from std::vector<int> to Eigen::VectorXd
-    std::vector<int> getTaskTypes()  
+    std::vector<int> getTaskTypes() const  
       { if (def_) return def_->task_types_; else return std::vector<int>(); }
 
     /*! \brief Returns the user-defined custom performance measures defined in the monitor() member function in a child class of TaskDefinition. */
-    Eigen::VectorXd getPerformanceMeasures()
+    Eigen::VectorXd getPerformanceMeasures() const 
       { if (def_) return def_->performance_measures_; else return Eigen::VectorXd(); }
 
   private:

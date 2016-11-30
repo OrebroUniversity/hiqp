@@ -14,10 +14,6 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
-
-
 cmake_minimum_required(VERSION 2.8.6)
 project(hiqp_controllers)
 
@@ -28,36 +24,20 @@ set(GUROBI_INCLUDE_DIR "$ENV{GUROBI_HOME}/include")
 set(GUROBI_LIB_DIR "$ENV{GUROBI_HOME}/lib")
 set(GUROBI_LIBS gurobi_c++ gurobi65)
 
-
-
-
-
-find_package(catkin REQUIRED COMPONENTS
-  roscpp
-  controller_interface
-  visualization_msgs
-  kdl_parser
-  hiqp_msgs_srvs
-)
+find_package(catkin REQUIRED COMPONENTS roscpp
+                                        controller_interface
+                                        visualization_msgs
+                                        kdl_parser
+                                        hiqp_msgs_srvs)
 
 find_package(orocos_kdl REQUIRED)
 find_package(Eigen3 REQUIRED)
 find_package(CASADI REQUIRED)
 
-
-
-
-
-catkin_package(
-  CATKIN_DEPENDS roscpp controller_interface visualization_msgs kdl_parser hiqp_msgs_srvs
-  INCLUDE_DIRS include #${EIGEN_INCLUDE_DIRS}
-  LIBRARIES ${PROJECT_NAME} casadi
-  DEPENDS orocos_kdl
-)
-
-
-
-
+catkin_package(CATKIN_DEPENDS roscpp controller_interface visualization_msgs kdl_parser hiqp_msgs_srvs
+               INCLUDE_DIRS include #${EIGEN_INCLUDE_DIRS}
+               LIBRARIES ${PROJECT_NAME} casadi
+               DEPENDS orocos_kdl)
 
 include_directories(include ${catkin_INCLUDE_DIRS})
 include_directories(${CASADI_INCLUDE_DIR})
@@ -92,24 +72,19 @@ add_library(${PROJECT_NAME} src/hiqp_utils.cpp
 
 target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} ${orocos_kdl_LIBRARIES} ${CASADI_LIBRARIES} ${GUROBI_LIBS})
 
-
-
-
-
 install(DIRECTORY include
-  DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION})
+        DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION})
 
 install(DIRECTORY config
-  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
+        DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
 
 install(DIRECTORY launch
-  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
+        DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
 
 install(TARGETS ${PROJECT_NAME}
-  ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-  )
+        ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+        LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+        RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 
 install(FILES hiqp_controllers_plugins.xml
-  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
+        DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})

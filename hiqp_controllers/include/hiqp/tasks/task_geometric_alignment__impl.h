@@ -56,7 +56,7 @@ namespace tasks
     
     e_.resize(n_task_dimensions);
     J_.resize(n_task_dimensions, n_controls);
-    performance_measures_.resize(n_task_dimensions);
+    performance_measures_.resize(0);
 
     fk_solver_pos_ = std::make_shared<KDL::TreeFkSolverPos_recursive>(robot_state->kdl_tree_);
     fk_solver_jac_ = std::make_shared<KDL::TreeJntToJacSolver>(robot_state->kdl_tree_);
@@ -133,7 +133,6 @@ namespace tasks
 
   template<typename PrimitiveA, typename PrimitiveB>
   int TaskGeometricAlignment<PrimitiveA, PrimitiveB>::monitor() {
-    performance_measures_(0) = e_(0);
     return 0;
   }
 

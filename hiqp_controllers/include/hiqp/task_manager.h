@@ -39,16 +39,16 @@ namespace hiqp {
   {
   public:
     TaskMonitoringData(const std::string& task_name,
-                       const std::string& measure_tag,
-                       const Eigen::VectorXd& performance_measures)
-    : task_name_(task_name), 
-      measure_tag_(measure_tag),
-      performance_measures_(performance_measures)
+                       const Eigen::VectorXd& e,
+                       const Eigen::VectorXd& de,
+                       const Eigen::VectorXd& pm)
+    : task_name_(task_name), e_(e), de_(de), pm_(pm)
     {}
 
-    const std::string&          task_name_;
-    std::string                 measure_tag_;
-    Eigen::VectorXd             performance_measures_;
+    std::string         task_name_;
+    Eigen::VectorXd     e_;
+    Eigen::VectorXd     de_;
+    Eigen::VectorXd     pm_;
   };
 
 

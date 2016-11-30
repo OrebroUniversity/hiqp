@@ -27,10 +27,9 @@
 #include <hiqp/geometric_primitives/geometric_primitive_visualizer.h>
 #include <hiqp/hiqp_utils.h>
 
-#include <hiqp_msgs_srvs/PerfMeasMsg.h>
-#include <hiqp_msgs_srvs/MonitorDataMsg.h>
+#include <hiqp_msgs_srvs/MonitoringDataMsg.h>
 #include <hiqp_msgs_srvs/Vector3d.h>
- #include <hiqp_msgs_srvs/StringArray.h>
+#include <hiqp_msgs_srvs/StringArray.h>
 
 #include <geometry_msgs/PoseStamped.h> // teleoperation magnet sensors
 
@@ -155,7 +154,7 @@ void ROSKinematicsController::update
   geometric_primitives::GeometricPrimitiveVisualizer geom_prim_vis(&ros_visualizer_);
   task_manager_.getGeometricPrimitiveMap()->acceptVisitor(geom_prim_vis);
 
-  //performMonitoring();
+  performMonitoring();
 
   return;
 }
@@ -389,48 +388,52 @@ void ROSKinematicsController::performMonitoring()
     if (d.toSec() >= 1.0/monitoring_publish_rate_)
     {
       last_monitoring_update_ = now;
-      std::vector<TaskMonitoringData> data;
-      task_manager_.getTaskMonitoringData(data);
+      std::vector<TaskMonitoringData> datas;
+      task_manager_.getTaskMonitoringData(datas);
 
-      hiqp_msgs_srvs::MonitorDataMsg mon_msg;
-      mon_msg.ts = now;
-
-/*
-      hiqp_msgs_srvs::PerfMeasMsg q_msg;
-      q_msg.task_name = "_q_";
-      q_msg.measure_tag = "_q_";
-      for (int i=0; i<q.columns(); ++i)
-        q_msg.data.push_back( q(i) );
-      mon_msg.data.push_back(q_msg);
-*/
-
-      hiqp_msgs_srvs::PerfMeasMsg qdot_msg;
-      qdot_msg.task_name = "_qdot_";
-      qdot_msg.measure_tag = "_qdot_";
-      qdot_msg.data.insert(qdot_msg.data.begin(),
-                        output_controls_.cbegin(),
-                        output_controls_.cend());
-      mon_msg.data.push_back(qdot_msg);
-
-      std::vector<TaskMonitoringData>::iterator it = data.begin();
-      while (it != data.end())
-      {
-        hiqp_msgs_srvs::PerfMeasMsg per_msg;
-        
-        //per_msg.task_id = it->task_id_;
-        per_msg.task_name = it->task_name_;
-        per_msg.measure_tag = it->measure_tag_;
-        for (int i=0; i<it->performance_measures_.size(); ++i)
-          per_msg.data.push_back(it->performance_measures_(i));
-        //per_msg.data.insert(per_msg.data.begin(),
-        //                  it->performance_measures_.cbegin(),
-        //                  it->performance_measures_.cend());
-
-        mon_msg.data.push_back(per_msg);
-        ++it;
+      for (auto&& data : datas) {
+        hiqp_msgs_srvs::MonitoringDataMsg msg;
+        msg.ts = now;
+        msg.task_name = data.task_name_;
+        msg.e = std::vector<double>(data.e_.data(), data.e_.data() + data.e_.rows() * data.e_.cols());
+        msg.de = std::vector<double>(data.de_.data(), data.de_.data() + data.de_.rows() * data.de_.cols());
+        msg.pm = std::vector<double>(data.pm_.data(), data.pm_.data() + data.pm_.rows() * data.pm_.cols());
+        //for (auto&& e : data.e_) { msg.e.push_back(e); }
+        //for (auto&& de : data.de_) { msg.e.push_back(de); }
+        //for (auto&& pm : data.performance_measures_) { msg.pm.push_back(pm); }
+        monitoring_pub_.publish(msg);
       }
+
+      // hiqp_msgs_srvs::MonitoringDataMsg msg;
+      // msg.ts = now;
+
+      // hiqp_msgs_srvs::PerfMeasMsg qdot_msg;
+      // qdot_msg.task_name = "_qdot_";
+      // qdot_msg.measure_tag = "_qdot_";
+      // qdot_msg.data.insert(qdot_msg.data.begin(),
+      //                   output_controls_.cbegin(),
+      //                   output_controls_.cend());
+      // mon_msg.data.push_back(qdot_msg);
+
+      // std::vector<TaskMonitoringData>::iterator it = data.begin();
+      // while (it != data.end())
+      // {
+      //   hiqp_msgs_srvs::PerfMeasMsg per_msg;
+        
+      //   //per_msg.task_id = it->task_id_;
+      //   per_msg.task_name = it->task_name_;
+      //   per_msg.measure_tag = it->measure_tag_;
+      //   for (int i=0; i<it->performance_measures_.size(); ++i)
+      //     per_msg.data.push_back(it->performance_measures_(i));
+      //   //per_msg.data.insert(per_msg.data.begin(),
+      //   //                  it->performance_measures_.cbegin(),
+      //   //                  it->performance_measures_.cend());
+
+      //   mon_msg.data.push_back(per_msg);
+      //   ++it;
+      // }
       
-      monitoring_pub_.publish(mon_msg);
+      // monitoring_pub_.publish(mon_msg);
     }
   }
 }
@@ -625,7 +628,7 @@ int ROSKinematicsController::loadAndSetupTaskMonitoring()
   monitoring_publish_rate_ = 
     static_cast<double>(task_monitoring["publish_rate"]);
 
-  monitoring_pub_ = controller_nh_.advertise<hiqp_msgs_srvs::MonitorDataMsg>
+  monitoring_pub_ = controller_nh_.advertise<hiqp_msgs_srvs::MonitoringDataMsg>
   ("monitoring_data", 1);
 
   return 0;
