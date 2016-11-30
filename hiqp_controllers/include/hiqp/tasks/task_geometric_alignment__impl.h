@@ -50,7 +50,7 @@ namespace tasks
       return -2;
 
     unsigned int n_task_dimensions = 1;
-    if (prim_type1.compare("frame") && prim_type2.compare("frame")) {
+    if (prim_type1.compare("frame") == 0 && prim_type2.compare("frame") == 0) {
       n_task_dimensions = 2;
     }
     
