@@ -4,12 +4,12 @@
 		"selected_items":
 		[
 			[
-				"ay",
-				"ay"
-			],
-			[
 				"y",
 				"y"
+			],
+			[
+				"ay",
+				"ay"
 			],
 			[
 				"geometric_pri",
@@ -223,6 +223,46 @@
 	},
 	"buffers":
 	[
+		{
+			"file": "hiqp_controllers/src/ros_topic_subscriber.cpp",
+			"settings":
+			{
+				"buffer_size": 6208,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "hiqp_controllers/include/hiqp/geometric_primitives/geometric_frame.h",
+			"settings":
+			{
+				"buffer_size": 3748,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "hiqp_controllers/servicecalls/teleoperation/startup_teleoperation.sh",
+			"settings":
+			{
+				"buffer_size": 1176,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "hiqp_controllers/CMakeLists.txt",
+			"settings":
+			{
+				"buffer_size": 3585,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "hiqp_msgs_srvs/srv/AddGeometricPrimitive.srv",
+			"settings":
+			{
+				"buffer_size": 960,
+				"line_ending": "Unix"
+			}
+		}
 	],
 	"build_system": "",
 	"build_system_choices":
@@ -258,18 +298,6 @@
 	[
 		"/home/neckutrek/dev/indigo_ws/src/hiqp",
 		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers",
-		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/config",
-		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/include",
-		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/include/hiqp",
-		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/include/hiqp/geometric_primitives",
-		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/include/hiqp/tasks",
-		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/servicecalls",
-		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/servicecalls/functional_tests",
-		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/servicecalls/functional_tests/TDefGeomProj",
-		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/src",
-		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/src/geometric_primitives",
-		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/src/solvers",
-		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/src/tasks",
 		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_experiment_rosnode",
 		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_experiment_rosnode/src",
 		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_msgs_srvs",
@@ -278,12 +306,22 @@
 	],
 	"file_history":
 	[
-		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/servicecalls/functional_tests/TDefGeomProj/frame_on_frame_proj.sh",
+		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_msgs_srvs/CMakeLists.txt",
+		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/src/ros_kinematics_controller.cpp",
+		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/include/hiqp/ros_kinematics_controller.h",
+		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/servicecalls/teleoperation/startup_teleoperation__old.sh",
 		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/servicecalls/functional_tests/TDefGeomAlign/frame_with_frame_alignment.sh",
-		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/src/task.cpp",
-		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/src/tasks/task_geometric_projection.cpp",
 		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/src/tasks/task_geometric_alignment.cpp",
 		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/include/hiqp/tasks/task_geometric_alignment__impl.h",
+		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/src/solvers/casadi_solver.cpp",
+		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/servicecalls/functional_tests/TDefGeomProj/frame_on_frame_projection.sh",
+		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/servicecalls/functional_tests/TDefGeomProj/point_on_cylinder_projection.sh",
+		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/servicecalls/functional_tests/TDefGeomProj/point_on_point_projection.sh",
+		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/config/yumi_hiqp_preload.yaml",
+		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/servicecalls/functional_tests/TDefGeomProj/test_point_on_point.sh",
+		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/servicecalls/functional_tests/TDefGeomProj/frame_on_frame_proj.sh",
+		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/src/task.cpp",
+		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/src/tasks/task_geometric_projection.cpp",
 		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/include/hiqp/geometric_primitives/geometric_line.h",
 		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/include/hiqp/geometric_primitives/geometric_frame.h",
 		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/CMakeLists.txt",
@@ -292,7 +330,6 @@
 		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/include/hiqp/geometric_primitives/geometric_point.h",
 		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/include/hiqp/visualizer.h",
 		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/servicecalls/add_frame.sh",
-		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/src/ros_kinematics_controller.cpp",
 		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/include/hiqp/geometric_primitives/geometric_primitive_map.h",
 		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/include/hiqp/geometric_primitives/geometric_primitive_visitor.h",
 		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/include/hiqp/geometric_primitives/geometric_primitive_visualizer.h",
@@ -306,8 +343,6 @@
 		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/servicecalls/functional_tests/TDefGeomProj/test_point_on_cylinder.sh",
 		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/servicecalls/functional_tests/test_taskfullpose.sh",
 		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/include/hiqp/task_manager.h",
-		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/src/solvers/casadi_solver.cpp",
-		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/config/yumi_hiqp_preload.yaml",
 		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/servicecalls/functional_tests/test_taskjntlimits.sh",
 		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/servicecalls/old_servicecalls/remove_task.sh",
 		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/src/ros_topic_subscriber.cpp",
@@ -334,10 +369,8 @@
 		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/include/hiqp/tasks/task_jnt_config.h",
 		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/src/tasks/task_full_pose.cpp",
 		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/servicecalls/old_servicecalls/set_starting_pos.sh",
-		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/include/hiqp/ros_kinematics_controller.h",
 		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/src/task_manager.cpp",
 		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/include/hiqp/task.h",
-		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_msgs_srvs/CMakeLists.txt",
 		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/include/hiqp/hiqp_solver.h",
 		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_msgs_srvs/srv/AddTask.srv",
 		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/include/hiqp/task_function.h",
@@ -400,12 +433,7 @@
 		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/servicecalls/default_yumi_setup/add_obstacle_avoidance.sh",
 		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/servicecalls/default_yumi_setup/add_default_primitives.sh",
 		"/home/neckutrek/dev/indigo_ws/src/yumi/demo_grasping/hqp_tasks/task_definitions.yaml",
-		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/servicecalls/default_yumi_setup/add_tasks.sh",
-		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/launch/controller.launch",
-		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/servicecalls/default_yumi_setup/add_joint_limitations.sh",
-		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/config/yumi_jnt_limits.yaml",
-		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/servicecalls/default_yumi_setup/add_default_tasks.sh",
-		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/include/hiqp/tasks/task_teleop.h"
+		"/home/neckutrek/dev/indigo_ws/src/hiqp/hiqp_controllers/servicecalls/default_yumi_setup/add_tasks.sh"
 	],
 	"find":
 	{
@@ -518,8 +546,154 @@
 	"groups":
 	[
 		{
+			"selected": 4,
 			"sheets":
 			[
+				{
+					"buffer": 0,
+					"file": "hiqp_controllers/src/ros_topic_subscriber.cpp",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 6208,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1640,
+								1640
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.sublime-syntax",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 78.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 3,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "hiqp_controllers/include/hiqp/geometric_primitives/geometric_frame.h",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 3748,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 234.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 4,
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "hiqp_controllers/servicecalls/teleoperation/startup_teleoperation.sh",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1176,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								587,
+								587
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/ShellScript/Shell-Unix-Generic.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "hiqp_controllers/CMakeLists.txt",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 3585,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Text/Plain text.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "hiqp_msgs_srvs/srv/AddGeometricPrimitive.srv",
+					"semi_transient": true,
+					"settings":
+					{
+						"buffer_size": 960,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								958,
+								760
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Text/Plain text.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				}
 			]
 		}
 	],
