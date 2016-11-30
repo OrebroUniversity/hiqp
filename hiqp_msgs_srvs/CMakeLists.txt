@@ -4,53 +4,29 @@ project(hiqp_msgs_srvs)
 ## Author: Marcus A Johansson (marcus.adam.johansson@gmail.com)
 ## Date: July, 2016
 
+find_package(catkin REQUIRED COMPONENTS message_generation 
+                                        std_msgs
+                                        visualization_msgs
+                                        geometry_msgs)
 
-find_package(catkin REQUIRED COMPONENTS 
-  message_generation 
-  std_msgs
-  visualization_msgs
-  geometry_msgs)
+add_message_files(FILES MonitoringDataMsg.msg
+                        StringArray.msg
+                        Vector3d.msg)
 
+add_service_files(FILES AddGeometricPrimitive.srv
+                        SetTask.srv
+                        RemoveAllGeometricPrimitives.srv
+                        RemoveAllTasks.srv
+                        RemoveGeometricPrimitive.srv
+                        RemoveTask.srv
+                        UpdateTask.srv
+                        ListAllTasks.srv)
 
+generate_messages(DEPENDENCIES std_msgs
+                               geometry_msgs
+                               visualization_msgs)
 
-add_message_files(
-  FILES
-  Vector3d.msg
-  PerfMeasMsg.msg
-  MonitorDataMsg.msg
-  StringArray.msg
-  )
-
-
-
-add_service_files(
-  FILES
-  AddGeometricPrimitive.srv
-  SetTask.srv
-  RemoveAllGeometricPrimitives.srv
-  RemoveAllTasks.srv
-  RemoveGeometricPrimitive.srv
-  RemoveTask.srv
-  UpdateTask.srv
-  ListAllTasks.srv
-  )
-
-
-
-generate_messages(
-  DEPENDENCIES 
-  std_msgs
-  geometry_msgs
-  visualization_msgs
-  )
-
-
-
-catkin_package(
-  CATKIN_DEPENDS 
-  message_runtime
-  std_msgs 
-  visualization_msgs
-  geometry_msgs
-  )
-
+catkin_package(CATKIN_DEPENDS message_runtime
+                              std_msgs 
+                              visualization_msgs
+                              geometry_msgs)

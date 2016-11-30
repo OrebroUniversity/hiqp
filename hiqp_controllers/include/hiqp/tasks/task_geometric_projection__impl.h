@@ -52,7 +52,7 @@ int TaskGeometricProjection<PrimitiveA, PrimitiveB>::init
 
   e_.resize(1);
   J_.resize(1, n_controls);
-  performance_measures_.resize(1);
+  performance_measures_.resize(0);
 
   fk_solver_pos_ = std::make_shared<KDL::TreeFkSolverPos_recursive>(robot_state->kdl_tree_);
   fk_solver_jac_ = std::make_shared<KDL::TreeJntToJacSolver>(robot_state->kdl_tree_);
@@ -144,7 +144,6 @@ int TaskGeometricProjection<PrimitiveA, PrimitiveB>::update(RobotStatePtr robot_
 
 template<typename PrimitiveA, typename PrimitiveB>
 int TaskGeometricProjection<PrimitiveA, PrimitiveB>::monitor() {
-  performance_measures_(0) = e_(0);
   return 0;
 }
 
