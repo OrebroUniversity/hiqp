@@ -1,3 +1,65 @@
-*~
 hiqp.sublime-workspace
 .Rhistory
+
+# Backup and data files
+eg/eg.*
+*~
+*.autosave
+*.bak
+*.off
+*.x
+x.*
+
+*/doxygen
+
+*/doc
+
+# patch results
+*.rej
+
+# Build products
+tmp/*
+build/Makefile*
+build/CMakeFiles
+build/CMakeCache.txt
+build/*/Makefile*
+build/*/object_script*
+build/*/Release/*
+build/*/Debug/*
+build/*/MinSizeRel/*
+build/*/RelWithDebInfo/*
+build
+
+*#
+*.#
+*.zip
+*.a
+*.dll
+*.lib
+*.exe
+*.bag
+*.o
+*.md5sum
+
+# Qt files
+*.pro.user
+
+# DevStudio files
+*.bsc
+*.ncb
+*.pdb
+*.suo
+*.user
+*.ilk
+
+# CVS files
+CVS/*
+*/CVS/*
+*/*/CVS/*
+*/*/*/CVS/*
+*.cvsignore
+
+# Other files
+working/
+Status API Training Shop Blog About
+© 2014 GitHub, Inc. Terms Privacy Security Contact

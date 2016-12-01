@@ -62,7 +62,7 @@ public:
   HiQPSolver() {}
   ~HiQPSolver() noexcept {}
 
-  virtual int solve(std::vector<double>& solution) = 0;
+  virtual bool solve(std::vector<double>& solution) = 0;
 
   int clearStages() {
     stages_map_.clear();

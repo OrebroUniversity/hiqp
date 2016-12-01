@@ -53,7 +53,9 @@ namespace geometric_primitives
 
 /*!
  * \class GeometricPlane
- * \brief Parameters: [n.x, n.y, n.z, offset]
+ * \brief Implements a plane given as a normal vector and scalar normal offset. Parameters: [n.x, n.y, n.z, offset]
+ *
+ *The plane equation corresponds to n^T*x-offset=0
  */ 
 class GeometricPlane : public GeometricPrimitive
 {
