@@ -14,63 +14,36 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-/*
- * \file   Gurobi_solver.h
- * \author Marcus A Johansson (marcus.adam.johansson@gmail.com)
- * \date   July, 2016
- * \brief  Brief description of file.
- *
- * Detailed description of file.
- */
-
 #ifndef HIQP_GUROBI_SOLVER_H
 #define HIQP_GUROBI_SOLVER_H
 
-// HiQP Includes
 #include <hiqp/hiqp_solver.h>
 #include <gurobi_c++.h>
 
-
-
-
 namespace hiqp
 {
-//--------------------------------------------------------------
-#define TIKHONOV_FACTOR  1e-4
-#define PRESOLVE         -1
-#define OPTIMALITY_TOL   1e-6
-#define SCALE_FLAG       1
-#define TIME_LIMIT       1.0//0.005
-#define OUTPUT_FLAG      0
-#define DUAL_REDUCTIONS  1
-//--------------------------------------------------------------
-class GurobiSolver : public HiQPSolver
-{
-public:
+  class GurobiSolver : public HiQPSolver {
+  public:
+    GurobiSolver();
+    ~GurobiSolver() noexcept {}
 
-  GurobiSolver(); 
+    bool solve(std::vector<double>& solution);
 
-  ~GurobiSolver() noexcept {}
+  private:
+    GurobiSolver(const GurobiSolver& other) = delete;
+    GurobiSolver(GurobiSolver&& other) = delete;
+    GurobiSolver& operator=(const GurobiSolver& other) = delete;
+    GurobiSolver& operator=(GurobiSolver&& other) noexcept = delete;
 
-  bool solve(std::vector<double>& solution);
+    void reset();
 
-
-
-private:
-  // No copying of this class is allowed !
-  GurobiSolver(const GurobiSolver& other) = delete;
-  GurobiSolver(GurobiSolver&& other) = delete;
-  GurobiSolver& operator=(const GurobiSolver& other) = delete;
-  GurobiSolver& operator=(GurobiSolver&& other) noexcept = delete;
-  GRBEnv env_;
-    Eigen::VectorXd x_; ///<HQP solution (updated sequentially when solving)
-    Eigen::VectorXd w_; ///<slack variables (updated sequentially when solving)
-    Eigen::VectorXd b_;
-    Eigen::MatrixXd A_;
-    std::vector<char> senses_;
-
- void reset();
-}; // class GurobiSolver
+    GRBEnv             env_;
+    Eigen::VectorXd    x_; ///<HQP solution (updated sequentially when solving)
+    Eigen::VectorXd    w_; ///<slack variables (updated sequentially when solving)
+    Eigen::VectorXd    b_;
+    Eigen::MatrixXd    A_;
+    std::vector<char>  senses_;
+  };
 
 } // namespace hiqp
 
