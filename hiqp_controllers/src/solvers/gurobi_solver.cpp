@@ -20,13 +20,13 @@
 #include <ros/assert.h>
 #include <Eigen/Dense>
 
-#define TIKHONOV_FACTOR  1e-4
+#define OUTPUT_FLAG      0
 #define PRESOLVE         -1
 #define OPTIMALITY_TOL   1e-6
 #define SCALE_FLAG       1
 #define TIME_LIMIT       1.0//0.005
-#define OUTPUT_FLAG      0
 #define DUAL_REDUCTIONS  1
+#define TIKHONOV_FACTOR  1e-4
 
 namespace hiqp
 {

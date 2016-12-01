@@ -61,12 +61,13 @@ bool TaskManager::getVelocityControls(RobotStatePtr robot_state,
     }
   }
 
-  if(!solver_->solve(controls))
-    {
-      ROS_WARN("Unable to solve HQP - setting solution to zero!");
-       for (int i=0; i<controls.size(); ++i)
+  if (!solver_->solve(controls)) {
+    printHiqpWarning("Unable to solve the hierarchical QP, setting the velocity controls to zero!");
+    for (int i=0; i<controls.size(); ++i)
       controls.at(i) = 0;
-   }
+
+    return false;
+  }
 
   return true;
 }

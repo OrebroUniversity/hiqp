@@ -466,65 +466,45 @@ void ROSKinematicsController::addAllTopicSubscriptions()
 
 
 
+/// \todo Change add_primitive to set_primitive ros service
+/// \todo Add list_all_primitives ros service
+/// \todo Add show_primitive ros service
+/// \todo Add hide_primitive ros service
+
+/// \todo Add activate_task ros service
+/// \todo Add deactivate_task ros service
+/// \todo Add show_task ros service
+/// \todo Add hide_task ros service
+/// \todo Add monitor_task ros service
+/// \todo Add unmonitor_task ros service
+
+/// \todo Add activate_stage ros service
+/// \todo Add deactivate_stage ros service
+/// \todo Add monitor_stage ros service
+/// \todo Add unmonitor_stage ros service
 
 void ROSKinematicsController::advertiseAllServices()
 {
-  // Advertise available ROS services and link the callback functions
-  add_task_service_ = controller_nh_.advertiseService
-  (
-    "set_task",
-    &ROSKinematicsController::setTask,
-    this
-  );
+  set_task_service_ = controller_nh_.advertiseService(
+    "set_task", &ROSKinematicsController::setTask, this);
 
-  // update_task_service_ = controller_nh_.advertiseService
-  // (
-  //   "update_task",
-  //   &ROSKinematicsController::updateTask,
-  //   this
-  // );
+  remove_task_service_ = controller_nh_.advertiseService(
+    "remove_task", &ROSKinematicsController::removeTask, this);
 
-  remove_task_service_ = controller_nh_.advertiseService
-  (
-    "remove_task",
-    &ROSKinematicsController::removeTask,
-    this
-  );
+  remove_all_tasks_service_ = controller_nh_.advertiseService(
+    "remove_all_tasks", &ROSKinematicsController::removeAllTasks, this);
 
-  remove_all_tasks_service_ = controller_nh_.advertiseService
-  (
-    "remove_all_tasks",
-    &ROSKinematicsController::removeAllTasks,
-    this
-  );
+  list_all_tasks_service_ = controller_nh_.advertiseService(
+    "list_all_tasks", &ROSKinematicsController::listAllTasks, this);
 
-  list_all_tasks_service_ = controller_nh_.advertiseService
-  (
-    "list_all_tasks",
-    &ROSKinematicsController::listAllTasks,
-    this
-  );
+  add_geomprim_service_ = controller_nh_.advertiseService(
+    "add_primitive", &ROSKinematicsController::addGeometricPrimitive, this);
 
-  add_geomprim_service_ = controller_nh_.advertiseService
-  (
-    "add_primitive",
-    &ROSKinematicsController::addGeometricPrimitive,
-    this
-  );
+  remove_geomprim_service_ = controller_nh_.advertiseService(
+    "remove_primitive", &ROSKinematicsController::removeGeometricPrimitive, this);
 
-  remove_geomprim_service_ = controller_nh_.advertiseService
-  (
-    "remove_primitive",
-    &ROSKinematicsController::removeGeometricPrimitive,
-    this
-  );
-
-  remove_all_geomprims_service_ = controller_nh_.advertiseService
-  (
-    "remove_all_primitives",
-    &ROSKinematicsController::removeAllGeometricPrimitives,
-    this
-  );
+  remove_all_geomprims_service_ = controller_nh_.advertiseService(
+    "remove_all_primitives", &ROSKinematicsController::removeAllGeometricPrimitives, this);
 }
 
 
@@ -552,9 +532,7 @@ int ROSKinematicsController::loadJointsAndSetJointHandlesMap()
     try
     {
       unsigned int q_nr = kdl_getQNrFromJointName(robot_state_data_.kdl_tree_, name);
-      joint_handles_map_.insert( 
-        JointHandleMapEntry(q_nr, hardware_interface_->getHandle(name))
-      );
+      joint_handles_map_.emplace(q_nr, hardware_interface_->getHandle(name));
     }
     catch (const hardware_interface::HardwareInterfaceException& e)
     {
