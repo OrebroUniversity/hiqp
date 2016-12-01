@@ -471,6 +471,9 @@ void ROSKinematicsController::addAllTopicSubscriptions()
 /// \todo Add show_primitive ros service
 /// \todo Add hide_primitive ros service
 
+/// \todo Add activate_controller ros service
+/// \todo Add deactivate_controller ros service
+
 /// \todo Add activate_task ros service
 /// \todo Add deactivate_task ros service
 /// \todo Add show_task ros service
