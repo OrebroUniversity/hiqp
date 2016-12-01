@@ -153,7 +153,7 @@ GurobiSolver::GurobiSolver()
 	  int status = model.get(GRB_IntAttr_Status);
 	  double runtime = model.get(GRB_DoubleAttr_Runtime);
 
-	  if (status != GRB_OPTIMAL)
+	  if (status != GRB_OPTIMAL && status != GRB_SUBOPTIMAL)
             {
 	      if(status == GRB_TIME_LIMIT)
 		ROS_WARN("Stage solving runtime %f sec exceeds the set time limit of %f sec.", runtime, TIME_LIMIT);

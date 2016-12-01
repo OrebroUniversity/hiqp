@@ -408,7 +408,8 @@ int TaskGeometricProjection<GeometricPoint, GeometricSphere>::project
 //                                 S P H E R E
 //
 ///////////////////////////////////////////////////////////////////////////////
-
+  
+/// \bug Inequality tasks for avoidance can be violated (check. e.g, the floor avoidance tasks in hiqp_controllers/config/yumi_hiqp_preload.yaml)
 template<>
 int TaskGeometricProjection<GeometricSphere, GeometricPlane>::project
 (

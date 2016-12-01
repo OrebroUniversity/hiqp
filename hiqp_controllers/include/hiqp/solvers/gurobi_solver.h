@@ -36,7 +36,7 @@
 namespace hiqp
 {
 //--------------------------------------------------------------
-#define TIKHONOV_FACTOR  1e-4
+#define TIKHONOV_FACTOR  1e-3
 #define PRESOLVE         -1
 #define OPTIMALITY_TOL   1e-6
 #define SCALE_FLAG       1
