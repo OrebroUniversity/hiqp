@@ -30,6 +30,8 @@ active: 1
 def_params: ['TDefGeomProj', 'point', 'line', 'point1 = line1']
 dyn_params: ['TDynFirstOrder', '1.0']"
 
+sleep 2.0 
+
 rosservice call /yumi/hiqp_kinematics_controller/set_task \
 "name: 'segfault_task'
 priority: 3

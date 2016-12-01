@@ -40,7 +40,7 @@ int TaskGeometricProjection<PrimitiveA, PrimitiveB>::init(const std::vector<std:
                                                           unsigned int n_controls) {
   int parameters_size = parameters.size();
   if (parameters_size != 4) {
-    printHiqpWarning("TDefGeomProj takes 4 parameters, got " + std::to_string(parameters_size) + "! No task was added!");
+    printHiqpWarning("'" + getTaskName() + "': TDefGeomProj takes 4 parameters, got " + std::to_string(parameters_size) + "! The task was not added!");
     return -1;
   }
 
@@ -49,8 +49,10 @@ int TaskGeometricProjection<PrimitiveA, PrimitiveB>::init(const std::vector<std:
     std::istream_iterator<std::string>{ss},
     std::istream_iterator<std::string>{});
 
-  if (args.size() != 3)
+  if (args.size() != 3) {
+    printHiqpWarning("'" + getTaskName() + "': TDefGeomProj's parameter nr.4 needs whitespace separation! The task was not added!");
     return -2;
+  }
 
   e_.resize(1);
   J_.resize(1, n_controls);

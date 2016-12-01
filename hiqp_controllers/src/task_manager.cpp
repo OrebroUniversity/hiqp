@@ -81,8 +81,6 @@ void TaskManager::getTaskMonitoringData(std::vector<TaskMonitoringData>& data) {
   }
 }
 
-/// \bug Certain tasks cause a segfault (see, e.g., /hiqp_controllers/servicecalls/teleoperation/segfault.sh)
-/// \bug Adding consecutive tasks with the same name results in a segfault
 int TaskManager::setTask(const std::string& task_name,
                          unsigned int priority,
                          bool visible,
@@ -91,11 +89,14 @@ int TaskManager::setTask(const std::string& task_name,
                          const std::vector<std::string>& dyn_params,
                          RobotStatePtr robot_state) {  
   std::shared_ptr<Task> task;
+  std::string action = "Added";
 
   TaskMap::iterator it = task_map_.find(task_name);
   if (it == task_map_.end()) {
     task = std::make_shared<Task>(geometric_primitive_map_, visualizer_, n_controls_);
   } else {
+    task = it->second;
+    action = "Updated";
   }
 
   task->setTaskName(task_name);
@@ -104,11 +105,11 @@ int TaskManager::setTask(const std::string& task_name,
   task->setActive(active);
 
   if (task->init(def_params, dyn_params, robot_state) != 0) {
+    //printHiqpWarning("The task '" + task_name + "' was not added!");
     return -1;
-    printHiqpInfo("The task '" + task_name + "' was NOT added!");
   } else {
     task_map_.emplace(task_name, task);
-    printHiqpInfo("Added task '" + task_name + "'");
+    printHiqpInfo(action + " task '" + task_name + "'");
   }
   return 0;
 }

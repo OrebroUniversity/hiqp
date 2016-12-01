@@ -35,7 +35,7 @@ rosservice call /yumi/hiqp_kinematics_controller/set_task \
 priority: 3
 visible: 1
 active: 1
-def_params: ['TDefGeomAlign', 'line', 'line', 'yumi_x_axis = gripper_approach_axis', '0']
+def_params: ['TDefGeomAlign', 'line', 'line', 'yumi_x_axis=gripper_approach_axis', '0']
 dyn_params: ['TDynFirstOrder', '1.0']"
 
 

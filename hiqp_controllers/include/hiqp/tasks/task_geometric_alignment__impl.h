@@ -39,7 +39,7 @@ namespace tasks
                                                            unsigned int n_controls) {
     int parameters_size = parameters.size();
     if (parameters_size != 5) {
-      printHiqpWarning("TDefGeomAlign takes 5 parameters, got " + std::to_string(parameters_size) + "! No task was added!");
+      printHiqpWarning("'" + getTaskName() + "': TDefGeomAlign takes 5 parameters, got " + std::to_string(parameters_size) + "! The task was not added!");
       return -1;
     }
 
@@ -51,8 +51,10 @@ namespace tasks
       std::istream_iterator<std::string>{ss},
       std::istream_iterator<std::string>{});
 
-    if (args.size() != 3)
+    if (args.size() != 3) {
+      printHiqpWarning("'" + getTaskName() + "': TDefGeomAlign's parameter nr.4 needs whitespace separation! The task was not added!");
       return -2;
+    }
 
     unsigned int n_task_dimensions = 1;
     if (prim_type1.compare("frame") == 0 && prim_type2.compare("frame") == 0) {
