@@ -40,18 +40,18 @@ namespace hiqp
   // }
 
  
-//-----------------------------------------
-GurobiSolver::GurobiSolver()
-{
+  //-----------------------------------------
+  GurobiSolver::GurobiSolver()
+  {
     env_.set(GRB_IntParam_OutputFlag, OUTPUT_FLAG);
     env_.set(GRB_IntParam_Presolve, PRESOLVE);
     env_.set(GRB_DoubleParam_OptimalityTol, OPTIMALITY_TOL);
     env_.set(GRB_IntParam_ScaleFlag, SCALE_FLAG);
     env_.set(GRB_DoubleParam_TimeLimit, TIME_LIMIT);
     env_.set(GRB_IntParam_DualReductions, DUAL_REDUCTIONS);
-}
-//-----------------------------------------
-/// \bug Empty stages are ignored, and the lower ones gain a hierarchy rank 
+  }
+  //-----------------------------------------
+  /// \bug Empty stages are ignored, and the lower ones gain a hierarchy rank 
   bool GurobiSolver::solve
   (
    std::vector<double>& solution
@@ -172,8 +172,11 @@ GurobiSolver::GurobiSolver()
 	      delete[] coeff_x;
 	      delete[] coeff_w;
 
-	      //                //model.write("/home/rkg/Desktop/model.lp");
-	      //                //model.write("/home/rkg/Desktop/model.sol");
+	      // std::cerr<<"A"<<A_<<std::endl;
+	      // std::cerr<<"b"<<b_<<std::endl;
+	      // std::cerr<<"w"<<w_<<std::endl;
+	      //model.write("/home/yumi/Desktop/model.lp");
+	      //model.write("/home/yumi/Desktop/model.sol");
 
 	      return false;
             }
@@ -185,7 +188,7 @@ GurobiSolver::GurobiSolver()
 		solution.at(i) = x[i].get(GRB_DoubleAttr_X);
 
 	      for(unsigned int i=0; i<s_dim; i++)
-	      	  w_(s_acc_dim + i) = w[i].get(GRB_DoubleAttr_X);
+		w_(s_acc_dim + i) = w[i].get(GRB_DoubleAttr_X);
 
             }
 	  catch(GRBException e)
