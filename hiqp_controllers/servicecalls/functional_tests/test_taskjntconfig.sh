@@ -1,5 +1,5 @@
 rosservice call /yumi/hiqp_kinematics_controller/set_task \
-"name: 'task_test_taskjntconfig'
+"name: 'mynewtask'
 priority: 3
 visible: 1
 active: 1
