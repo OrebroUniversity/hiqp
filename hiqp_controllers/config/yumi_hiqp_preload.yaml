@@ -17,7 +17,6 @@ yumi:
       - link_frame: yumi_link_7_r
         limitations: [2.2689, -4.0, 4.0] 
 
-
      hiqp_preload_geometric_primitives:
     #   #####      OBSTACLE AVOIDANCE PRIMITIVES    #####
       - name: floor_avoidance_plane
