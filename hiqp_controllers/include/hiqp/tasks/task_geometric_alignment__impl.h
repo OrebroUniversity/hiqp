@@ -20,6 +20,8 @@
 #include <sstream>
 #include <iterator>
 
+#include <hiqp/hiqp_utils.h>
+
 namespace hiqp
 {
 namespace tasks
@@ -35,8 +37,11 @@ namespace tasks
   int TaskGeometricAlignment<PrimitiveA, PrimitiveB>::init(const std::vector<std::string>& parameters,
                                                            RobotStatePtr robot_state,
                                                            unsigned int n_controls) {
-    if (parameters.size() != 5)
+    int parameters_size = parameters.size();
+    if (parameters_size != 5) {
+      printHiqpWarning("TDefGeomAlign takes 5 parameters, got " + std::to_string(parameters_size) + "! No task was added!");
       return -1;
+    }
 
     std::string prim_type1 = parameters.at(1);
     std::string prim_type2 = parameters.at(2);

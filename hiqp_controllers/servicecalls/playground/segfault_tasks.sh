@@ -1,21 +1,13 @@
 rosservice call /yumi/hiqp_kinematics_controller/add_primitive \
-"name: 'object_vertical_axis'
-type: 'line'
+"name: 'point1'
+type: 'point'
 frame_id: 'yumi_body'
 visible: true
-color: [1.0, 0.0, 0.0, 0.9]
-parameters: [0, 0, 1, 0.35, 0, 0.1]"
-
-rosservice call /yumi/hiqp_kinematics_controller/add_primitive \
-"name: 'gripper_approach_axis'
-type: 'line'
-frame_id: 'gripper_r_base'
-visible: true
 color: [0.0, 1.0, 0.0, 0.9]
-parameters: [0, 0, 1, 0, 0, 0]"
+parameters: [0.5, 0, 0.5]"
 
 rosservice call /yumi/hiqp_kinematics_controller/add_primitive \
-"name: 'gripper_vertical_axis'
+"name: 'line1'
 type: 'line'
 frame_id: 'gripper_r_base'
 visible: true
@@ -23,21 +15,25 @@ color: [0.0, 1.0, 0.0, 0.9]
 parameters: [0, -1, 0, 0, 0, 0]"
 
 rosservice call /yumi/hiqp_kinematics_controller/add_primitive \
-"name: 'yumi_x_axis'
-type: 'line'
-frame_id: 'world'
+"name: 'plane1'
+type: 'plane'
+frame_id: 'gripper_l_base'
 visible: true
 color: [1.0, 0.0, 0.0, 0.9]
-parameters: [1, 0, 0, 0, 0, 0]"
+parameters: [0, 0, 1, 0.1]"
 
 rosservice call /yumi/hiqp_kinematics_controller/set_task \
-"name: 'align_gripper_approach_axis_yumi_x_axis'
+"name: 'segfault_task'
 priority: 3
 visible: 1
 active: 1
-def_params: ['TDefGeomAlign', 'line', 'line', 'yumi_x_axis = gripper_approach_axis', '0']
+def_params: ['TDefGeomProj', 'point', 'line', 'point1 = line1']
 dyn_params: ['TDynFirstOrder', '1.0']"
 
-
-
-
+rosservice call /yumi/hiqp_kinematics_controller/set_task \
+"name: 'segfault_task'
+priority: 3
+visible: 1
+active: 1
+def_params: ['TDefGeomProj', 'point', 'plane', 'point1 = plane1']
+dyn_params: ['TDynFirstOrder', '1.0']"

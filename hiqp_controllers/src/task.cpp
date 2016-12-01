@@ -51,8 +51,7 @@ namespace hiqp {
 
   int Task::init(const std::vector<std::string>& def_params,
                  const std::vector<std::string>& dyn_params,
-                 RobotStatePtr robot_state)
-  {
+                 RobotStatePtr robot_state) {
     if (def_params.size() <= 0) {
       printHiqpWarning("No (zero) task definition parameters found!");
       return -1;
@@ -75,11 +74,9 @@ namespace hiqp {
     dyn_->active_ = active_;
     dyn_->visible_ = visible_;
 
-    def_->initialize(def_params, robot_state, n_controls_);
-
-    dyn_->init(dyn_params, robot_state, def_->getInitialValue(), def_->getFinalValue(robot_state));
-
-    return 0;
+    int init_def = def_->initialize(def_params, robot_state, n_controls_);
+    int init_dyn = dyn_->init(dyn_params, robot_state, def_->getInitialValue(), def_->getFinalValue(robot_state));
+    return (init_def != 0 || init_dyn != 0 ? -5 : 0);
   }
 
   void Task::update(RobotStatePtr robot_state)

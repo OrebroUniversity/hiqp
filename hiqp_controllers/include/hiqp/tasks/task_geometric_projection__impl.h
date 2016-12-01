@@ -20,6 +20,8 @@
 #include <sstream>
 #include <iterator>
 
+#include <hiqp/hiqp_utils.h>
+
 namespace hiqp
 {
 namespace tasks
@@ -33,14 +35,14 @@ TaskGeometricProjection<PrimitiveA, PrimitiveB>::TaskGeometricProjection(
 
 
 template<typename PrimitiveA, typename PrimitiveB>
-int TaskGeometricProjection<PrimitiveA, PrimitiveB>::init
-(const std::vector<std::string>& parameters,
- RobotStatePtr robot_state,
- unsigned int n_controls)
-{
-
-  if (parameters.size() != 4)
+int TaskGeometricProjection<PrimitiveA, PrimitiveB>::init(const std::vector<std::string>& parameters,
+                                                          RobotStatePtr robot_state,
+                                                          unsigned int n_controls) {
+  int parameters_size = parameters.size();
+  if (parameters_size != 4) {
+    printHiqpWarning("TDefGeomProj takes 4 parameters, got " + std::to_string(parameters_size) + "! No task was added!");
     return -1;
+  }
 
   std::stringstream ss(parameters.at(3));
   std::vector<std::string> args(
