@@ -81,6 +81,7 @@ void TaskManager::getTaskMonitoringData(std::vector<TaskMonitoringData>& data) {
   }
 }
 
+/// \bug Certain tasks cause a segfault (see, e.g., /hiqp_controllers/servicecalls/teleoperation/segfault.sh)
 /// \bug Adding consecutive tasks with the same name results in a segfault
 int TaskManager::setTask(const std::string& task_name,
                          unsigned int priority,

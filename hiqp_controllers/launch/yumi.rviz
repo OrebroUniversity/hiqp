@@ -8,6 +8,7 @@ Panels:
         - /Status1
         - /RobotModel1
         - /RobotModel1/Links1
+        - /RobotModel1/Links1/gripper_r_base1
         - /Tasks1
         - /TF1/Tree1
       Splitter Ratio: 0.664207
@@ -57,7 +58,7 @@ Visualization Manager:
       Collision Enabled: false
       Enabled: true
       Links:
-        All Links Enabled: false
+        All Links Enabled: true
         Expand Joint Details: false
         Expand Link Details: false
         Expand Tree: false
@@ -79,9 +80,9 @@ Visualization Manager:
           Value: true
         gripper_r_base:
           Alpha: 1
-          Show Axes: false
+          Show Axes: true
           Show Trail: false
-          Value: false
+          Value: true
         gripper_r_finger_l:
           Alpha: 1
           Show Axes: false
@@ -253,7 +254,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 1.71685
+      Distance: 0.76098
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.06
         Stereo Focal Distance: 1
@@ -265,10 +266,10 @@ Visualization Manager:
         Z: 0.149351
       Name: Current View
       Near Clip Distance: 0.01
-      Pitch: 0.164798
+      Pitch: 0.179798
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 5.8904
+      Yaw: 6.04039
     Saved: ~
 Window Geometry:
   Displays:
@@ -286,5 +287,5 @@ Window Geometry:
   Views:
     collapsed: true
   Width: 780
-  X: 121
-  Y: 14
+  X: 80
+  Y: 19

@@ -133,7 +133,7 @@ int TaskGeometricAlignment<GeometricLine, GeometricSphere>::align
 
 
 
-
+/// \bug Frame alignment seems not to consider the axis sense (e.g., alignment along x and -x seems the same)
 template<>
 int TaskGeometricAlignment<GeometricFrame, GeometricFrame>::align
 (
