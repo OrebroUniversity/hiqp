@@ -127,8 +127,8 @@ int TaskGeometricProjection<GeometricPoint, GeometricLine>::project
 	// although K is not an actual rotation matrix in this context !
 	// K = (I - v v^T)
 	KDL::Rotation K = KDL::Rotation(KDL::Vector(1,0,0) - v*v(0), 
-		                            KDL::Vector(0,1,0) - v*v(1), 
-		                            KDL::Vector(0,0,1) - v*v(2));
+		                              KDL::Vector(0,1,0) - v*v(1), 
+		                              KDL::Vector(0,0,1) - v*v(2));
 
 	for (int q_nr = 0; q_nr < jacobian_a_.columns(); ++q_nr)
 	{
@@ -348,8 +348,8 @@ int TaskGeometricProjection<GeometricPoint, GeometricCylinder>::project
 	// although K is not an actual rotation matrix in this context !
 	// K = (I - v v^T)
 	KDL::Rotation K = KDL::Rotation(KDL::Vector(1,0,0) - v*v(0), 
-		                            KDL::Vector(0,1,0) - v*v(1), 
-		                            KDL::Vector(0,0,1) - v*v(2));
+		                              KDL::Vector(0,1,0) - v*v(1), 
+		                              KDL::Vector(0,0,1) - v*v(2));
 
 	for (int q_nr = 0; q_nr < jacobian_a_.columns(); ++q_nr)
 	{
@@ -394,6 +394,63 @@ int TaskGeometricProjection<GeometricPoint, GeometricSphere>::project
 	
 	return 0;
 }
+
+
+
+
+
+///////////////////////////////////////////////////////////////////////////////
+//  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  
+// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
+//-  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
+///////////////////////////////////////////////////////////////////////////////
+//
+//                                 L I N E
+//
+///////////////////////////////////////////////////////////////////////////////
+
+template<>
+int TaskGeometricProjection<GeometricLine, GeometricLine>::project
+(
+	std::shared_ptr<GeometricLine> line1, 
+	std::shared_ptr<GeometricLine> line2
+)
+{
+	KDL::Vector v1 = pose_a_.M * line1->getDirectionKDL();
+	KDL::Vector d1__ = pose_a_.M * line1->getOffsetKDL();
+	KDL::Vector d1 = pose_a_.p + d1__;
+
+	KDL::Vector v2 = pose_b_.M * line2->getDirectionKDL();
+	KDL::Vector d2__ = pose_b_.M * line2->getOffsetKDL();
+	KDL::Vector d2 = pose_b_.p + d2__;
+
+	// Make a line, line3, that is perpendicular to both line1 and line2
+
+	//KDL::Vector v3 = v1 * v2; // v3 = v1 x v2 (cross product)
+
+	KDL::Rotation V = KDL::Rotation(v1, -v2, v1*v2);
+
+	// s are the parameter values for line1, line2 and line3 indicating the points of intersection
+	KDL::Vector s = V.Inverse() * (d2 - d1);
+
+	KDL::Vector d3 = v1 * s.data[0] + d1; // the point in world coordinates that lies on line1 and line3
+	KDL::Vector d3_proj = v2 * s.data[1] + d2; // the point in world coordinates that lies on line2 and line3
+
+	KDL::Vector d3__ = d3 - pose_a_.p;
+	KDL::Vector d3_proj__ = d3_proj - pose_b_.p;
+
+	KDL::Vector d = d3_proj - d3;
+
+	e_(0) = KDL::dot(d, d);
+
+	for (int q_nr = 0; q_nr < jacobian_a_.columns(); ++q_nr) {
+		KDL::Vector Jd3d3proj = getVelocityJacobianForTwoPoints(d3__, d3_proj__, q_nr);
+		J_(0, q_nr) = 2 * dot(d, Jd3d3proj);
+	}
+	
+	return 0;
+}
+
 
 
 
