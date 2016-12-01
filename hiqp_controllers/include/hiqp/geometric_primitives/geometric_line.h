@@ -14,23 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
-
-/*
- * \file   geometric_line.h
- * \author Marcus A Johansson (marcus.adam.johansson@gmail.com)
- * \date   July, 2016
- * \brief 
- *
- */
-
-
 #ifndef HIQP_GEOMETRIC_LINE_H
 #define HIQP_GEOMETRIC_LINE_H
-
-
-
 
 #include <hiqp/geometric_primitives/geometric_primitive.h>
 #include <hiqp/hiqp_utils.h>
@@ -39,23 +24,14 @@
 
 #include <Eigen/Dense>
 
-
-
-
 namespace hiqp
 {
 namespace geometric_primitives
 {
 
-
-
-
-/*!
- * \class GeometricLine
- * \brief Implements a line defined by an arbitrary point and a directional vector. Parameters: [dir.x, dir.y, dir.z, offset.x, offset.y, offset.z]
- *
- * The offset variables define the point on the line, the direction variables the direction (not necessarily unitary)
- */  
+/*! \brief Implements a line defined by an arbitrary point and a directional vector. Parameters: [dir.x, dir.y, dir.z, offset.x, offset.y, offset.z]
+ *         The offset variables define the point on the line, the direction variables the direction (not necessarily unitary)
+ *  \author Marcus A Johansson */  
 class GeometricLine : public GeometricPrimitive
 {
 public:

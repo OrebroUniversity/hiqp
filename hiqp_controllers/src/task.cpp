@@ -114,6 +114,8 @@ namespace hiqp {
         def_ = std::make_shared< TaskGeometricProjection<GeometricPoint, GeometricCylinder> >(geom_prim_map_, visualizer_);
       } else if (prim_type1.compare("point") == 0 && prim_type2.compare("sphere") == 0) {
         def_ = std::make_shared< TaskGeometricProjection<GeometricPoint, GeometricSphere> >(geom_prim_map_, visualizer_);
+      } else if (prim_type1.compare("line") == 0 && prim_type2.compare("line") == 0) {
+        def_ = std::make_shared< TaskGeometricProjection<GeometricLine, GeometricLine> >(geom_prim_map_, visualizer_);
       } else if (prim_type1.compare("sphere") == 0 && prim_type2.compare("plane") == 0) {
         def_ = std::make_shared< TaskGeometricProjection<GeometricSphere, GeometricPlane> >(geom_prim_map_, visualizer_);
       } else if (prim_type1.compare("sphere") == 0 && prim_type2.compare("sphere") == 0) {
