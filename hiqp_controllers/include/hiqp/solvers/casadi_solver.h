@@ -14,48 +14,29 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-/*
- * \file   casadi_solver.h
- * \author Marcus A Johansson (marcus.adam.johansson@gmail.com)
- * \date   July, 2016
- * \brief  Brief description of file.
- *
- * Detailed description of file.
- */
-
 #ifndef HIQP_CASADI_SOLVER_H
 #define HIQP_CASADI_SOLVER_H
 
-// HiQP Includes
 #include <hiqp/hiqp_solver.h>
-
-
-
-
 
 namespace hiqp
 {
 
-class CasADiSolver : public HiQPSolver
-{
-public:
+  /*! \brief 
+   *  \author Marcus A Johansson */
+  class CasADiSolver : public HiQPSolver {
+  public:
+    CasADiSolver() {}
+    ~CasADiSolver() noexcept {}
 
-  CasADiSolver() {}
+    bool solve(std::vector<double>& solution);
 
-  ~CasADiSolver() noexcept {}
-
-  bool solve(std::vector<double>& solution);
-
-
-
-private:
-  // No copying of this class is allowed !
-  CasADiSolver(const CasADiSolver& other) = delete;
-  CasADiSolver(CasADiSolver&& other) = delete;
-  CasADiSolver& operator=(const CasADiSolver& other) = delete;
-  CasADiSolver& operator=(CasADiSolver&& other) noexcept = delete;
-
-}; // class CasADiSolver
+  private:
+    CasADiSolver(const CasADiSolver& other) = delete;
+    CasADiSolver(CasADiSolver&& other) = delete;
+    CasADiSolver& operator=(const CasADiSolver& other) = delete;
+    CasADiSolver& operator=(CasADiSolver&& other) noexcept = delete;
+  };
 
 } // namespace hiqp
 

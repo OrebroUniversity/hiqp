@@ -50,7 +50,7 @@ namespace hiqp
 
     unsigned int x_dim = solution.size();
     A_.resize(Eigen::NoChange, x_dim);
-    StageMapIterator it = stages_map_.begin();
+    StageMap::iterator it = stages_map_.begin();
     try {
       // Iterate over all stages and solve one QP per each stage
       unsigned int s_count = 0; // stage counter

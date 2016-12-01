@@ -22,6 +22,8 @@
 
 namespace hiqp
 {
+  /*! \brief 
+   *  \author Robert Krug, Marcus A Johansson */
   class GurobiSolver : public HiQPSolver {
   public:
     GurobiSolver();
@@ -38,8 +40,8 @@ namespace hiqp
     void reset();
 
     GRBEnv             env_;
-    Eigen::VectorXd    x_; ///<HQP solution (updated sequentially when solving)
-    Eigen::VectorXd    w_; ///<slack variables (updated sequentially when solving)
+    Eigen::VectorXd    x_; // HQP solution (updated sequentially when solving)
+    Eigen::VectorXd    w_; // slack variables (updated sequentially when solving)
     Eigen::VectorXd    b_;
     Eigen::MatrixXd    A_;
     std::vector<char>  senses_;

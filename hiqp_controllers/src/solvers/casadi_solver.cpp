@@ -47,7 +47,7 @@ bool CasADiSolver::solve
 	std::vector<double>& solution
 )
 {
-	// StageMapIterator it2 = stages_map_.begin();
+	// StageMap::iterator it2 = stages_map_.begin();
 	
  //  std::cout << "--- casadi solve ---\n";
 	// while (it2 != stages_map_.end())
@@ -70,7 +70,7 @@ bool CasADiSolver::solve
 	std::vector<double> 		lbg, ubg;
 
 	// Iterate over all stages and solve one QP per each stage
-	StageMapIterator it = stages_map_.begin();
+	StageMap::iterator it = stages_map_.begin();
 	while (it != stages_map_.end())
 	{
 		HiQPStage& stage = it->second;
