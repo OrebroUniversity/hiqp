@@ -1,30 +1,15 @@
 yumi:
   hiqp_kinematics_controller:
     #####      JOINT LIMITATIONS    #####
-     hiqp_preload_jnt_limits:
-      - link_frame: yumi_link_1_r
-        limitations: [1.4835, -2.94, 2.94] #dq_max, lower joint limit, upper joint limit
-      - link_frame: yumi_link_2_r
-        limitations: [1.4835, -2.5, 0.75] 
-      - link_frame: yumi_link_3_r
-        limitations: [1.7453, -2.94, 2.94]
-      - link_frame: yumi_link_4_r
-        limitations: [1.3090, -2.16, 1.4]
-      - link_frame: yumi_link_5_r
-        limitations: [2.2689, -5.07, 5.07] 
-      - link_frame: yumi_link_6_r
-        limitations: [2.2689, -1.54, 2.41]
-      - link_frame: yumi_link_7_r
-        limitations: [2.2689, -4.0, 4.0] 
 
      hiqp_preload_geometric_primitives:
     #   #####      OBSTACLE AVOIDANCE PRIMITIVES    #####
       - name: floor_avoidance_plane
         type: plane 
-        frame_id: world
+        frame_id: yumi_body
         visible: true
         color: [0.5, 0.5, 0.5, 1.0]
-        parameters: [0.0, 0.0, 1.0, 0.115]
+        parameters: [0.0, 0.0, 1.0, 0.02]
       - name: yumi_link_5_r_avoidance_sphere
         type: sphere 
         frame_id: yumi_link_5_r
@@ -133,25 +118,25 @@ yumi:
      hiqp_preload_tasks:
       #####      OBSTACLE AVOIDANCE TASKS    #####
       # - name: yumi_link_5_r_l_avoidance
-      #   priority: 2
+      #   priority: 1
       #   visible: true
       #   active: true
       #   def_params: ['TDefGeomProj', 'sphere', 'sphere', 'yumi_link_5_l_avoidance_sphere > yumi_link_5_r_avoidance_sphere']
       #   dyn_params: ['TDynFirstOrder', '10.0']
       # - name: yumi_link_6_r_l_avoidance
-      #   priority: 2
+      #   priority: 1
       #   visible: true
       #   active: true
       #   def_params: ['TDefGeomProj', 'sphere', 'sphere', 'yumi_link_6_l_avoidance_sphere > yumi_link_6_r_avoidance_sphere']
       #   dyn_params: ['TDynFirstOrder', '10.0']
       # - name: yumi_link_5_l_6_r_avoidance
-      #   priority: 2
+      #   priority: 1
       #   visible: true
       #   active: true
       #   def_params: ['TDefGeomProj', 'sphere', 'sphere', 'yumi_link_5_l_avoidance_sphere > yumi_link_6_r_avoidance_sphere']
       #   dyn_params: ['TDynFirstOrder', '10.0']
       # - name: yumi_link_5_r_6_l_avoidance
-      #   priority: 2
+      #   priority: 1
       #   visible: true
       #   active: true
       #   def_params: ['TDefGeomProj', 'sphere', 'sphere', 'yumi_link_6_l_avoidance_sphere > yumi_link_5_r_avoidance_sphere']
