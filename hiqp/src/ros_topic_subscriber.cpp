@@ -18,8 +18,8 @@
 #include <hiqp/geometric_primitives/geometric_point.h>
 #include <hiqp/geometric_primitives/geometric_cylinder.h>
 
-#include <hiqp_msgs_srvs/Vector3d.h>
-#include <hiqp_msgs_srvs/StringArray.h>
+#include <hiqp_msgs/Vector3d.h>
+#include <hiqp_msgs/StringArray.h>
 
 #include <iostream>
 #include <string>
@@ -85,9 +85,9 @@ void ROSTopicSubscriber::topicCallback<geometry_msgs::PoseStamped>(const geometr
 
 
 template<>
-void ROSTopicSubscriber::topicCallback<hiqp_msgs_srvs::Vector3d>
+void ROSTopicSubscriber::topicCallback<hiqp_msgs::Vector3d>
 (
-	const hiqp_msgs_srvs::Vector3d& msg
+	const hiqp_msgs::Vector3d& msg
 )
 {
 	/*
@@ -115,9 +115,9 @@ void ROSTopicSubscriber::topicCallback<hiqp_msgs_srvs::Vector3d>
 }
 
 template<>
-void ROSTopicSubscriber::topicCallback<hiqp_msgs_srvs::StringArray>
+void ROSTopicSubscriber::topicCallback<hiqp_msgs::StringArray>
 (
-	const hiqp_msgs_srvs::StringArray& msg
+	const hiqp_msgs::StringArray& msg
 )
 {
 	if (msg.params.size() == 0) return;

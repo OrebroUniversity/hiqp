@@ -27,9 +27,9 @@
 #include <hiqp/geometric_primitives/geometric_primitive_visualizer.h>
 #include <hiqp/hiqp_utils.h>
 
-#include <hiqp_msgs_srvs/MonitoringDataMsg.h>
-#include <hiqp_msgs_srvs/Vector3d.h>
-#include <hiqp_msgs_srvs/StringArray.h>
+#include <hiqp_msgs/MonitoringDataMsg.h>
+#include <hiqp_msgs/Vector3d.h>
+#include <hiqp_msgs/StringArray.h>
 
 #include <geometry_msgs/PoseStamped.h> // teleoperation magnet sensors
 
@@ -183,8 +183,8 @@ void ROSKinematicsController::update
 
 bool ROSKinematicsController::setTask
 (
-  hiqp_msgs_srvs::SetTask::Request& req, 
-  hiqp_msgs_srvs::SetTask::Response& res
+  hiqp_msgs::SetTask::Request& req, 
+  hiqp_msgs::SetTask::Response& res
 )
 {
   int retval = task_manager_.setTask(
@@ -201,8 +201,8 @@ bool ROSKinematicsController::setTask
 
 bool ROSKinematicsController::removeTask
 (
-  hiqp_msgs_srvs::RemoveTask::Request& req, 
-    hiqp_msgs_srvs::RemoveTask::Response& res
+  hiqp_msgs::RemoveTask::Request& req, 
+    hiqp_msgs::RemoveTask::Response& res
 )
 {
   res.success = false;
@@ -227,8 +227,8 @@ bool ROSKinematicsController::removeTask
 
 bool ROSKinematicsController::removeAllTasks
 (
-    hiqp_msgs_srvs::RemoveAllTasks::Request& req, 
-    hiqp_msgs_srvs::RemoveAllTasks::Response& res
+    hiqp_msgs::RemoveAllTasks::Request& req, 
+    hiqp_msgs::RemoveAllTasks::Response& res
 )
 {
   task_manager_.removeAllTasks();
@@ -243,8 +243,8 @@ bool ROSKinematicsController::removeAllTasks
 
 bool ROSKinematicsController::listAllTasks
 (
-    hiqp_msgs_srvs::ListAllTasks::Request& req, 
-    hiqp_msgs_srvs::ListAllTasks::Response& res
+    hiqp_msgs::ListAllTasks::Request& req, 
+    hiqp_msgs::ListAllTasks::Response& res
 )
 {
   task_manager_.listAllTasks();
@@ -258,8 +258,8 @@ bool ROSKinematicsController::listAllTasks
 
 bool ROSKinematicsController::addGeometricPrimitive
 (
-    hiqp_msgs_srvs::AddGeometricPrimitive::Request& req, 
-    hiqp_msgs_srvs::AddGeometricPrimitive::Response& res
+    hiqp_msgs::AddGeometricPrimitive::Request& req, 
+    hiqp_msgs::AddGeometricPrimitive::Response& res
 )
 {
   int retval = task_manager_.addGeometricPrimitive(
@@ -283,8 +283,8 @@ bool ROSKinematicsController::addGeometricPrimitive
 /// \bug Removing primitive doesn't remove visualization
 bool ROSKinematicsController::removeGeometricPrimitive
 (
-    hiqp_msgs_srvs::RemoveGeometricPrimitive::Request& req, 
-    hiqp_msgs_srvs::RemoveGeometricPrimitive::Response& res
+    hiqp_msgs::RemoveGeometricPrimitive::Request& req, 
+    hiqp_msgs::RemoveGeometricPrimitive::Response& res
 )
 {
   res.success = false;
@@ -306,8 +306,8 @@ bool ROSKinematicsController::removeGeometricPrimitive
 
 bool ROSKinematicsController::removeAllGeometricPrimitives
 (
-    hiqp_msgs_srvs::RemoveAllGeometricPrimitives::Request& req, 
-    hiqp_msgs_srvs::RemoveAllGeometricPrimitives::Response& res
+    hiqp_msgs::RemoveAllGeometricPrimitives::Request& req, 
+    hiqp_msgs::RemoveAllGeometricPrimitives::Response& res
 )
 {
   task_manager_.removeAllGeometricPrimitives();
@@ -392,7 +392,7 @@ void ROSKinematicsController::performMonitoring()
       task_manager_.getTaskMonitoringData(datas);
 
       for (auto&& data : datas) {
-        hiqp_msgs_srvs::MonitoringDataMsg msg;
+        hiqp_msgs::MonitoringDataMsg msg;
         msg.ts = now;
         msg.task_name = data.task_name_;
         msg.e = std::vector<double>(data.e_.data(), data.e_.data() + data.e_.rows() * data.e_.cols());
@@ -404,10 +404,10 @@ void ROSKinematicsController::performMonitoring()
         monitoring_pub_.publish(msg);
       }
 
-      // hiqp_msgs_srvs::MonitoringDataMsg msg;
+      // hiqp_msgs::MonitoringDataMsg msg;
       // msg.ts = now;
 
-      // hiqp_msgs_srvs::PerfMeasMsg qdot_msg;
+      // hiqp_msgs::PerfMeasMsg qdot_msg;
       // qdot_msg.task_name = "_qdot_";
       // qdot_msg.measure_tag = "_qdot_";
       // qdot_msg.data.insert(qdot_msg.data.begin(),
@@ -418,7 +418,7 @@ void ROSKinematicsController::performMonitoring()
       // std::vector<TaskMonitoringData>::iterator it = data.begin();
       // while (it != data.end())
       // {
-      //   hiqp_msgs_srvs::PerfMeasMsg per_msg;
+      //   hiqp_msgs::PerfMeasMsg per_msg;
         
       //   //per_msg.task_id = it->task_id_;
       //   per_msg.task_name = it->task_name_;
@@ -453,12 +453,12 @@ void ROSKinematicsController::addAllTopicSubscriptions()
     controller_nh_, "/wintracker_rebase/pose", 100
   );
 
-  //topic_subscriber_.addSubscription<hiqp_msgs_srvs::Vector3d>(
+  //topic_subscriber_.addSubscription<hiqp_msgs::Vector3d>(
   //  controller_nh_, "/yumi/hiqp_controllers/vector3d", 100
   //);
   
 
-  //topic_subscriber_.addSubscription<hiqp_msgs_srvs::StringArray>(
+  //topic_subscriber_.addSubscription<hiqp_msgs::StringArray>(
   //  controller_nh_, "/yumi/hiqp_kinematics_controller/experiment_commands", 100
   //);
 }
@@ -609,7 +609,7 @@ int ROSKinematicsController::loadAndSetupTaskMonitoring()
   monitoring_publish_rate_ = 
     static_cast<double>(task_monitoring["publish_rate"]);
 
-  monitoring_pub_ = controller_nh_.advertise<hiqp_msgs_srvs::MonitoringDataMsg>
+  monitoring_pub_ = controller_nh_.advertise<hiqp_msgs::MonitoringDataMsg>
   ("monitoring_data", 1);
 
   return 0;

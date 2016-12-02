@@ -1,6 +1,6 @@
+<?xml version="1.0"?>
 <package>
-
-  <name>hiqp_msgs_srvs</name>
+  <name>hiqp_msgs</name>
   <version>0.0.1</version>
   <description>Messages and services for the HiQP Control Framework</description>
 
@@ -19,8 +19,4 @@
   <run_depend>std_msgs</run_depend>
   <run_depend>geometry_msgs</run_depend>
   <run_depend>message_runtime</run_depend>
-
-  <export>
-  </export>
-
 </package>

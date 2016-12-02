@@ -36,14 +36,14 @@
 #include <hiqp/ros_topic_subscriber.h>
 #include <hiqp/hiqp_time_point.h>
 
-#include <hiqp_msgs_srvs/SetTask.h>
-#include <hiqp_msgs_srvs/UpdateTask.h>
-#include <hiqp_msgs_srvs/RemoveTask.h>
-#include <hiqp_msgs_srvs/RemoveAllTasks.h>
-#include <hiqp_msgs_srvs/ListAllTasks.h>
-#include <hiqp_msgs_srvs/AddGeometricPrimitive.h>
-#include <hiqp_msgs_srvs/RemoveGeometricPrimitive.h>
-#include <hiqp_msgs_srvs/RemoveAllGeometricPrimitives.h>
+#include <hiqp_msgs/SetTask.h>
+#include <hiqp_msgs/UpdateTask.h>
+#include <hiqp_msgs/RemoveTask.h>
+#include <hiqp_msgs/RemoveAllTasks.h>
+#include <hiqp_msgs/ListAllTasks.h>
+#include <hiqp_msgs/AddGeometricPrimitive.h>
+#include <hiqp_msgs/RemoveGeometricPrimitive.h>
+#include <hiqp_msgs/RemoveAllGeometricPrimitives.h>
 
 #include <fstream>
 
@@ -110,14 +110,14 @@ namespace hiqp
     void loadTasksFromParamServer();
 
     // ROS Service callback functions
-    bool setTask(hiqp_msgs_srvs::SetTask::Request& req, hiqp_msgs_srvs::SetTask::Response& res);
-    //bool updateTask(hiqp_msgs_srvs::UpdateTask::Request& req, hiqp_msgs_srvs::UpdateTask::Response& res);
-    bool removeTask(hiqp_msgs_srvs::RemoveTask::Request& req, hiqp_msgs_srvs::RemoveTask::Response& res);
-    bool removeAllTasks(hiqp_msgs_srvs::RemoveAllTasks::Request& req, hiqp_msgs_srvs::RemoveAllTasks::Response& res);
-    bool listAllTasks(hiqp_msgs_srvs::ListAllTasks::Request& req, hiqp_msgs_srvs::ListAllTasks::Response& res);
-    bool addGeometricPrimitive(hiqp_msgs_srvs::AddGeometricPrimitive::Request& req, hiqp_msgs_srvs::AddGeometricPrimitive::Response& res);
-    bool removeGeometricPrimitive(hiqp_msgs_srvs::RemoveGeometricPrimitive::Request& req, hiqp_msgs_srvs::RemoveGeometricPrimitive::Response& res);
-    bool removeAllGeometricPrimitives(hiqp_msgs_srvs::RemoveAllGeometricPrimitives::Request& req, hiqp_msgs_srvs::RemoveAllGeometricPrimitives::Response& res);
+    bool setTask(hiqp_msgs::SetTask::Request& req, hiqp_msgs::SetTask::Response& res);
+    //bool updateTask(hiqp_msgs::UpdateTask::Request& req, hiqp_msgs::UpdateTask::Response& res);
+    bool removeTask(hiqp_msgs::RemoveTask::Request& req, hiqp_msgs::RemoveTask::Response& res);
+    bool removeAllTasks(hiqp_msgs::RemoveAllTasks::Request& req, hiqp_msgs::RemoveAllTasks::Response& res);
+    bool listAllTasks(hiqp_msgs::ListAllTasks::Request& req, hiqp_msgs::ListAllTasks::Response& res);
+    bool addGeometricPrimitive(hiqp_msgs::AddGeometricPrimitive::Request& req, hiqp_msgs::AddGeometricPrimitive::Response& res);
+    bool removeGeometricPrimitive(hiqp_msgs::RemoveGeometricPrimitive::Request& req, hiqp_msgs::RemoveGeometricPrimitive::Response& res);
+    bool removeAllGeometricPrimitives(hiqp_msgs::RemoveAllGeometricPrimitives::Request& req, hiqp_msgs::RemoveAllGeometricPrimitives::Response& res);
 
     typedef std::map<unsigned int, hardware_interface::JointHandle > JointHandleMap;
 
