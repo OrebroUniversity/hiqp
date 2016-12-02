@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<library path="lib/libhiqp_controllers">
+<library path="lib/libhiqp">
 
   <class name="hiqp/ROSKinematicsController" 
          type="hiqp::ROSKinematicsController" 

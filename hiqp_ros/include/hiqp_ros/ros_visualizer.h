@@ -17,16 +17,23 @@
 #ifndef HIQP_ROS_VISUALIZER_H
 #define HIQP_ROS_VISUALIZER_H
 
-// HiQP Includes
 #include <hiqp/visualizer.h>
 
-// ROS Includes
 #include <ros/ros.h>
 
-namespace hiqp
+using hiqp::Visualizer;
+using hiqp::geometric_primitives::GeometricPoint;
+using hiqp::geometric_primitives::GeometricLine;
+using hiqp::geometric_primitives::GeometricPlane;
+using hiqp::geometric_primitives::GeometricBox;
+using hiqp::geometric_primitives::GeometricCylinder;
+using hiqp::geometric_primitives::GeometricSphere;
+using hiqp::geometric_primitives::GeometricFrame;
+
+namespace hiqp_ros
 {
 
-	class ROSVisualizer : public Visualizer
+	class ROSVisualizer : public hiqp::Visualizer
 	{
 	public:
 		ROSVisualizer();

@@ -23,17 +23,21 @@
 #include <XmlRpcValue.h>  
 #include <XmlRpcException.h> 
 
-#include <hiqp/hiqp_joint_velocity_controller.h>
-#include <hiqp_controllers/hiqp/geometric_primitives/geometric_primitive_visualizer.h>
-#include <hiqp_controllers/hiqp/hiqp_utils.h>
+#include <hiqp_ros/hiqp_joint_velocity_controller.h>
+#include <hiqp/geometric_primitives/geometric_primitive_visualizer.h>
 
-#include <hiqp_msgs_srvs/MonitoringDataMsg.h>
-#include <hiqp_msgs_srvs/Vector3d.h>
-#include <hiqp_msgs_srvs/StringArray.h>
+#include <hiqp_ros/utilities.h>
+
+#include <hiqp_msgs/MonitoringDataMsg.h>
+#include <hiqp_msgs/Vector3d.h>
+#include <hiqp_msgs/StringArray.h>
 
 #include <geometry_msgs/PoseStamped.h> // teleoperation magnet sensors
 
-namespace hiqp
+using hiqp::geometric_primitives::GeometricPrimitiveVisualizer;
+using hiqp::TaskMonitoringData;
+
+namespace hiqp_ros
 {
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -151,7 +155,7 @@ void HiQPJointVelocityController::update
   }
 
   //task_manager_.getGeometricPrimitiveMap()->redrawAllPrimitives();
-  geometric_primitives::GeometricPrimitiveVisualizer geom_prim_vis(&ros_visualizer_);
+  GeometricPrimitiveVisualizer geom_prim_vis(&ros_visualizer_);
   task_manager_.getGeometricPrimitiveMap()->acceptVisitor(geom_prim_vis);
 
   performMonitoring();
@@ -183,8 +187,8 @@ void HiQPJointVelocityController::update
 
 bool HiQPJointVelocityController::setTask
 (
-  hiqp_msgs_srvs::SetTask::Request& req, 
-  hiqp_msgs_srvs::SetTask::Response& res
+  hiqp_msgs::SetTask::Request& req, 
+  hiqp_msgs::SetTask::Response& res
 )
 {
   int retval = task_manager_.setTask(
@@ -201,8 +205,8 @@ bool HiQPJointVelocityController::setTask
 
 bool HiQPJointVelocityController::removeTask
 (
-  hiqp_msgs_srvs::RemoveTask::Request& req, 
-    hiqp_msgs_srvs::RemoveTask::Response& res
+  hiqp_msgs::RemoveTask::Request& req, 
+    hiqp_msgs::RemoveTask::Response& res
 )
 {
   res.success = false;
@@ -211,11 +215,11 @@ bool HiQPJointVelocityController::removeTask
 
   if (res.success)
   {
-    printHiqpInfo("Removed task '" + req.task_name + "'.");
+    hiqp::printHiqpInfo("Removed task '" + req.task_name + "'.");
   }
   else
   {
-    printHiqpInfo("Couldn't remove task '" + req.task_name + "'!");  
+    hiqp::printHiqpInfo("Couldn't remove task '" + req.task_name + "'!");  
   }
 
   return true;
@@ -227,12 +231,12 @@ bool HiQPJointVelocityController::removeTask
 
 bool HiQPJointVelocityController::removeAllTasks
 (
-    hiqp_msgs_srvs::RemoveAllTasks::Request& req, 
-    hiqp_msgs_srvs::RemoveAllTasks::Response& res
+    hiqp_msgs::RemoveAllTasks::Request& req, 
+    hiqp_msgs::RemoveAllTasks::Response& res
 )
 {
   task_manager_.removeAllTasks();
-  printHiqpInfo("Removed all tasks successfully!");
+  hiqp::printHiqpInfo("Removed all tasks successfully!");
   res.success = true;
   return true;
 }
@@ -243,8 +247,8 @@ bool HiQPJointVelocityController::removeAllTasks
 
 bool HiQPJointVelocityController::listAllTasks
 (
-    hiqp_msgs_srvs::ListAllTasks::Request& req, 
-    hiqp_msgs_srvs::ListAllTasks::Response& res
+    hiqp_msgs::ListAllTasks::Request& req, 
+    hiqp_msgs::ListAllTasks::Response& res
 )
 {
   task_manager_.listAllTasks();
@@ -258,8 +262,8 @@ bool HiQPJointVelocityController::listAllTasks
 
 bool HiQPJointVelocityController::addGeometricPrimitive
 (
-    hiqp_msgs_srvs::AddGeometricPrimitive::Request& req, 
-    hiqp_msgs_srvs::AddGeometricPrimitive::Response& res
+    hiqp_msgs::AddGeometricPrimitive::Request& req, 
+    hiqp_msgs::AddGeometricPrimitive::Response& res
 )
 {
   int retval = task_manager_.addGeometricPrimitive(
@@ -270,7 +274,7 @@ bool HiQPJointVelocityController::addGeometricPrimitive
 
   if (res.success)
   {
-    printHiqpInfo("Added geometric primitive of type '" 
+    hiqp::printHiqpInfo("Added geometric primitive of type '" 
       + req.type + "' with name '" + req.name + "'.");
   }
 
@@ -283,8 +287,8 @@ bool HiQPJointVelocityController::addGeometricPrimitive
 /// \bug Removing primitive doesn't remove visualization
 bool HiQPJointVelocityController::removeGeometricPrimitive
 (
-    hiqp_msgs_srvs::RemoveGeometricPrimitive::Request& req, 
-    hiqp_msgs_srvs::RemoveGeometricPrimitive::Response& res
+    hiqp_msgs::RemoveGeometricPrimitive::Request& req, 
+    hiqp_msgs::RemoveGeometricPrimitive::Response& res
 )
 {
   res.success = false;
@@ -292,9 +296,9 @@ bool HiQPJointVelocityController::removeGeometricPrimitive
     res.success = true;
 
   if (res.success) {
-    printHiqpInfo("Removed primitive '" + req.name + "' successfully!");
+    hiqp::printHiqpInfo("Removed primitive '" + req.name + "' successfully!");
   } else {
-    printHiqpInfo("Couldn't remove primitive '" + req.name + "'!");  
+    hiqp::printHiqpInfo("Couldn't remove primitive '" + req.name + "'!");  
   }
 
   return true;
@@ -306,12 +310,12 @@ bool HiQPJointVelocityController::removeGeometricPrimitive
 
 bool HiQPJointVelocityController::removeAllGeometricPrimitives
 (
-    hiqp_msgs_srvs::RemoveAllGeometricPrimitives::Request& req, 
-    hiqp_msgs_srvs::RemoveAllGeometricPrimitives::Response& res
+    hiqp_msgs::RemoveAllGeometricPrimitives::Request& req, 
+    hiqp_msgs::RemoveAllGeometricPrimitives::Response& res
 )
 {
   task_manager_.removeAllGeometricPrimitives();
-  printHiqpInfo("Removed all primitives successfully!");
+  hiqp::printHiqpInfo("Removed all primitives successfully!");
   res.success = true;
   return true;
 }
@@ -392,7 +396,7 @@ void HiQPJointVelocityController::performMonitoring()
       task_manager_.getTaskMonitoringData(datas);
 
       for (auto&& data : datas) {
-        hiqp_msgs_srvs::MonitoringDataMsg msg;
+        hiqp_msgs::MonitoringDataMsg msg;
         msg.ts = now;
         msg.task_name = data.task_name_;
         msg.e = std::vector<double>(data.e_.data(), data.e_.data() + data.e_.rows() * data.e_.cols());
@@ -404,10 +408,10 @@ void HiQPJointVelocityController::performMonitoring()
         monitoring_pub_.publish(msg);
       }
 
-      // hiqp_msgs_srvs::MonitoringDataMsg msg;
+      // hiqp_msgs::MonitoringDataMsg msg;
       // msg.ts = now;
 
-      // hiqp_msgs_srvs::PerfMeasMsg qdot_msg;
+      // hiqp_msgs::PerfMeasMsg qdot_msg;
       // qdot_msg.task_name = "_qdot_";
       // qdot_msg.measure_tag = "_qdot_";
       // qdot_msg.data.insert(qdot_msg.data.begin(),
@@ -418,7 +422,7 @@ void HiQPJointVelocityController::performMonitoring()
       // std::vector<TaskMonitoringData>::iterator it = data.begin();
       // while (it != data.end())
       // {
-      //   hiqp_msgs_srvs::PerfMeasMsg per_msg;
+      //   hiqp_msgs::PerfMeasMsg per_msg;
         
       //   //per_msg.task_id = it->task_id_;
       //   per_msg.task_name = it->task_name_;
@@ -453,12 +457,12 @@ void HiQPJointVelocityController::addAllTopicSubscriptions()
     controller_nh_, "/wintracker_rebase/pose", 100
   );
 
-  //topic_subscriber_.addSubscription<hiqp_msgs_srvs::Vector3d>(
+  //topic_subscriber_.addSubscription<hiqp_msgs::Vector3d>(
   //  controller_nh_, "/yumi/hiqp_controllers/vector3d", 100
   //);
   
 
-  //topic_subscriber_.addSubscription<hiqp_msgs_srvs::StringArray>(
+  //topic_subscriber_.addSubscription<hiqp_msgs::StringArray>(
   //  controller_nh_, "/yumi/hiqp_kinematics_controller/experiment_commands", 100
   //);
 }
@@ -534,7 +538,7 @@ int HiQPJointVelocityController::loadJointsAndSetJointHandlesMap()
   {
     try
     {
-      unsigned int q_nr = kdl_getQNrFromJointName(robot_state_data_.kdl_tree_, name);
+      unsigned int q_nr = hiqp::kdl_getQNrFromJointName(robot_state_data_.kdl_tree_, name);
       joint_handles_map_.emplace(q_nr, hardware_interface_->getHandle(name));
     }
     catch (const hardware_interface::HardwareInterfaceException& e)
@@ -609,7 +613,7 @@ int HiQPJointVelocityController::loadAndSetupTaskMonitoring()
   monitoring_publish_rate_ = 
     static_cast<double>(task_monitoring["publish_rate"]);
 
-  monitoring_pub_ = controller_nh_.advertise<hiqp_msgs_srvs::MonitoringDataMsg>
+  monitoring_pub_ = controller_nh_.advertise<hiqp_msgs::MonitoringDataMsg>
   ("monitoring_data", 1);
 
   return 0;
@@ -637,7 +641,7 @@ int HiQPJointVelocityController::loadUrdfAndSetupKdlTree()
           << " parameter 'robot_description' on the parameter server.");
         return -1;
     }
-    printHiqpInfo("Loaded the robot's urdf model and initialized the KDL tree successfully");
+    hiqp::printHiqpInfo("Loaded the robot's urdf model and initialized the KDL tree successfully");
     std::cout << robot_state_data_.kdl_tree_ << "\n";
 
     return 0;
@@ -804,8 +808,8 @@ void HiQPJointVelocityController::loadTasksFromParamServer() {
 
 
 
-} // namespace hiqp
+} // namespace hiqp_ros
 
 
 // make the controller available to the library loader
-PLUGINLIB_EXPORT_CLASS(hiqp::HiQPJointVelocityController, controller_interface::ControllerBase)
+PLUGINLIB_EXPORT_CLASS(hiqp_ros::HiQPJointVelocityController, controller_interface::ControllerBase)

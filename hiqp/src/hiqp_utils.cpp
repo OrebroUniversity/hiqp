@@ -14,34 +14,14 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
-
-/*!
- * \file   hiqp_utils.cpp
- * \Author Marcus A Johansson (marcus.adam.johansson@gmail.com)
- * \date   July, 2016
- * \brief  Brief description of file.
- *
- * Detailed description of file.
- */
-
-
-
 #include <hiqp/hiqp_utils.h>
 
 #include <iomanip>
 
 #include <kdl/frames.hpp>
 
-
-
 namespace hiqp
 {
-
-
-
-
 
 // Auxiliary function to 'ostream& << KDL::Tree&'
 void printChildrenToOstream

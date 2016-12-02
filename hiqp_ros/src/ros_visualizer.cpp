@@ -17,14 +17,14 @@
 #include <iostream>
 #include <cmath>
 
-#include <hiqp/ros_visualizer.h>
+#include <hiqp_ros/ros_visualizer.h>
 
 #include <visualization_msgs/Marker.h>
 #include <visualization_msgs/MarkerArray.h>
 
 #include <Eigen/Dense>
 
-namespace hiqp
+namespace hiqp_ros
 {
 
 

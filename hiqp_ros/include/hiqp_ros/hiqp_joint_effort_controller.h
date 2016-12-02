@@ -19,7 +19,9 @@
 
 #include <ros/ros.h>
 
-namespace hiqp
+
+
+namespace hiqp_ros
 {
 
   /*! \brief A joint effort controller that provides full access to the HiQP control framework

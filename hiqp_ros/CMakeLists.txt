@@ -17,7 +17,7 @@
 cmake_minimum_required(VERSION 2.8.6)
 project(hiqp_ros)
 
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake_modules)
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR})
 set(CMAKE_CXX_FLAGS "-O3 -std=c++11 -Wl,-z,defs")
 
 set(GUROBI_INCLUDE_DIR "$ENV{GUROBI_HOME}/include") 
@@ -27,33 +27,32 @@ set(GUROBI_LIBS gurobi_c++ gurobi65)
 find_package(catkin REQUIRED COMPONENTS roscpp
                                         controller_interface
                                         visualization_msgs
-                                        kdl_parser
-                                        hiqp_controllers
-                                        hiqp_msgs_srvs)
+                                        hiqp
+                                        hiqp_msgs)
 
 find_package(orocos_kdl REQUIRED)
 find_package(Eigen3 REQUIRED)
-#find_package(CASADI REQUIRED)
 
-catkin_package(CATKIN_DEPENDS roscpp controller_interface visualization_msgs kdl_parser hiqp_controllers hiqp_msgs_srvs
-               INCLUDE_DIRS include #${EIGEN_INCLUDE_DIRS}
-               LIBRARIES ${PROJECT_NAME} #casadi
+catkin_package(CATKIN_DEPENDS roscpp controller_interface visualization_msgs hiqp hiqp_msgs
+               INCLUDE_DIRS include
+               LIBRARIES ${PROJECT_NAME}
                DEPENDS orocos_kdl)
 
 include_directories(include ${catkin_INCLUDE_DIRS})
-#include_directories(${CASADI_INCLUDE_DIR})
 include_directories(${GUROBI_INCLUDE_DIR})
 
 link_directories(${GUROBI_LIB_DIR})
 
 add_library(${PROJECT_NAME} src/hiqp_joint_velocity_controller.cpp
                             src/ros_topic_subscriber.cpp
-                            src/ros_visualizer.cpp)
+                            src/ros_visualizer.cpp
+                            src/utilities.cpp)
 
-target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} ${orocos_kdl_LIBRARIES} ${GUROBI_LIBS})#${CASADI_LIBRARIES} )
+target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} ${orocos_kdl_LIBRARIES} ${GUROBI_LIBS})
 
-install(DIRECTORY include
-        DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION})
+install(DIRECTORY include/${PROJECT_NAME}/
+        DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
+        FILES_MATCHING PATTERN "*.h")
 
 install(DIRECTORY config
         DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
@@ -66,5 +65,5 @@ install(TARGETS ${PROJECT_NAME}
         LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
         RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 
-install(FILES hiqp_controllers_plugins.xml
+install(FILES plugins.xml
         DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
