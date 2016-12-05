@@ -15,7 +15,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 cmake_minimum_required(VERSION 2.8.6)
-project(hiqp_ros)
+project(hiqp_core)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR})
 set(CMAKE_CXX_FLAGS "-O3 -std=c++11 -Wl,-z,defs")
@@ -27,28 +27,48 @@ set(GUROBI_LIBS gurobi_c++ gurobi65)
 find_package(catkin REQUIRED COMPONENTS roscpp
                                         controller_interface
                                         visualization_msgs
-                                        hiqp_core
+                                        kdl_parser
                                         hiqp_msgs)
 
 find_package(orocos_kdl REQUIRED)
 find_package(Eigen3 REQUIRED)
+find_package(CASADI REQUIRED)
 
-catkin_package(CATKIN_DEPENDS roscpp controller_interface visualization_msgs hiqp_core hiqp_msgs
+catkin_package(CATKIN_DEPENDS roscpp controller_interface visualization_msgs kdl_parser hiqp_msgs
                INCLUDE_DIRS include
-               LIBRARIES ${PROJECT_NAME}
+               LIBRARIES ${PROJECT_NAME} casadi
                DEPENDS orocos_kdl)
 
 include_directories(include ${catkin_INCLUDE_DIRS})
+include_directories(${CASADI_INCLUDE_DIR})
 include_directories(${GUROBI_INCLUDE_DIR})
 
 link_directories(${GUROBI_LIB_DIR})
 
-add_library(${PROJECT_NAME} src/hiqp_joint_velocity_controller.cpp
-                            src/ros_topic_subscriber.cpp
-                            src/ros_visualizer.cpp
-                            src/utilities.cpp)
+add_library(${PROJECT_NAME} src/utilities.cpp
+                            src/hiqp_time_point.cpp
+                            src/task_manager.cpp
+                            src/task.cpp
 
-target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} ${orocos_kdl_LIBRARIES} ${GUROBI_LIBS})
+                            src/geometric_primitives/geometric_primitive_map.cpp
+                            src/geometric_primitives/geometric_primitive_visualizer.cpp
+
+                            src/solvers/casadi_solver.cpp
+                            src/solvers/gurobi_solver.cpp
+                            src/tasks/dynamics_first_order.cpp
+                            src/tasks/dynamics_jnt_limits.cpp
+                            src/tasks/dynamics_minimal_jerk.cpp
+                            src/tasks/task_full_pose.cpp
+                            src/tasks/task_geometric_projection.cpp
+                            src/tasks/task_geometric_alignment.cpp
+                            src/tasks/task_jnt_config.cpp
+                            src/tasks/task_jnt_limits.cpp
+)
+
+target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} 
+                                      ${orocos_kdl_LIBRARIES} 
+                                      ${CASADI_LIBRARIES} 
+                                      ${GUROBI_LIBS})
 
 install(DIRECTORY include/${PROJECT_NAME}/
         DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
