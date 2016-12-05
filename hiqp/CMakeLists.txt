@@ -47,9 +47,6 @@ link_directories(${GUROBI_LIB_DIR})
 
 add_library(${PROJECT_NAME} src/utilities.cpp
                             src/hiqp_time_point.cpp
-                            src/ros_kinematics_controller.cpp
-                            src/ros_topic_subscriber.cpp
-                            src/ros_visualizer.cpp
                             src/task_manager.cpp
                             src/task.cpp
 

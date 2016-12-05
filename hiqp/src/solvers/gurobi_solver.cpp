@@ -16,8 +16,12 @@
 
 #include <hiqp/utilities.h>
 #include <hiqp/solvers/gurobi_solver.h>
+
 #include <gurobi_c++.h>
 #include <ros/assert.h>
+#include <cassert>
+#include <iostream>
+
 #include <Eigen/Dense>
 
 #define OUTPUT_FLAG      0
@@ -41,8 +45,7 @@ namespace hiqp
   }
 
   /// \bug Empty stages are ignored, and the lower ones gain a hierarchy rank 
-  bool GurobiSolver::solve(std::vector<double>& solution)
-  {
+  bool GurobiSolver::solve(std::vector<double>& solution) {
     if (stages_map_.empty())
       return false;
 
@@ -56,14 +59,16 @@ namespace hiqp
       unsigned int s_count = 0; // stage counter
 
       for (it; it!=stages_map_.end(); ++it) {
-        ROS_ASSERT(it->second.J_.cols() == x_dim); //make sure the stage jacobian column dimensions are consistent
+        //ROS_ASSERT(it->second.J_.cols() == x_dim); //make sure the stage jacobian column dimensions are consistent
+        assert(it->second.J_.cols() == x_dim);
         s_count++;
         GRBModel model(env_);
         unsigned int s_dim = it->second.nRows; //dimension of the current stage
         unsigned int s_acc_dim = b_.rows(); //accumulated dimensions of all the previously solved stages
 
         // append the new signs, jacobian matrix and task velocity vector to the previous ones
-        ROS_ASSERT(it->second.constraint_signs_.size()==s_dim);
+        //ROS_ASSERT(it->second.constraint_signs_.size()==s_dim);
+        assert(it->second.constraint_signs_.size()==s_dim);
         for(unsigned int i = 0; i<s_dim; i++) {
           if (it->second.constraint_signs_.at(i)== 0)
             senses_.push_back(GRB_EQUAL);

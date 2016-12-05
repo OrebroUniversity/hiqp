@@ -19,8 +19,6 @@
 
 #include <ros/ros.h>
 
-
-
 namespace hiqp_ros
 {
 

@@ -30,6 +30,7 @@ namespace hiqp {
     HiQPTimePoint     sampling_time_;
     KDL::Tree         kdl_tree_;
     KDL::JntArrayVel  kdl_jnt_array_vel_;
+    KDL::JntArray     kdl_effort_;
   };
 
   /*! \brief A const pointer type to a robot state. Used to reference to the current robot state throught the framework.

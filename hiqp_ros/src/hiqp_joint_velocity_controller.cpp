@@ -23,10 +23,9 @@
 #include <XmlRpcValue.h>  
 #include <XmlRpcException.h> 
 
+#include <hiqp_ros/utilities.h>
 #include <hiqp_ros/hiqp_joint_velocity_controller.h>
 #include <hiqp/geometric_primitives/geometric_primitive_visualizer.h>
-
-#include <hiqp_ros/utilities.h>
 
 #include <hiqp_msgs/MonitoringDataMsg.h>
 #include <hiqp_msgs/Vector3d.h>
@@ -51,110 +50,53 @@ namespace hiqp_ros
 ////////////////////////////////////////////////////////////////////////////////
 
 HiQPJointVelocityController::HiQPJointVelocityController()
-: visualizer_(&ros_visualizer_), robot_state_ptr_(&robot_state_data_),
+: visualizer_(&ros_visualizer_),
   is_active_(true), monitoring_active_(false), task_manager_(visualizer_) {}
 
 HiQPJointVelocityController::~HiQPJointVelocityController() noexcept {}
 
-void HiQPJointVelocityController::starting(const ros::Time& time) {
-  logfile_.open("hiqp_log.txt", std::ios::out);
-}
+void HiQPJointVelocityController::initialize() {
+  ros_visualizer_.init( &(this->getControllerNodeHandle()) );
 
-void HiQPJointVelocityController::stopping(const ros::Time& time) {
-  logfile_.close();
-}
+  if (loadFps() != 0) return;
 
-
-
-
-
-bool HiQPJointVelocityController::init
-(
-  hardware_interface::VelocityJointInterface *hw,
-  ros::NodeHandle &controller_nh
-)
-{
-  controller_nh_ = controller_nh;
-
-  hardware_interface_ = hw;
-
-  ros_visualizer_.init(&controller_nh_);
-
-  if (loadFps() != 0) return false;
-
-  if (loadAndSetupTaskMonitoring() != 0) return false;
-
-  if (loadUrdfAndSetupKdlTree() != 0) return false;
-
-  if (loadJointsAndSetJointHandlesMap() != 0) return false;
-
-  sampleJointValues();
+  if (loadAndSetupTaskMonitoring() != 0) return;
 
   addAllTopicSubscriptions();
 
   advertiseAllServices();
 
-  task_manager_.init(n_controls_);
+  task_manager_.init(getNJoints());
 
   loadJointLimitsFromParamServer();
 
   loadGeometricPrimitivesFromParamServer();
 
   loadTasksFromParamServer();
-
-  return true;
 }
 
 
 
 
 
-void HiQPJointVelocityController::update
-(
-  const ros::Time& time, 
-  const ros::Duration& period
-)
-{
+void HiQPJointVelocityController::setJointControls(Eigen::VectorXd& u) {
   if (!is_active_) return;
 
-  time_since_last_sampling_ += period.toSec();
+  const hiqp::HiQPTimePoint& current_sampling_time_ = this->getRobotState()->sampling_time_;
+  time_since_last_sampling_ += (current_sampling_time_ - last_sampling_time_).toSec();
   if (time_since_last_sampling_ >= 1/fps_)
   {
-    sampleJointValues();
-
-    task_manager_.getVelocityControls(robot_state_ptr_,
-                                      output_controls_);
-
-    setControls();
-
-    // logfile_ << sampling_time_.toSec() << ",qdot";
-    // for (auto&& c : output_controls_)
-    // {
-    //   logfile_ << "," << c;
-    // }
-    // logfile_ << "\n";
-
-    // std::vector<TaskMonitoringData> data;
-    // task_manager_.getTaskMonitoringData(data);
-
-    // for (auto&& d : data)
-    // {
-    //   if (d.task_name_.compare("minjerk_task") == 0 && 
-    //       d.measure_tag_.compare("J") == 0)
-    //   {
-    //     logfile_ << sampling_time_.toSec() << ",J";
-    //     for (auto&& pm : d.performance_measures_)
-    //     {
-    //       logfile_ << "," << pm;
-    //     }
-    //     logfile_ << "\n";
-    //   }
-    // }
+    std::vector<double> outcon(u.size());
+    task_manager_.getVelocityControls(this->getRobotState(), outcon);
+    int i=0;
+    for (auto&& oc : outcon) {
+      u(i++) = oc;
+    }
 
     time_since_last_sampling_ = 0;
+    last_sampling_time_ = current_sampling_time_;
   }
 
-  //task_manager_.getGeometricPrimitiveMap()->redrawAllPrimitives();
   GeometricPrimitiveVisualizer geom_prim_vis(&ros_visualizer_);
   task_manager_.getGeometricPrimitiveMap()->acceptVisitor(geom_prim_vis);
 
@@ -193,7 +135,7 @@ bool HiQPJointVelocityController::setTask
 {
   int retval = task_manager_.setTask(
     req.name, req.priority, req.visible, req.active,
-    req.def_params, req.dyn_params, robot_state_ptr_);
+    req.def_params, req.dyn_params, this->getRobotState());
 
   res.success = (retval < 0 ? false : true);
 
@@ -338,49 +280,6 @@ bool HiQPJointVelocityController::removeAllGeometricPrimitives
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-
-
-
-
-void HiQPJointVelocityController::sampleJointValues()
-{
-  // Lock the mutex and read all joint positions from the handles
-
-  KDL::JntArray& q = robot_state_data_.kdl_jnt_array_vel_.q;
-  KDL::JntArray& qdot = robot_state_data_.kdl_jnt_array_vel_.qdot;
-  handles_mutex_.lock();
-
-  for (auto&& handle : joint_handles_map_)
-  {
-    q(handle.first) = handle.second.getPosition();
-    qdot(handle.first) = handle.second.getVelocity();
-  }
-  ros::Time t = ros::Time::now();
-  robot_state_data_.sampling_time_.setTimePoint(t.sec, t.nsec);
-
-  handles_mutex_.unlock();
-}
-
-
-
-
-void HiQPJointVelocityController::setControls()
-{
-  // Lock the mutex and write the controls to the joint handles
-  //std::cout << "q = ";
-  handles_mutex_.lock();
-    for (auto&& handle : joint_handles_map_)
-    {
-      handle.second.setCommand(output_controls_.at(handle.first));
-      //std::cout << output_controls_.at(handle.first) << ", ";
-    }
-  handles_mutex_.unlock();
-  //std::cout << "\n";
-}
-
-
-
-
 void HiQPJointVelocityController::performMonitoring()
 {
   // If monitoring is turned on, generate monitoring data and publish it
@@ -402,66 +301,24 @@ void HiQPJointVelocityController::performMonitoring()
         msg.e = std::vector<double>(data.e_.data(), data.e_.data() + data.e_.rows() * data.e_.cols());
         msg.de = std::vector<double>(data.de_.data(), data.de_.data() + data.de_.rows() * data.de_.cols());
         msg.pm = std::vector<double>(data.pm_.data(), data.pm_.data() + data.pm_.rows() * data.pm_.cols());
-        //for (auto&& e : data.e_) { msg.e.push_back(e); }
-        //for (auto&& de : data.de_) { msg.e.push_back(de); }
-        //for (auto&& pm : data.performance_measures_) { msg.pm.push_back(pm); }
         monitoring_pub_.publish(msg);
       }
-
-      // hiqp_msgs::MonitoringDataMsg msg;
-      // msg.ts = now;
-
-      // hiqp_msgs::PerfMeasMsg qdot_msg;
-      // qdot_msg.task_name = "_qdot_";
-      // qdot_msg.measure_tag = "_qdot_";
-      // qdot_msg.data.insert(qdot_msg.data.begin(),
-      //                   output_controls_.cbegin(),
-      //                   output_controls_.cend());
-      // mon_msg.data.push_back(qdot_msg);
-
-      // std::vector<TaskMonitoringData>::iterator it = data.begin();
-      // while (it != data.end())
-      // {
-      //   hiqp_msgs::PerfMeasMsg per_msg;
-        
-      //   //per_msg.task_id = it->task_id_;
-      //   per_msg.task_name = it->task_name_;
-      //   per_msg.measure_tag = it->measure_tag_;
-      //   for (int i=0; i<it->performance_measures_.size(); ++i)
-      //     per_msg.data.push_back(it->performance_measures_(i));
-      //   //per_msg.data.insert(per_msg.data.begin(),
-      //   //                  it->performance_measures_.cbegin(),
-      //   //                  it->performance_measures_.cend());
-
-      //   mon_msg.data.push_back(per_msg);
-      //   ++it;
-      // }
-      
-      // monitoring_pub_.publish(mon_msg);
     }
   }
 }
 
-
-
-
-
-
 void HiQPJointVelocityController::addAllTopicSubscriptions()
 {
-  // Setup topic subscription
-  topic_subscriber_.init( &task_manager_ );//task_manager_.getGeometricPrimitiveMap(),
-  
+  topic_subscriber_.init( &task_manager_ );
   
   topic_subscriber_.addSubscription<geometry_msgs::PoseStamped>(
-    controller_nh_, "/wintracker_rebase/pose", 100
+    this->getControllerNodeHandle(), "/wintracker_rebase/pose", 100
   );
 
   //topic_subscriber_.addSubscription<hiqp_msgs::Vector3d>(
   //  controller_nh_, "/yumi/hiqp_controllers/vector3d", 100
   //);
   
-
   //topic_subscriber_.addSubscription<hiqp_msgs::StringArray>(
   //  controller_nh_, "/yumi/hiqp_kinematics_controller/experiment_commands", 100
   //);
@@ -492,118 +349,49 @@ void HiQPJointVelocityController::addAllTopicSubscriptions()
 
 void HiQPJointVelocityController::advertiseAllServices()
 {
-  set_task_service_ = controller_nh_.advertiseService(
+  set_task_service_ = this->getControllerNodeHandle().advertiseService(
     "set_task", &HiQPJointVelocityController::setTask, this);
 
-  remove_task_service_ = controller_nh_.advertiseService(
+  remove_task_service_ = this->getControllerNodeHandle().advertiseService(
     "remove_task", &HiQPJointVelocityController::removeTask, this);
 
-  remove_all_tasks_service_ = controller_nh_.advertiseService(
+  remove_all_tasks_service_ = this->getControllerNodeHandle().advertiseService(
     "remove_all_tasks", &HiQPJointVelocityController::removeAllTasks, this);
 
-  list_all_tasks_service_ = controller_nh_.advertiseService(
+  list_all_tasks_service_ = this->getControllerNodeHandle().advertiseService(
     "list_all_tasks", &HiQPJointVelocityController::listAllTasks, this);
 
-  add_geomprim_service_ = controller_nh_.advertiseService(
+  add_geomprim_service_ = this->getControllerNodeHandle().advertiseService(
     "add_primitive", &HiQPJointVelocityController::addGeometricPrimitive, this);
 
-  remove_geomprim_service_ = controller_nh_.advertiseService(
+  remove_geomprim_service_ = this->getControllerNodeHandle().advertiseService(
     "remove_primitive", &HiQPJointVelocityController::removeGeometricPrimitive, this);
 
-  remove_all_geomprims_service_ = controller_nh_.advertiseService(
+  remove_all_geomprims_service_ = this->getControllerNodeHandle().advertiseService(
     "remove_all_primitives", &HiQPJointVelocityController::removeAllGeometricPrimitives, this);
 }
 
-
-
-
-
-int HiQPJointVelocityController::loadJointsAndSetJointHandlesMap()
-{
-  // Load the names of all joints specified in the .yaml file
-  std::string param_name = "joints";
-  std::vector< std::string > joint_names;
-  if (!controller_nh_.getParam(param_name, joint_names))
-    {
-        ROS_ERROR_STREAM("In HiQPJointVelocityController: Call to getParam('" 
-          << param_name 
-          << "') in namespace '" 
-          << controller_nh_.getNamespace() 
-          << "' failed.");
-        return -1;
-    }
-
-    // Load all joint handles for all joint name references
-  for (auto&& name : joint_names)
-  {
-    try
-    {
-      unsigned int q_nr = hiqp::kdl_getQNrFromJointName(robot_state_data_.kdl_tree_, name);
-      joint_handles_map_.emplace(q_nr, hardware_interface_->getHandle(name));
-    }
-    catch (const hardware_interface::HardwareInterfaceException& e)
-    {
-      ROS_ERROR_STREAM("Exception thrown: " << e.what());
-            return -2;
-    }
-    // catch (MAP INSERT FAIL EXCEPTION)
-    // catch (HIQP Q_NR NOT AVAILABLE EXCEPTION)
-  }
-
-  // Set the joint position and velocity and the control vectors to all zero
-  unsigned int n_joint_names = joint_names.size();
-  n_controls_ = robot_state_data_.kdl_tree_.getNrOfJoints();
-  if (n_joint_names > n_controls_)
-  {
-    ROS_ERROR_STREAM("In HiQPJointVelocityController: The .yaml file"
-      << " includes more joint names than specified in the .urdf file."
-      << " Could not succeffully initialize controller. Aborting!\n");
-    return -3;
-  }
-  robot_state_data_.kdl_jnt_array_vel_.resize(n_controls_);
-  output_controls_ = std::vector<double>(n_controls_, 0.0);
-
-  return 0;
-}
-
-
-
-
-
 int HiQPJointVelocityController::loadFps()
 {
-  // Load the fps specified in the .yaml file
-
-  if (!controller_nh_.getParam("fps", fps_))
-  {
+  if (!this->getControllerNodeHandle().getParam("fps", fps_)) {
       ROS_ERROR_STREAM("In HiQPJointVelocityController: Call to getParam('" 
         << "fps" 
         << "') in namespace '" 
-        << controller_nh_.getNamespace() 
+        << this->getControllerNodeHandle().getNamespace() 
         << "' failed.");
       return -1;
   }
-
   time_since_last_sampling_ = 0;
-
   return 0;
 }
 
-
-
-
-
-int HiQPJointVelocityController::loadAndSetupTaskMonitoring()
-{
-  // Load the monitoring setup specified in the .yaml file
-
+int HiQPJointVelocityController::loadAndSetupTaskMonitoring() {
   XmlRpc::XmlRpcValue task_monitoring;
-  if (!controller_nh_.getParam("task_monitoring", task_monitoring))
-  {
+  if (!this->getControllerNodeHandle().getParam("task_monitoring", task_monitoring)) {
       ROS_ERROR_STREAM("In HiQPJointVelocityController: Call to getParam('" 
         << "task_monitoring" 
         << "') in namespace '" 
-        << controller_nh_.getNamespace() 
+        << this->getControllerNodeHandle().getNamespace() 
         << "' failed.");
       return -1;
   }
@@ -613,48 +401,17 @@ int HiQPJointVelocityController::loadAndSetupTaskMonitoring()
   monitoring_publish_rate_ = 
     static_cast<double>(task_monitoring["publish_rate"]);
 
-  monitoring_pub_ = controller_nh_.advertise<hiqp_msgs::MonitoringDataMsg>
+  monitoring_pub_ = this->getControllerNodeHandle().advertise<hiqp_msgs::MonitoringDataMsg>
   ("monitoring_data", 1);
 
   return 0;
 }
 
-
-
-
-
-int HiQPJointVelocityController::loadUrdfAndSetupKdlTree()
-{
-  // Load the urdf-formatted robot description from the parameter server
-  // and build a KDL tree from it
-
-  std::string full_parameter_path;
-    std::string robot_urdf;
-    if (controller_nh_.searchParam("robot_description", full_parameter_path))
-    {
-        controller_nh_.getParam(full_parameter_path, robot_urdf);
-        ROS_ASSERT(kdl_parser::treeFromString(robot_urdf, robot_state_data_.kdl_tree_));
-    }
-    else
-    {
-        ROS_ERROR_STREAM("In HiQPJointVelocityController: Could not find"
-          << " parameter 'robot_description' on the parameter server.");
-        return -1;
-    }
-    hiqp::printHiqpInfo("Loaded the robot's urdf model and initialized the KDL tree successfully");
-    std::cout << robot_state_data_.kdl_tree_ << "\n";
-
-    return 0;
-}
-
-
-
-
 /// \bug Having both, joint limits and avoidance tasks at the highest hierarchy level can cause an infeasible problem (e.g., via starting with yumi_hiqp_preload.yaml tasks)
 void HiQPJointVelocityController::loadJointLimitsFromParamServer()
 {
   XmlRpc::XmlRpcValue hiqp_preload_jnt_limits;
-  if (!controller_nh_.getParam("hiqp_preload_jnt_limits", hiqp_preload_jnt_limits))
+  if (!this->getControllerNodeHandle().getParam("hiqp_preload_jnt_limits", hiqp_preload_jnt_limits))
   {
     ROS_WARN_STREAM("No hiqp_preload_jnt_limits parameter found on "
       << "the parameter server. No joint limits were loaded!");
@@ -682,7 +439,7 @@ void HiQPJointVelocityController::loadJointLimitsFromParamServer()
           static_cast<double>(limitations[0]) ) );
 
         task_manager_.setTask(link_frame + "_jntlimits", 1, true, true,
-          def_params, dyn_params, robot_state_ptr_);
+          def_params, dyn_params, this->getRobotState());
       } catch (const XmlRpc::XmlRpcException& e) {
         ROS_WARN_STREAM("Error while loading "
           << "hiqp_preload_jnt_limits parameter from the "
@@ -706,7 +463,7 @@ void HiQPJointVelocityController::loadJointLimitsFromParamServer()
 void HiQPJointVelocityController::loadGeometricPrimitivesFromParamServer()
 {
   XmlRpc::XmlRpcValue hiqp_preload_geometric_primitives;
-  if (!controller_nh_.getParam("hiqp_preload_geometric_primitives", hiqp_preload_geometric_primitives)) {
+  if (!this->getControllerNodeHandle().getParam("hiqp_preload_geometric_primitives", hiqp_preload_geometric_primitives)) {
     ROS_WARN_STREAM("No hiqp_preload_geometric_primitives parameter "
       << "found on the parameter server. No geometric primitives "
       << "were loaded!");
@@ -756,7 +513,7 @@ void HiQPJointVelocityController::loadGeometricPrimitivesFromParamServer()
 
 void HiQPJointVelocityController::loadTasksFromParamServer() {
   XmlRpc::XmlRpcValue hiqp_preload_tasks;
-  if (!controller_nh_.getParam("hiqp_preload_tasks", hiqp_preload_tasks)) {
+  if (!this->getControllerNodeHandle().getParam("hiqp_preload_tasks", hiqp_preload_tasks)) {
     ROS_WARN_STREAM("No hiqp_preload_tasks parameter found on "
       << "the parameter server. No joint limits were loaded!");
   } else {
@@ -782,7 +539,7 @@ void HiQPJointVelocityController::loadTasksFromParamServer() {
         bool visible = static_cast<bool>( hiqp_preload_tasks[i]["visible"] );
         bool active = static_cast<bool>( hiqp_preload_tasks[i]["active"] );
         
-        task_manager_.setTask(name, priority, visible, active, def_params, dyn_params, robot_state_ptr_);
+        task_manager_.setTask(name, priority, visible, active, def_params, dyn_params, this->getRobotState());
       } catch (const XmlRpc::XmlRpcException& e) {
         ROS_WARN_STREAM("Error while loading "
           << "hiqp_preload_tasks parameter from the "

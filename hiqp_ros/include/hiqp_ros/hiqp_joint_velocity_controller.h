@@ -34,6 +34,7 @@
 #include <hiqp/task_manager.h>
 #include <hiqp/hiqp_time_point.h>
 
+#include <hiqp_ros/base_controller.h>
 #include <hiqp_ros/ros_visualizer.h>
 #include <hiqp_ros/ros_topic_subscriber.h>
 
@@ -50,28 +51,18 @@
 
 namespace hiqp_ros
 {
-
-  /*! \brief The standard joint-velocity-controller in ROS */
-  typedef 
-  controller_interface::Controller<hardware_interface::VelocityJointInterface>
-  JointVelocityController;
-
-  /*! \brief The standard joint-velocity hardware interface in ROS */
-  typedef 
-  hardware_interface::VelocityJointInterface 
-  JointVelocityInterface;
+  typedef controller_interface::Controller<hardware_interface::VelocityJointInterface> JointVelocityController;
+  typedef hardware_interface::VelocityJointInterface JointVelocityInterface;
 
   /*! \brief A joint velocity controller that provides full access to the HiQP control framework
    *  \author Marcus A Johansson */  
-  class HiQPJointVelocityController : public JointVelocityController {
+  class HiQPJointVelocityController : public BaseController<JointVelocityController, JointVelocityInterface> {
   public:
     HiQPJointVelocityController();
     ~HiQPJointVelocityController() noexcept;
     
-    bool init(JointVelocityInterface *hw, ros::NodeHandle &controller_nh);
-    void starting(const ros::Time& time);
-    void update(const ros::Time& time, const ros::Duration& period);
-    void stopping(const ros::Time& time);
+    void initialize();
+    void setJointControls(Eigen::VectorXd& u);
 
   private:
     HiQPJointVelocityController(const HiQPJointVelocityController& other) = delete;
@@ -79,13 +70,9 @@ namespace hiqp_ros
     HiQPJointVelocityController& operator=(const HiQPJointVelocityController& other) = delete;
     HiQPJointVelocityController& operator=(HiQPJointVelocityController&& other) noexcept = delete;
 
-    void sampleJointValues();
-    void setControls();
     void performMonitoring();
     int loadFps();
     int loadAndSetupTaskMonitoring();
-    int loadUrdfAndSetupKdlTree();
-    int loadJointsAndSetJointHandlesMap();
     void advertiseAllServices();
     void addAllTopicSubscriptions();
     void loadJointLimitsFromParamServer();
@@ -102,17 +89,15 @@ namespace hiqp_ros
 
     typedef std::map<unsigned int, hardware_interface::JointHandle > JointHandleMap;
 
-    std::ofstream logfile_;
-
     bool                                              is_active_;
-    double                                            fps_; // Hz
-    double                                            time_since_last_sampling_; // seconds
+    double                                            fps_;
+    hiqp::HiQPTimePoint                               last_sampling_time_;
+    double                                            time_since_last_sampling_;
 
     bool                                              monitoring_active_;
     double                                            monitoring_publish_rate_;
     ros::Time                                         last_monitoring_update_;
 
-    ros::NodeHandle                                   controller_nh_;
     ros::Publisher                                    monitoring_pub_;
 
     ROSTopicSubscriber                                topic_subscriber_;
@@ -126,19 +111,10 @@ namespace hiqp_ros
     ros::ServiceServer                                remove_geomprim_service_;
     ros::ServiceServer                                remove_all_geomprims_service_;
 
-    hardware_interface::VelocityJointInterface *      hardware_interface_;
-    JointHandleMap                                    joint_handles_map_;
-    std::mutex                                        handles_mutex_;
-
     std::shared_ptr<Visualizer>                       visualizer_;
     ROSVisualizer                                     ros_visualizer_;
     hiqp::TaskManager                                 task_manager_;
 
-    hiqp::RobotState                                  robot_state_data_;
-    hiqp::RobotStatePtr                               robot_state_ptr_;
-
-    std::vector<double>                               output_controls_;
-    unsigned int                                      n_controls_;
   };
 
 } // namespace hiqp
