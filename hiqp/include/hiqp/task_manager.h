@@ -32,18 +32,16 @@
 
 namespace hiqp {
 
-  /*! \brief An aggregation of const references to facilitate communication of
-   *        monitoring data.
+  /*! \brief A structure used to get data out of tasks that is to be monitored.
    *  \author Marcus A Johansson */
-  class TaskMonitoringData
-  {
+  /// \todo This data structure copies too much data! Use const-references?
+  class TaskMonitoringData {
   public:
     TaskMonitoringData(const std::string& task_name,
                        const Eigen::VectorXd& e,
                        const Eigen::VectorXd& de,
                        const Eigen::VectorXd& pm)
-    : task_name_(task_name), e_(e), de_(de), pm_(pm)
-    {}
+    : task_name_(task_name), e_(e), de_(de), pm_(pm) {}
 
     std::string         task_name_;
     Eigen::VectorXd     e_;
@@ -51,18 +49,11 @@ namespace hiqp {
     Eigen::VectorXd     pm_;
   };
 
-
-
-
-
-  /*! \brief The central mediator class in teh HiQP framework
+  /*! \brief The central mediator class in the HiQP framework.
    *  \author Marcus A Johansson */  
-  class TaskManager
-  {
+  class TaskManager {
   public:
-
     TaskManager(std::shared_ptr<Visualizer> visualizer);
-
     ~TaskManager() noexcept;
 
     void init(unsigned int n_controls);
@@ -73,7 +64,7 @@ namespace hiqp {
 
     /*! \brief Retrieves the performance measures for every active task along
      *         with the task's name and unique identifier. */
-     void getTaskMonitoringData(std::vector<TaskMonitoringData>& data);
+    void getTaskMonitoringData(std::vector<TaskMonitoringData>& data);
 
     /*! \brief Adds a new task to the task manager or updates an existing one
      *  \return 0 if the task creation was successful,

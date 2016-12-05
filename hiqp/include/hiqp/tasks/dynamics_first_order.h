@@ -14,15 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-/*
- * \file   dynamics_first_order.h
- * \author Marcus A Johansson (marcus.adam.johansson@gmail.com)
- * \date   July, 2016
- * \brief  Brief description of file.
- *
- * Detailed description of file.
- */
-
 #ifndef HIQP_DYNAMICS_FIRST_ORDER_H
 #define HIQP_DYNAMICS_FIRST_ORDER_H
 
@@ -34,8 +25,8 @@ namespace hiqp
 namespace tasks
 {
 
-  /*! \brief A general first-order task dynamics implementation that enforces an 
-   *        exponential decay of the task performance value */  
+  /*! \brief A general first-order task dynamics implementation that enforces an exponential decay of the task performance value.
+   *  \author Marcus A Johansson */  
   class DynamicsFirstOrder : public TaskDynamics
   {
   public:

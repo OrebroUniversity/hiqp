@@ -20,7 +20,7 @@
 #include <sstream>
 #include <iterator>
 
-#include <hiqp/hiqp_utils.h>
+#include <hiqp/utilities.h>
 
 namespace hiqp
 {

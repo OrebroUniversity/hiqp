@@ -18,7 +18,7 @@
 #define HIQP_GEOMETRIC_FRAME_H
 
 #include <hiqp/geometric_primitives/geometric_primitive.h>
-#include <hiqp/hiqp_utils.h>
+#include <hiqp/utilities.h>
 
 #include <kdl/frames.hpp>
 

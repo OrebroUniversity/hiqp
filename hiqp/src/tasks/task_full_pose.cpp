@@ -16,7 +16,7 @@
 
 #include <hiqp/tasks/task_full_pose.h>
 
-#include <hiqp/hiqp_utils.h>
+#include <hiqp/utilities.h>
 
 #include <iostream>
 

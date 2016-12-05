@@ -25,7 +25,7 @@
 
 #include <hiqp/ros_kinematics_controller.h>
 #include <hiqp/geometric_primitives/geometric_primitive_visualizer.h>
-#include <hiqp/hiqp_utils.h>
+#include <hiqp/utilities.h>
 
 #include <hiqp_msgs/MonitoringDataMsg.h>
 #include <hiqp_msgs/Vector3d.h>

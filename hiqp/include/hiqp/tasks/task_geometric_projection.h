@@ -31,7 +31,7 @@ namespace hiqp
 namespace tasks
 {
 
-  /*! \brief A task that projects one geometric primitive on another.
+  /*! \brief A task definition that positions geometric primitives relative to each other through mutual geometric projection.
    *  \author Marcus A Johansson */  
   template<typename PrimitiveA, typename PrimitiveB>
   class TaskGeometricProjection : public TaskDefinition {

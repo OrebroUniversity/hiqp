@@ -31,7 +31,7 @@ namespace hiqp
 namespace tasks
 {
 
-  /*! \brief 
+  /*! \brief A task definition that rotates primitives to align with each other.
    *  \author Marcus A Johansson */  
   template<typename PrimitiveA, typename PrimitiveB>
   class TaskGeometricAlignment : public TaskDefinition {
@@ -55,8 +55,6 @@ namespace tasks
     TaskGeometricAlignment& operator=(TaskGeometricAlignment&& other) noexcept = delete;
 
     int align(std::shared_ptr<PrimitiveA> first, std::shared_ptr<PrimitiveB> second);
-
-    // v1 must relate to primitive_a_, and v2 to primitive_b_ !
     int alignVectors(const KDL::Vector& v1, const KDL::Vector v2);
 
     std::shared_ptr<KDL::TreeFkSolverPos_recursive>  fk_solver_pos_;
@@ -70,9 +68,8 @@ namespace tasks
     KDL::Frame                   pose_b_;
     KDL::Jacobian                jacobian_b_;
 
-    double                   delta_; // the angular error margin
-
-  }; // class TaskGeometricAlignment
+    double                       delta_; // the angular error margin
+  };
 
 } // namespace tasks
 

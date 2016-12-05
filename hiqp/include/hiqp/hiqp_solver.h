@@ -26,6 +26,8 @@
 namespace hiqp
 {
 
+  /*! \brief A stage is a compound set of tasks with the same priority level.
+   *  \author Marcus A Johansson */
   struct HiQPStage {
     int nRows;
     Eigen::VectorXd e_dot_star_;
@@ -33,6 +35,8 @@ namespace hiqp
     std::vector<int> constraint_signs_;
   };
 
+  /*! \brief The base class for a solver for controls from a set of stages. Keeps an internal set of stages that tasks can be appended to.
+   *  \author Marcus A Johansson */
   class HiQPSolver {
   public:
     HiQPSolver() {}
@@ -45,6 +49,7 @@ namespace hiqp
       return 0;
     }
 
+    /*! \brief Appends the internal set of stages with a task. If a stage with the priority is not currently present in the stages map, it is created, otherwise the task is appended to that existing stage. */
     int appendStage(std::size_t priority_level, 
                     const Eigen::VectorXd& e_dot_star,
                     const Eigen::MatrixXd& J,
@@ -77,9 +82,7 @@ namespace hiqp
     }
 
   protected:
-
     typedef std::map<std::size_t, HiQPStage> StageMap;
-
     StageMap    stages_map_; 
 
   private:

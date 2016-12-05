@@ -24,13 +24,16 @@
 
 namespace hiqp {
 
-  /*! \brief Holds the state of the robot (sampling time, kdl tree, joint positions and velocities) */
+  /*! \brief Holds the state of the robot (sampling time, kdl tree, joint positions and velocities) 
+   *  \author Marcus A Johansson */
   struct RobotState {
     HiQPTimePoint     sampling_time_;
     KDL::Tree         kdl_tree_;
     KDL::JntArrayVel  kdl_jnt_array_vel_;
   };
 
+  /*! \brief A const pointer type to a robot state. Used to reference to the current robot state throught the framework.
+   *  \author Marcus A Johansson */
   typedef std::shared_ptr<const RobotState> RobotStatePtr;
 
 } // namespace hiqp

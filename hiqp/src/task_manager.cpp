@@ -17,7 +17,7 @@
 #include <iomanip> // std::setw
 #include <ros/console.h>
 #include <hiqp/task_manager.h>
-#include <hiqp/hiqp_utils.h>
+#include <hiqp/utilities.h>
 //#include <hiqp/tasks/task_geometric_projection.h>
 //#include <hiqp/tasks/dynamics_first_order.h>
 

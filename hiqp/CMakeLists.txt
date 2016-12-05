@@ -45,7 +45,7 @@ include_directories(${GUROBI_INCLUDE_DIR})
 
 link_directories(${GUROBI_LIB_DIR})
 
-add_library(${PROJECT_NAME} src/hiqp_utils.cpp
+add_library(${PROJECT_NAME} src/utilities.cpp
                             src/hiqp_time_point.cpp
                             src/ros_kinematics_controller.cpp
                             src/ros_topic_subscriber.cpp

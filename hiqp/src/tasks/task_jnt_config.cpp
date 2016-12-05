@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <hiqp/tasks/task_jnt_config.h>
-#include <hiqp/hiqp_utils.h>
+#include <hiqp/utilities.h>
 
 #include <iostream>
 

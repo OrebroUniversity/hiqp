@@ -22,7 +22,7 @@
 namespace hiqp
 {
 
-  /*! \brief 
+  /*! \brief An optimization based solver for a set of stages implemented in CasADi.
    *  \author Marcus A Johansson */
   class CasADiSolver : public HiQPSolver {
   public:

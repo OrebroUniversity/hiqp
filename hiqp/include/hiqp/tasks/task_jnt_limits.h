@@ -27,8 +27,8 @@ namespace hiqp
 namespace tasks
 {
 
-  /*! \brief Task achieving velocity and position limitations of a specific joint.
-   * \author Marcus A Johansson */  
+  /*! \brief A task definition that sets velocity and position limitations of a specific joint.
+   *  \author Marcus A Johansson */  
   class TaskJntLimits : public TaskDefinition {
   public:
     TaskJntLimits(std::shared_ptr<GeometricPrimitiveMap> geom_prim_map,

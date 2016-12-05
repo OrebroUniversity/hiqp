@@ -33,7 +33,7 @@
 #include <hiqp/geometric_primitives/geometric_sphere.h>
 #include <hiqp/geometric_primitives/geometric_frame.h>
 
-#include <hiqp/hiqp_utils.h>
+#include <hiqp/utilities.h>
 
 #include <iostream>
 #include <cmath>

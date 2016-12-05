@@ -27,7 +27,7 @@ namespace hiqp
 namespace tasks
 {
 
-  /*! \brief A task that sets a specific joints position.
+  /*! \brief A task definition that sets a specific joints position.
    *  \author Marcus A Johansson */  
   class TaskJntConfig : public TaskDefinition {
   public:

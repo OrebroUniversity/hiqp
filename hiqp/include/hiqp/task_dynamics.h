@@ -33,7 +33,7 @@ namespace hiqp
 
   class Task;
 
-  /*! \brief A definition of the task dynamics.
+  /*! \brief A task dynamics enforces the optimizer to produce controls that results is a certain velocity of the task performance value.
    *  \author Marcus A Johansson */ 
   class TaskDynamics
   {

@@ -25,8 +25,7 @@ namespace hiqp
 namespace tasks
 {
 
-  /*! \brief A general first-order task dynamics implementation that enforces an 
-   *         exponential decay of the task function value.
+  /*! \brief A task dynamics that enforces minimal jerk throughout the whole motion.
    *  \author Marcus A Johansson */  
   class DynamicsMinimalJerk : public TaskDynamics {
   public:
@@ -60,8 +59,7 @@ namespace tasks
     Eigen::VectorXd              e_final_;
     Eigen::VectorXd              e_diff_;
     double                       f_;
-
-  }; // class DynamicsMinimalJerk
+  };
 
 } // namespace tasks
 

@@ -51,9 +51,7 @@ namespace hiqp
   void printHiqpInfo(const std::string& msg);
   void printHiqpWarning(const std::string& msg);
 
-  /*! \brief calculates the Moore-Penrose Pseudoinverse for any sized matrices.
-   *  The original source code is got from http://eigendobetter.com/, I edited it 
-   *  to be compilable in this form.
+  /*! \brief Calculates the Moore-Penrose Pseudoinverse for any sized matrices. The original source code is got from http://eigendobetter.com/, I edited it to be compilable in this form.
    *  \author Marcus A Johansson
    *  \param a : the matrix to be inverted
    *  \return the inverted matrix */
@@ -71,29 +69,18 @@ namespace hiqp
       return svd.matrixV() * Derived((svd.singularValues().array().abs() > tolerance).select(svd.singularValues().array().inverse(), 0)).asDiagonal() * svd.matrixU().adjoint();
   }
 
-  /*!
-   *  \brief calculates the Damped-Least-Square matrix.
-   *
+  /*! \brief calculates the Damped-Least-Square matrix.
+   *  \author Marcus A Johansson
    *  \param a : the matrix to be inverted
-   *
    *  \return the damped-least-square matrix on success, 
-   *          the given matrix is returned otherwise.
-   */
+   *          the given matrix is returned otherwise. */
   template<typename Derived>
-  Derived dls
-  (
-      const Eigen::MatrixBase<Derived>& a, 
-      double eta = 0.01
-  )
-  {
+  Derived dls(const Eigen::MatrixBase<Derived>& a, double eta = 0.01) {
       unsigned int r = a.rows();
       unsigned int c = a.cols();
 
-      if (r > c) 
-          return a;
-
-      if (r == c)
-          return pinv(a);
+      if (r > c) return a;
+      if (r == c) return pinv(a);
 
       Derived a_ext(r+c, c);
       a_ext.block(0, 0, r, c) = a;

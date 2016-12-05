@@ -25,36 +25,36 @@ namespace hiqp
 namespace tasks
 {
 
-/*! \brief 
- *  \author Marcus A Johansson */  
-class DynamicsJntLimits : public TaskDynamics {
-public:
-  DynamicsJntLimits(std::shared_ptr<GeometricPrimitiveMap> geom_prim_map,
-                    std::shared_ptr<Visualizer> visualizer)
-  : TaskDynamics(geom_prim_map, visualizer) {}
+  /*! \brief A special task dynamics to be used only with the TaskJntLimits task definition.
+   *  \author Marcus A Johansson */  
+  class DynamicsJntLimits : public TaskDynamics {
+  public:
+    DynamicsJntLimits(std::shared_ptr<GeometricPrimitiveMap> geom_prim_map,
+                      std::shared_ptr<Visualizer> visualizer)
+    : TaskDynamics(geom_prim_map, visualizer) {}
 
-  ~DynamicsJntLimits() noexcept = default;
+    ~DynamicsJntLimits() noexcept = default;
 
-  int init(const std::vector<std::string>& parameters,
-           RobotStatePtr robot_state,
-           const Eigen::VectorXd& e_initial,
-           const Eigen::VectorXd& e_final);
+    int init(const std::vector<std::string>& parameters,
+             RobotStatePtr robot_state,
+             const Eigen::VectorXd& e_initial,
+             const Eigen::VectorXd& e_final);
 
-  int update(RobotStatePtr robot_state,
-             const Eigen::VectorXd& e,
-             const Eigen::MatrixXd& J);
+    int update(RobotStatePtr robot_state,
+               const Eigen::VectorXd& e,
+               const Eigen::MatrixXd& J);
 
-  int monitor();
+    int monitor();
 
-private:
-  DynamicsJntLimits(const DynamicsJntLimits& other) = delete;
-  DynamicsJntLimits(DynamicsJntLimits&& other) = delete;
-  DynamicsJntLimits& operator=(const DynamicsJntLimits& other) = delete;
-  DynamicsJntLimits& operator=(DynamicsJntLimits&& other) noexcept = delete;
+  private:
+    DynamicsJntLimits(const DynamicsJntLimits& other) = delete;
+    DynamicsJntLimits(DynamicsJntLimits&& other) = delete;
+    DynamicsJntLimits& operator=(const DynamicsJntLimits& other) = delete;
+    DynamicsJntLimits& operator=(DynamicsJntLimits&& other) noexcept = delete;
 
-  double             dq_max_;
+    double             dq_max_;
 
-}; // class DynamicsJntLimits
+  };
 
 } // namespace tasks
 

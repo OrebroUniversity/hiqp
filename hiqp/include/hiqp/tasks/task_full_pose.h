@@ -27,9 +27,8 @@ namespace hiqp
 namespace tasks
 {
 
-  /*! \brief Represents a task that sets a specific joint configuration
-   *  This task does not leave any redundancy available to other tasks.
-   *  \author Marcus A Johansson */  
+  /*! \brief Represents a task definition that sets a specific joint configuration. This task definition does not leave any redundancy available to other tasks!
+   *  \author Marcus A Johansson */ 
   class TaskFullPose : public TaskDefinition
   {
   public:

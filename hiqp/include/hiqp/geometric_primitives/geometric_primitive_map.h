@@ -60,15 +60,11 @@ namespace geometric_primitives
                                   const std::vector<double>& parameters);
 
     //void redrawAllPrimitives();
-
     void addDependencyToPrimitive(const std::string& name, const std::string& id);
-
     void removeDependency(const std::string& id);
-
     void acceptVisitor(const GeometricPrimitiveVisitor& visitor);
 
   private:
-
     GeometricPrimitiveMap(const GeometricPrimitiveMap& other) = delete;
     GeometricPrimitiveMap(GeometricPrimitiveMap&& other) = delete;
     GeometricPrimitiveMap& operator=(const GeometricPrimitiveMap& other) = delete;
@@ -96,7 +92,7 @@ namespace geometric_primitives
 
     std::vector<std::string> all_primitive_names_;
 
-  }; // class GeometricPrimitiveMap
+  };
 
 } // namespace geometric_primitives
 

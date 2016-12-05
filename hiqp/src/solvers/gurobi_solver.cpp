@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include <hiqp/hiqp_utils.h>
+#include <hiqp/utilities.h>
 #include <hiqp/solvers/gurobi_solver.h>
 #include <gurobi_c++.h>
 #include <ros/assert.h>

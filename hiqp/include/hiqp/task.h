@@ -30,7 +30,7 @@
 
 namespace hiqp {
 
-  /*! \brief A Task has a TaskDefinition and a TaskDynamics. Do not change this code!
+  /*! \brief A Task has a TaskDefinition and a TaskDynamics.
    *  \author Marcus A Johansson */
   class Task {
   public:
@@ -73,7 +73,7 @@ namespace hiqp {
       { if (dyn_) return dyn_->e_dot_star_; else return Eigen::VectorXd(); }
 
     /*! \brief Returns the task types (leq/eq/geq task) for each dimension of the task space. Returns a vector or -1, 0 or 1 for leq, eq and geq tasks respectively. */
-    /// \TODO Change from std::vector<int> to Eigen::VectorXd
+    /// \todo Change from std::vector<int> to Eigen::VectorXd
     std::vector<int> getTaskTypes() const  
       { if (def_) return def_->task_types_; else return std::vector<int>(); }
 

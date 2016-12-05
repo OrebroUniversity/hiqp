@@ -17,7 +17,6 @@
 #ifndef HIQP_GEOMETRIC_PRIMITIVE_H
 #define HIQP_GEOMETRIC_PRIMITIVE_H
 
-// STL Includes
 #include <string>
 #include <vector>
 #include <atomic>
@@ -34,31 +33,24 @@ namespace geometric_primitives
   class GeometricPrimitive
   {
   public:
-    GeometricPrimitive
-    (
-      const std::string& name,
-      const std::string& frame_id,
-      bool visible,
-      const std::vector<double>& color
-    )
-    : name_(name), frame_id_(frame_id), visible_(visible), visual_id_(-1)
-    {
+    GeometricPrimitive(const std::string& name,
+                       const std::string& frame_id,
+                       bool visible,
+                       const std::vector<double>& color)
+     : name_(name), frame_id_(frame_id), visible_(visible), visual_id_(-1) {
       r_ = color.at(0);
       g_ = color.at(1);
       b_ = color.at(2);
       a_ = color.at(3);
-      //unique_id_ = n_instances_;
-      //++n_instances_;
     }
 
-    ~GeometricPrimitive() noexcept {};
+    ~GeometricPrimitive() noexcept = default;
 
-    /*! \brief Needs to be specified by the inheriting class */
+    /*! \brief Must be specified by the inheriting class. */
     virtual int init(const std::vector<double>& parameters) = 0;
 
     inline int            setVisualId(int visual_id) { visual_id_ = visual_id; }
     inline int            getVisualId() { return visual_id_; }
-    //inline unsigned int 	getId() { return reinterpret_cast<unsigned int>(unique_id_); }
 
     inline std::string   	getName() { return name_; }
     inline std::string   	getFrameId() { return frame_id_; }
@@ -74,8 +66,6 @@ namespace geometric_primitives
     std::string   				               frame_id_;
     bool       						               visible_;
     int                                  visual_id_;
-    //unsigned int                         unique_id_;
-    //static std::atomic<unsigned int>     n_instances_;
     double       					               r_, g_, b_, a_;
 
   private:
@@ -83,7 +73,7 @@ namespace geometric_primitives
     GeometricPrimitive(GeometricPrimitive&& other) = delete;
     GeometricPrimitive& operator=(const GeometricPrimitive& other) = delete;
     GeometricPrimitive& operator=(GeometricPrimitive&& other) noexcept = delete;
-  }; // class GeometricPrimitive
+  };
 
 } // namespace geometric_primitives
 

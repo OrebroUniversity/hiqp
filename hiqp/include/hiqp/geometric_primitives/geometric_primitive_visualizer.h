@@ -26,30 +26,32 @@ namespace hiqp {
 
 namespace geometric_primitives {
 
-class GeometricPrimitiveVisualizer : public GeometricPrimitiveVisitor {
-public:
-  GeometricPrimitiveVisualizer(Visualizer* visualizer)
-  : visualizer_(visualizer)
-  {}
+  /*! \brief A Geometric Primitive Visitor that sends the primitive it visits to a visualizer.
+   *  \author Marcus A Johansson */
+  class GeometricPrimitiveVisualizer : public GeometricPrimitiveVisitor {
+  public:
+    GeometricPrimitiveVisualizer(Visualizer* visualizer)
+    : visualizer_(visualizer)
+    {}
 
-  ~GeometricPrimitiveVisualizer() noexcept {}
+    ~GeometricPrimitiveVisualizer() noexcept {}
 
-  void visit(std::shared_ptr<GeometricPoint> point) const;
-  void visit(std::shared_ptr<GeometricLine> line) const;
-  void visit(std::shared_ptr<GeometricPlane> plane) const;
-  void visit(std::shared_ptr<GeometricBox> box) const;
-  void visit(std::shared_ptr<GeometricCylinder> cylinder) const;
-  void visit(std::shared_ptr<GeometricSphere> sphere) const;
-  void visit(std::shared_ptr<GeometricFrame> frame) const;
+    void visit(std::shared_ptr<GeometricPoint> point) const;
+    void visit(std::shared_ptr<GeometricLine> line) const;
+    void visit(std::shared_ptr<GeometricPlane> plane) const;
+    void visit(std::shared_ptr<GeometricBox> box) const;
+    void visit(std::shared_ptr<GeometricCylinder> cylinder) const;
+    void visit(std::shared_ptr<GeometricSphere> sphere) const;
+    void visit(std::shared_ptr<GeometricFrame> frame) const;
 
-private:
-  GeometricPrimitiveVisualizer(const GeometricPrimitiveVisualizer& other) = delete;
-  GeometricPrimitiveVisualizer(GeometricPrimitiveVisualizer&& other) = delete;
-  GeometricPrimitiveVisualizer& operator=(const GeometricPrimitiveVisualizer& other) = delete;
-  GeometricPrimitiveVisualizer& operator=(GeometricPrimitiveVisualizer&& other) noexcept = delete;
+  private:
+    GeometricPrimitiveVisualizer(const GeometricPrimitiveVisualizer& other) = delete;
+    GeometricPrimitiveVisualizer(GeometricPrimitiveVisualizer&& other) = delete;
+    GeometricPrimitiveVisualizer& operator=(const GeometricPrimitiveVisualizer& other) = delete;
+    GeometricPrimitiveVisualizer& operator=(GeometricPrimitiveVisualizer&& other) noexcept = delete;
 
-  Visualizer* visualizer_;
-};
+    Visualizer* visualizer_;
+  };
 
 } // namespace geometric_primitives
 

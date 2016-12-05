@@ -14,21 +14,12 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-/*
- * \file   geometric_primitive_map.cpp
- * \author Marcus A Johansson (marcus.adam.johansson@gmail.com)
- * \date   July, 2016
- * \brief  Brief description of file.
- *
- * Detailed description of file.
- */
-
 #include <iostream>
 #include <algorithm>
 #include <iterator>
 
 #include <hiqp/geometric_primitives/geometric_primitive_map.h>
-#include <hiqp/hiqp_utils.h>
+#include <hiqp/utilities.h>
 
 namespace hiqp
 {

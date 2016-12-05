@@ -29,7 +29,6 @@
 
 namespace hiqp
 {
-
 	using geometric_primitives::GeometricPoint;
 	using geometric_primitives::GeometricLine;
 	using geometric_primitives::GeometricPlane;
@@ -38,8 +37,9 @@ namespace hiqp
 	using geometric_primitives::GeometricSphere;
 	using geometric_primitives::GeometricFrame;
 
-	class Visualizer
-	{
+	/*! \brief An interface for visualizing geometric primitives. Derive from this class to implement your own visualizer and provide it to TaskManager to get visualization of HiQP.
+	 *  \author Marcus A Johansson */
+	class Visualizer {
 	public:
 		Visualizer() {}
 		~Visualizer() noexcept {}

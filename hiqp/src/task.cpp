@@ -23,7 +23,7 @@
 #include <hiqp/tasks/dynamics_first_order.h>
 #include <hiqp/tasks/dynamics_jnt_limits.h>
 #include <hiqp/tasks/dynamics_minimal_jerk.h>
-#include <hiqp/hiqp_utils.h>
+#include <hiqp/utilities.h>
 
 #include <hiqp/geometric_primitives/geometric_point.h>
 #include <hiqp/geometric_primitives/geometric_line.h>

@@ -31,25 +31,27 @@ namespace hiqp {
 
 namespace geometric_primitives {
 
-class GeometricPrimitiveVisitor {
-public:
-  GeometricPrimitiveVisitor() {}
-  ~GeometricPrimitiveVisitor() noexcept {}
+  /*! \brief 
+   * {author Marcus A Johansson */
+  class GeometricPrimitiveVisitor {
+  public:
+    GeometricPrimitiveVisitor() {}
+    ~GeometricPrimitiveVisitor() noexcept {}
 
-  virtual void visit(std::shared_ptr<GeometricPoint> point) const = 0;
-  virtual void visit(std::shared_ptr<GeometricLine> line) const = 0;
-  virtual void visit(std::shared_ptr<GeometricPlane> plane) const = 0;
-  virtual void visit(std::shared_ptr<GeometricBox> box) const = 0;
-  virtual void visit(std::shared_ptr<GeometricCylinder> cylinder) const = 0;
-  virtual void visit(std::shared_ptr<GeometricSphere> sphere) const = 0;
-  virtual void visit(std::shared_ptr<GeometricFrame> frame) const = 0;
+    virtual void visit(std::shared_ptr<GeometricPoint> point) const = 0;
+    virtual void visit(std::shared_ptr<GeometricLine> line) const = 0;
+    virtual void visit(std::shared_ptr<GeometricPlane> plane) const = 0;
+    virtual void visit(std::shared_ptr<GeometricBox> box) const = 0;
+    virtual void visit(std::shared_ptr<GeometricCylinder> cylinder) const = 0;
+    virtual void visit(std::shared_ptr<GeometricSphere> sphere) const = 0;
+    virtual void visit(std::shared_ptr<GeometricFrame> frame) const = 0;
 
-private:
-  GeometricPrimitiveVisitor(const GeometricPrimitiveVisitor& other) = delete;
-  GeometricPrimitiveVisitor(GeometricPrimitiveVisitor&& other) = delete;
-  GeometricPrimitiveVisitor& operator=(const GeometricPrimitiveVisitor& other) = delete;
-  GeometricPrimitiveVisitor& operator=(GeometricPrimitiveVisitor&& other) noexcept = delete;
-};
+  private:
+    GeometricPrimitiveVisitor(const GeometricPrimitiveVisitor& other) = delete;
+    GeometricPrimitiveVisitor(GeometricPrimitiveVisitor&& other) = delete;
+    GeometricPrimitiveVisitor& operator=(const GeometricPrimitiveVisitor& other) = delete;
+    GeometricPrimitiveVisitor& operator=(GeometricPrimitiveVisitor&& other) noexcept = delete;
+  };
 
 } // namespace geometric_primitives
 
