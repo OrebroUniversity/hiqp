@@ -23,7 +23,7 @@ namespace hiqp_ros
 {
 
   /*! \brief A joint effort controller that provides full access to the HiQP control framework
-   *  \author Marcus A Johansson*/ 
+   *  \author Marcus A Johansson */ 
   class HiQPJointEffortController : public JointEffortController {
   public:
     HiQPJointEffortController();

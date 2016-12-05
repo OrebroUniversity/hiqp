@@ -39,8 +39,7 @@ int TaskJntConfig::init(const std::vector<std::string>& parameters,
 
   joint_q_nr_ = kdl_getQNrFromLinkName(robot_state->kdl_tree_, link_name_);
 
-  if (joint_q_nr_ < 0)
-  {
+  if (joint_q_nr_ < 0) {
     printHiqpWarning("TaskJntConfig::init, couldn't find joint '" + link_name_ + "'! Initialization failed.");
     return -2;
   }

@@ -158,6 +158,15 @@ namespace hiqp_ros {
       return -1;
     }
 
+    unsigned int n_joint_names = joint_names.size();
+    n_joints_ = robot_state_data_.kdl_tree_.getNrOfJoints();
+    if (n_joint_names > n_joints_) {
+      ROS_ERROR_STREAM("In ROSKinematicsController: The .yaml file"
+        << " includes more joint names than specified in the .urdf file."
+        << " Could not succeffully initialize controller. Aborting!\n");
+      return -3;
+    }
+
     for (auto&& name : joint_names) {
       try {
         unsigned int q_nr = hiqp::kdl_getQNrFromJointName(robot_state_data_.kdl_tree_, name);
@@ -171,14 +180,6 @@ namespace hiqp_ros {
       // catch (HIQP Q_NR NOT AVAILABLE EXCEPTION)
     }
 
-    unsigned int n_joint_names = joint_names.size();
-    n_joints_ = robot_state_data_.kdl_tree_.getNrOfJoints();
-    if (n_joint_names > n_joints_) {
-      ROS_ERROR_STREAM("In ROSKinematicsController: The .yaml file"
-        << " includes more joint names than specified in the .urdf file."
-        << " Could not succeffully initialize controller. Aborting!\n");
-      return -3;
-    }
     robot_state_data_.kdl_jnt_array_vel_.resize(n_joints_);
     robot_state_data_.kdl_effort_.resize(n_joints_);
     u_ = Eigen::VectorXd::Zero(n_joints_);
