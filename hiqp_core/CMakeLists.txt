@@ -32,15 +32,15 @@ find_package(catkin REQUIRED COMPONENTS roscpp
 
 find_package(orocos_kdl REQUIRED)
 find_package(Eigen3 REQUIRED)
-find_package(CASADI REQUIRED)
+#find_package(CASADI REQUIRED)
 
 catkin_package(CATKIN_DEPENDS roscpp controller_interface visualization_msgs kdl_parser hiqp_msgs
                INCLUDE_DIRS include
-               LIBRARIES ${PROJECT_NAME} casadi
+               LIBRARIES ${PROJECT_NAME} #casadi
                DEPENDS orocos_kdl)
 
 include_directories(include ${catkin_INCLUDE_DIRS})
-include_directories(${CASADI_INCLUDE_DIR})
+#include_directories(${CASADI_INCLUDE_DIR})
 include_directories(${GUROBI_INCLUDE_DIR})
 
 link_directories(${GUROBI_LIB_DIR})
@@ -53,7 +53,7 @@ add_library(${PROJECT_NAME} src/utilities.cpp
                             src/geometric_primitives/geometric_primitive_map.cpp
                             src/geometric_primitives/geometric_primitive_visualizer.cpp
 
-                            src/solvers/casadi_solver.cpp
+                            #src/solvers/casadi_solver.cpp
                             src/solvers/gurobi_solver.cpp
                             src/tasks/dynamics_first_order.cpp
                             src/tasks/dynamics_jnt_limits.cpp
@@ -67,7 +67,7 @@ add_library(${PROJECT_NAME} src/utilities.cpp
 
 target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} 
                                       ${orocos_kdl_LIBRARIES} 
-                                      ${CASADI_LIBRARIES} 
+                                      #${CASADI_LIBRARIES} 
                                       ${GUROBI_LIBS})
 
 install(DIRECTORY include/${PROJECT_NAME}/
