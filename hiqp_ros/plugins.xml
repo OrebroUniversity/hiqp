@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<library path="lib/libhiqp_ros">
+
+  <class name="hiqp_ros/HiQPJointVelocityController" 
+         type="hiqp_ros::HiQPJointVelocityController" 
+         base_class_type="controller_interface::ControllerBase">
+    <description>
+      The HiQPJointVelocityController generates velocity commands for a set of joints. It expects a VelocityJointInterface type of hardware interface.
+    </description>
+  </class>
+
+</library>

@@ -1,0 +1,26 @@
+<package>
+  <name>hiqp</name>
+  <version>0.0.1</version>
+
+  <description>
+    The HiQP Control Framework (including ROS support).
+  </description>
+
+  <author email="marcus.adam.johansson@gmail.com">Marcus A Johansson</author>
+  <maintainer email="marcus.adam.johansson@gmail.com">Marcus A Johansson</maintainer>
+
+  <license>GPLv3</license>
+
+  <url type="repository">https://github.com/neckutrek/hiqp</url>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <run_depend>hiqp_core</run_depend>
+  <run_depend>hiqp_msgs</run_depend>
+  <run_depend>hiqp_ros</run_depend>
+
+  <export>
+    <metapackage/>
+  </export>
+
+</package>
