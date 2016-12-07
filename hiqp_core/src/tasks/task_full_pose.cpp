@@ -67,6 +67,7 @@ namespace tasks
     double diff = 0;
     for (int i=0; i<q.rows(); ++i) {
       e_(i) = desired_configuration_.at(i) - q(i);
+      // std::cerr<<"desired_config(i): "<<desired_configuration_.at(i)<<" q(i): "<<q(i)<<std::endl;
     }
     // std::cout << "--- update ---\n";
     // std::cout << "update e_ = " << e_ << "\n";
