@@ -34,6 +34,10 @@ namespace tasks
       return -1;
     }
 
+ 
+    // Parameter example: 'TDefJntLimits' 'yumi_link_1_r' '-2.940000' '2.940000'
+    //DOES NOT REAT VELOCITY LIMITS ALTHOUGH THEY'RE IN THE YAML FILE
+
     unsigned int n_joints = robot_state->getNumJoints();
     e_.resize(4);
     J_.resize(4, n_joints);
@@ -55,7 +59,7 @@ namespace tasks
         J_(i, j) = (j == link_frame_q_nr_ ? 1 : 0);
       }
     }
-    
+
     return 0;
   }
 
