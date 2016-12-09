@@ -72,7 +72,7 @@ namespace hiqp_ros
 
     void performMonitoring();
     /// \todo rename to loadSamplingRate
-    int loadFps();
+    int loadDesiredSamplingTime();
     int loadAndSetupTaskMonitoring();
     void advertiseAllServices();
     void addAllTopicSubscriptions();
@@ -91,9 +91,9 @@ namespace hiqp_ros
     typedef std::map<unsigned int, hardware_interface::JointHandle > JointHandleMap;
 
     bool                                              is_active_;
-    double                                            fps_; /// \todo rename to sampling_rate_
-    hiqp::HiQPTimePoint                               last_sampling_time_;
-    double                                            time_since_last_sampling_;
+    double                                            desired_sampling_time_;
+    //hiqp::HiQPTimePoint                               last_sampling_time_;
+    //double                                            time_since_last_sampling_;
 
     bool                                              monitoring_active_;
     double                                            monitoring_publish_rate_;

@@ -32,7 +32,7 @@ namespace tasks
 
     performance_measures_.resize(e_initial.rows());
 
-    time_start_ = robot_state->sampling_time_;
+    time_start_ = robot_state->sampling_time_point_;
 
     total_duration_ = std::stod( parameters.at(1) );
     gain_ = std::stod( parameters.at(2) );
@@ -49,7 +49,7 @@ namespace tasks
   int DynamicsMinimalJerk::update(RobotStatePtr robot_state,
                                   const Eigen::VectorXd& e,
                                   const Eigen::MatrixXd& J) {
-    double tau = (robot_state->sampling_time_ - time_start_).toSec() / total_duration_;
+    double tau = (robot_state->sampling_time_point_ - time_start_).toSec() / total_duration_;
 
     if (tau > 1) {
       e_dot_star_ = 0*e;

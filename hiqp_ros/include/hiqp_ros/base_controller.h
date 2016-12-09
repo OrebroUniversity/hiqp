@@ -38,6 +38,7 @@
 
 namespace hiqp_ros {
 
+  using hiqp::HiQPTimePoint;
   using hiqp::RobotState;
   using hiqp::RobotStatePtr;
 
@@ -67,6 +68,7 @@ namespace hiqp_ros {
     inline ros::NodeHandle& getControllerNodeHandle() { return controller_nh_; }
     inline unsigned int getNJoints() { return n_joints_; }
     inline RobotStatePtr getRobotState() { return robot_state_ptr_; }
+    inline void setDesiredSamplingTime(double desired_sampling_time) { desired_sampling_time_ =  desired_sampling_time;}
 
   private:
     BaseController(const BaseController& other) = delete;
@@ -83,6 +85,8 @@ namespace hiqp_ros {
 
     RobotState                            robot_state_data_;
     RobotStatePtr                         robot_state_ptr_;
+    HiQPTimePoint                   last_sampling_time_point_;
+    double                                desired_sampling_time_;
     Eigen::VectorXd                       u_;
 
     ros::NodeHandle                       controller_nh_;
@@ -105,6 +109,10 @@ namespace hiqp_ros {
     hardware_interface_ = hw;
     controller_nh_ = controller_nh;
     robot_state_ptr_.reset(&robot_state_data_);
+    desired_sampling_time_ = 1; // defaults to 1kHz
+    ros::Time t = ros::Time::now();
+    last_sampling_time_point_.setTimePoint(t.sec, t.nsec);
+
     loadUrdfToKdlTree();
     loadJointsAndSetJointHandlesMap();
     sampleJointValues();
@@ -115,9 +123,13 @@ namespace hiqp_ros {
 
   template <typename ControllerT, typename HardwareInterfaceT>
   void BaseController<ControllerT, HardwareInterfaceT>::update(const ros::Time& time, const ros::Duration& period) {
-    sampleJointValues();
-    setJointControls(u_);
-    setControls();
+    HiQPTimePoint now(time.sec, time.nsec);
+    double elapsed_time = (now-last_sampling_time_point_).toSec();
+    if (elapsed_time*1000 >= desired_sampling_time_) {
+      sampleJointValues();
+      setJointControls(u_);
+      setControls();
+    }
   }
 
   template <typename ControllerT, typename HardwareInterfaceT>
@@ -213,7 +225,9 @@ namespace hiqp_ros {
       /* std::cerr<<"sampled joint efforts: "<<effort.data.transpose()<<std::endl; */
 
       ros::Time t = ros::Time::now();
-      robot_state_data_.sampling_time_.setTimePoint(t.sec, t.nsec);
+      robot_state_data_.sampling_time_point_.setTimePoint(t.sec, t.nsec);
+      robot_state_data_.sampling_time_ = (robot_state_data_.sampling_time_point_ - last_sampling_time_point_).toSec();
+      last_sampling_time_point_.setTimePoint(t.sec, t.nsec);
     handles_mutex_.unlock();
   }
 

@@ -58,7 +58,7 @@ HiQPJointVelocityController::~HiQPJointVelocityController() noexcept {}
 void HiQPJointVelocityController::initialize() {
   ros_visualizer_.init( &(this->getControllerNodeHandle()) );
 
-  if (loadFps() != 0) return;
+  if (loadDesiredSamplingTime() != 0) return;
 
   if (loadAndSetupTaskMonitoring() != 0) return;
 
@@ -82,10 +82,10 @@ void HiQPJointVelocityController::initialize() {
 void HiQPJointVelocityController::setJointControls(Eigen::VectorXd& u) {
   if (!is_active_) return;
 
-  const hiqp::HiQPTimePoint& current_sampling_time_ = this->getRobotState()->sampling_time_;
-  time_since_last_sampling_ += (current_sampling_time_ - last_sampling_time_).toSec();
-  if (time_since_last_sampling_ >= 1/fps_)
-  {
+  //const hiqp::HiQPTimePoint& current_sampling_time_point_ = this->getRobotState()->sampling_time_point_;
+  //time_since_last_sampling_ += (current_sampling_time_point_ - last_sampling_time_).toSec();
+  //if (time_since_last_sampling_ >= 1/fps_)
+  //{
     std::vector<double> outcon(u.size());
     task_manager_.getVelocityControls(this->getRobotState(), outcon);
     int i=0;
@@ -93,9 +93,9 @@ void HiQPJointVelocityController::setJointControls(Eigen::VectorXd& u) {
       u(i++) = oc;
     }
 
-    time_since_last_sampling_ = 0;
-    last_sampling_time_ = current_sampling_time_;
-  }
+    //time_since_last_sampling_ = 0;
+    //last_sampling_time_ = current_sampling_time_point_;
+  //}
 
   GeometricPrimitiveVisualizer geom_prim_vis(&ros_visualizer_);
   task_manager_.getGeometricPrimitiveMap()->acceptVisitor(geom_prim_vis);
@@ -371,17 +371,16 @@ void HiQPJointVelocityController::advertiseAllServices()
     "remove_all_primitives", &HiQPJointVelocityController::removeAllGeometricPrimitives, this);
 }
 
-int HiQPJointVelocityController::loadFps()
+int HiQPJointVelocityController::loadDesiredSamplingTime()
 {
-  if (!this->getControllerNodeHandle().getParam("fps", fps_)) {
-      ROS_ERROR_STREAM("In HiQPJointVelocityController: Call to getParam('" 
-        << "fps" 
-        << "') in namespace '" 
+  if (!this->getControllerNodeHandle().getParam("sampling_time", desired_sampling_time_)) {
+      ROS_ERROR_STREAM("In HiQPJointVelocityController: Call to getParam('sampling_time') in namespace '" 
         << this->getControllerNodeHandle().getNamespace() 
         << "' failed.");
       return -1;
   }
-  time_since_last_sampling_ = 0;
+  this->setDesiredSamplingTime(desired_sampling_time_);
+  //time_since_last_sampling_ = 0;
   return 0;
 }
 

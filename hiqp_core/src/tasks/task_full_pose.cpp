@@ -52,7 +52,7 @@ namespace tasks
     performance_measures_.resize(0);
     task_types_.insert(task_types_.begin(), n_controls, 0);
 
-    // The jacobian has zero columns for non-writable joints
+    // The jacobian has zero-columns for non-writable joints
     // -1  0  0  0  0
     //  0 -1  0  0  0
     //  0  0  0 -1  0
