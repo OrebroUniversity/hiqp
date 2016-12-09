@@ -46,8 +46,7 @@ namespace hiqp
     ~TaskDefinition() noexcept {}
 
     virtual int init(const std::vector<std::string>& parameters,
-                     RobotStatePtr robot_state,
-                     unsigned int n_controls) = 0;
+                     RobotStatePtr robot_state) = 0;
 
     virtual int update(RobotStatePtr robot_state) = 0;
 
@@ -98,9 +97,8 @@ namespace hiqp
 
     /*! \brief Calls init() of the child class, and properly sets up the TaskDefinition object. */
     int initialize(const std::vector<std::string>& parameters,
-                   RobotStatePtr robot_state,
-                   unsigned int n_controls) {
-        if (init(parameters, robot_state, n_controls) != 0)
+                   RobotStatePtr robot_state) {
+        if (init(parameters, robot_state) != 0)
           return -1;
         update(robot_state);
         e_initial_ = e_;
