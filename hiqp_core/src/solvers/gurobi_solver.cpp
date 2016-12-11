@@ -30,7 +30,7 @@
 #define SCALE_FLAG       1
 #define TIME_LIMIT       1.0//0.005
 #define DUAL_REDUCTIONS  1
-#define TIKHONOV_FACTOR  1e-4
+#define TIKHONOV_FACTOR  5*1e-5
 
 namespace hiqp
 {
@@ -181,11 +181,11 @@ namespace hiqp
             solution.at(i) = x[i].get(GRB_DoubleAttr_X);
           for(unsigned int i=0; i<s_dim; i++)
             w_(s_acc_dim + i) = w[i].get(GRB_DoubleAttr_X);
+
         } catch(GRBException e) {
           std::cerr<<"In HQPSolver::solve(...): Gurobi exception with error code" <<e.getErrorCode()<<", and error message "<<e.getMessage().c_str()<<" when trying to extract the solution variables."<<std::endl;
           // model.write("/home/yumi/Desktop/model.lp");
           // model.write("/home/yumi/Desktop/model.sol");
-
           return false;
         }
 
