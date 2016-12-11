@@ -21,7 +21,7 @@
 #include <ros/assert.h>
 #include <cassert>
 #include <iostream>
-
+#include <iomanip>
 #include <Eigen/Dense>
 
 #define OUTPUT_FLAG      0
@@ -62,6 +62,7 @@ namespace hiqp
         //ROS_ASSERT(it->second.J_.cols() == x_dim); //make sure the stage jacobian column dimensions are consistent
         assert(it->second.J_.cols() == x_dim);
         s_count++;
+ 
         GRBModel model(env_);
         unsigned int s_dim = it->second.nRows; //dimension of the current stage
         unsigned int s_acc_dim = b_.rows(); //accumulated dimensions of all the previously solved stages
@@ -134,6 +135,17 @@ namespace hiqp
         model.setObjective(obj, GRB_MINIMIZE);
         model.update();
 
+        // DEBUG =============================================
+        // std::cerr<<std::setprecision(2)<<"Gurobi solver stage "<<s_count<<" matrices:"<<std::endl;
+	// std::cerr<<"A"<<std::endl<<A_<<std::endl;
+	// std::cerr<<"signs: ";
+        // for (unsigned k=0; k<senses_.size(); k++)
+	//   std::cerr<<senses_[k]<<" ";
+
+	// std::cerr<<std::endl<<"b"<<b_.transpose()<<std::endl;
+	// std::cerr<<"w"<<w_.transpose()<<std::endl;
+	// DEBUG END ==========================================
+
         // ========== SOLVE ==========
         model.optimize();
         int status = model.get(GRB_IntAttr_Status);
@@ -156,11 +168,8 @@ namespace hiqp
           delete[] rhsides;
           delete[] coeff_x;
           delete[] coeff_w;
-
-	  // std::cerr<<"A"<<A_<<std::endl;
-	  // std::cerr<<"b"<<b_<<std::endl;
-	  // std::cerr<<"w"<<w_<<std::endl;
-	  //model.write("/home/yumi/Desktop/model.lp");
+            
+	  //model.write("/home/rkg/Desktop/model.lp");
 	  //model.write("/home/yumi/Desktop/model.sol");
 
           return false;
