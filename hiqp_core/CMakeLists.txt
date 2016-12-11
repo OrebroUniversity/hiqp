@@ -35,8 +35,8 @@ find_package(orocos_kdl REQUIRED)
 find_package(Eigen3 REQUIRED)
 
 catkin_package(CATKIN_DEPENDS roscpp controller_interface visualization_msgs kdl_parser hiqp_msgs
-               INCLUDE_DIRS include ${GUROBI_INCLUDE_DIR}
-               LIBRARIES ${PROJECT_NAME} ${GUROBI_LIBS}
+               INCLUDE_DIRS include 
+               LIBRARIES ${PROJECT_NAME} 
                DEPENDS orocos_kdl)
 
 include_directories(include ${catkin_INCLUDE_DIRS})
