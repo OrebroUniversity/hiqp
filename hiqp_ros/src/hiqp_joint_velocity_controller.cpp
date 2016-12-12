@@ -27,14 +27,14 @@
 #include <hiqp_ros/hiqp_joint_velocity_controller.h>
 #include <hiqp/geometric_primitives/geometric_primitive_visualizer.h>
 
-#include <hiqp_msgs/MonitoringDataMsg.h>
+#include <hiqp_msgs/TaskMeasures.h>
 #include <hiqp_msgs/Vector3d.h>
 #include <hiqp_msgs/StringArray.h>
 
 #include <geometry_msgs/PoseStamped.h> // teleoperation magnet sensors
 
 using hiqp::geometric_primitives::GeometricPrimitiveVisualizer;
-using hiqp::TaskMonitoringData;
+using hiqp::TaskMeasure;
 
 namespace hiqp_ros
 {
@@ -283,18 +283,20 @@ void HiQPJointVelocityController::monitorTasks() {
     ros::Duration d = now - last_monitoring_update_;
     if (d.toSec() >= 1.0/monitoring_publish_rate_) {
       last_monitoring_update_ = now;
-      std::vector<TaskMonitoringData> datas;
-      task_manager_.getTaskMonitoringData(datas);
+      std::vector<TaskMeasure> measures;
+      task_manager_.getTaskMeasures(measures);
 
-      for (auto&& data : datas) {
-        hiqp_msgs::MonitoringDataMsg msg;
-        msg.ts = now;
-        msg.task_name = data.task_name_;
-        msg.e = std::vector<double>(data.e_.data(), data.e_.data() + data.e_.rows() * data.e_.cols());
-        msg.de = std::vector<double>(data.de_.data(), data.de_.data() + data.de_.rows() * data.de_.cols());
-        msg.pm = std::vector<double>(data.pm_.data(), data.pm_.data() + data.pm_.rows() * data.pm_.cols());
-        monitoring_pub_.publish(msg);
+      hiqp_msgs::TaskMeasures msgs;
+      msgs.stamp = now;
+      for (auto&& measure : measures) {
+        hiqp_msgs::TaskMeasure msg;
+        msg.task_name = measure.task_name_;
+        msg.e = std::vector<double>(measure.e_.data(), measure.e_.data() + measure.e_.rows() * measure.e_.cols());
+        msg.de = std::vector<double>(measure.de_.data(), measure.de_.data() + measure.de_.rows() * measure.de_.cols());
+        msg.pm = std::vector<double>(measure.pm_.data(), measure.pm_.data() + measure.pm_.rows() * measure.pm_.cols());
+        msgs.task_measures.push_back(msg);
       }
+      monitoring_pub_.publish(msgs);
     }
   }
 }
@@ -401,8 +403,8 @@ int HiQPJointVelocityController::loadAndSetupTaskMonitoring() {
   monitoring_publish_rate_ = 
     static_cast<double>(task_monitoring["publish_rate"]);
 
-  monitoring_pub_ = this->getControllerNodeHandle().advertise<hiqp_msgs::MonitoringDataMsg>
-  ("monitoring_data", 1);
+  monitoring_pub_ = this->getControllerNodeHandle().advertise<hiqp_msgs::TaskMeasures>
+  ("task_measures", 1);
 
   return 0;
 }

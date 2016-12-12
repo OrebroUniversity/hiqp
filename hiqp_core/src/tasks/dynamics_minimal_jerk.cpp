@@ -27,8 +27,12 @@ namespace tasks
                                 RobotStatePtr robot_state,
                                 const Eigen::VectorXd& e_initial,
                                 const Eigen::VectorXd& e_final) {
-    if (parameters.size() != 3)
+    int size = parameters.size();
+    if (size != 3) {
+      printHiqpWarning("TDynMinimalJerk requires 3 parameters, got " 
+        + std::to_string(size) + "! Initialization failed!");
       return -1;
+    }
 
     performance_measures_.resize(e_initial.rows());
 

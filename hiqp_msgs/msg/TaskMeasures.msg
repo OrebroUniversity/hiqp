@@ -14,8 +14,5 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-time           ts            # time stamp of this monitoring data set
-string         task_name     # unique string identifier for the task
-float64[]      e             # the task performance value at this time step
-float64[]      de            # the task dynamics value at this time step
-float64[]      pm            # the user-defined custom performance monitoring values for thsi task at this time step
+time           stamp            # time stamp of this monitoring data set
+TaskMeasure[]  task_measures    # array of task measures

@@ -72,13 +72,14 @@ bool TaskManager::getVelocityControls(RobotStatePtr robot_state,
   return true;
 }
 
-void TaskManager::getTaskMonitoringData(std::vector<TaskMonitoringData>& data) {
+void TaskManager::getTaskMeasures(std::vector<TaskMeasure>& data) {
+  data.clear();
   for (auto&& kv : task_map_) {
     kv.second->monitor();
-    data.push_back(TaskMonitoringData(kv.second->getTaskName(), 
-                                      kv.second->getValue(),
-                                      kv.second->getDynamics(),
-                                      kv.second->getPerformanceMeasures()));
+    data.push_back(TaskMeasure(kv.second->getTaskName(), 
+                               kv.second->getValue(),
+                               kv.second->getDynamics(),
+                               kv.second->getPerformanceMeasures()));
   }
 }
 
