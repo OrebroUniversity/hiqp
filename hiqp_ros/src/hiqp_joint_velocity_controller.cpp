@@ -58,7 +58,7 @@ HiQPJointVelocityController::~HiQPJointVelocityController() noexcept {}
 void HiQPJointVelocityController::initialize() {
   ros_visualizer_.init( &(this->getControllerNodeHandle()) );
 
-  if (loadDesiredSamplingTime() != 0) return;
+  //if (loadDesiredSamplingTime() != 0) return;
 
   if (loadAndSetupTaskMonitoring() != 0) return;
 
@@ -79,28 +79,19 @@ void HiQPJointVelocityController::initialize() {
 
 
 
-void HiQPJointVelocityController::setJointControls(Eigen::VectorXd& u) {
+void HiQPJointVelocityController::computeControls(Eigen::VectorXd& u) {
   if (!is_active_) return;
 
-  const hiqp::HiQPTimePoint& current_sampling_time_point_ = this->getRobotState()->sampling_time_point_;
-  time_since_last_sampling_ += (current_sampling_time_point_ - last_sampling_time_).toSec();
-  if (time_since_last_sampling_ >= 1/fps_)
-  {
-    time_since_last_sampling_ = 0;
-    last_sampling_time_ = current_sampling_time_;
-
-    std::vector<double> outcon(u.size());
-    task_manager_.getVelocityControls(this->getRobotState(), outcon);
-    int i=0;
-    for (auto&& oc : outcon) {
-      u(i++) = oc;
-    }
-
-    GeometricPrimitiveVisualizer geom_prim_vis(&ros_visualizer_);
-    task_manager_.getGeometricPrimitiveMap()->acceptVisitor(geom_prim_vis);
-
-    performMonitoring();
+  std::vector<double> outcon(u.size());
+  task_manager_.getVelocityControls(this->getRobotState(), outcon);
+  int i=0;
+  for (auto&& oc : outcon) {
+    u(i++) = oc;
   }
+
+  renderPrimitives();
+  monitorTasks();
+
   return;
 }
 
@@ -147,19 +138,16 @@ bool HiQPJointVelocityController::setTask
 bool HiQPJointVelocityController::removeTask
 (
   hiqp_msgs::RemoveTask::Request& req, 
-    hiqp_msgs::RemoveTask::Response& res
+  hiqp_msgs::RemoveTask::Response& res
 )
 {
   res.success = false;
   if (task_manager_.removeTask(req.task_name) == 0)
     res.success = true;
 
-  if (res.success)
-  {
+  if (res.success) {
     hiqp::printHiqpInfo("Removed task '" + req.task_name + "'.");
-  }
-  else
-  {
+  } else {
     hiqp::printHiqpInfo("Couldn't remove task '" + req.task_name + "'!");  
   }
 
@@ -279,7 +267,17 @@ bool HiQPJointVelocityController::removeAllGeometricPrimitives
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-void HiQPJointVelocityController::performMonitoring() {
+void HiQPJointVelocityController::renderPrimitives() {
+  ros::Time now = ros::Time::now();
+  ros::Duration d = now - last_rendering_update_;
+  if (d.toSec() >= 1.0/rendering_publish_rate_) {
+    last_rendering_update_ = now;
+    GeometricPrimitiveVisualizer geom_prim_vis(&ros_visualizer_);
+    task_manager_.getGeometricPrimitiveMap()->acceptVisitor(geom_prim_vis);
+  }
+}
+
+void HiQPJointVelocityController::monitorTasks() {
   if (monitoring_active_) {
     ros::Time now = ros::Time::now();
     ros::Duration d = now - last_monitoring_update_;
@@ -365,17 +363,25 @@ void HiQPJointVelocityController::advertiseAllServices()
     "remove_all_primitives", &HiQPJointVelocityController::removeAllGeometricPrimitives, this);
 }
 
-int HiQPJointVelocityController::loadDesiredSamplingTime()
-{
-  if (!this->getControllerNodeHandle().getParam("sampling_time", desired_sampling_time_)) {
-      ROS_ERROR_STREAM("In HiQPJointVelocityController: Call to getParam('sampling_time') in namespace '" 
-        << this->getControllerNodeHandle().getNamespace() 
-        << "' failed.");
-      return -1;
+// int HiQPJointVelocityController::loadDesiredSamplingTime()
+// {
+//   if (!this->getControllerNodeHandle().getParam("sampling_time", desired_sampling_time_)) {
+//       ROS_ERROR_STREAM("In HiQPJointVelocityController: Call to getParam('sampling_time') in namespace '" 
+//         << this->getControllerNodeHandle().getNamespace() 
+//         << "' failed.");
+//       return -1;
+//   }
+//   this->setDesiredSamplingTime(desired_sampling_time_);
+//   //time_since_last_sampling_ = 0;
+//   return 0;
+// }
+
+void HiQPJointVelocityController::loadRenderingParameters() {
+  rendering_publish_rate_ = 1000; // defaults to 1 kHz
+  if (!this->getControllerNodeHandle().getParam("visualization_publish_rate", rendering_publish_rate_)) {
+    ROS_WARN("Couldn't find parameter 'visualization_publish_rate' on parameter server, defaulting to 1 kHz.");
   }
-  this->setDesiredSamplingTime(desired_sampling_time_);
-  //time_since_last_sampling_ = 0;
-  return 0;
+  last_rendering_update_ = ros::Time::now();
 }
 
   /// \todo Task monitoring should publish an array of all task infos at each publication time step, rather than indeterministacally publishing single infos on the same topic

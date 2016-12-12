@@ -62,7 +62,7 @@ namespace hiqp_ros {
     virtual void initialize() = 0;
 
     /*! \brief Implement this to set the output controls of this controller. Do not resize u! */
-    virtual void setJointControls(Eigen::VectorXd& u) = 0;
+    virtual void computeControls(Eigen::VectorXd& u) = 0;
 
   protected:
     inline ros::NodeHandle& getControllerNodeHandle() { return controller_nh_; }
@@ -76,6 +76,7 @@ namespace hiqp_ros {
     BaseController& operator=(const BaseController& other) = delete;
     BaseController& operator=(BaseController&& other) noexcept = delete;
 
+    void loadDesiredSamplingTime();
     int loadUrdfToKdlTree();
     int loadJointsAndSetJointHandlesMap();
     void sampleJointValues();
@@ -85,7 +86,7 @@ namespace hiqp_ros {
 
     RobotState                            robot_state_data_;
     RobotStatePtr                         robot_state_ptr_;
-    HiQPTimePoint                   last_sampling_time_point_;
+    HiQPTimePoint                         last_sampling_time_point_;
     double                                desired_sampling_time_;
     Eigen::VectorXd                       u_;
 
@@ -109,10 +110,8 @@ namespace hiqp_ros {
     hardware_interface_ = hw;
     controller_nh_ = controller_nh;
     robot_state_ptr_.reset(&robot_state_data_);
-    desired_sampling_time_ = 1; // defaults to 1kHz
-    ros::Time t = ros::Time::now();
-    last_sampling_time_point_.setTimePoint(t.sec, t.nsec);
 
+    loadDesiredSamplingTime();
     loadUrdfToKdlTree();
     loadJointsAndSetJointHandlesMap();
     sampleJointValues();
@@ -127,9 +126,19 @@ namespace hiqp_ros {
     double elapsed_time = (now-last_sampling_time_point_).toSec();
     if (elapsed_time*1000 >= desired_sampling_time_) {
       sampleJointValues();
-      setJointControls(u_);
+      computeControls(u_);
       setControls();
     }
+  }
+
+  template <typename ControllerT, typename HardwareInterfaceT>
+  void BaseController<ControllerT, HardwareInterfaceT>::loadDesiredSamplingTime() {
+    desired_sampling_time_ = 1; // milliseconds. (defaults to 1kHz)
+    if (!controller_nh_.getParam("sampling_time", desired_sampling_time_)) {
+      ROS_WARN("Couldn't find parameter 'sampling_time' on the parameter server, defaulting to 1ms (1kHz).");
+    }
+    ros::Time t = ros::Time::now();
+    last_sampling_time_point_.setTimePoint(t.sec, t.nsec);
   }
 
   template <typename ControllerT, typename HardwareInterfaceT>
