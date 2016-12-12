@@ -388,6 +388,7 @@ int HiQPJointVelocityController::loadFps()
   return 0;
 }
 
+  /// \todo Task monitoring should publish an array of all task infos at each publication time step, rather than indeterministacally publishing single infos on the same topic
 int HiQPJointVelocityController::loadAndSetupTaskMonitoring() {
   XmlRpc::XmlRpcValue task_monitoring;
   if (!this->getControllerNodeHandle().getParam("task_monitoring", task_monitoring)) {

@@ -54,7 +54,7 @@ namespace hiqp
     /// \todo Implement cylinder-capsule projection
     /// \todo Implement sphere-capsule projection
     /// \todo Implement capsule-capsule projection
-
+    /// \todo Implement activation zones for all tasks
 
 
 
@@ -474,6 +474,7 @@ namespace hiqp
     //
     ///////////////////////////////////////////////////////////////////////////////
 
+    /// \todo Would need to know task sign to make inequalities work in general, currently only > and = tasks work as intended 
     template<>
     int TaskGeometricProjection<GeometricSphere, GeometricPlane>::project
     (
@@ -481,31 +482,35 @@ namespace hiqp
      std::shared_ptr<GeometricPlane> plane
      )
     {
+      double r=sphere->getRadius();
+
       KDL::Vector c__ = pose_a_.M * sphere->getCenterKDL();
       KDL::Vector c = pose_a_.p + c__;
 
       KDL::Vector n = pose_b_.M * plane->getNormalKDL();
 
       KDL::Vector d__ = n * plane->getOffset();
-      KDL::Vector d = d__ + n * KDL::dot(n, pose_b_.p); //normal vector to the plane expressed in the base frame with length being the offset to the plane in the base frame
+      KDL::Vector d = d__ + n * KDL::dot(n, pose_b_.p);
 
-      e_(0) = (KDL::dot(c, n) - plane->getOffset() - KDL::dot(n, pose_b_.p));
+      double dist=KDL::dot(c, n) - plane->getOffset() - KDL::dot(n, pose_b_.p)-r;
+
+      if(std::fabs(dist)<=d_i_)
+       	e_(0) = dist;
+      else
+      	e_(0)=0.0;
 
       // The task jacobian is J = 2 (p2-p1)^T (Jp2 - Jp1)
-
       for (int q_nr = 0; q_nr < jacobian_a_.columns(); ++q_nr)
 	{
 	  KDL::Vector Jpd = - getVelocityJacobianForTwoPoints(c__, d__, q_nr);
-
-	  J_(0, q_nr) = KDL::dot(n, Jpd);
+	  if(std::fabs(dist)<=d_i_)
+	    J_(0, q_nr) = KDL::dot(n, Jpd);
+	    else
+	    J_(0, q_nr) = 0.0;
 	}
 	
       return 0;
     }
-
-
-
-
 
     template<>
     int TaskGeometricProjection<GeometricSphere, GeometricSphere>::project
@@ -567,21 +572,23 @@ namespace hiqp
       KDL::Vector p2 = pose_b_.p + p2__;
 
       KDL::Vector d = p2 - p1;
-      e_(0) = KDL::dot(d, d);
+      if(d.Norm() <= d_i_)
+	e_(0) = KDL::dot(d, d);
+      else
+	e_(0)=0.0;
+
 
       // The task jacobian is J = 2 (p2-p1)^T (Jp2 - Jp1)
       for (int q_nr = 0; q_nr < jacobian_a_.columns(); ++q_nr) {
 	KDL::Vector Jp2p1 = getVelocityJacobianForTwoPoints(p1__, p2__, q_nr);
-	J_(0, q_nr) = 2 * dot(d, Jp2p1);
+	if(d.Norm() <= d_i_)
+	  J_(0, q_nr) = 2 * dot(d, Jp2p1);
+	else
+	  J_(0,q_nr)=0.0;
       }
 	
       return 0;
     }
-
-
-
-
-
   } // namespace tasks
 
 } // namespace hiqp
