@@ -82,10 +82,13 @@ void HiQPJointVelocityController::initialize() {
 void HiQPJointVelocityController::setJointControls(Eigen::VectorXd& u) {
   if (!is_active_) return;
 
-  //const hiqp::HiQPTimePoint& current_sampling_time_point_ = this->getRobotState()->sampling_time_point_;
-  //time_since_last_sampling_ += (current_sampling_time_point_ - last_sampling_time_).toSec();
-  //if (time_since_last_sampling_ >= 1/fps_)
-  //{
+  const hiqp::HiQPTimePoint& current_sampling_time_point_ = this->getRobotState()->sampling_time_point_;
+  time_since_last_sampling_ += (current_sampling_time_point_ - last_sampling_time_).toSec();
+  if (time_since_last_sampling_ >= 1/fps_)
+  {
+    time_since_last_sampling_ = 0;
+    last_sampling_time_ = current_sampling_time_;
+
     std::vector<double> outcon(u.size());
     task_manager_.getVelocityControls(this->getRobotState(), outcon);
     int i=0;
@@ -93,15 +96,11 @@ void HiQPJointVelocityController::setJointControls(Eigen::VectorXd& u) {
       u(i++) = oc;
     }
 
-    //time_since_last_sampling_ = 0;
-    //last_sampling_time_ = current_sampling_time_point_;
-  //}
+    GeometricPrimitiveVisualizer geom_prim_vis(&ros_visualizer_);
+    task_manager_.getGeometricPrimitiveMap()->acceptVisitor(geom_prim_vis);
 
-  GeometricPrimitiveVisualizer geom_prim_vis(&ros_visualizer_);
-  task_manager_.getGeometricPrimitiveMap()->acceptVisitor(geom_prim_vis);
-
-  performMonitoring();
-
+    performMonitoring();
+  }
   return;
 }
 
@@ -280,16 +279,11 @@ bool HiQPJointVelocityController::removeAllGeometricPrimitives
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-void HiQPJointVelocityController::performMonitoring()
-{
-  // If monitoring is turned on, generate monitoring data and publish it
-
-  if (monitoring_active_)
-  {
+void HiQPJointVelocityController::performMonitoring() {
+  if (monitoring_active_) {
     ros::Time now = ros::Time::now();
     ros::Duration d = now - last_monitoring_update_;
-    if (d.toSec() >= 1.0/monitoring_publish_rate_)
-    {
+    if (d.toSec() >= 1.0/monitoring_publish_rate_) {
       last_monitoring_update_ = now;
       std::vector<TaskMonitoringData> datas;
       task_manager_.getTaskMonitoringData(datas);
@@ -384,6 +378,7 @@ int HiQPJointVelocityController::loadDesiredSamplingTime()
   return 0;
 }
 
+  /// \todo Task monitoring should publish an array of all task infos at each publication time step, rather than indeterministacally publishing single infos on the same topic
 int HiQPJointVelocityController::loadAndSetupTaskMonitoring() {
   XmlRpc::XmlRpcValue task_monitoring;
   if (!this->getControllerNodeHandle().getParam("task_monitoring", task_monitoring)) {

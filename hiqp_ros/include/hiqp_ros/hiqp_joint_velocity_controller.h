@@ -71,7 +71,6 @@ namespace hiqp_ros
     HiQPJointVelocityController& operator=(HiQPJointVelocityController&& other) noexcept = delete;
 
     void performMonitoring();
-    /// \todo rename to loadSamplingRate
     int loadDesiredSamplingTime();
     int loadAndSetupTaskMonitoring();
     void advertiseAllServices();
@@ -91,9 +90,15 @@ namespace hiqp_ros
     typedef std::map<unsigned int, hardware_interface::JointHandle > JointHandleMap;
 
     bool                                              is_active_;
+<<<<<<< HEAD
     double                                            desired_sampling_time_;
     //hiqp::HiQPTimePoint                               last_sampling_time_;
     //double                                            time_since_last_sampling_;
+=======
+    double                                            fps_; /// \todo rename to publish_rate_
+    hiqp::HiQPTimePoint                               last_sampling_time_;
+    double                                            time_since_last_sampling_;
+>>>>>>> origin/develop-robert
 
     bool                                              monitoring_active_;
     double                                            monitoring_publish_rate_;
