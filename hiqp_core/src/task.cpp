@@ -82,7 +82,6 @@ namespace hiqp {
 
   void Task::update(RobotStatePtr robot_state)
   {
-    assert(def_ && dyn_); //just to make sure ...
     if (!def_ || !dyn_) return;
     if (def_->update(robot_state) != 0) return;
     dyn_->update(robot_state, def_->e_, def_->J_);

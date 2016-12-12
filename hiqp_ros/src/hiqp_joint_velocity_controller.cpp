@@ -58,7 +58,7 @@ HiQPJointVelocityController::~HiQPJointVelocityController() noexcept {}
 void HiQPJointVelocityController::initialize() {
   ros_visualizer_.init( &(this->getControllerNodeHandle()) );
 
-  //if (loadDesiredSamplingTime() != 0) return;
+  loadRenderingParameters();
 
   if (loadAndSetupTaskMonitoring() != 0) return;
 
