@@ -19,5 +19,3 @@ Robert Krug and Todor Stoyanov at the AASS Researche Institute at Örebro Univer
 
 ## How to suppress gurobi printouts from casadi
 In ``casadi/casadi/interfaces/gurobi/gurobi_interface.cpp`` at line 116, add ``GRBsetintparam(m->env, "OutputFlag", 0);``
-
-
