@@ -62,7 +62,6 @@ namespace hiqp
         //ROS_ASSERT(it->second.J_.cols() == x_dim); //make sure the stage jacobian column dimensions are consistent
         assert(it->second.J_.cols() == x_dim);
         s_count++;
- 
         GRBModel model(env_);
         unsigned int s_dim = it->second.nRows; //dimension of the current stage
         unsigned int s_acc_dim = b_.rows(); //accumulated dimensions of all the previously solved stages
@@ -181,11 +180,11 @@ namespace hiqp
             solution.at(i) = x[i].get(GRB_DoubleAttr_X);
           for(unsigned int i=0; i<s_dim; i++)
             w_(s_acc_dim + i) = w[i].get(GRB_DoubleAttr_X);
-
         } catch(GRBException e) {
           std::cerr<<"In HQPSolver::solve(...): Gurobi exception with error code" <<e.getErrorCode()<<", and error message "<<e.getMessage().c_str()<<" when trying to extract the solution variables."<<std::endl;
           // model.write("/home/yumi/Desktop/model.lp");
           // model.write("/home/yumi/Desktop/model.sol");
+
           return false;
         }
 

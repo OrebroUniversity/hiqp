@@ -68,7 +68,6 @@ namespace tasks
     KDL::Jacobian                jacobian_b_;
 
     double                       delta_; // the angular error margin
-
   };
 
 } // namespace tasks

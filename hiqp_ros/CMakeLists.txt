@@ -67,3 +67,4 @@ install(TARGETS ${PROJECT_NAME}
 
 install(FILES plugins.xml
         DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
+
