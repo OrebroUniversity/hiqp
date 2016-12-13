@@ -50,11 +50,12 @@ bool TaskManager::getVelocityControls(RobotStatePtr robot_state,
 
   for (auto&& kv : task_map_) {
     if (kv.second->getActive()) {
-      kv.second->update(robot_state);
-      solver_->appendStage(kv.second->getPriority(), 
-                           kv.second->getDynamics(), 
-                           kv.second->getJacobian(),
-                           kv.second->getTaskTypes());
+      if (kv.second->update(robot_state) == 0) {
+        solver_->appendStage(kv.second->getPriority(), 
+                             kv.second->getDynamics(), 
+                             kv.second->getJacobian(),
+                             kv.second->getTaskTypes());
+      }
     }
   }
 
