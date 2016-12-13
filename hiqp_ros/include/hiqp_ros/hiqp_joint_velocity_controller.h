@@ -117,6 +117,8 @@ namespace hiqp_ros
     ros::ServiceServer                                remove_geomprim_service_;
     ros::ServiceServer                                remove_all_geomprims_service_;
 
+    std::mutex                                        service_mutex_; 
+
     std::shared_ptr<Visualizer>                       visualizer_;
     ROSVisualizer                                     ros_visualizer_;
     hiqp::TaskManager                                 task_manager_;
