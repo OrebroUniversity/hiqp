@@ -89,8 +89,13 @@ void HiQPJointVelocityController::computeControls(Eigen::VectorXd& u) {
     u(i++) = oc;
   }
 
+  service_mutex_.lock();
   renderPrimitives();
+  service_mutex_.unlock();
+
+  service_mutex_.lock();
   monitorTasks();
+  service_mutex_.unlock();
 
   return;
 }
@@ -150,10 +155,6 @@ bool HiQPJointVelocityController::removeAllTasks(hiqp_msgs::RemoveAllTasks::Requ
   return true;
 }
 
-
-
-
-
 bool HiQPJointVelocityController::listAllTasks(hiqp_msgs::ListAllTasks::Request& req, 
                                                hiqp_msgs::ListAllTasks::Response& res) {
   service_mutex_.lock();
@@ -162,10 +163,6 @@ bool HiQPJointVelocityController::listAllTasks(hiqp_msgs::ListAllTasks::Request&
   service_mutex_.unlock();
   return true;
 }
-
-
-
-
 
 bool HiQPJointVelocityController::addGeometricPrimitive(hiqp_msgs::AddGeometricPrimitive::Request& req, 
                                                         hiqp_msgs::AddGeometricPrimitive::Response& res) {
@@ -180,9 +177,6 @@ bool HiQPJointVelocityController::addGeometricPrimitive(hiqp_msgs::AddGeometricP
   service_mutex_.unlock();
   return true;
 }
-
-
-
 
 /// \bug Removing primitive doesn't remove visualization
 bool HiQPJointVelocityController::removeGeometricPrimitive(hiqp_msgs::RemoveGeometricPrimitive::Request& req, 
@@ -201,10 +195,6 @@ bool HiQPJointVelocityController::removeGeometricPrimitive(hiqp_msgs::RemoveGeom
   return true;
 }
 
-
-
-
-
 bool HiQPJointVelocityController::removeAllGeometricPrimitives(hiqp_msgs::RemoveAllGeometricPrimitives::Request& req, 
                                                                hiqp_msgs::RemoveAllGeometricPrimitives::Response& res) {
   service_mutex_.lock();
@@ -215,13 +205,14 @@ bool HiQPJointVelocityController::removeAllGeometricPrimitives(hiqp_msgs::Remove
   return true;
 }
 
-
-
-
-
-
-
-
+bool HiQPJointVelocityController::listAllGeometricPrimitives(hiqp_msgs::ListAllGeometricPrimitives::Request& req, 
+                                                             hiqp_msgs::ListAllGeometricPrimitives::Response& res) {
+  service_mutex_.lock();
+  task_manager_.listAllGeometricPrimitives();
+  res.success = true;
+  service_mutex_.unlock();
+  return true;
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 //  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
@@ -328,6 +319,9 @@ void HiQPJointVelocityController::advertiseAllServices()
 
   remove_all_geomprims_service_ = this->getControllerNodeHandle().advertiseService(
     "remove_all_primitives", &HiQPJointVelocityController::removeAllGeometricPrimitives, this);
+
+  list_all_geomprims_service_ = this->getControllerNodeHandle().advertiseService(
+    "list_all_primitives", &HiQPJointVelocityController::listAllGeometricPrimitives, this);
 }
 
 // int HiQPJointVelocityController::loadDesiredSamplingTime()

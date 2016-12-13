@@ -19,12 +19,14 @@
 #include <hiqp/task_manager.h>
 #include <hiqp/utilities.h>
 #include <hiqp/geometric_primitives/geometric_primitive_visualizer.h>
+#include <hiqp/geometric_primitives/geometric_primitive_couter.h>
 //#include <hiqp/tasks/task_geometric_projection.h>
 //#include <hiqp/tasks/dynamics_first_order.h>
 
 #include <Eigen/Dense>
 
 using hiqp::geometric_primitives::GeometricPrimitiveVisualizer;
+using hiqp::geometric_primitives::GeometricPrimitiveCouter;
 
 namespace hiqp {
 
@@ -193,6 +195,14 @@ namespace hiqp {
     geometric_primitive_map_->acceptVisitor(geom_prim_vis);
     geom_prim_vis.removeAllVisitedPrimitives();
     geometric_primitive_map_->clear();
+    return 0;
+  }
+
+  int TaskManager::listAllGeometricPrimitives() {
+    std::cout << "LISTING ALL REGISTERED GEOMETRIC PRIMITIVES:\n";
+    std::cout << "Name | Frame ID | Visible | Visual ID | Type\n";
+    GeometricPrimitiveCouter geom_prim_cout;
+    geometric_primitive_map_->acceptVisitor(geom_prim_cout);
     return 0;
   }
 

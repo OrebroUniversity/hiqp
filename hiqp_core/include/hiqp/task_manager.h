@@ -98,6 +98,8 @@ namespace hiqp {
 
     int removeAllGeometricPrimitives();
 
+    int listAllGeometricPrimitives();
+
     inline std::shared_ptr<GeometricPrimitiveMap> getGeometricPrimitiveMap() { return geometric_primitive_map_; }
 
 
