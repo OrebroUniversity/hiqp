@@ -61,7 +61,7 @@ namespace geometric_primitives
 
     void addDependencyToPrimitive(const std::string& name, const std::string& id);
     void removeDependency(const std::string& id);
-    void acceptVisitor(const GeometricPrimitiveVisitor& visitor, const std::string& primitive_name = "");
+    void acceptVisitor(GeometricPrimitiveVisitor& visitor, const std::string& primitive_name = "");
 
   private:
     GeometricPrimitiveMap(const GeometricPrimitiveMap& other) = delete;

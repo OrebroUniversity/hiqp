@@ -276,7 +276,7 @@ void GeometricPrimitiveMap::removeDependency
 
 
 
-void GeometricPrimitiveMap::acceptVisitor(const GeometricPrimitiveVisitor& visitor, 
+void GeometricPrimitiveMap::acceptVisitor(GeometricPrimitiveVisitor& visitor, 
                                           const std::string& primitive_name) {
   if (primitive_name.compare("") == 0) {
     for (auto&& kv : point_map_) visitor.visit(kv.second);
@@ -292,6 +292,30 @@ void GeometricPrimitiveMap::acceptVisitor(const GeometricPrimitiveVisitor& visit
       {
         PointMap::iterator it = point_map_.find(primitive_name);
         if (it != point_map_.end()) visitor.visit(it->second);
+      }
+      {
+        LineMap::iterator it = line_map_.find(primitive_name);
+        if (it != line_map_.end()) visitor.visit(it->second);
+      }
+      {
+        PlaneMap::iterator it = plane_map_.find(primitive_name);
+        if (it != plane_map_.end()) visitor.visit(it->second);
+      }
+      {
+        BoxMap::iterator it = box_map_.find(primitive_name);
+        if (it != box_map_.end()) visitor.visit(it->second);
+      }
+      {
+        CylinderMap::iterator it = cylinder_map_.find(primitive_name);
+        if (it != cylinder_map_.end()) visitor.visit(it->second);
+      }
+      {
+        SphereMap::iterator it = sphere_map_.find(primitive_name);
+        if (it != sphere_map_.end()) visitor.visit(it->second);
+      }
+      {
+        FrameMap::iterator it = frame_map_.find(primitive_name);
+        if (it != frame_map_.end()) visitor.visit(it->second);
       }
     }
   }

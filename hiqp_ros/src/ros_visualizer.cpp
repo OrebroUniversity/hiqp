@@ -755,50 +755,29 @@ void ROSVisualizer::update
 // 																			  //
 ////////////////////////////////////////////////////////////////////////////////
 
-void ROSVisualizer::remove
-(
-	int id
-  )
-{
+void ROSVisualizer::remove(int id) {
   visualization_msgs::Marker marker;
-
   marker.header.stamp = ros::Time::now();
   marker.ns = kNamespace;
   marker.id = id;
   marker.action = visualization_msgs::Marker::DELETE; 
-
   visualization_msgs::MarkerArray marker_array;
   marker_array.markers.push_back(marker);
   marker_array_pub_.publish(marker_array);
 }
 
 
-void ROSVisualizer::removeMany
-(
-  const std::vector<int>& ids
-  )
-{
+void ROSVisualizer::removeMany(const std::vector<int>& ids) {
   visualization_msgs::MarkerArray marker_array;
-
-  for (int id : ids)
-  {
+  for (int id : ids) {
     visualization_msgs::Marker marker;
-
     marker.header.stamp = ros::Time::now();
     marker.ns = kNamespace;
     marker.id = id;
     marker.action = visualization_msgs::Marker::DELETE; 
-
     marker_array.markers.push_back(marker);
   }
-
   marker_array_pub_.publish(marker_array);
 }
-
-
-
-
-
-
 
 } // namespace hiqp

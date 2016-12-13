@@ -30,7 +30,7 @@ namespace geometric_primitives {
    *  \author Marcus A Johansson */
   class GeometricPrimitiveVisualizer : public GeometricPrimitiveVisitor {
   public:
-    /*! \brief Adds to, updates or removes a primitive from the visualizer given.
+    /*! \brief Adds to, updates or removes a primitive from the visualizer given. If action=1, removeAllVisitedPrimitives has to be called after finishing visiting to perform the actual removal.
      *  \param action : 0 for adding/updating the visited geometric primitive to the visualizer, 1 for removing it. */
     GeometricPrimitiveVisualizer(std::shared_ptr<Visualizer> visualizer, int action)
     : visualizer_(visualizer), action_(action)
@@ -38,13 +38,18 @@ namespace geometric_primitives {
 
     ~GeometricPrimitiveVisualizer() noexcept {}
 
-    void visit(std::shared_ptr<GeometricPoint> point) const { visit__(point); if (action_ == 1) std::cout << "action_ = " << action_ << "\n"; }
-    void visit(std::shared_ptr<GeometricLine> line) const { visit__(line); }
-    void visit(std::shared_ptr<GeometricPlane> plane) const { visit__(plane); }
-    void visit(std::shared_ptr<GeometricBox> box) const { visit__(box); }
-    void visit(std::shared_ptr<GeometricCylinder> cylinder) const { visit__(cylinder); }
-    void visit(std::shared_ptr<GeometricSphere> sphere) const { visit__(sphere); }
-    void visit(std::shared_ptr<GeometricFrame> frame) const { visit__(frame); }
+    void visit(std::shared_ptr<GeometricPoint> point) { visit__(point); }
+    void visit(std::shared_ptr<GeometricLine> line) { visit__(line); }
+    void visit(std::shared_ptr<GeometricPlane> plane) { visit__(plane); }
+    void visit(std::shared_ptr<GeometricBox> box) { visit__(box); }
+    void visit(std::shared_ptr<GeometricCylinder> cylinder) { visit__(cylinder); }
+    void visit(std::shared_ptr<GeometricSphere> sphere) { visit__(sphere); }
+    void visit(std::shared_ptr<GeometricFrame> frame) { visit__(frame); }
+
+    /// \brief Effectively removes all visited geometric primitives.
+    void removeAllVisitedPrimitives() {
+      visualizer_->removeMany(visited_visual_ids_);
+    }
 
   private:
     GeometricPrimitiveVisualizer(const GeometricPrimitiveVisualizer& other) = delete;
@@ -53,14 +58,15 @@ namespace geometric_primitives {
     GeometricPrimitiveVisualizer& operator=(GeometricPrimitiveVisualizer&& other) noexcept = delete;
 
     template <typename Primitive>
-    void visit__(std::shared_ptr<Primitive> primitive) const;
+    void visit__(std::shared_ptr<Primitive> primitive);
 
     std::shared_ptr<Visualizer>  visualizer_;
     int                          action_;
+    std::vector<int>             visited_visual_ids_;
   };
 
   template <typename Primitive>
-  void GeometricPrimitiveVisualizer::visit__(std::shared_ptr<Primitive> primitive) const {
+  void GeometricPrimitiveVisualizer::visit__(std::shared_ptr<Primitive> primitive) {
     int id = primitive->getVisualId();
     switch (action_) {
     case 0:
@@ -68,7 +74,7 @@ namespace geometric_primitives {
       else        visualizer_->update(id, primitive);
       break;
     case 1:
-      if (id >= 0) visualizer_->remove(id);
+      if (id >= 0) visited_visual_ids_.push_back(id);//visualizer_->remove(id);
       break;
     default:
       break;

@@ -183,6 +183,7 @@ namespace hiqp {
   int TaskManager::removeGeometricPrimitive(std::string name) {
     GeometricPrimitiveVisualizer geom_prim_vis(visualizer_, 1);
     geometric_primitive_map_->acceptVisitor(geom_prim_vis, name);
+    geom_prim_vis.removeAllVisitedPrimitives();
     geometric_primitive_map_->removeGeometricPrimitive(name);
     return 0;
   }
@@ -190,6 +191,7 @@ namespace hiqp {
   int TaskManager::removeAllGeometricPrimitives() {
     GeometricPrimitiveVisualizer geom_prim_vis(visualizer_, 1);
     geometric_primitive_map_->acceptVisitor(geom_prim_vis);
+    geom_prim_vis.removeAllVisitedPrimitives();
     geometric_primitive_map_->clear();
     return 0;
   }
