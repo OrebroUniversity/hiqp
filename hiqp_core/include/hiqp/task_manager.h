@@ -34,7 +34,6 @@ namespace hiqp {
 
   /*! \brief A structure used to get data out of tasks that is to be monitored.
    *  \author Marcus A Johansson */
-  /// \todo This data structure copies too much data! Use const-references?
   class TaskMeasure {
   public:
     TaskMeasure(const std::string& task_name,
@@ -108,7 +107,7 @@ namespace hiqp {
 
     TaskMap                                      task_map_;
 
-    HiQPSolver*                                  solver_;
+    std::shared_ptr<HiQPSolver>                  solver_;
 
     unsigned int                                 n_controls_;
 

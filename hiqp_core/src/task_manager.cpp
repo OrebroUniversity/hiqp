@@ -28,13 +28,10 @@ namespace hiqp {
 TaskManager::TaskManager(std::shared_ptr<Visualizer> visualizer)
 : visualizer_(visualizer) {
   geometric_primitive_map_ = std::make_shared<GeometricPrimitiveMap>();
-
-  solver_ = new GurobiSolver();
+  solver_ = std::make_shared<GurobiSolver>();
 }
 
-TaskManager::~TaskManager() noexcept {
-  delete solver_;
-}
+TaskManager::~TaskManager() noexcept {}
 
 void TaskManager::init(unsigned int n_controls) {
   n_controls_ = n_controls; 
