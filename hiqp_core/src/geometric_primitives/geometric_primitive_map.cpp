@@ -136,11 +136,7 @@ int GeometricPrimitiveMap::addGeometricPrimitive
 
 
 
-int GeometricPrimitiveMap::removeGeometricPrimitive
-( 
-  std::string name
-)
-{
+int GeometricPrimitiveMap::removeGeometricPrimitive(std::string name) {
   if (std::find(all_primitive_names_.begin(), all_primitive_names_.end(), name)
       == all_primitive_names_.end())
   {
@@ -280,18 +276,25 @@ void GeometricPrimitiveMap::removeDependency
 
 
 
-void GeometricPrimitiveMap::acceptVisitor
-(
-  const GeometricPrimitiveVisitor& visitor
-)
-{
-  for (auto&& kv : point_map_) visitor.visit(kv.second);
-  for (auto&& kv : line_map_) visitor.visit(kv.second);
-  for (auto&& kv : plane_map_) visitor.visit(kv.second);
-  for (auto&& kv : box_map_) visitor.visit(kv.second);
-  for (auto&& kv : cylinder_map_) visitor.visit(kv.second);
-  for (auto&& kv : sphere_map_) visitor.visit(kv.second);
-  for (auto&& kv : frame_map_) visitor.visit(kv.second);
+void GeometricPrimitiveMap::acceptVisitor(const GeometricPrimitiveVisitor& visitor, 
+                                          const std::string& primitive_name) {
+  if (primitive_name.compare("") == 0) {
+    for (auto&& kv : point_map_) visitor.visit(kv.second);
+    for (auto&& kv : line_map_) visitor.visit(kv.second);
+    for (auto&& kv : plane_map_) visitor.visit(kv.second);
+    for (auto&& kv : box_map_) visitor.visit(kv.second);
+    for (auto&& kv : cylinder_map_) visitor.visit(kv.second);
+    for (auto&& kv : sphere_map_) visitor.visit(kv.second);
+    for (auto&& kv : frame_map_) visitor.visit(kv.second);
+  } else {
+    if (std::find(all_primitive_names_.begin(), all_primitive_names_.end(), primitive_name) 
+          != all_primitive_names_.end()) {
+      {
+        PointMap::iterator it = point_map_.find(primitive_name);
+        if (it != point_map_.end()) visitor.visit(it->second);
+      }
+    }
+  }
 }
 
 

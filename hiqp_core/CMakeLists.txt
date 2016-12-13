@@ -50,7 +50,6 @@ add_library(${PROJECT_NAME} src/utilities.cpp
                             src/task.cpp
 
                             src/geometric_primitives/geometric_primitive_map.cpp
-                            src/geometric_primitives/geometric_primitive_visualizer.cpp
 
                             src/solvers/gurobi_solver.cpp
                             src/tasks/dynamics_first_order.cpp

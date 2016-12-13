@@ -25,7 +25,6 @@
 
 #include <hiqp_ros/utilities.h>
 #include <hiqp_ros/hiqp_joint_velocity_controller.h>
-#include <hiqp/geometric_primitives/geometric_primitive_visualizer.h>
 
 #include <hiqp_msgs/TaskMeasures.h>
 #include <hiqp_msgs/Vector3d.h>
@@ -33,7 +32,6 @@
 
 #include <geometry_msgs/PoseStamped.h> // teleoperation magnet sensors
 
-using hiqp::geometric_primitives::GeometricPrimitiveVisualizer;
 using hiqp::TaskMeasure;
 
 namespace hiqp_ros
@@ -272,8 +270,7 @@ void HiQPJointVelocityController::renderPrimitives() {
   ros::Duration d = now - last_rendering_update_;
   if (d.toSec() >= 1.0/rendering_publish_rate_) {
     last_rendering_update_ = now;
-    GeometricPrimitiveVisualizer geom_prim_vis(&ros_visualizer_);
-    task_manager_.getGeometricPrimitiveMap()->acceptVisitor(geom_prim_vis);
+    task_manager_.renderPrimitives();
   }
 }
 
