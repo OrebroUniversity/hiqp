@@ -44,7 +44,7 @@ namespace geometric_primitives {
     void visit(std::shared_ptr<GeometricBox> box) { visit__(box); }
     void visit(std::shared_ptr<GeometricCylinder> cylinder) { visit__(cylinder); }
     void visit(std::shared_ptr<GeometricSphere> sphere) { visit__(sphere); }
-    void visit(std::shared_ptr<GeometricFrame> frame) { visit__(frame); }
+    void visit(std::shared_ptr<GeometricFrame> frame);
 
     /// \brief Effectively removes all visited geometric primitives.
     void removeAllVisitedPrimitives() {
@@ -74,11 +74,36 @@ namespace geometric_primitives {
       else        visualizer_->update(id, primitive);
       break;
     case 1:
-      if (id >= 0) visited_visual_ids_.push_back(id);//visualizer_->remove(id);
+      if (id >= 0) visited_visual_ids_.push_back(id);
       break;
     default:
       break;
     }
+  }
+
+  template <>
+  void GeometricPrimitiveVisualizer::visit__<GeometricFrame>(std::shared_ptr<GeometricFrame> primitive) {
+    int id = primitive->getVisualId();
+    switch (action_) {
+    case 0:
+      if (id < 0) primitive->setVisualId(visualizer_->add(primitive));
+      else        visualizer_->update(id, primitive);
+      break;
+    case 1:
+      if (id >= 0) {
+        // the frame primitive consists of three successive visual markers
+        visited_visual_ids_.push_back(id);
+        visited_visual_ids_.push_back(id+1);
+        visited_visual_ids_.push_back(id+2);
+      }
+      break;
+    default:
+      break;
+    }
+  }
+
+  void GeometricPrimitiveVisualizer::visit(std::shared_ptr<GeometricFrame> frame) {
+    visit__(frame);
   }
 
 } // namespace geometric_primitives
