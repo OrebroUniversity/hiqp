@@ -81,7 +81,9 @@ void HiQPJointVelocityController::computeControls(Eigen::VectorXd& u) {
   if (!is_active_) return;
 
   std::vector<double> outcon(u.size());
+  service_mutex_.lock();
   task_manager_.getVelocityControls(this->getRobotState(), outcon);
+  service_mutex_.unlock();
   int i=0;
   for (auto&& oc : outcon) {
     u(i++) = oc;

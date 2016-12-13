@@ -27,40 +27,21 @@
 namespace hiqp_ros
 {
 
-
-
-  ROSVisualizer::ROSVisualizer()
-  : next_id_(0)
-  {}
-
-
-
-
+  ROSVisualizer::ROSVisualizer() : next_id_(0) {}
 
   int ROSVisualizer::init(ros::NodeHandle* controller_nh) {
     controller_nh_ = controller_nh;
-
     marker_array_pub_ = controller_nh_->advertise<visualization_msgs::MarkerArray>
       ("visualization_marker", 1);
   }
 
-
-
-
-
 ////////////////////////////////////////////////////////////////////////////////
-// 																			  //
-//								 A P P L Y                                    //
-// 																			  //
+//                                                                            //
+//                                A P P L Y                                   //
+//                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-  int ROSVisualizer::apply
-  (
-   int id,
-   std::shared_ptr<GeometricPoint> point,
-   int action
-   )
-  {
+  int ROSVisualizer::apply(int id, std::shared_ptr<GeometricPoint> point, int action) {
    visualization_msgs::Marker marker;
 
    marker.header.frame_id = "/" + point->getFrameId();
@@ -95,28 +76,15 @@ namespace hiqp_ros
    marker_array.markers.push_back(marker);
    marker_array_pub_.publish(marker_array);
 
-   if (action == ACTION_ADD)
-   {
+   if (action == ACTION_ADD) {
      next_id_++;
      return next_id_-1;
-   }
-   else
-   {
+   } else {
      return id;
    }
  }
 
-
-
-
-
- int ROSVisualizer::apply
- (
-   int id,
-   std::shared_ptr<GeometricLine> line,
-   int action
-   )
- {
+ int ROSVisualizer::apply(int id, std::shared_ptr<GeometricLine> line, int action) {
    visualization_msgs::Marker marker;
 
    marker.header.frame_id = "/" + line->getFrameId();
@@ -160,28 +128,15 @@ namespace hiqp_ros
    marker_array.markers.push_back(marker);
    marker_array_pub_.publish(marker_array);
 
-   if (action == ACTION_ADD)
-   {
+   if (action == ACTION_ADD) {
      next_id_++;
      return next_id_-1;
-   }
-   else
-   {
+   } else {
      return id;
    }
  }
 
-
-
-
-
- int ROSVisualizer::apply
- (
-   int id,
-   std::shared_ptr<GeometricPlane> plane,
-   int action
-   )
- {
+ int ROSVisualizer::apply(int id, std::shared_ptr<GeometricPlane> plane, int action) {
    visualization_msgs::Marker marker;
 
    marker.header.frame_id = "/" + plane->getFrameId();
@@ -223,19 +178,16 @@ namespace hiqp_ros
     marker_array.markers.push_back(marker);
     marker_array_pub_.publish(marker_array);
 
-    if (action == ACTION_ADD)
-    {
-    	next_id_++;
-    	return next_id_-1;
-    }
-    else
-    {
-    	return id;
+    if (action == ACTION_ADD) {
+      next_id_++;
+      return next_id_-1;
+    } else {
+      return id;
     }
   }
 
 
-#include <sstream>
+  #include <sstream>
   std::string dtostr(double d)
   {
     std::ostringstream strs;
@@ -244,13 +196,7 @@ namespace hiqp_ros
     return str;
   }
 
-  int ROSVisualizer::apply
-  (
-   int id,
-   std::shared_ptr<GeometricBox> box,
-   int action
-   )
-  {
+  int ROSVisualizer::apply(int id, std::shared_ptr<GeometricBox> box, int action) {
    visualization_msgs::Marker marker;
 
    marker.header.frame_id = "/" + box->getFrameId();
@@ -260,8 +206,6 @@ namespace hiqp_ros
    else                       marker.id = id;
    marker.type = visualization_msgs::Marker::CUBE;
    marker.action = visualization_msgs::Marker::ADD; 
-
-
 
 
    Eigen::Vector3d p = box->getCenterEigen();
@@ -323,28 +267,15 @@ namespace hiqp_ros
     apply(0, line, visualization_msgs::Marker::ADD);
 */
 
-    if (action == ACTION_ADD)
-    {
-    	next_id_++;
-    	return next_id_-1;
-    }
-    else
-    {
-    	return id;
+    if (action == ACTION_ADD) {
+      next_id_++;
+      return next_id_-1;
+    } else {
+      return id;
     }
   }
 
-
-
-
-
-  int ROSVisualizer::apply
-  (
-   int id,
-   std::shared_ptr<GeometricCylinder> cylinder,
-   int action
-   )
-  {
+  int ROSVisualizer::apply(int id, std::shared_ptr<GeometricCylinder> cylinder, int action) {
    visualization_msgs::Marker marker;
 
    marker.header.frame_id = "/" + cylinder->getFrameId();
@@ -388,28 +319,15 @@ namespace hiqp_ros
    marker_array.markers.push_back(marker);
    marker_array_pub_.publish(marker_array);
 
-   if (action == ACTION_ADD)
-   {
+   if (action == ACTION_ADD) {
      next_id_++;
      return next_id_-1;
-   }
-   else
-   {
+   } else {
      return id;
    }
  }
 
-
-
-
-
- int ROSVisualizer::apply
- (
-   int id,
-   std::shared_ptr<GeometricSphere> sphere,
-   int action
-   )
- {
+ int ROSVisualizer::apply(int id, std::shared_ptr<GeometricSphere> sphere, int action) {
    visualization_msgs::Marker marker;
 
    marker.header.frame_id = "/" + sphere->getFrameId();
@@ -444,24 +362,15 @@ namespace hiqp_ros
    marker_array.markers.push_back(marker);
    marker_array_pub_.publish(marker_array);
 
-   if (action == ACTION_ADD)
-   {
+   if (action == ACTION_ADD) {
      next_id_++;
      return next_id_-1;
-   }
-   else
-   {
+   } else {
      return id;
    }
  }
 
-
-
-
-
- int ROSVisualizer::apply(int id,
-                          std::shared_ptr<GeometricFrame> frame,
-                          int action) {
+ int ROSVisualizer::apply(int id, std::shared_ptr<GeometricFrame> frame, int action) {
   visualization_msgs::MarkerArray marker_array;
   {
     visualization_msgs::Marker marker;
@@ -548,211 +457,86 @@ namespace hiqp_ros
 
   marker_array_pub_.publish(marker_array);
 
-  if (action == ACTION_ADD)
-  {
+  if (action == ACTION_ADD) {
     next_id_ += 3;
     return next_id_-3;
-  }
-  else
-  {
+  } else {
     return id;
   }
 }
 
-
-
-
-
 ////////////////////////////////////////////////////////////////////////////////
-// 																			  //
-//								   A D D                                      //
-// 																			  //
+//                                                                            //
+//                                 A D D                                      //
+//                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-int ROSVisualizer::add
-(
-  std::shared_ptr<GeometricPoint> point
-  )
-{
-	return apply(0, point, ACTION_ADD);
+int ROSVisualizer::add(std::shared_ptr<GeometricPoint> point) {
+  return apply(0, point, ACTION_ADD);
 }
 
-
-
-
-
-int ROSVisualizer::add
-(
-  std::shared_ptr<GeometricLine> line
-  )
-{
-	return apply(0, line, ACTION_ADD);
+int ROSVisualizer::add(std::shared_ptr<GeometricLine> line) {
+  return apply(0, line, ACTION_ADD);
 }
 
-
-
-
-
-int ROSVisualizer::add
-(
-  std::shared_ptr<GeometricPlane> plane
-  )
-{
-	return apply(0, plane, ACTION_ADD);
+int ROSVisualizer::add(std::shared_ptr<GeometricPlane> plane) {
+  return apply(0, plane, ACTION_ADD);
 }
 
-
-
-
-
-int ROSVisualizer::add
-(
-  std::shared_ptr<GeometricBox> box
-  )
-{
-	return apply(0, box, ACTION_ADD);
+int ROSVisualizer::add(std::shared_ptr<GeometricBox> box) {
+  return apply(0, box, ACTION_ADD);
 }
 
-
-
-
-
-int ROSVisualizer::add
-(
-  std::shared_ptr<GeometricCylinder> cylinder
-  )
-{
-	return apply(0, cylinder, ACTION_ADD);
+int ROSVisualizer::add(std::shared_ptr<GeometricCylinder> cylinder) {
+  return apply(0, cylinder, ACTION_ADD);
 }
 
-
-
-
-
-int ROSVisualizer::add
-(
-  std::shared_ptr<GeometricSphere> sphere
-  )
-{
-	return apply(0, sphere, ACTION_ADD);
+int ROSVisualizer::add(std::shared_ptr<GeometricSphere> sphere) {
+  return apply(0, sphere, ACTION_ADD);
 }
 
-
-
-
-
-int ROSVisualizer::add
-(
-  std::shared_ptr<GeometricFrame> frame
-  )
-{
+int ROSVisualizer::add(std::shared_ptr<GeometricFrame> frame) {
   return apply(0, frame, ACTION_ADD);
 }
 
-
-
-
-
 ////////////////////////////////////////////////////////////////////////////////
-// 																			  //
-//								U P D A T E                                   //
-// 																			  //
+//                                                                            //
+//                              U P D A T E                                   //
+//                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-void ROSVisualizer::update
-(
-	int id, 
-	std::shared_ptr<GeometricPoint> point
-  )
-{
-	apply(id, point, ACTION_MODIFY);
+void ROSVisualizer::update(int id, std::shared_ptr<GeometricPoint> point) {
+  apply(id, point, ACTION_MODIFY);
 }
 
-
-
-
-
-void ROSVisualizer::update
-(
-	int id, 
-	std::shared_ptr<GeometricLine> line
-  )
-{
-	apply(id, line, ACTION_MODIFY);
+void ROSVisualizer::update(int id, std::shared_ptr<GeometricLine> line) {
+  apply(id, line, ACTION_MODIFY);
 }
 
-
-
-
-
-void ROSVisualizer::update
-(
-	int id, 
-	std::shared_ptr<GeometricPlane> plane
-  )
-{
-	apply(id, plane, ACTION_MODIFY);
+void ROSVisualizer::update(int id, std::shared_ptr<GeometricPlane> plane) {
+  apply(id, plane, ACTION_MODIFY);
 }
 
-
-
-
-
-void ROSVisualizer::update
-(
-	int id, 
-	std::shared_ptr<GeometricBox> box
-  )
-{
-	apply(id, box, ACTION_MODIFY);
+void ROSVisualizer::update(int id, std::shared_ptr<GeometricBox> box) {
+  apply(id, box, ACTION_MODIFY);
 }
 
-
-
-
-
-void ROSVisualizer::update
-(
-	int id, 
-	std::shared_ptr<GeometricCylinder> cylinder
-  )
-{
-	apply(id, cylinder, ACTION_MODIFY);
+void ROSVisualizer::update(int id, std::shared_ptr<GeometricCylinder> cylinder) {
+  apply(id, cylinder, ACTION_MODIFY);
 }
 
-
-
-
-
-void ROSVisualizer::update
-(
-	int id, 
-	std::shared_ptr<GeometricSphere> sphere
-  )
-{
-	apply(id, sphere, ACTION_MODIFY);
+void ROSVisualizer::update(int id, std::shared_ptr<GeometricSphere> sphere) {
+  apply(id, sphere, ACTION_MODIFY);
 }
 
-
-
-
-void ROSVisualizer::update
-(
-  int id, 
-  std::shared_ptr<GeometricFrame> frame
-  )
-{
+void ROSVisualizer::update(int id, std::shared_ptr<GeometricFrame> frame) {
   apply(id, frame, ACTION_MODIFY);
 }
 
-
-
-
-
 ////////////////////////////////////////////////////////////////////////////////
-// 																			  //
-//								R E M O V E                                   //
-// 																			  //
+//                                                                            //
+//                              R E M O V E                                   //
+//                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
 void ROSVisualizer::remove(int id) {
@@ -768,8 +552,11 @@ void ROSVisualizer::remove(int id) {
 
 
 void ROSVisualizer::removeMany(const std::vector<int>& ids) {
+  std::cout << "removeMany: ";
+
   visualization_msgs::MarkerArray marker_array;
   for (int id : ids) {
+    std::cout << id << ", ";
     visualization_msgs::Marker marker;
     marker.header.stamp = ros::Time::now();
     marker.ns = kNamespace;
@@ -777,6 +564,7 @@ void ROSVisualizer::removeMany(const std::vector<int>& ids) {
     marker.action = visualization_msgs::Marker::DELETE; 
     marker_array.markers.push_back(marker);
   }
+  std::cout << "\n";
   marker_array_pub_.publish(marker_array);
 }
 
