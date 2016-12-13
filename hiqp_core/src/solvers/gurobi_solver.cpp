@@ -44,7 +44,6 @@ namespace hiqp
     env_.set(GRB_IntParam_DualReductions, DUAL_REDUCTIONS);
   }
 
-  /// \bug Empty stages are ignored, and the lower ones gain a hierarchy rank 
   bool GurobiSolver::solve(std::vector<double>& solution) {
     if (stages_map_.empty())
       return false;
@@ -59,7 +58,6 @@ namespace hiqp
       unsigned int s_count = 0; // stage counter
 
       for (it; it!=stages_map_.end(); ++it) {
-        //ROS_ASSERT(it->second.J_.cols() == x_dim); //make sure the stage jacobian column dimensions are consistent
         assert(it->second.J_.cols() == x_dim);
         s_count++;
  
@@ -68,7 +66,6 @@ namespace hiqp
         unsigned int s_acc_dim = b_.rows(); //accumulated dimensions of all the previously solved stages
 
         // append the new signs, jacobian matrix and task velocity vector to the previous ones
-        //ROS_ASSERT(it->second.constraint_signs_.size()==s_dim);
         assert(it->second.constraint_signs_.size()==s_dim);
         for(unsigned int i = 0; i<s_dim; i++) {
           if (it->second.constraint_signs_.at(i)== 0)
@@ -137,14 +134,14 @@ namespace hiqp
 
         // DEBUG =============================================
         // std::cerr<<std::setprecision(2)<<"Gurobi solver stage "<<s_count<<" matrices:"<<std::endl;
-	// std::cerr<<"A"<<std::endl<<A_<<std::endl;
-	// std::cerr<<"signs: ";
-        // for (unsigned k=0; k<senses_.size(); k++)
-	//   std::cerr<<senses_[k]<<" ";
+      	// std::cerr<<"A"<<std::endl<<A_<<std::endl;
+      	// std::cerr<<"signs: ";
+              // for (unsigned k=0; k<senses_.size(); k++)
+      	//   std::cerr<<senses_[k]<<" ";
 
-	// std::cerr<<std::endl<<"b"<<b_.transpose()<<std::endl;
-	// std::cerr<<"w"<<w_.transpose()<<std::endl;
-	// DEBUG END ==========================================
+      	// std::cerr<<std::endl<<"b"<<b_.transpose()<<std::endl;
+      	// std::cerr<<"w"<<w_.transpose()<<std::endl;
+      	// DEBUG END ==========================================
 
         // ========== SOLVE ==========
         model.optimize();

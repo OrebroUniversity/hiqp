@@ -65,7 +65,7 @@ namespace tasks
 
     return 0;
   }
-/// \bug Noticed, that the measured values for the 4 gripper joints can be huge which causes the optimization to fail for this task. Maybe due to the discrepancy between specified and controlled joints ...?  
+
   int TaskFullPose::update(RobotStatePtr robot_state) {
     const KDL::JntArray &q = robot_state->kdl_jnt_array_vel_.q;
     int j=0;

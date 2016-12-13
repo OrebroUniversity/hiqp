@@ -35,6 +35,7 @@ namespace tasks
     }
 
     performance_measures_.resize(e_initial.rows());
+    e_dot_star_.resize(e_initial.rows());
 
     time_start_ = robot_state->sampling_time_point_;
 
