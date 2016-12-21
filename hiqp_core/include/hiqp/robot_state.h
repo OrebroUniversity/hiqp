@@ -69,6 +69,7 @@ namespace hiqp {
     }
   };
 
+  /// \todo Rename to RobotStateConstPtr
   /*! \brief A const pointer type to a robot state. Used to reference to the current robot state throught the framework.
    *  \author Marcus A Johansson */
   typedef std::shared_ptr<const RobotState> RobotStatePtr;

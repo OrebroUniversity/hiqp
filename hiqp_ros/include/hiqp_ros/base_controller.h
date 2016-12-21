@@ -65,6 +65,7 @@ namespace hiqp_ros {
 
   protected:
     inline ros::NodeHandle& getControllerNodeHandle() { return controller_nh_; }
+    inline std::shared_ptr<ros::NodeHandle> getControllerNodeHandlePtr() { return controller_nh_ptr_; }
     inline unsigned int getNJoints() { return n_joints_; }
     inline RobotStatePtr getRobotState() { return robot_state_ptr_; }
     inline void setDesiredSamplingTime(double desired_sampling_time) { desired_sampling_time_ =  desired_sampling_time;}
@@ -90,6 +91,7 @@ namespace hiqp_ros {
     Eigen::VectorXd                       u_;
 
     ros::NodeHandle                       controller_nh_;
+    std::shared_ptr<ros::NodeHandle>      controller_nh_ptr_;
     HardwareInterfaceT*                   hardware_interface_;
     JointHandleMap                        joint_handles_map_;
     std::mutex                            handles_mutex_; 
@@ -108,6 +110,7 @@ namespace hiqp_ros {
   bool BaseController<HardwareInterfaceT>::init(HardwareInterfaceT* hw, ros::NodeHandle &controller_nh) {
     hardware_interface_ = hw;
     controller_nh_ = controller_nh;
+    controller_nh_ptr_.reset(&controller_nh_);
     robot_state_ptr_.reset(&robot_state_data_);
 
     loadDesiredSamplingTime();

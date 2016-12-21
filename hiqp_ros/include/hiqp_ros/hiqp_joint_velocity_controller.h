@@ -34,21 +34,12 @@
 #include <hiqp_ros/base_controller.h>
 #include <hiqp_ros/ros_visualizer.h>
 #include <hiqp_ros/ros_topic_subscriber.h>
-
-#include <hiqp_msgs/SetTask.h>
-#include <hiqp_msgs/UpdateTask.h>
-#include <hiqp_msgs/RemoveTask.h>
-#include <hiqp_msgs/RemoveAllTasks.h>
-#include <hiqp_msgs/ListAllTasks.h>
-#include <hiqp_msgs/AddGeometricPrimitive.h>
-#include <hiqp_msgs/RemoveGeometricPrimitive.h>
-#include <hiqp_msgs/RemoveAllGeometricPrimitives.h>
-#include <hiqp_msgs/ListAllGeometricPrimitives.h>
+#include <hiqp_ros/hiqp_service_handler.h>
 
 #include <fstream>
 
-namespace hiqp_ros
-{
+namespace hiqp_ros {
+
   //typedef controller_interface::Controller<hardware_interface::VelocityJointInterface> JointVelocityController;
   typedef hardware_interface::VelocityJointInterface JointVelocityInterface;
 
@@ -73,20 +64,10 @@ namespace hiqp_ros
 
     void loadRenderingParameters();
     int loadAndSetupTaskMonitoring();
-    void advertiseAllServices();
     void addAllTopicSubscriptions();
     void loadJointLimitsFromParamServer();
     void loadGeometricPrimitivesFromParamServer();
     void loadTasksFromParamServer();
-
-    bool setTask(hiqp_msgs::SetTask::Request& req, hiqp_msgs::SetTask::Response& res);
-    bool removeTask(hiqp_msgs::RemoveTask::Request& req, hiqp_msgs::RemoveTask::Response& res);
-    bool removeAllTasks(hiqp_msgs::RemoveAllTasks::Request& req, hiqp_msgs::RemoveAllTasks::Response& res);
-    bool listAllTasks(hiqp_msgs::ListAllTasks::Request& req, hiqp_msgs::ListAllTasks::Response& res);
-    bool addGeometricPrimitive(hiqp_msgs::AddGeometricPrimitive::Request& req, hiqp_msgs::AddGeometricPrimitive::Response& res);
-    bool removeGeometricPrimitive(hiqp_msgs::RemoveGeometricPrimitive::Request& req, hiqp_msgs::RemoveGeometricPrimitive::Response& res);
-    bool removeAllGeometricPrimitives(hiqp_msgs::RemoveAllGeometricPrimitives::Request& req, hiqp_msgs::RemoveAllGeometricPrimitives::Response& res);
-    bool listAllGeometricPrimitives(hiqp_msgs::ListAllGeometricPrimitives::Request& req, hiqp_msgs::ListAllGeometricPrimitives::Response& res);
 
     typedef std::map<unsigned int, hardware_interface::JointHandle > JointHandleMap;
 
@@ -103,22 +84,13 @@ namespace hiqp_ros
 
     ROSTopicSubscriber                                topic_subscriber_;
 
-    ros::ServiceServer                                set_task_service_;
-    ros::ServiceServer                                update_task_service_;
-    ros::ServiceServer                                remove_task_service_;
-    ros::ServiceServer                                remove_all_tasks_service_;
-    ros::ServiceServer                                list_all_tasks_service_;
-    ros::ServiceServer                                add_geomprim_service_;
-    ros::ServiceServer                                remove_geomprim_service_;
-    ros::ServiceServer                                remove_all_geomprims_service_;
-    ros::ServiceServer                                list_all_geomprims_service_;
+    HiQPServiceHandler                                service_handler_; // takes care of all ros service calls
 
     ROSVisualizer                                     ros_visualizer_;
     std::shared_ptr<Visualizer>                       visualizer_;
     
     hiqp::TaskManager                                 task_manager_;
     std::shared_ptr<hiqp::TaskManager>                task_manager_ptr_;
-
   };
 
 } // namespace hiqp

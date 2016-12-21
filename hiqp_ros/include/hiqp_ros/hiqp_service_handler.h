@@ -19,6 +19,8 @@
 
 #include <ros/ros.h>
 
+#include <hiqp/task_manager.h>
+
 #include <hiqp_msgs/SetTask.h>
 #include <hiqp_msgs/UpdateTask.h>
 #include <hiqp_msgs/RemoveTask.h>
@@ -31,33 +33,68 @@
 
 class HiQPServiceHandler {
 public:
-  HiQPServiceHandler();
-  ~HiQPServiceHandler();
+  HiQPServiceHandler() = default;
+
+  ~HiQPServiceHandler() noexcept = default;
+
+  void init(std::shared_ptr<ros::NodeHandle> node_handle, 
+            std::shared_ptr<hiqp::TaskManager> task_manager,
+            hiqp::RobotStatePtr robot_state) {
+    node_handle_ = node_handle;
+    task_manager_ = task_manager;
+    robot_state_ = robot_state;
+  }
+
+  void advertiseAll();
 
 private:
   HiQPServiceHandler(const HiQPServiceHandler& other) = delete;
-    HiQPServiceHandler(HiQPServiceHandler&& other) = delete;
-    HiQPServiceHandler& operator=(const HiQPServiceHandler& other) = delete;
-    HiQPServiceHandler& operator=(HiQPServiceHandler&& other) noexcept = delete;
+  HiQPServiceHandler(HiQPServiceHandler&& other) = delete;
+  HiQPServiceHandler& operator=(const HiQPServiceHandler& other) = delete;
+  HiQPServiceHandler& operator=(HiQPServiceHandler&& other) noexcept = delete;
 
-    bool setTask(hiqp_msgs::SetTask::Request& req, hiqp_msgs::SetTask::Response& res);
-    bool removeTask(hiqp_msgs::RemoveTask::Request& req, hiqp_msgs::RemoveTask::Response& res);
-    bool removeAllTasks(hiqp_msgs::RemoveAllTasks::Request& req, hiqp_msgs::RemoveAllTasks::Response& res);
-    bool listAllTasks(hiqp_msgs::ListAllTasks::Request& req, hiqp_msgs::ListAllTasks::Response& res);
-    bool addGeometricPrimitive(hiqp_msgs::AddGeometricPrimitive::Request& req, hiqp_msgs::AddGeometricPrimitive::Response& res);
-    bool removeGeometricPrimitive(hiqp_msgs::RemoveGeometricPrimitive::Request& req, hiqp_msgs::RemoveGeometricPrimitive::Response& res);
-    bool removeAllGeometricPrimitives(hiqp_msgs::RemoveAllGeometricPrimitives::Request& req, hiqp_msgs::RemoveAllGeometricPrimitives::Response& res);
-    bool listAllGeometricPrimitives(hiqp_msgs::ListAllGeometricPrimitives::Request& req, hiqp_msgs::ListAllGeometricPrimitives::Response& res);
+  /// \todo Change add_primitive to set_primitive ros service
+  /// \todo Add list_all_primitives ros service
+  /// \todo Add show_primitive ros service
+  /// \todo Add hide_primitive ros service
 
-    ros::ServiceServer    set_task_service_;
-    ros::ServiceServer    update_task_service_;
-    ros::ServiceServer    remove_task_service_;
-    ros::ServiceServer    remove_all_tasks_service_;
-    ros::ServiceServer    list_all_tasks_service_;
-    ros::ServiceServer    add_geomprim_service_;
-    ros::ServiceServer    remove_geomprim_service_;
-    ros::ServiceServer    remove_all_geomprims_service_;
-    ros::ServiceServer    list_all_geomprims_service_;
+  /// \todo Add activate_controller ros service
+  /// \todo Add deactivate_controller ros service
+
+  /// \todo Add activate_task ros service
+  /// \todo Add deactivate_task ros service
+  /// \todo Add show_task ros service
+  /// \todo Add hide_task ros service
+  /// \todo Add monitor_task ros service
+  /// \todo Add unmonitor_task ros service
+
+  /// \todo Add activate_stage ros service
+  /// \todo Add deactivate_stage ros service
+  /// \todo Add monitor_stage ros service
+  /// \todo Add unmonitor_stage ros service
+
+  bool setTask(hiqp_msgs::SetTask::Request& req, hiqp_msgs::SetTask::Response& res);
+  bool removeTask(hiqp_msgs::RemoveTask::Request& req, hiqp_msgs::RemoveTask::Response& res);
+  bool removeAllTasks(hiqp_msgs::RemoveAllTasks::Request& req, hiqp_msgs::RemoveAllTasks::Response& res);
+  bool listAllTasks(hiqp_msgs::ListAllTasks::Request& req, hiqp_msgs::ListAllTasks::Response& res);
+  bool addGeometricPrimitive(hiqp_msgs::AddGeometricPrimitive::Request& req, hiqp_msgs::AddGeometricPrimitive::Response& res);
+  bool removeGeometricPrimitive(hiqp_msgs::RemoveGeometricPrimitive::Request& req, hiqp_msgs::RemoveGeometricPrimitive::Response& res);
+  bool removeAllGeometricPrimitives(hiqp_msgs::RemoveAllGeometricPrimitives::Request& req, hiqp_msgs::RemoveAllGeometricPrimitives::Response& res);
+  bool listAllGeometricPrimitives(hiqp_msgs::ListAllGeometricPrimitives::Request& req, hiqp_msgs::ListAllGeometricPrimitives::Response& res);
+
+  std::shared_ptr<ros::NodeHandle>    node_handle_;
+  std::shared_ptr<hiqp::TaskManager>  task_manager_;
+  hiqp::RobotStatePtr                 robot_state_;
+
+  ros::ServiceServer                  set_task_service_;
+  ros::ServiceServer                  update_task_service_;
+  ros::ServiceServer                  remove_task_service_;
+  ros::ServiceServer                  remove_all_tasks_service_;
+  ros::ServiceServer                  list_all_tasks_service_;
+  ros::ServiceServer                  add_geomprim_service_;
+  ros::ServiceServer                  remove_geomprim_service_;
+  ros::ServiceServer                  remove_all_geomprims_service_;
+  ros::ServiceServer                  list_all_geomprims_service_;
 };
 
 #endif

@@ -34,8 +34,7 @@
 
 using hiqp::TaskMeasure;
 
-namespace hiqp_ros
-{
+namespace hiqp_ros {
 
 ////////////////////////////////////////////////////////////////////////////////
 //  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
@@ -48,13 +47,16 @@ namespace hiqp_ros
 ////////////////////////////////////////////////////////////////////////////////
 
 HiQPJointVelocityController::HiQPJointVelocityController()
-: visualizer_(&ros_visualizer_),
-  is_active_(true), monitoring_active_(false), task_manager_(visualizer_) {}
+: is_active_(true), monitoring_active_(false),
+  visualizer_(&ros_visualizer_),
+  task_manager_(visualizer_),
+  task_manager_ptr_(&task_manager_) {}
 
 HiQPJointVelocityController::~HiQPJointVelocityController() noexcept {}
 
 void HiQPJointVelocityController::initialize() {
   ros_visualizer_.init( &(this->getControllerNodeHandle()) );
+  service_handler_.init( this->getControllerNodeHandlePtr(), task_manager_ptr_, this->getRobotState() );
 
   loadRenderingParameters();
 
@@ -62,7 +64,7 @@ void HiQPJointVelocityController::initialize() {
 
   addAllTopicSubscriptions();
 
-  advertiseAllServices();
+  service_handler_.advertiseAll();
 
   task_manager_.init(getNJoints());
 
@@ -72,10 +74,6 @@ void HiQPJointVelocityController::initialize() {
 
   loadTasksFromParamServer();
 }
-
-
-
-
 
 void HiQPJointVelocityController::computeControls(Eigen::VectorXd& u) {
   if (!is_active_) return;
@@ -92,104 +90,6 @@ void HiQPJointVelocityController::computeControls(Eigen::VectorXd& u) {
   monitorTasks();
   
   return;
-}
-
-
-
-
-
-
-
-
-
-////////////////////////////////////////////////////////////////////////////////
-//  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
-// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
-//-  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  
-////////////////////////////////////////////////////////////////////////////////
-//
-//                R O S   S E R V I C E   C A L L B A C K S
-//
-////////////////////////////////////////////////////////////////////////////////
-
-bool HiQPJointVelocityController::setTask(hiqp_msgs::SetTask::Request& req, 
-                                          hiqp_msgs::SetTask::Response& res) {
-  int retval = task_manager_.setTask(
-    req.name, req.priority, req.visible, req.active,
-    req.def_params, req.dyn_params, this->getRobotState());
-  res.success = (retval < 0 ? false : true);
-  return true;
-}
-
-bool HiQPJointVelocityController::removeTask(hiqp_msgs::RemoveTask::Request& req, 
-                                             hiqp_msgs::RemoveTask::Response& res) {
-  res.success = false;
-  if (task_manager_.removeTask(req.task_name) == 0)
-    res.success = true;
-
-  if (res.success) {
-    hiqp::printHiqpInfo("Removed task '" + req.task_name + "'.");
-  } else {
-    hiqp::printHiqpInfo("Couldn't remove task '" + req.task_name + "'!");  
-  }
-  return true;
-}
-
-bool HiQPJointVelocityController::removeAllTasks(hiqp_msgs::RemoveAllTasks::Request& req, 
-                                                 hiqp_msgs::RemoveAllTasks::Response& res) {
-  task_manager_.removeAllTasks();
-  hiqp::printHiqpInfo("Removed all tasks successfully!");
-  res.success = true;
-  return true;
-}
-
-bool HiQPJointVelocityController::listAllTasks(hiqp_msgs::ListAllTasks::Request& req, 
-                                               hiqp_msgs::ListAllTasks::Response& res) {
-  task_manager_.listAllTasks();
-  res.success = true;
-  return true;
-}
-
-bool HiQPJointVelocityController::addGeometricPrimitive(hiqp_msgs::AddGeometricPrimitive::Request& req, 
-                                                        hiqp_msgs::AddGeometricPrimitive::Response& res) {
-  int retval = task_manager_.addGeometricPrimitive(
-    req.name, req.type, req.frame_id, req.visible, req.color, req.parameters
-  );
-  res.success = (retval == 0 ? true : false);
-  if (res.success) {
-    hiqp::printHiqpInfo("Added geometric primitive of type '" + req.type + "' with name '" + req.name + "'.");
-  }
-  return true;
-}
-
-/// \bug Removing primitive doesn't remove visualization
-bool HiQPJointVelocityController::removeGeometricPrimitive(hiqp_msgs::RemoveGeometricPrimitive::Request& req, 
-                                                           hiqp_msgs::RemoveGeometricPrimitive::Response& res) {
-  res.success = false;
-  if (task_manager_.removeGeometricPrimitive(req.name) == 0)
-    res.success = true;
-
-  if (res.success) {
-    hiqp::printHiqpInfo("Removed primitive '" + req.name + "' successfully!");
-  } else {
-    hiqp::printHiqpInfo("Couldn't remove primitive '" + req.name + "'!");  
-  }
-  return true;
-}
-
-bool HiQPJointVelocityController::removeAllGeometricPrimitives(hiqp_msgs::RemoveAllGeometricPrimitives::Request& req, 
-                                                               hiqp_msgs::RemoveAllGeometricPrimitives::Response& res) {
-  task_manager_.removeAllGeometricPrimitives();
-  hiqp::printHiqpInfo("Removed all primitives successfully!");
-  res.success = true;
-  return true;
-}
-
-bool HiQPJointVelocityController::listAllGeometricPrimitives(hiqp_msgs::ListAllGeometricPrimitives::Request& req, 
-                                                             hiqp_msgs::ListAllGeometricPrimitives::Response& res) {
-  task_manager_.listAllGeometricPrimitives();
-  res.success = true;
-  return true;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -251,69 +151,6 @@ void HiQPJointVelocityController::addAllTopicSubscriptions()
   //  controller_nh_, "/yumi/hiqp_kinematics_controller/experiment_commands", 100
   //);
 }
-
-
-
-
-/// \todo Change add_primitive to set_primitive ros service
-/// \todo Add list_all_primitives ros service
-/// \todo Add show_primitive ros service
-/// \todo Add hide_primitive ros service
-
-/// \todo Add activate_controller ros service
-/// \todo Add deactivate_controller ros service
-
-/// \todo Add activate_task ros service
-/// \todo Add deactivate_task ros service
-/// \todo Add show_task ros service
-/// \todo Add hide_task ros service
-/// \todo Add monitor_task ros service
-/// \todo Add unmonitor_task ros service
-
-/// \todo Add activate_stage ros service
-/// \todo Add deactivate_stage ros service
-/// \todo Add monitor_stage ros service
-/// \todo Add unmonitor_stage ros service
-
-void HiQPJointVelocityController::advertiseAllServices()
-{
-  set_task_service_ = this->getControllerNodeHandle().advertiseService(
-    "set_task", &HiQPJointVelocityController::setTask, this);
-
-  remove_task_service_ = this->getControllerNodeHandle().advertiseService(
-    "remove_task", &HiQPJointVelocityController::removeTask, this);
-
-  remove_all_tasks_service_ = this->getControllerNodeHandle().advertiseService(
-    "remove_all_tasks", &HiQPJointVelocityController::removeAllTasks, this);
-
-  list_all_tasks_service_ = this->getControllerNodeHandle().advertiseService(
-    "list_all_tasks", &HiQPJointVelocityController::listAllTasks, this);
-
-  add_geomprim_service_ = this->getControllerNodeHandle().advertiseService(
-    "add_primitive", &HiQPJointVelocityController::addGeometricPrimitive, this);
-
-  remove_geomprim_service_ = this->getControllerNodeHandle().advertiseService(
-    "remove_primitive", &HiQPJointVelocityController::removeGeometricPrimitive, this);
-
-  remove_all_geomprims_service_ = this->getControllerNodeHandle().advertiseService(
-    "remove_all_primitives", &HiQPJointVelocityController::removeAllGeometricPrimitives, this);
-
-  list_all_geomprims_service_ = this->getControllerNodeHandle().advertiseService(
-    "list_all_primitives", &HiQPJointVelocityController::listAllGeometricPrimitives, this);
-}
-
-// int HiQPJointVelocityController::loadDesiredSamplingTime()
-// {
-//   if (!this->getControllerNodeHandle().getParam("sampling_time", desired_sampling_time_)) {
-//       ROS_ERROR_STREAM("In HiQPJointVelocityController: Call to getParam('sampling_time') in namespace '" 
-//         << this->getControllerNodeHandle().getNamespace() 
-//         << "' failed.");
-//       return -1;
-//   }
-//   this->setDesiredSamplingTime(desired_sampling_time_);
-//   //time_since_last_sampling_ = 0;
-//   return 0;
-// }
 
 void HiQPJointVelocityController::loadRenderingParameters() {
   rendering_publish_rate_ = 1000; // defaults to 1 kHz
@@ -395,12 +232,7 @@ void HiQPJointVelocityController::loadJointLimitsFromParamServer()
   }
 }
 
-
-
-
-
-void HiQPJointVelocityController::loadGeometricPrimitivesFromParamServer()
-{
+void HiQPJointVelocityController::loadGeometricPrimitivesFromParamServer() {
   XmlRpc::XmlRpcValue hiqp_preload_geometric_primitives;
   if (!this->getControllerNodeHandle().getParam("hiqp_preload_geometric_primitives", hiqp_preload_geometric_primitives)) {
     ROS_WARN_STREAM("No hiqp_preload_geometric_primitives parameter "
@@ -446,10 +278,6 @@ void HiQPJointVelocityController::loadGeometricPrimitivesFromParamServer()
   }
 }
 
-
-
-
-
 void HiQPJointVelocityController::loadTasksFromParamServer() {
   XmlRpc::XmlRpcValue hiqp_preload_tasks;
   if (!this->getControllerNodeHandle().getParam("hiqp_preload_tasks", hiqp_preload_tasks)) {
@@ -494,18 +322,7 @@ void HiQPJointVelocityController::loadTasksFromParamServer() {
   }
 }
 
-
-
-
-
-
-
-
-
-
-
 } // namespace hiqp_ros
-
 
 // make the controller available to the library loader
 PLUGINLIB_EXPORT_CLASS(hiqp_ros::HiQPJointVelocityController, controller_interface::ControllerBase)
