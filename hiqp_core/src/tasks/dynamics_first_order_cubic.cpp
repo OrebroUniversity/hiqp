@@ -14,45 +14,44 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include <limits>
-
 #include <hiqp/utilities.h>
 
-#include <hiqp/tasks/dynamics_first_order.h>
+#include <hiqp/tasks/dynamics_first_order_cubic.h>
 
 namespace hiqp
 {
 namespace tasks
 {
 
-  int DynamicsFirstOrder::init(const std::vector<std::string>& parameters,
-                               RobotStatePtr robot_state,
-                               const Eigen::VectorXd& e_initial,
-                               const Eigen::VectorXd& e_final) {
+  int DynamicsFirstOrderCubic::init(const std::vector<std::string>& parameters,
+                                    RobotStatePtr robot_state,
+                                    const Eigen::VectorXd& e_initial,
+                                    const Eigen::VectorXd& e_final) {
     int size = parameters.size();
     if (size != 2) {
-      printHiqpWarning("TDynFirstOrder requires 2 parameters, got " 
-        + std::to_string(size) + "! Initialization failed!");
+      printHiqpWarning("TDynFirstOrderCubic requires 2 parameters, got " 
+                        + std::to_string(size) + "! Initialization failed!");
       return -1;
     }
 
     lambda_ = std::stod( parameters.at(1) );
-
     e_dot_star_.resize(e_initial.rows());
     performance_measures_.resize(e_initial.rows());
-
     return 0;
   }
 
-  int DynamicsFirstOrder::update(RobotStatePtr robot_state,
-                                 const Eigen::VectorXd& e,
-                                 const Eigen::MatrixXd& J) {
-    //e_dot_star_.resize(e.size());
-    e_dot_star_ = -lambda_ * e;
+  int DynamicsFirstOrderCubic::update(RobotStatePtr robot_state,
+                                      const Eigen::VectorXd& e,
+                                      const Eigen::MatrixXd& J) {
+    e_dot_star_.resize(e.size());
+    std::cout << "i'mhere\n";
+    for (unsigned int i=0; i<e_dot_star_.size(); ++i) {
+      e_dot_star_(i) = -lambda_ * e(i)*e(i)*e(i);
+    }
     return 0;
   }
 
-  int DynamicsFirstOrder::monitor() {
+  int DynamicsFirstOrderCubic::monitor() {
     return 0;
   }
 

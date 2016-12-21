@@ -17,9 +17,9 @@ parameters: [0.0, 0, 0.2]"
 sleep 1.0
 
 rosservice call /yumi/hiqp_joint_velocity_controller/set_task \
-"name: 'task_test_taskjntconfig'
+"name: 'task_hypersin'
 priority: 3
 visible: 1
 active: 1
 def_params: ['TDefGeomProj', 'point', 'point', 'mypoint1 = mypoint2']
-dyn_params: ['TDynMinJerk', '5.0', '1.0']"
+dyn_params: ['TDynHyperSin', '1.0']"

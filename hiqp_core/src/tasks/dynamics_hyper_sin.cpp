@@ -15,17 +15,18 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <limits>
+#include <cmath>
 
 #include <hiqp/utilities.h>
 
-#include <hiqp/tasks/dynamics_first_order.h>
+#include <hiqp/tasks/dynamics_hyper_sin.h>
 
 namespace hiqp
 {
 namespace tasks
 {
 
-  int DynamicsFirstOrder::init(const std::vector<std::string>& parameters,
+  int DynamicsHyperSin::init(const std::vector<std::string>& parameters,
                                RobotStatePtr robot_state,
                                const Eigen::VectorXd& e_initial,
                                const Eigen::VectorXd& e_final) {
@@ -44,15 +45,17 @@ namespace tasks
     return 0;
   }
 
-  int DynamicsFirstOrder::update(RobotStatePtr robot_state,
+  int DynamicsHyperSin::update(RobotStatePtr robot_state,
                                  const Eigen::VectorXd& e,
                                  const Eigen::MatrixXd& J) {
-    //e_dot_star_.resize(e.size());
-    e_dot_star_ = -lambda_ * e;
+    e_dot_star_.resize(e.size());
+    for (unsigned int i=0; i<e.size(); ++i) {
+      e_dot_star_(i) = -lambda_ * std::sinh( e(i) );
+    }
     return 0;
   }
 
-  int DynamicsFirstOrder::monitor() {
+  int DynamicsHyperSin::monitor() {
     return 0;
   }
 

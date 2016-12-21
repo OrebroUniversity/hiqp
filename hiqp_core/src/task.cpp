@@ -21,8 +21,11 @@
 #include <hiqp/tasks/task_geometric_projection.h>
 #include <hiqp/tasks/task_geometric_alignment.h>
 #include <hiqp/tasks/dynamics_first_order.h>
+#include <hiqp/tasks/dynamics_first_order_cubic.h>
 #include <hiqp/tasks/dynamics_jnt_limits.h>
 #include <hiqp/tasks/dynamics_minimal_jerk.h>
+#include <hiqp/tasks/dynamics_hyper_sin.h>
+
 #include <hiqp/utilities.h>
 
 #include <hiqp/geometric_primitives/geometric_point.h>
@@ -39,10 +42,10 @@ namespace hiqp {
   using tasks::TaskGeometricAlignment;
 
   using tasks::DynamicsFirstOrder;
+  using tasks::DynamicsFirstOrderCubic;
   using tasks::DynamicsJntLimits;
   using tasks::DynamicsMinimalJerk;
-
-  //using geometric_primitives::GeometricPoint;
+  using tasks::DynamicsHyperSin;
 
   Task::Task(std::shared_ptr<GeometricPrimitiveMap> geom_prim_map,
              std::shared_ptr<Visualizer> visualizer,
@@ -174,10 +177,14 @@ namespace hiqp {
 
     if (type.compare("TDynFirstOrder") == 0) {
       dyn_ = std::make_shared<DynamicsFirstOrder>(geom_prim_map_, visualizer_);
+    } else if (type.compare("TDynFirstOrderCubic") == 0) {
+      dyn_ = std::make_shared<DynamicsFirstOrderCubic>(geom_prim_map_, visualizer_);
     } else if (type.compare("TDynJntLimits") == 0) {
       dyn_ = std::make_shared<DynamicsJntLimits>(geom_prim_map_, visualizer_);
     } else if (type.compare("TDynMinJerk") == 0) {
       dyn_ = std::make_shared<DynamicsMinimalJerk>(geom_prim_map_, visualizer_);
+    } else if (type.compare("TDynHyperSin") == 0) {
+      dyn_ = std::make_shared<DynamicsHyperSin>(geom_prim_map_, visualizer_);
     } else {
       printHiqpWarning("The task dynamics type name '" + type + "' was not understood!");
       return -1;

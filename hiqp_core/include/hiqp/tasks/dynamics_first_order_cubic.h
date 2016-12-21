@@ -14,8 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef HIQP_DYNAMICS_FIRST_ORDER_H
-#define HIQP_DYNAMICS_FIRST_ORDER_H
+#ifndef HIQP_DYNAMICS_FIRST_ORDER_CUBIC_H
+#define HIQP_DYNAMICS_FIRST_ORDER_CUBIC_H
 
 #include <hiqp/robot_state.h>
 #include <hiqp/task_dynamics.h>
@@ -25,17 +25,15 @@ namespace hiqp
 namespace tasks
 {
 
-  /*! \brief A general first-order task dynamics implementation that enforces an exponential decay of the task performance value.
+  /*! \brief A cubic dynamics similar to first-order dynamics but with slower convergence around e=0.
    *  \author Marcus A Johansson */  
-  class DynamicsFirstOrder : public TaskDynamics
-  {
+  class DynamicsFirstOrderCubic : public TaskDynamics {
   public:
-
-    DynamicsFirstOrder(std::shared_ptr<GeometricPrimitiveMap> geom_prim_map,
-                       std::shared_ptr<Visualizer> visualizer)
+    DynamicsFirstOrderCubic(std::shared_ptr<GeometricPrimitiveMap> geom_prim_map,
+                            std::shared_ptr<Visualizer> visualizer)
      : TaskDynamics(geom_prim_map, visualizer) {}
 
-    ~DynamicsFirstOrder() noexcept {}
+    ~DynamicsFirstOrderCubic() noexcept {}
 
     int init(const std::vector<std::string>& parameters,
              RobotStatePtr robot_state,
@@ -49,10 +47,10 @@ namespace tasks
     int monitor();
 
   private:
-    DynamicsFirstOrder(const DynamicsFirstOrder& other) = delete;
-    DynamicsFirstOrder(DynamicsFirstOrder&& other) = delete;
-    DynamicsFirstOrder& operator=(const DynamicsFirstOrder& other) = delete;
-    DynamicsFirstOrder& operator=(DynamicsFirstOrder&& other) noexcept = delete;
+    DynamicsFirstOrderCubic(const DynamicsFirstOrderCubic& other) = delete;
+    DynamicsFirstOrderCubic(DynamicsFirstOrderCubic&& other) = delete;
+    DynamicsFirstOrderCubic& operator=(const DynamicsFirstOrderCubic& other) = delete;
+    DynamicsFirstOrderCubic& operator=(DynamicsFirstOrderCubic&& other) noexcept = delete;
 
     double lambda_;
   };
