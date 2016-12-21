@@ -53,6 +53,7 @@ namespace hiqp {
 
     solver_->clearStages();
 
+    resource_mutex_.lock();
     for (auto&& kv : task_map_) {
       if (kv.second->getActive()) {
         if (kv.second->update(robot_state) == 0) {
@@ -63,6 +64,7 @@ namespace hiqp {
         }
       }
     }
+    resource_mutex_.unlock();
 
     if (!solver_->solve(controls)) {
       printHiqpWarning("Unable to solve the hierarchical QP, setting the velocity controls to zero!");
@@ -77,6 +79,7 @@ namespace hiqp {
 
   void TaskManager::getTaskMeasures(std::vector<TaskMeasure>& data) {
     data.clear();
+    resource_mutex_.lock();
     for (auto&& kv : task_map_) {
       kv.second->monitor();
       data.push_back(TaskMeasure(kv.second->getTaskName(), 
@@ -84,6 +87,7 @@ namespace hiqp {
                                  kv.second->getDynamics(),
                                  kv.second->getPerformanceMeasures()));
     }
+    resource_mutex_.unlock();
   }
 
   int TaskManager::setTask(const std::string& task_name,
@@ -92,7 +96,8 @@ namespace hiqp {
                            bool active,
                            const std::vector<std::string>& def_params,
                            const std::vector<std::string>& dyn_params,
-                           RobotStatePtr robot_state) {  
+                           RobotStatePtr robot_state) {
+    resource_mutex_.lock();
     std::shared_ptr<Task> task;
     std::string action = "Added";
 
@@ -111,35 +116,42 @@ namespace hiqp {
 
     if (task->init(def_params, dyn_params, robot_state) != 0) {
       //printHiqpWarning("The task '" + task_name + "' was not added!");
+      resource_mutex_.unlock();
       return -1;
     } else {
       task_map_.emplace(task_name, task);
       printHiqpInfo(action + " task '" + task_name + "'");
     }
+    resource_mutex_.unlock();
     return 0;
   }
 
   int TaskManager::removeTask(std::string task_name) {
+    resource_mutex_.lock();
     if (task_map_.erase(task_name) == 1) 
     {
       geometric_primitive_map_->removeDependency(task_name);
+      resource_mutex_.unlock();
       return 0;
     }
-
+    resource_mutex_.unlock();
     return -1;
   }
 
   int TaskManager::removeAllTasks() {
+    resource_mutex_.lock();
     TaskMap::iterator it = task_map_.begin();
     while (it != task_map_.end()) {
       geometric_primitive_map_->removeDependency(it->first);
       ++it;
     }
     task_map_.clear();
+    resource_mutex_.unlock();
     return 0;
   }
 
   int TaskManager::listAllTasks() {
+    resource_mutex_.lock();
     std::cout << "LISTING ALL REGISTERED TASKS:\n";
     TaskMap::iterator it = task_map_.begin();
 
@@ -164,12 +176,15 @@ namespace hiqp {
         << std::setw(6) << it->second->getActive() << "\n";
       ++it;
     }
+    resource_mutex_.unlock();
     return 0;
   }
 
   void TaskManager::renderPrimitives() {
+    resource_mutex_.lock();
     GeometricPrimitiveVisualizer geom_prim_vis(visualizer_, 0);
     geometric_primitive_map_->acceptVisitor(geom_prim_vis);
+    resource_mutex_.unlock();
   }
 
   int TaskManager::addGeometricPrimitive(const std::string& name,
@@ -178,31 +193,39 @@ namespace hiqp {
                                          bool visible,
                                          const std::vector<double>& color,
                                          const std::vector<double>& parameters) {
+    resource_mutex_.lock();
     geometric_primitive_map_->addGeometricPrimitive(name, type, frame_id, visible, color, parameters);
+    resource_mutex_.unlock();
     return 0;
   }
 
   int TaskManager::removeGeometricPrimitive(std::string name) {
+    resource_mutex_.lock();
     GeometricPrimitiveVisualizer geom_prim_vis(visualizer_, 1);
     geometric_primitive_map_->acceptVisitor(geom_prim_vis, name);
     geom_prim_vis.removeAllVisitedPrimitives();
     geometric_primitive_map_->removeGeometricPrimitive(name);
+    resource_mutex_.unlock();
     return 0;
   }
 
   int TaskManager::removeAllGeometricPrimitives() {
+    resource_mutex_.lock();
     GeometricPrimitiveVisualizer geom_prim_vis(visualizer_, 1);
     geometric_primitive_map_->acceptVisitor(geom_prim_vis);
     geom_prim_vis.removeAllVisitedPrimitives();
     geometric_primitive_map_->clear();
+    resource_mutex_.unlock();
     return 0;
   }
 
   int TaskManager::listAllGeometricPrimitives() {
+    resource_mutex_.lock();
     std::cout << "LISTING ALL REGISTERED GEOMETRIC PRIMITIVES:\n";
     std::cout << "Name | Frame ID | Visible | Visual ID | Type\n";
     GeometricPrimitiveCouter geom_prim_cout;
     geometric_primitive_map_->acceptVisitor(geom_prim_cout);
+    resource_mutex_.unlock();
     return 0;
   }
 

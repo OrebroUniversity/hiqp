@@ -19,6 +19,7 @@
 
 #include <vector>
 #include <memory>
+#include <mutex>
 
 #include <hiqp/task.h>
 #include <hiqp/visualizer.h>
@@ -104,6 +105,11 @@ namespace hiqp {
 
 
    private:
+    TaskManager(const TaskManager& other) = delete;
+    TaskManager(TaskManager&& other) = delete;
+    TaskManager& operator=(const TaskManager& other) = delete;
+    TaskManager& operator=(TaskManager&& other) noexcept = delete;
+
     typedef std::map< std::string, std::shared_ptr<Task> > TaskMap;
 
     std::shared_ptr<GeometricPrimitiveMap>       geometric_primitive_map_;
@@ -113,12 +119,9 @@ namespace hiqp {
 
     std::shared_ptr<HiQPSolver>                  solver_;
 
-    unsigned int                                 n_controls_;
+    std::mutex                                   resource_mutex_;
 
-    TaskManager(const TaskManager& other) = delete;
-    TaskManager(TaskManager&& other) = delete;
-    TaskManager& operator=(const TaskManager& other) = delete;
-    TaskManager& operator=(TaskManager&& other) noexcept = delete;
+    unsigned int                                 n_controls_;
   };
 
 } // namespace hiqp

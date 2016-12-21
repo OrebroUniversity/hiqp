@@ -25,7 +25,6 @@
 #include <ros/ros.h>
 #include <ros/node_handle.h>
 #include <controller_interface/controller.h>
-//#include <hardware_interface/joint_command_interface.h>
 
 #include <kdl/tree.hpp>
 #include <kdl/jntarray.hpp>

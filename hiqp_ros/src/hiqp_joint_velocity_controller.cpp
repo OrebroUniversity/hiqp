@@ -81,22 +81,16 @@ void HiQPJointVelocityController::computeControls(Eigen::VectorXd& u) {
   if (!is_active_) return;
 
   std::vector<double> outcon(u.size());
-  service_mutex_.lock();
   task_manager_.getVelocityControls(this->getRobotState(), outcon);
-  service_mutex_.unlock();
   int i=0;
   for (auto&& oc : outcon) {
     u(i++) = oc;
   }
 
-  service_mutex_.lock();
   renderPrimitives();
-  service_mutex_.unlock();
-
-  service_mutex_.lock();
+  
   monitorTasks();
-  service_mutex_.unlock();
-
+  
   return;
 }
 
@@ -120,18 +114,15 @@ void HiQPJointVelocityController::computeControls(Eigen::VectorXd& u) {
 
 bool HiQPJointVelocityController::setTask(hiqp_msgs::SetTask::Request& req, 
                                           hiqp_msgs::SetTask::Response& res) {
-  service_mutex_.lock();
   int retval = task_manager_.setTask(
     req.name, req.priority, req.visible, req.active,
     req.def_params, req.dyn_params, this->getRobotState());
   res.success = (retval < 0 ? false : true);
-  service_mutex_.unlock();
   return true;
 }
 
 bool HiQPJointVelocityController::removeTask(hiqp_msgs::RemoveTask::Request& req, 
                                              hiqp_msgs::RemoveTask::Response& res) {
-  service_mutex_.lock();
   res.success = false;
   if (task_manager_.removeTask(req.task_name) == 0)
     res.success = true;
@@ -141,32 +132,26 @@ bool HiQPJointVelocityController::removeTask(hiqp_msgs::RemoveTask::Request& req
   } else {
     hiqp::printHiqpInfo("Couldn't remove task '" + req.task_name + "'!");  
   }
-  service_mutex_.unlock();
   return true;
 }
 
 bool HiQPJointVelocityController::removeAllTasks(hiqp_msgs::RemoveAllTasks::Request& req, 
                                                  hiqp_msgs::RemoveAllTasks::Response& res) {
-  service_mutex_.lock();
   task_manager_.removeAllTasks();
   hiqp::printHiqpInfo("Removed all tasks successfully!");
   res.success = true;
-  service_mutex_.unlock();
   return true;
 }
 
 bool HiQPJointVelocityController::listAllTasks(hiqp_msgs::ListAllTasks::Request& req, 
                                                hiqp_msgs::ListAllTasks::Response& res) {
-  service_mutex_.lock();
   task_manager_.listAllTasks();
   res.success = true;
-  service_mutex_.unlock();
   return true;
 }
 
 bool HiQPJointVelocityController::addGeometricPrimitive(hiqp_msgs::AddGeometricPrimitive::Request& req, 
                                                         hiqp_msgs::AddGeometricPrimitive::Response& res) {
-  service_mutex_.lock();
   int retval = task_manager_.addGeometricPrimitive(
     req.name, req.type, req.frame_id, req.visible, req.color, req.parameters
   );
@@ -174,14 +159,12 @@ bool HiQPJointVelocityController::addGeometricPrimitive(hiqp_msgs::AddGeometricP
   if (res.success) {
     hiqp::printHiqpInfo("Added geometric primitive of type '" + req.type + "' with name '" + req.name + "'.");
   }
-  service_mutex_.unlock();
   return true;
 }
 
 /// \bug Removing primitive doesn't remove visualization
 bool HiQPJointVelocityController::removeGeometricPrimitive(hiqp_msgs::RemoveGeometricPrimitive::Request& req, 
                                                            hiqp_msgs::RemoveGeometricPrimitive::Response& res) {
-  service_mutex_.lock();
   res.success = false;
   if (task_manager_.removeGeometricPrimitive(req.name) == 0)
     res.success = true;
@@ -191,26 +174,21 @@ bool HiQPJointVelocityController::removeGeometricPrimitive(hiqp_msgs::RemoveGeom
   } else {
     hiqp::printHiqpInfo("Couldn't remove primitive '" + req.name + "'!");  
   }
-  service_mutex_.unlock();
   return true;
 }
 
 bool HiQPJointVelocityController::removeAllGeometricPrimitives(hiqp_msgs::RemoveAllGeometricPrimitives::Request& req, 
                                                                hiqp_msgs::RemoveAllGeometricPrimitives::Response& res) {
-  service_mutex_.lock();
   task_manager_.removeAllGeometricPrimitives();
   hiqp::printHiqpInfo("Removed all primitives successfully!");
   res.success = true;
-  service_mutex_.unlock();
   return true;
 }
 
 bool HiQPJointVelocityController::listAllGeometricPrimitives(hiqp_msgs::ListAllGeometricPrimitives::Request& req, 
                                                              hiqp_msgs::ListAllGeometricPrimitives::Response& res) {
-  service_mutex_.lock();
   task_manager_.listAllGeometricPrimitives();
   res.success = true;
-  service_mutex_.unlock();
   return true;
 }
 

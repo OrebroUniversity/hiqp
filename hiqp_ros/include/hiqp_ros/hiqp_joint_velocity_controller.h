@@ -19,11 +19,8 @@
 
 #include <string>
 #include <vector>
-#include <mutex>
 
 #include <ros/ros.h>
-//#include <ros/node_handle.h>
-//#include <controller_interface/controller.h>
 #include <hardware_interface/joint_command_interface.h>
 
 #include <kdl/tree.hpp>
@@ -95,10 +92,6 @@ namespace hiqp_ros
 
     bool                                              is_active_;
 
-    //double                                            desired_visualization_publishing_time_;
-    //hiqp::HiQPTimePoint                               last_visualization_publishing_time_;
-    //double                                            time_since_last_visualization_publishing_;
-
     bool                                              monitoring_active_;
     double                                            monitoring_publish_rate_;
     ros::Time                                         last_monitoring_update_;
@@ -120,11 +113,11 @@ namespace hiqp_ros
     ros::ServiceServer                                remove_all_geomprims_service_;
     ros::ServiceServer                                list_all_geomprims_service_;
 
-    std::mutex                                        service_mutex_; 
-
-    std::shared_ptr<Visualizer>                       visualizer_;
     ROSVisualizer                                     ros_visualizer_;
+    std::shared_ptr<Visualizer>                       visualizer_;
+    
     hiqp::TaskManager                                 task_manager_;
+    std::shared_ptr<hiqp::TaskManager>                task_manager_ptr_;
 
   };
 
