@@ -22,8 +22,8 @@
 #include <mutex>
 
 #include <ros/ros.h>
-#include <ros/node_handle.h>
-#include <controller_interface/controller.h>
+//#include <ros/node_handle.h>
+//#include <controller_interface/controller.h>
 #include <hardware_interface/joint_command_interface.h>
 
 #include <kdl/tree.hpp>
@@ -52,12 +52,12 @@
 
 namespace hiqp_ros
 {
-  typedef controller_interface::Controller<hardware_interface::VelocityJointInterface> JointVelocityController;
+  //typedef controller_interface::Controller<hardware_interface::VelocityJointInterface> JointVelocityController;
   typedef hardware_interface::VelocityJointInterface JointVelocityInterface;
 
   /*! \brief A joint velocity controller that provides full access to the HiQP control framework
    *  \author Marcus A Johansson */  
-  class HiQPJointVelocityController : public BaseController<JointVelocityController, JointVelocityInterface> {
+  class HiQPJointVelocityController : public BaseController<JointVelocityInterface> {
   public:
     HiQPJointVelocityController();
     ~HiQPJointVelocityController() noexcept;

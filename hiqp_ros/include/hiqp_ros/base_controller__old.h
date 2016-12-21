@@ -25,7 +25,7 @@
 #include <ros/ros.h>
 #include <ros/node_handle.h>
 #include <controller_interface/controller.h>
-//#include <hardware_interface/joint_command_interface.h>
+#include <hardware_interface/joint_command_interface.h>
 
 #include <kdl/tree.hpp>
 #include <kdl/jntarray.hpp>
@@ -44,8 +44,8 @@ namespace hiqp_ros {
 
   /*! \brief A base controller class whose controller type and hardware interface type are set as template parameters. This controller includes an internal KDL tree that is got from the robot_description on the parameter server. Also all claimed joint resources are read from the yaml file. Only joints specified in the yaml file are claimed, the others are not claimed but still read from.
    *  \author Marcus A Johansson */
-  template <typename HardwareInterfaceT>
-  class BaseController : public controller_interface::Controller<HardwareInterfaceT> {
+  template <typename ControllerT, typename HardwareInterfaceT>
+  class BaseController : public ControllerT {
   public:
     BaseController() = default;
     ~BaseController() noexcept = default;
@@ -105,8 +105,8 @@ namespace hiqp_ros {
   //
   //////////////////////////////////////////////////////////////////////////////
 
-  template <typename HardwareInterfaceT>
-  bool BaseController<HardwareInterfaceT>::init(HardwareInterfaceT* hw, ros::NodeHandle &controller_nh) {
+  template <typename ControllerT, typename HardwareInterfaceT>
+  bool BaseController<ControllerT, HardwareInterfaceT>::init(HardwareInterfaceT* hw, ros::NodeHandle &controller_nh) {
     hardware_interface_ = hw;
     controller_nh_ = controller_nh;
     robot_state_ptr_.reset(&robot_state_data_);
@@ -120,8 +120,8 @@ namespace hiqp_ros {
     return true;
   }
 
-  template <typename HardwareInterfaceT>
-  void BaseController<HardwareInterfaceT>::update(const ros::Time& time, const ros::Duration& period) {
+  template <typename ControllerT, typename HardwareInterfaceT>
+  void BaseController<ControllerT, HardwareInterfaceT>::update(const ros::Time& time, const ros::Duration& period) {
     HiQPTimePoint now(time.sec, time.nsec);
     double elapsed_time = (now-last_sampling_time_point_).toSec();
     if (elapsed_time*1000 >= desired_sampling_time_) {
@@ -131,8 +131,8 @@ namespace hiqp_ros {
     }
   }
 
-  template <typename HardwareInterfaceT>
-  void BaseController<HardwareInterfaceT>::loadDesiredSamplingTime() {
+  template <typename ControllerT, typename HardwareInterfaceT>
+  void BaseController<ControllerT, HardwareInterfaceT>::loadDesiredSamplingTime() {
     desired_sampling_time_ = 1; // milliseconds. (defaults to 1kHz)
     if (!controller_nh_.getParam("sampling_time", desired_sampling_time_)) {
       ROS_WARN("Couldn't find parameter 'sampling_time' on the parameter server, defaulting to 1ms (1kHz).");
@@ -141,8 +141,8 @@ namespace hiqp_ros {
     last_sampling_time_point_.setTimePoint(t.sec, t.nsec);
   }
 
-  template <typename HardwareInterfaceT>
-  int BaseController<HardwareInterfaceT>::loadUrdfToKdlTree() {
+  template <typename ControllerT, typename HardwareInterfaceT>
+  int BaseController<ControllerT, HardwareInterfaceT>::loadUrdfToKdlTree() {
     std::string full_parameter_path;
     std::string robot_urdf;
     if (controller_nh_.searchParam("robot_description", full_parameter_path)) {
@@ -156,8 +156,8 @@ namespace hiqp_ros {
     return 0;
   }
 
-  template <typename HardwareInterfaceT>
-  int BaseController<HardwareInterfaceT>::loadJointsAndSetJointHandlesMap() {
+  template <typename ControllerT, typename HardwareInterfaceT>
+  int BaseController<ControllerT, HardwareInterfaceT>::loadJointsAndSetJointHandlesMap() {
     std::string param_name = "joints";
     std::vector< std::string > joint_names;
     if (!controller_nh_.getParam(param_name, joint_names)) {
@@ -218,8 +218,8 @@ namespace hiqp_ros {
     return 0;
   }
 
-  template <typename HardwareInterfaceT>
-  void BaseController<HardwareInterfaceT>::sampleJointValues() {
+  template <typename ControllerT, typename HardwareInterfaceT>
+  void BaseController<ControllerT, HardwareInterfaceT>::sampleJointValues() {
     KDL::JntArray& q = robot_state_data_.kdl_jnt_array_vel_.q;
     KDL::JntArray& qdot = robot_state_data_.kdl_jnt_array_vel_.qdot;
     KDL::JntArray& effort = robot_state_data_.kdl_effort_;
@@ -240,8 +240,8 @@ namespace hiqp_ros {
     handles_mutex_.unlock();
   }
 
-  template <typename HardwareInterfaceT>
-  void BaseController<HardwareInterfaceT>::setControls() {
+  template <typename ControllerT, typename HardwareInterfaceT>
+  void BaseController<ControllerT, HardwareInterfaceT>::setControls() {
     handles_mutex_.lock();
       for (auto&& handle : joint_handles_map_) {
         handle.second.setCommand(u_(handle.first));
