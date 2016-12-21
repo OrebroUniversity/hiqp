@@ -88,18 +88,18 @@ namespace hiqp {
 
     void renderPrimitives();
 
-    int addGeometricPrimitive(const std::string& name,
-                              const std::string& type,
-                              const std::string& frame_id,
-                              bool visible,
-                              const std::vector<double>& color,
-                              const std::vector<double>& parameters);
+    int addPrimitive(const std::string& name,
+                     const std::string& type,
+                     const std::string& frame_id,
+                     bool visible,
+                     const std::vector<double>& color,
+                     const std::vector<double>& parameters);
 
-    int removeGeometricPrimitive(std::string name);
+    int removePrimitive(std::string name);
 
-    int removeAllGeometricPrimitives();
+    int removeAllPrimitives();
 
-    int listAllGeometricPrimitives();
+    int listAllPrimitives();
 
     inline std::shared_ptr<GeometricPrimitiveMap> getGeometricPrimitiveMap() { return geometric_primitive_map_; }
 

@@ -29,17 +29,17 @@ void HiQPServiceHandler::advertiseAll() {
   list_all_tasks_service_ = node_handle_->advertiseService(
     "list_all_tasks", &HiQPServiceHandler::listAllTasks, this);
 
-  add_geomprim_service_ = node_handle_->advertiseService(
-    "add_primitive", &HiQPServiceHandler::addGeometricPrimitive, this);
+  add_primitive_service_ = node_handle_->advertiseService(
+    "add_primitive", &HiQPServiceHandler::addPrimitive, this);
 
-  remove_geomprim_service_ = node_handle_->advertiseService(
-    "remove_primitive", &HiQPServiceHandler::removeGeometricPrimitive, this);
+  remove_primitive_service_ = node_handle_->advertiseService(
+    "remove_primitive", &HiQPServiceHandler::removePrimitive, this);
 
-  remove_all_geomprims_service_ = node_handle_->advertiseService(
-    "remove_all_primitives", &HiQPServiceHandler::removeAllGeometricPrimitives, this);
+  remove_all_primitives_service_ = node_handle_->advertiseService(
+    "remove_all_primitives", &HiQPServiceHandler::removeAllPrimitives, this);
 
-  list_all_geomprims_service_ = node_handle_->advertiseService(
-    "list_all_primitives", &HiQPServiceHandler::listAllGeometricPrimitives, this);
+  list_all_primitives_service_ = node_handle_->advertiseService(
+    "list_all_primitives", &HiQPServiceHandler::listAllPrimitives, this);
 }
 
 bool HiQPServiceHandler::setTask(hiqp_msgs::SetTask::Request& req, 
@@ -80,9 +80,9 @@ bool HiQPServiceHandler::listAllTasks(hiqp_msgs::ListAllTasks::Request& req,
   return true;
 }
 
-bool HiQPServiceHandler::addGeometricPrimitive(hiqp_msgs::AddGeometricPrimitive::Request& req, 
-                                               hiqp_msgs::AddGeometricPrimitive::Response& res) {
-  int retval = task_manager_->addGeometricPrimitive(
+bool HiQPServiceHandler::addPrimitive(hiqp_msgs::AddPrimitive::Request& req, 
+                                      hiqp_msgs::AddPrimitive::Response& res) {
+  int retval = task_manager_->addPrimitive(
     req.name, req.type, req.frame_id, req.visible, req.color, req.parameters
   );
   res.success = (retval == 0 ? true : false);
@@ -92,10 +92,10 @@ bool HiQPServiceHandler::addGeometricPrimitive(hiqp_msgs::AddGeometricPrimitive:
   return true;
 }
 
-bool HiQPServiceHandler::removeGeometricPrimitive(hiqp_msgs::RemoveGeometricPrimitive::Request& req, 
-                                                  hiqp_msgs::RemoveGeometricPrimitive::Response& res) {
+bool HiQPServiceHandler::removePrimitive(hiqp_msgs::RemovePrimitive::Request& req, 
+                                         hiqp_msgs::RemovePrimitive::Response& res) {
   res.success = false;
-  if (task_manager_->removeGeometricPrimitive(req.name) == 0)
+  if (task_manager_->removePrimitive(req.name) == 0)
     res.success = true;
 
   if (res.success) {
@@ -106,17 +106,17 @@ bool HiQPServiceHandler::removeGeometricPrimitive(hiqp_msgs::RemoveGeometricPrim
   return true;
 }
 
-bool HiQPServiceHandler::removeAllGeometricPrimitives(hiqp_msgs::RemoveAllGeometricPrimitives::Request& req, 
-                                                      hiqp_msgs::RemoveAllGeometricPrimitives::Response& res) {
-  task_manager_->removeAllGeometricPrimitives();
+bool HiQPServiceHandler::removeAllPrimitives(hiqp_msgs::RemoveAllPrimitives::Request& req, 
+                                             hiqp_msgs::RemoveAllPrimitives::Response& res) {
+  task_manager_->removeAllPrimitives();
   hiqp::printHiqpInfo("Removed all primitives successfully!");
   res.success = true;
   return true;
 }
 
-bool HiQPServiceHandler::listAllGeometricPrimitives(hiqp_msgs::ListAllGeometricPrimitives::Request& req, 
-                                                    hiqp_msgs::ListAllGeometricPrimitives::Response& res) {
-  task_manager_->listAllGeometricPrimitives();
+bool HiQPServiceHandler::listAllPrimitives(hiqp_msgs::ListAllPrimitives::Request& req, 
+                                           hiqp_msgs::ListAllPrimitives::Response& res) {
+  task_manager_->listAllPrimitives();
   res.success = true;
   return true;
 }

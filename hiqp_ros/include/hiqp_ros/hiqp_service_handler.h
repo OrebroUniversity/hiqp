@@ -26,10 +26,10 @@
 #include <hiqp_msgs/RemoveTask.h>
 #include <hiqp_msgs/RemoveAllTasks.h>
 #include <hiqp_msgs/ListAllTasks.h>
-#include <hiqp_msgs/AddGeometricPrimitive.h>
-#include <hiqp_msgs/RemoveGeometricPrimitive.h>
-#include <hiqp_msgs/RemoveAllGeometricPrimitives.h>
-#include <hiqp_msgs/ListAllGeometricPrimitives.h>
+#include <hiqp_msgs/AddPrimitive.h>
+#include <hiqp_msgs/RemovePrimitive.h>
+#include <hiqp_msgs/RemoveAllPrimitives.h>
+#include <hiqp_msgs/ListAllPrimitives.h>
 
 class HiQPServiceHandler {
 public:
@@ -77,10 +77,11 @@ private:
   bool removeTask(hiqp_msgs::RemoveTask::Request& req, hiqp_msgs::RemoveTask::Response& res);
   bool removeAllTasks(hiqp_msgs::RemoveAllTasks::Request& req, hiqp_msgs::RemoveAllTasks::Response& res);
   bool listAllTasks(hiqp_msgs::ListAllTasks::Request& req, hiqp_msgs::ListAllTasks::Response& res);
-  bool addGeometricPrimitive(hiqp_msgs::AddGeometricPrimitive::Request& req, hiqp_msgs::AddGeometricPrimitive::Response& res);
-  bool removeGeometricPrimitive(hiqp_msgs::RemoveGeometricPrimitive::Request& req, hiqp_msgs::RemoveGeometricPrimitive::Response& res);
-  bool removeAllGeometricPrimitives(hiqp_msgs::RemoveAllGeometricPrimitives::Request& req, hiqp_msgs::RemoveAllGeometricPrimitives::Response& res);
-  bool listAllGeometricPrimitives(hiqp_msgs::ListAllGeometricPrimitives::Request& req, hiqp_msgs::ListAllGeometricPrimitives::Response& res);
+
+  bool addPrimitive(hiqp_msgs::AddPrimitive::Request& req, hiqp_msgs::AddPrimitive::Response& res);
+  bool removePrimitive(hiqp_msgs::RemovePrimitive::Request& req, hiqp_msgs::RemovePrimitive::Response& res);
+  bool removeAllPrimitives(hiqp_msgs::RemoveAllPrimitives::Request& req, hiqp_msgs::RemoveAllPrimitives::Response& res);
+  bool listAllPrimitives(hiqp_msgs::ListAllPrimitives::Request& req, hiqp_msgs::ListAllPrimitives::Response& res);
 
   std::shared_ptr<ros::NodeHandle>    node_handle_;
   std::shared_ptr<hiqp::TaskManager>  task_manager_;
@@ -91,10 +92,10 @@ private:
   ros::ServiceServer                  remove_task_service_;
   ros::ServiceServer                  remove_all_tasks_service_;
   ros::ServiceServer                  list_all_tasks_service_;
-  ros::ServiceServer                  add_geomprim_service_;
-  ros::ServiceServer                  remove_geomprim_service_;
-  ros::ServiceServer                  remove_all_geomprims_service_;
-  ros::ServiceServer                  list_all_geomprims_service_;
+  ros::ServiceServer                  add_primitive_service_;
+  ros::ServiceServer                  remove_primitive_service_;
+  ros::ServiceServer                  remove_all_primitives_service_;
+  ros::ServiceServer                  list_all_primitives_service_;
 };
 
 #endif

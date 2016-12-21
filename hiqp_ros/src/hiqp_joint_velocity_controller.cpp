@@ -261,7 +261,7 @@ void HiQPJointVelocityController::loadGeometricPrimitivesFromParamServer() {
           parameters.push_back(static_cast<double>(parameters_xml[j]));
         }
 
-        task_manager_.addGeometricPrimitive(name, type, frame_id, visible, color, parameters);
+        task_manager_.addPrimitive(name, type, frame_id, visible, color, parameters);
       } catch (const XmlRpc::XmlRpcException& e) {
         ROS_WARN_STREAM("Error while loading "
           << "hiqp_preload_geometric_primitives parameter from the "

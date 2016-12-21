@@ -27,15 +27,15 @@ add_message_files(FILES TaskMeasure.msg
                         StringArray.msg
                         Vector3d.msg)
 
-add_service_files(FILES AddGeometricPrimitive.srv
+add_service_files(FILES AddPrimitive.srv
                         SetTask.srv
-                        RemoveAllGeometricPrimitives.srv
+                        RemoveAllPrimitives.srv
                         RemoveAllTasks.srv
-                        RemoveGeometricPrimitive.srv
+                        RemovePrimitive.srv
                         RemoveTask.srv
                         UpdateTask.srv
                         ListAllTasks.srv
-                        ListAllGeometricPrimitives.srv)
+                        ListAllPrimitives.srv)
 
 generate_messages(DEPENDENCIES std_msgs
                                geometry_msgs

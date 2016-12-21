@@ -14,9 +14,6 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
-
 string       name          # the name to be associated with this task instantiation
 uint16       priority      # the task priority (1 is highest)
 bool         visible       # whether or not the task should be visible initially
