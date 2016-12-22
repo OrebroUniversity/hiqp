@@ -39,8 +39,6 @@
 #include <fstream>
 
 namespace hiqp_ros {
-
-  //typedef controller_interface::Controller<hardware_interface::VelocityJointInterface> JointVelocityController;
   typedef hardware_interface::VelocityJointInterface JointVelocityInterface;
 
   /*! \brief A joint velocity controller that provides full access to the HiQP control framework
@@ -68,8 +66,6 @@ namespace hiqp_ros {
     void loadJointLimitsFromParamServer();
     void loadGeometricPrimitivesFromParamServer();
     void loadTasksFromParamServer();
-
-    typedef std::map<unsigned int, hardware_interface::JointHandle > JointHandleMap;
 
     bool                                              is_active_;
 
