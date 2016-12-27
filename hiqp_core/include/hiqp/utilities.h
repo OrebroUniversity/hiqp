@@ -55,6 +55,9 @@ namespace hiqp
   void printHiqpInfo(const std::string& msg);
   void printHiqpWarning(const std::string& msg);
 
+  /// \brief Returns the largest absolute value of all entries in v
+  double absMax(std::vector<double> v);
+
   /*! \brief Calculates the Moore-Penrose Pseudoinverse for any sized matrices. The original source code is got from http://eigendobetter.com/, I edited it to be compilable in this form.
    *  \author Marcus A Johansson
    *  \param a : the matrix to be inverted

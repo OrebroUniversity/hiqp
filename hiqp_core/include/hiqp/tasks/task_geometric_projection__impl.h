@@ -43,11 +43,11 @@ namespace tasks
       return -1;
     }
 
-    // if (parameters_size == 5) {
-    //   d_i_ = std::stod(parameters[4]);
-    //   if (d_i_ < 0) d_i_ = 0;
-    // } else {
-    //   d_i_ = std::numeric_limits<double>::infinity();
+    // Used for debugging
+    // if (parameters.at(2).compare("box") == 0) {
+    //   getGeometricPrimitiveMap()->addGeometricPrimitive("box_center", "point", "world", true, {0, 0, 1, 1}, {0, 0, 0});
+    //   getGeometricPrimitiveMap()->addGeometricPrimitive("box_proj", "point", "world", true, {0, 0, 1, 1}, {0, 0, 0});
+    //   getGeometricPrimitiveMap()->addGeometricPrimitive("box_line", "line", "world", true, {0, 0, 1, 1}, {0, 0, 0, 0, 0, 0});
     // }
 
     std::stringstream ss(parameters.at(3));

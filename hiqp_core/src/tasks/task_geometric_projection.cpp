@@ -141,110 +141,31 @@ namespace tasks
 
   template<>
   int TaskGeometricProjection<GeometricPoint, GeometricBox>::project
-  (std::shared_ptr<GeometricPoint> point, std::shared_ptr<GeometricBox> box) {
+  (std::shared_ptr<GeometricPoint> point, std::shared_ptr<GeometricBox> box) 
+  {
     KDL::Vector p__ = pose_a_.M * point->getPointKDL();
     KDL::Vector p = pose_a_.p + p__; 
-
-    KDL::Rotation S = KDL::Rotation(box->getDimX(), 0, 0,
-                                    0, box->getDimY(), 0,
-                                    0, 0, box->getDimZ() );
-
-    KDL::Rotation Sinv = KDL::Rotation(1/box->getDimX(), 0, 0,
-                                       0, 1/box->getDimY(), 0,
-                                       0, 0, 1/box->getDimZ() );
-
-    std::cout << "S = (";
-    for (int i=0; i<3; i++) {
-      for (int j=0; j<3; j++) std::cout << S(i,j) << ", ";
-        if (i < 2) std::cout << "\n";
-    }
-    std::cout << ")\n";
-
-    std::cout << "Sinv = (";
-    for (int i=0; i<3; i++) {
-      for (int j=0; j<3; j++) std::cout << Sinv(i,j) << ", ";
-        if (i < 2) std::cout << "\n";
-    }
-    std::cout << ")\n";
-
-    double qx, qy, qz, qw;
-    box->getQuaternion(qw, qx, qy, qz);
-
-    // rotation from box to root coordinates
-    KDL::Rotation Rbox = KDL::Rotation::Quaternion(qx, qy, qz, qw);
-    KDL::Rotation R = pose_b_.M * Rbox;
-
-    std::cout << "Rbox = (";
-    for (int i=0; i<3; i++) {
-      for (int j=0; j<3; j++) std::cout << Rbox(i,j) << ", ";
-        if (i < 2) std::cout << "\n";
-    }
-    std::cout << ")\n";
-
-    std::cout << "R = (";
-    for (int i=0; i<3; i++) {
-      for (int j=0; j<3; j++) std::cout << R(i,j) << ", ";
-        if (i < 2) std::cout << "\n";
-    }
-    std::cout << ")\n";
-
-    KDL::Vector c__= pose_b_.M * box->getCenterKDL();
+    KDL::Vector c__ = pose_b_.M * box->getCenterKDL();
     KDL::Vector c = pose_b_.p + c__;
 
-    KDL::Vector x = Sinv * R * (p - c);
+    KDL::Rotation S = box->getScalingKDL(); // from the world frame to a unit-box frame
+    KDL::Rotation Sinv = box->getScalingInvertedKDL();
+    KDL::Rotation R = pose_b_.M * box->getRotationKDL();
 
-    std::cout << "p = (" << p.x() << ", " << p.y() << ", " << p.z() << ")\n";
-    std::cout << "c = (" << c.x() << ", " << c.y() << ", " << c.z() << ")\n";
-    std::cout << "x = (" << x.x() << ", " << x.y() << ", " << x.z() << ")\n";
+    KDL::Vector x = S * R.Inverse() * (p - c); // vector from c to p in axis-aligned unit-box coordinates
 
-    double xx = std::abs(x.x());
-    double xy = std::abs(x.y());
-    double xz = std::abs(x.z());
-    double f = 0;
-    if (xx > xy) {
-      if (xx > xz) f = x.x();
-      else f = x.z();
-    } else {
-      if (xy > xz) f = x.y();
-      else f = x.z();
-    }
+    double f = absMax({x.x(), x.y(), x.z()});
+    double lambda = 1/(2*f);
 
-    double lambda = 0.5 * 1 / f;
-    KDL::Vector x_prim = lambda * x;
-    KDL::Vector x_prim__ = S * R.Inverse() * x_prim;
+    KDL::Vector x_prim = lambda * x; // the projected point p' on the box in axis-aligned unit-box coordinates
+    KDL::Vector x_prim__ = R * Sinv * x_prim;
     KDL::Vector p_prim = x_prim__ + c;
 
-    std::cout << "x_prim = (" << x_prim.x() << ", " << x_prim.y() << ", " << x_prim.z() << ")\n";
-    std::cout << "p_prim = (" << p_prim.x() << ", " <<p_prim.y() << ", " << p_prim.z() << ")\n";
-
-    /*
-    GeometricPoint cpoint( "c", "world", true, {0, 0.0, 1.0, 0.5} );
-    std::vector<double> ppos2;
-    ppos2.push_back(c.x()); 
-    ppos2.push_back(c.y()); 
-    ppos2.push_back(c.z());
-    cpoint.init( ppos2 );
-    getVisualizer()->update(1235, &cpoint);
-
-    GeometricLine bline( "bline", "world", true, {0, 0.0, 1.0, 0.5} );
-    std::vector<double> blineparam;
-    blineparam.push_back(c.x()-p.x()); 
-    blineparam.push_back(c.y()-p.y()); 
-    blineparam.push_back(c.z()-p.z());
-    blineparam.push_back(c.x()); 
-    blineparam.push_back(c.y()); 
-    blineparam.push_back(c.z());
-    bline.init( blineparam );
-    getVisualizer()->update(1236, &bline);
-
-    GeometricPoint projpoint( "p_prim", "world", true, {0, 1.0, 0, 0.5} );
-    std::vector<double> ppos;
-    ppos.push_back(p_prim.x()); 
-    ppos.push_back(p_prim.y()); 
-    ppos.push_back(p_prim.z());
-    projpoint.init( ppos );
-    getVisualizer()->update(1234, &projpoint);
-    */
+    // Used for debugging
+    // getGeometricPrimitiveMap()->updateGeometricPrimitive<GeometricPoint>("box_center", {c.x(), c.y(), c.z()});
+    // getGeometricPrimitiveMap()->updateGeometricPrimitive<GeometricPoint>("box_proj", {p_prim.x(), p_prim.y(), p_prim.z()});
+    // getGeometricPrimitiveMap()->updateGeometricPrimitive<GeometricLine>("box_line", {c.x()-p.x(), c.y()-p.y(), c.z()-p.z(),
+    //                                                                                  c.x(), c.y(), c.z()});
 
     KDL::Vector d = p - p_prim;
     e_(0) = KDL::dot(d, d);

@@ -146,6 +146,14 @@ namespace hiqp
       return -1;
   }
 
+  double absMax(std::vector<double> v) {
+    double f = 0;
+    for (auto&& x : v)
+      if (f < std::abs(x))
+        f = std::abs(x);
+    return f;
+  }
+
   // NOTE: This is a modified version of KDL::TreeJntToJacSolver::JntToJac!
   // This version supports giving the qdot as well.
   int kdl_JntToJac(const KDL::Tree& tree,

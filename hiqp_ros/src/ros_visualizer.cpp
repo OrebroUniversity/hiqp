@@ -27,7 +27,7 @@
 namespace hiqp_ros
 {
 
-  double marker_lifetime = 1; // added markers live for 1 second
+  double marker_lifetime = 10; // added markers live for 1 second
 
   ROSVisualizer::ROSVisualizer() : next_id_(0) {}
 
@@ -189,15 +189,6 @@ namespace hiqp_ros
   }
 
 
-  #include <sstream>
-  std::string dtostr(double d)
-  {
-    std::ostringstream strs;
-    strs << d;
-    std::string str = strs.str();
-    return str;
-  }
-
   int ROSVisualizer::apply(int id, std::shared_ptr<GeometricBox> box, int action) {
     visualization_msgs::Marker marker;
 
@@ -209,33 +200,8 @@ namespace hiqp_ros
     marker.type = visualization_msgs::Marker::CUBE;
     marker.action = visualization_msgs::Marker::ADD; 
 
-
     Eigen::Vector3d p = box->getCenterEigen();
-    // Eigen::Vector3d nu = box->getNormalUpEigen();
-    // Eigen::Vector3d nl = box->getNormalLeftEigen();
-
-    // // Quaternion that aligns the x-axis with the normal of the upper side
-    // // projected on the x-y plane
-    // Eigen::Quaterniond q1;
-    // Eigen::Vector3d nu_xy;
-    // nu_xy << nu(0), nu(1), 0;
-    // q1.setFromTwoVectors(Eigen::Vector3d::UnitX(), nu_xy);
-
-    // // Quaternion that aligns the z-axis with the normal of the upper side
-    // Eigen::Quaterniond q2;
-    // q2.setFromTwoVectors(Eigen::Vector3d::UnitZ(), nu);
-
-    // // Rotate around the normal upper side vector
-    // Eigen::Vector3d left = Eigen::Vector3d::UnitZ().cross(nu);
-    // Eigen::Quaterniond q3;
-    // q3.setFromTwoVectors(left, nl);
-
-    // Eigen::Quaterniond q = q1 * q2 * q3;
-
-
     Eigen::Quaterniond q = box->getQuaternionEigen();
-
-
 
     marker.pose.position.x = p(0);
     marker.pose.position.y = p(1);
@@ -260,14 +226,6 @@ namespace hiqp_ros
     visualization_msgs::MarkerArray marker_array;
     marker_array.markers.push_back(marker);
     marker_array_pub_.publish(marker_array);
-
-/*
-    // For debugging purposes
-    GeometricLine* line = new GeometricLine(
-        "noname",  box->getFrameId(), true, {1,0,0,1},
-        {dtostr(p1),dtostr(p2),dtostr(p3),dtostr(nl1),dtostr(nl2),dtostr(nl3)});
-    apply(0, line, visualization_msgs::Marker::ADD);
-*/
 
     if (action == ACTION_ADD) {
       next_id_++;
@@ -371,6 +329,15 @@ namespace hiqp_ros
      return id;
    }
  }
+
+  Eigen::Quaterniond euler2Quaternion(const double roll, const double pitch, const double yaw) {
+    Eigen::AngleAxisd rollAngle(roll, Eigen::Vector3d::UnitZ());
+    Eigen::AngleAxisd yawAngle(yaw, Eigen::Vector3d::UnitY());
+    Eigen::AngleAxisd pitchAngle(pitch, Eigen::Vector3d::UnitX());
+
+    Eigen::Quaterniond q = rollAngle * yawAngle * pitchAngle;
+    return q;
+  }
 
  int ROSVisualizer::apply(int id, std::shared_ptr<GeometricFrame> frame, int action) {
   visualization_msgs::MarkerArray marker_array;

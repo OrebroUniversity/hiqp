@@ -69,9 +69,19 @@ namespace geometric_primitives
       kdl_dim_(1) = parameters.at(4);
       kdl_dim_(2) = parameters.at(5);
 
-      scaling_matrix_ << 1/kdl_dim_(0), 0, 0,
-                         0, 1/kdl_dim_(1), 0,
-                         0, 0, 1/kdl_dim_(2);
+      scaling_matrix_eigen_ << 1/kdl_dim_(0), 0, 0,
+                               0, 1/kdl_dim_(1), 0,
+                               0, 0, 1/kdl_dim_(2);
+
+      scaling_matrix_kdl_ = KDL::Rotation(1/kdl_dim_(0), 0, 0,
+                                          0, 1/kdl_dim_(1), 0,
+                                          0, 0, 1/kdl_dim_(2));
+
+      // inversion of KDL::Rotate does not work the same as inverting a matrix
+      scaling_matrix_inverted_kdl_ = 
+        KDL::Rotation(kdl_dim_(0), 0, 0,
+                      0, kdl_dim_(1), 0,
+                      0, 0, kdl_dim_(2));
 
       if (size == 9) {
         double angle1 = parameters.at(6);
@@ -79,31 +89,25 @@ namespace geometric_primitives
         double angle3 = parameters.at(8);
 
         Eigen::Matrix3d m;
-        m =   Eigen::AngleAxisd(angle1, Eigen::Vector3d::UnitX())
+        m = Eigen::AngleAxisd(angle1, Eigen::Vector3d::UnitX())
             * Eigen::AngleAxisd(angle2, Eigen::Vector3d::UnitY())
             * Eigen::AngleAxisd(angle3, Eigen::Vector3d::UnitZ());
-
         q_ = Eigen::Quaternion<double>(m);
+
       } else if (size == 10) {
         double w = parameters.at(6);
         double x = parameters.at(7);
         double y = parameters.at(8);
         double z = parameters.at(9);
-
         q_ = Eigen::Quaternion<double>(w, x, y, z);
+
       } else {
         q_ = Eigen::Quaternion<double>(1.0, 0.0, 0.0, 0.0);
       }
 
-      // Calculate the normal of the left side of the box
-      // KDL::Vector left = KDL::Vector(0, 0, 1) * kdl_n_up_;
-      // KDL::Vector back = kdl_n_up_ * left;
-      // kdl_n_left_ = std::cos(a_) * left + std::sin(a_) * back;
-
       eigen_c_ << kdl_c_(0), kdl_c_(1), kdl_c_(2);
       eigen_dim_ << kdl_dim_(0), kdl_dim_(1), kdl_dim_(2);
-      // eigen_n_up_ << kdl_n_up_(0), kdl_n_up_(1), kdl_n_up_(2);
-      // eigen_n_left_ << kdl_n_left_(0), kdl_n_left_(1), kdl_n_left_(2);
+      rotation_kdl_ = KDL::Rotation::Quaternion(q_.x(), q_.y(), q_.z(), q_.w());
 
       return 0;
     }
@@ -116,20 +120,23 @@ namespace geometric_primitives
 
     inline const Eigen::Vector3d& getDimensionsEigen() { return eigen_dim_; }
 
+    /// \brief Returns the scaling matrix of the box
+    inline const KDL::Rotation&   getScalingKDL() { return scaling_matrix_kdl_; }
+
+    /// \brief Returns the inverted scaling matrix of the box
+    inline const KDL::Rotation&   getScalingInvertedKDL() { return scaling_matrix_inverted_kdl_; }
+
+    inline const Eigen::Matrix3d& getScalingEigen() { return scaling_matrix_eigen_; }
+
+    /// \brief Returns the rotation matrix that transforms from global world coordinates to local box coordinates
+    inline const KDL::Rotation&   getRotationKDL() { return rotation_kdl_; }
+
+    /// \brief Returns the quaternion that transforms from global world coordinates to local box coordinates
     inline const Eigen::Quaternion<double>& getQuaternionEigen() { return q_; }
 
+    /// \brief Gets the quaternion components that transform from global world coordinates to local box coordinates
     inline void getQuaternion(double& w, double& x, double& y, double& z)
     { w = q_.w(); x = q_.x(); y = q_.y(); z = q_.z(); }
-
-    inline const Eigen::Matrix3d& getScalingMatrix() { return scaling_matrix_; }
-
-    // inline const KDL::Vector&     getNormalUpKDL() { return kdl_n_up_; }
-
-    // inline const Eigen::Vector3d& getNormalUpEigen() { return eigen_n_up_; }
-
-    // inline const KDL::Vector&     getNormalLeftKDL() { return kdl_n_left_; }
-
-    // inline const Eigen::Vector3d& getNormalLeftEigen() { return eigen_n_left_; }
 
     inline double getCenterX() { return kdl_c_(0); }
 
@@ -143,28 +150,19 @@ namespace geometric_primitives
 
     inline double getDimZ() { return kdl_dim_(2); }
 
-    // inline double getNormalUpX() { return kdl_n_up_(0); }
-
-    // inline double getNormalUpY() { return kdl_n_up_(1); }
-
-    // inline double getNormalUpZ() { return kdl_n_up_(2); }
-
-    // inline double getNormalLeftX() { return kdl_n_left_(0); }
-
-    // inline double getNormalLeftY() { return kdl_n_left_(1); }
-
-    // inline double getNormalLeftZ() { return kdl_n_left_(2); }
-
   protected:
-    KDL::Vector      kdl_c_; // the geometrical cetrum of the box
-    Eigen::Vector3d  eigen_c_;
+    KDL::Vector                kdl_c_; // the geometrical center of the box
+    Eigen::Vector3d            eigen_c_;
 
-    KDL::Vector      kdl_dim_; // the dimensions of the box
-    Eigen::Vector3d  eigen_dim_;
+    KDL::Vector                kdl_dim_; // the dimensions of the box
+    Eigen::Vector3d            eigen_dim_;
 
-    Eigen::Quaternion<double> q_;
+    KDL::Rotation              rotation_kdl_;
+    Eigen::Quaternion<double>  q_;
 
-    Eigen::Matrix3d  scaling_matrix_;
+    KDL::Rotation              scaling_matrix_kdl_;
+    KDL::Rotation              scaling_matrix_inverted_kdl_;
+    Eigen::Matrix3d            scaling_matrix_eigen_;
 
   private:
     GeometricBox(const GeometricBox& other) = delete;
