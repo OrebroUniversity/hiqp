@@ -81,11 +81,13 @@ namespace hiqp {
     data.clear();
     resource_mutex_.lock();
     for (auto&& kv : task_map_) {
-      kv.second->monitor();
-      data.push_back(TaskMeasure(kv.second->getTaskName(), 
-                                 kv.second->getValue(),
-                                 kv.second->getDynamics(),
-                                 kv.second->getPerformanceMeasures()));
+      if (kv.second->getMonitored()) {
+        kv.second->monitor();
+        data.push_back(TaskMeasure(kv.second->getTaskName(), 
+                                   kv.second->getValue(),
+                                   kv.second->getDynamics(),
+                                   kv.second->getPerformanceMeasures()));
+      }
     }
     resource_mutex_.unlock();
   }
@@ -94,6 +96,7 @@ namespace hiqp {
                            unsigned int priority,
                            bool visible,
                            bool active,
+                           bool monitored,
                            const std::vector<std::string>& def_params,
                            const std::vector<std::string>& dyn_params,
                            RobotStatePtr robot_state) {
@@ -113,6 +116,7 @@ namespace hiqp {
     task->setPriority(priority);
     task->setVisible(visible);
     task->setActive(active);
+    task->setMonitored(monitored);
 
     if (task->init(def_params, dyn_params, robot_state) != 0) {
       //printHiqpWarning("The task '" + task_name + "' was not added!");

@@ -21,5 +21,6 @@ rosservice call /yumi/hiqp_joint_velocity_controller/set_task \
 priority: 3
 visible: 1
 active: 1
+monitored: 1
 def_params: ['TDefGeomAlign', 'frame', 'frame', 'myframe1 = myframe2', '0']
 dyn_params: ['TDynFirstOrder', '1.0']"

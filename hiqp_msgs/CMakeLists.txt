@@ -33,7 +33,6 @@ add_service_files(FILES AddPrimitive.srv
                         RemoveAllTasks.srv
                         RemovePrimitive.srv
                         RemoveTask.srv
-                        UpdateTask.srv
                         ListAllTasks.srv
                         ListAllPrimitives.srv)
 

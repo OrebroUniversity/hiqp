@@ -37,14 +37,14 @@ namespace tasks
 template<>
 int TaskGeometricAlignment<GeometricLine, GeometricLine>::align
 (
-	std::shared_ptr<GeometricLine> line1,
-	std::shared_ptr<GeometricLine> line2
+  std::shared_ptr<GeometricLine> line1,
+  std::shared_ptr<GeometricLine> line2
 )
 {
-	KDL::Vector v1 = pose_a_.M * line1->getDirectionKDL();
-	KDL::Vector v2 = pose_b_.M * line2->getDirectionKDL();
+  KDL::Vector v1 = pose_a_.M * line1->getDirectionKDL();
+  KDL::Vector v2 = pose_b_.M * line2->getDirectionKDL();
 
-	return alignVectors(v1, v2);
+  return alignVectors(v1, v2);
 }
 
 
@@ -54,14 +54,14 @@ int TaskGeometricAlignment<GeometricLine, GeometricLine>::align
 template<>
 int TaskGeometricAlignment<GeometricLine, GeometricPlane>::align
 (
-	std::shared_ptr<GeometricLine> line,
-	std::shared_ptr<GeometricPlane> plane
+  std::shared_ptr<GeometricLine> line,
+  std::shared_ptr<GeometricPlane> plane
 )
 {
-	KDL::Vector v1 = pose_a_.M * line->getDirectionKDL();
-	KDL::Vector v2 = - ( pose_b_.M * plane->getNormalKDL() );
+  KDL::Vector v1 = pose_a_.M * line->getDirectionKDL();
+  KDL::Vector v2 = - ( pose_b_.M * plane->getNormalKDL() );
 
-	return alignVectors(v1, v2);
+  return alignVectors(v1, v2);
 }
 
 
@@ -71,23 +71,23 @@ int TaskGeometricAlignment<GeometricLine, GeometricPlane>::align
 template<>
 int TaskGeometricAlignment<GeometricLine, GeometricCylinder>::align
 (
-	std::shared_ptr<GeometricLine> line,
-	std::shared_ptr<GeometricCylinder> cylinder
+  std::shared_ptr<GeometricLine> line,
+  std::shared_ptr<GeometricCylinder> cylinder
 )
 {
-	KDL::Vector v1 = - (pose_a_.M * line->getDirectionKDL());
+  KDL::Vector v1 = - (pose_a_.M * line->getDirectionKDL());
 
-	KDL::Vector p = pose_a_.p + pose_a_.M * line->getOffsetKDL();
-	KDL::Vector d = pose_b_.p + pose_b_.M * cylinder->getOffsetKDL();
-	KDL::Vector v = pose_b_.M * cylinder->getDirectionKDL();
+  KDL::Vector p = pose_a_.p + pose_a_.M * line->getOffsetKDL();
+  KDL::Vector d = pose_b_.p + pose_b_.M * cylinder->getOffsetKDL();
+  KDL::Vector v = pose_b_.M * cylinder->getDirectionKDL();
 
-	KDL::Vector x = KDL::dot( (p-d), v) * v;
+  KDL::Vector x = KDL::dot( (p-d), v) * v;
 
-	KDL::Vector v2 = (p-d) - x;
+  KDL::Vector v2 = (p-d) - x;
 
-	v2.Normalize();
+  v2.Normalize();
 
-	return alignVectors(v1, v2);
+  return alignVectors(v1, v2);
 }
 
 
@@ -97,20 +97,20 @@ int TaskGeometricAlignment<GeometricLine, GeometricCylinder>::align
 template<>
 int TaskGeometricAlignment<GeometricLine, GeometricSphere>::align
 (
-	std::shared_ptr<GeometricLine> line,
-	std::shared_ptr<GeometricSphere> sphere
+  std::shared_ptr<GeometricLine> line,
+  std::shared_ptr<GeometricSphere> sphere
 )
 {
-	KDL::Vector v1 = pose_a_.M * line->getDirectionKDL();
+  KDL::Vector v1 = pose_a_.M * line->getDirectionKDL();
 
-	KDL::Vector p = pose_a_.p + pose_a_.M * line->getOffsetKDL();
-	KDL::Vector d = pose_b_.p + pose_b_.M * sphere->getCenterKDL();
+  KDL::Vector p = pose_a_.p + pose_a_.M * line->getOffsetKDL();
+  KDL::Vector d = pose_b_.p + pose_b_.M * sphere->getCenterKDL();
 
-	KDL::Vector v2 = d - p;
+  KDL::Vector v2 = d - p;
 
-	v2.Normalize();
+  v2.Normalize();
 
-	return alignVectors(v1, v2);
+  return alignVectors(v1, v2);
 }
 
 
@@ -119,26 +119,26 @@ int TaskGeometricAlignment<GeometricLine, GeometricSphere>::align
 template<>
 int TaskGeometricAlignment<GeometricFrame, GeometricFrame>::align
 (
-	std::shared_ptr<GeometricFrame> frame1,
-	std::shared_ptr<GeometricFrame> frame2
+  std::shared_ptr<GeometricFrame> frame1,
+  std::shared_ptr<GeometricFrame> frame2
 )
 {
-	KDL::Vector ax1 = pose_a_.M * frame1->getAxisXKDL();
-	KDL::Vector ax2 = pose_b_.M * frame2->getAxisXKDL();
-	KDL::Vector ay1 = pose_a_.M * frame1->getAxisYKDL();
-	KDL::Vector ay2 = pose_b_.M * frame2->getAxisYKDL();
+  KDL::Vector ax1 = pose_a_.M * frame1->getAxisXKDL();
+  KDL::Vector ax2 = pose_b_.M * frame2->getAxisXKDL();
+  KDL::Vector ay1 = pose_a_.M * frame1->getAxisYKDL();
+  KDL::Vector ay2 = pose_b_.M * frame2->getAxisYKDL();
 
-	double d1 = KDL::dot(ax1, ax2);
-	double d2 = KDL::dot(ay1, ay2);
+  double d1 = KDL::dot(ax1, ax2);
+  double d2 = KDL::dot(ay1, ay2);
 
-	e_(0) = d1 - std::cos(delta_);
-	e_(1) = d2 - std::cos(delta_);
+  e_(0) = d1 - std::cos(delta_);
+  e_(1) = d2 - std::cos(delta_);
 
   KDL::Vector v1 = ax1 * ax2;
   KDL::Vector v2 = ay1 * ay2;
 
   for (int q_nr = 0; q_nr < jacobian_a_.columns(); ++q_nr) {
-  	KDL::Vector Ja = jacobian_a_.getColumn(q_nr).rot;
+    KDL::Vector Ja = jacobian_a_.getColumn(q_nr).rot;
     KDL::Vector Jb = jacobian_b_.getColumn(q_nr).rot;
     J_(0, q_nr) = KDL::dot( v1, (Ja - Jb) );
     J_(1, q_nr) = KDL::dot( v2, (Ja - Jb) );

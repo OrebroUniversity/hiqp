@@ -214,7 +214,7 @@ void HiQPJointVelocityController::loadJointLimitsFromParamServer()
         dyn_params.push_back( std::to_string(
           static_cast<double>(limitations[0]) ) );
 
-        task_manager_.setTask(link_frame + "_jntlimits", 1, true, true,
+        task_manager_.setTask(link_frame + "_jntlimits", 1, true, true, false,
           def_params, dyn_params, this->getRobotState());
       } catch (const XmlRpc::XmlRpcException& e) {
         ROS_WARN_STREAM("Error while loading "
@@ -305,8 +305,9 @@ void HiQPJointVelocityController::loadTasksFromParamServer() {
         unsigned int priority = static_cast<int>( hiqp_preload_tasks[i]["priority"] );
         bool visible = static_cast<bool>( hiqp_preload_tasks[i]["visible"] );
         bool active = static_cast<bool>( hiqp_preload_tasks[i]["active"] );
+        bool monitored = static_cast<bool>( hiqp_preload_tasks[i]["monitored"] );
         
-        task_manager_.setTask(name, priority, visible, active, def_params, dyn_params, this->getRobotState());
+        task_manager_.setTask(name, priority, visible, active, monitored, def_params, dyn_params, this->getRobotState());
       } catch (const XmlRpc::XmlRpcException& e) {
         ROS_WARN_STREAM("Error while loading "
           << "hiqp_preload_tasks parameter from the "

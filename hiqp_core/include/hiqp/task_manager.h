@@ -75,6 +75,7 @@ namespace hiqp {
                 unsigned int priority,
                 bool visible,
                 bool active,
+                bool monitored,
                 const std::vector<std::string>& def_params,
                 const std::vector<std::string>& dyn_params,
                 RobotStatePtr robot_state);

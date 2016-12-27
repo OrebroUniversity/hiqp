@@ -53,6 +53,8 @@ namespace hiqp {
     inline bool         getActive()                        { return active_; }
     inline void         setVisible(bool visible)           { visible_ = visible; }
     inline bool         getVisible()                       { return visible_; }
+    inline void         setMonitored(bool monitored)       { monitored_ = monitored; }
+    inline bool         getMonitored()                     { return monitored_; }
     inline unsigned int getDimensions()                    { if (def_) return def_->getDimensions(); else return 0; }
 
     /*! \brief Recomputes the task performance value, jacobian and its dynamics. */
@@ -103,6 +105,7 @@ namespace hiqp {
     unsigned int                             priority_;
     bool                                     active_;
     bool                                     visible_;
+    bool                                     monitored_;
   };
 
 } // namespace hiqp

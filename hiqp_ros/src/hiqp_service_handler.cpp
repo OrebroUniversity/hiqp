@@ -45,7 +45,7 @@ void HiQPServiceHandler::advertiseAll() {
 bool HiQPServiceHandler::setTask(hiqp_msgs::SetTask::Request& req, 
                                  hiqp_msgs::SetTask::Response& res) {
   int retval = task_manager_->setTask(
-    req.name, req.priority, req.visible, req.active,
+    req.name, req.priority, req.visible, req.active, req.monitored,
     req.def_params, req.dyn_params, robot_state_);
   res.success = (retval < 0 ? false : true);
   return true;

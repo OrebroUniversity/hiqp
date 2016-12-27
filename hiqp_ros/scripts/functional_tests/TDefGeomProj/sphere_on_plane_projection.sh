@@ -29,6 +29,7 @@ rosservice call /yumi/hiqp_joint_velocity_controller/set_task \
 priority: 3
 visible: 1
 active: 1
+monitored: 1
 def_params: ['TDefGeomProj', 'sphere', 'plane', 'mysphere1 > myplane2']
 dyn_params: ['TDynFirstOrder', '1.0']"
 
@@ -37,5 +38,6 @@ rosservice call /yumi/hiqp_joint_velocity_controller/set_task \
 priority: 4
 visible: 1
 active: 1
+monitored: 1
 def_params: ['TDefGeomProj', 'point', 'plane', 'mypoint1 = myplane2']
 dyn_params: ['TDynFirstOrder', '1.0']"
