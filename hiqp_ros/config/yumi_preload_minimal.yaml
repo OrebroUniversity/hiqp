@@ -3,18 +3,18 @@ yumi:
     #####      JOINT LIMITATIONS    #####
      hiqp_preload_jnt_limits:
       - link_frame: yumi_link_1_r
-        limitations: [1.4835, -2.94, 2.94] #dq_max, lower joint limit, upper joint limit
+        limitations: [1.4835, -2.94, 2.94, 1.0] #dq_max, lower joint limit, upper joint limit, dynamics gain
       - link_frame: yumi_link_2_r
-        limitations: [1.4835, -2.5, 0.75] 
+        limitations: [1.4835, -2.5, 0.75, 1.0] 
       - link_frame: yumi_link_3_r
-        limitations: [1.7453, -2.94, 2.94]
+        limitations: [1.7453, -2.94, 2.94, 1.0]
       - link_frame: yumi_link_4_r
-        limitations: [1.3090, -2.16, 1.4]
+        limitations: [1.3090, -2.16, 1.4, 1.0]
       - link_frame: yumi_link_5_r
-        limitations: [2.2689, -5.07, 5.07] 
+        limitations: [2.2689, -5.07, 5.07, 1.0] 
       - link_frame: yumi_link_6_r
-        limitations: [2.2689, -1.54, 2.41]
+        limitations: [2.2689, -1.54, 2.41, 1.0]
       - link_frame: yumi_link_7_r
-        limitations: [2.2689, -4.0, 4.0] 
+        limitations: [2.2689, -4.0, 4.0, 1.0] 
 
    

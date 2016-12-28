@@ -14,8 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef HIQP_TASK_GEOMETRIC_PROJECTION_H
-#define HIQP_TASK_GEOMETRIC_PROJECTION_H
+#ifndef HIQP_TDEF_GEOMETRIC_PROJECTION_H
+#define HIQP_TDEF_GEOMETRIC_PROJECTION_H
 
 #include <string>
 #include <vector>
@@ -34,11 +34,11 @@ namespace tasks
   /*! \brief A task definition that positions geometric primitives relative to each other through mutual geometric projection.
    *  \author Marcus A Johansson */  
   template<typename PrimitiveA, typename PrimitiveB>
-  class TaskGeometricProjection : public TaskDefinition {
+  class TDefGeometricProjection : public TaskDefinition {
   public:
-    TaskGeometricProjection(std::shared_ptr<GeometricPrimitiveMap> geom_prim_map,
+    TDefGeometricProjection(std::shared_ptr<GeometricPrimitiveMap> geom_prim_map,
                             std::shared_ptr<Visualizer> visualizer);
-    ~TaskGeometricProjection() noexcept = default;
+    ~TDefGeometricProjection() noexcept = default;
 
     int init(const std::vector<std::string>& parameters,
              RobotStatePtr robot_state);
@@ -48,10 +48,10 @@ namespace tasks
     int monitor();
 
   private:
-    TaskGeometricProjection(const TaskGeometricProjection& other) = delete;
-    TaskGeometricProjection(TaskGeometricProjection&& other) = delete;
-    TaskGeometricProjection& operator=(const TaskGeometricProjection& other) = delete;
-    TaskGeometricProjection& operator=(TaskGeometricProjection&& other) noexcept = delete;
+    TDefGeometricProjection(const TDefGeometricProjection& other) = delete;
+    TDefGeometricProjection(TDefGeometricProjection&& other) = delete;
+    TDefGeometricProjection& operator=(const TDefGeometricProjection& other) = delete;
+    TDefGeometricProjection& operator=(TDefGeometricProjection&& other) noexcept = delete;
 
     int project(std::shared_ptr<PrimitiveA> first, std::shared_ptr<PrimitiveB> second);
 
@@ -85,6 +85,6 @@ namespace tasks
 
 } // namespace hiqp
 
-#include <hiqp/tasks/task_geometric_projection__impl.h>
+#include <hiqp/tasks/tdef_geometric_projection__impl.h>
 
 #endif // include guard

@@ -17,10 +17,10 @@ parameters: [0, 0, 1, 0.5, 0, 0, 0.06, 0.2]"
 sleep 1.0
 
 rosservice call /yumi/hiqp_joint_velocity_controller/set_task \
-"name: 'task_test_taskgeomproj_point_cylinder'
+"name: 'task_pointoncylinder'
 priority: 3
 visible: 1
 active: 1
 monitored: 1
 def_params: ['TDefGeomProj', 'point', 'cylinder', 'mypoint1 = mycylinder2']
-dyn_params: ['TDynFirstOrder', '1.0']"
+dyn_params: ['TDynLinear', '1.0']"

@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include <hiqp/tasks/task_full_pose.h>
+#include <hiqp/tasks/tdef_full_pose.h>
 
 #include <hiqp/utilities.h>
 
@@ -25,13 +25,13 @@ namespace hiqp
 namespace tasks
 {
 
-  int TaskFullPose::init(const std::vector<std::string>& parameters,
+  int TDefFullPose::init(const std::vector<std::string>& parameters,
                          RobotStatePtr robot_state) {
     int size = parameters.size();
     unsigned int n_controls = robot_state->getNumControls();
     unsigned int n_joints = robot_state->getNumJoints();
     if (size != 1 && size != n_controls + 1) {
-      printHiqpWarning("TaskFullPose requires 1 or " 
+      printHiqpWarning("TDefFullPose requires 1 or " 
         + std::to_string(n_controls+1) + " parameters, got " 
         + std::to_string(size) + "! Initialization failed!");
       return -1;
@@ -66,7 +66,7 @@ namespace tasks
     return 0;
   }
 
-  int TaskFullPose::update(RobotStatePtr robot_state) {
+  int TDefFullPose::update(RobotStatePtr robot_state) {
     const KDL::JntArray &q = robot_state->kdl_jnt_array_vel_.q;
     int j=0;
     for (int i=0; i<q.rows(); ++i) {
@@ -78,7 +78,7 @@ namespace tasks
     return 0;
   }
 
-  int TaskFullPose::monitor() {
+  int TDefFullPose::monitor() {
     return 0;
   }
 

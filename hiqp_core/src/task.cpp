@@ -15,16 +15,18 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <hiqp/task.h>
-#include <hiqp/tasks/task_full_pose.h>
-#include <hiqp/tasks/task_jnt_config.h>
-#include <hiqp/tasks/task_jnt_limits.h>
-#include <hiqp/tasks/task_geometric_projection.h>
-#include <hiqp/tasks/task_geometric_alignment.h>
-#include <hiqp/tasks/dynamics_first_order.h>
-#include <hiqp/tasks/dynamics_first_order_cubic.h>
-#include <hiqp/tasks/dynamics_jnt_limits.h>
-#include <hiqp/tasks/dynamics_minimal_jerk.h>
-#include <hiqp/tasks/dynamics_hyper_sin.h>
+
+#include <hiqp/tasks/tdef_full_pose.h>
+#include <hiqp/tasks/tdef_geometric_alignment.h>
+#include <hiqp/tasks/tdef_geometric_projection.h>
+#include <hiqp/tasks/tdef_jnt_config.h>
+#include <hiqp/tasks/tdef_jnt_limits.h>
+
+#include <hiqp/tasks/tdyn_linear.h>
+#include <hiqp/tasks/tdyn_cubic.h>
+#include <hiqp/tasks/tdyn_hyper_sin.h>
+#include <hiqp/tasks/tdyn_jnt_limits.h>
+#include <hiqp/tasks/tdyn_minimal_jerk.h>
 
 #include <hiqp/utilities.h>
 
@@ -35,17 +37,17 @@
 
 namespace hiqp {
 
-  using tasks::TaskFullPose;
-  using tasks::TaskJntConfig;
-  using tasks::TaskJntLimits;
-  using tasks::TaskGeometricProjection;
-  using tasks::TaskGeometricAlignment;
+  using tasks::TDefFullPose;
+  using tasks::TDefGeometricAlignment;
+  using tasks::TDefGeometricProjection;
+  using tasks::TDefJntConfig;
+  using tasks::TDefJntLimits;
 
-  using tasks::DynamicsFirstOrder;
-  using tasks::DynamicsFirstOrderCubic;
-  using tasks::DynamicsJntLimits;
-  using tasks::DynamicsMinimalJerk;
-  using tasks::DynamicsHyperSin;
+  using tasks::TDynLinear;
+  using tasks::TDynCubic;
+  using tasks::TDynHyperSin;
+  using tasks::TDynJntLimits;
+  using tasks::TDynMinimalJerk;
 
   Task::Task(std::shared_ptr<GeometricPrimitiveMap> geom_prim_map,
              std::shared_ptr<Visualizer> visualizer,
@@ -114,34 +116,34 @@ namespace hiqp {
     std::string type = def_params.at(0);
 
     if (type.compare("TDefFullPose") == 0) {
-      def_ = std::make_shared<TaskFullPose>(geom_prim_map_, visualizer_);
+      def_ = std::make_shared<TDefFullPose>(geom_prim_map_, visualizer_);
     } else if (type.compare("TDefJntConfig") == 0) {
-      def_ = std::make_shared<TaskJntConfig>(geom_prim_map_, visualizer_);
+      def_ = std::make_shared<TDefJntConfig>(geom_prim_map_, visualizer_);
     } else if (type.compare("TDefJntLimits") == 0) {
-      def_ = std::make_shared<TaskJntLimits>(geom_prim_map_, visualizer_);
+      def_ = std::make_shared<TDefJntLimits>(geom_prim_map_, visualizer_);
     } else if (type.compare("TDefGeomProj") == 0) {
       std::string prim_type1 = def_params.at(1);
       std::string prim_type2 = def_params.at(2);
       if (prim_type1.compare("point") == 0 && prim_type2.compare("point") == 0) {
-        def_ = std::make_shared< TaskGeometricProjection<GeometricPoint, GeometricPoint> >(geom_prim_map_, visualizer_);
+        def_ = std::make_shared< TDefGeometricProjection<GeometricPoint, GeometricPoint> >(geom_prim_map_, visualizer_);
       } else if (prim_type1.compare("point") == 0 && prim_type2.compare("line") == 0) {
-        def_ = std::make_shared< TaskGeometricProjection<GeometricPoint, GeometricLine> >(geom_prim_map_, visualizer_);
+        def_ = std::make_shared< TDefGeometricProjection<GeometricPoint, GeometricLine> >(geom_prim_map_, visualizer_);
       } else if (prim_type1.compare("point") == 0 && prim_type2.compare("plane") == 0) {
-        def_ = std::make_shared< TaskGeometricProjection<GeometricPoint, GeometricPlane> >(geom_prim_map_, visualizer_);
+        def_ = std::make_shared< TDefGeometricProjection<GeometricPoint, GeometricPlane> >(geom_prim_map_, visualizer_);
       } else if (prim_type1.compare("point") == 0 && prim_type2.compare("box") == 0) {
-        def_ = std::make_shared< TaskGeometricProjection<GeometricPoint, GeometricBox> >(geom_prim_map_, visualizer_);
+        def_ = std::make_shared< TDefGeometricProjection<GeometricPoint, GeometricBox> >(geom_prim_map_, visualizer_);
       } else if (prim_type1.compare("point") == 0 && prim_type2.compare("cylinder") == 0) {
-        def_ = std::make_shared< TaskGeometricProjection<GeometricPoint, GeometricCylinder> >(geom_prim_map_, visualizer_);
+        def_ = std::make_shared< TDefGeometricProjection<GeometricPoint, GeometricCylinder> >(geom_prim_map_, visualizer_);
       } else if (prim_type1.compare("point") == 0 && prim_type2.compare("sphere") == 0) {
-        def_ = std::make_shared< TaskGeometricProjection<GeometricPoint, GeometricSphere> >(geom_prim_map_, visualizer_);
+        def_ = std::make_shared< TDefGeometricProjection<GeometricPoint, GeometricSphere> >(geom_prim_map_, visualizer_);
       } else if (prim_type1.compare("line") == 0 && prim_type2.compare("line") == 0) {
-        def_ = std::make_shared< TaskGeometricProjection<GeometricLine, GeometricLine> >(geom_prim_map_, visualizer_);
+        def_ = std::make_shared< TDefGeometricProjection<GeometricLine, GeometricLine> >(geom_prim_map_, visualizer_);
       } else if (prim_type1.compare("sphere") == 0 && prim_type2.compare("plane") == 0) {
-        def_ = std::make_shared< TaskGeometricProjection<GeometricSphere, GeometricPlane> >(geom_prim_map_, visualizer_);
+        def_ = std::make_shared< TDefGeometricProjection<GeometricSphere, GeometricPlane> >(geom_prim_map_, visualizer_);
       } else if (prim_type1.compare("sphere") == 0 && prim_type2.compare("sphere") == 0) {
-        def_ = std::make_shared< TaskGeometricProjection<GeometricSphere, GeometricSphere> >(geom_prim_map_, visualizer_);
+        def_ = std::make_shared< TDefGeometricProjection<GeometricSphere, GeometricSphere> >(geom_prim_map_, visualizer_);
       } else if (prim_type1.compare("frame") == 0 && prim_type2.compare("frame") == 0) {
-        def_ = std::make_shared< TaskGeometricProjection<GeometricFrame, GeometricFrame> >(geom_prim_map_, visualizer_);
+        def_ = std::make_shared< TDefGeometricProjection<GeometricFrame, GeometricFrame> >(geom_prim_map_, visualizer_);
       } else {
         printHiqpWarning("TDefGeomProj does not support primitive combination of types '" + prim_type1 + "' and '" + prim_type2 + "'!");
         return -1;
@@ -150,15 +152,15 @@ namespace hiqp {
       std::string prim_type1 = def_params.at(1);
       std::string prim_type2 = def_params.at(2);
       if (prim_type1.compare("line") == 0 && prim_type2.compare("line") == 0) {
-        def_ = std::make_shared< TaskGeometricAlignment<GeometricLine, GeometricLine> >(geom_prim_map_, visualizer_);
+        def_ = std::make_shared< TDefGeometricAlignment<GeometricLine, GeometricLine> >(geom_prim_map_, visualizer_);
       } else if (prim_type1.compare("line") == 0 && prim_type2.compare("plane") == 0) {
-        def_ = std::make_shared< TaskGeometricAlignment<GeometricLine, GeometricPlane> >(geom_prim_map_, visualizer_);
+        def_ = std::make_shared< TDefGeometricAlignment<GeometricLine, GeometricPlane> >(geom_prim_map_, visualizer_);
       } else if (prim_type1.compare("line") == 0 && prim_type2.compare("cylinder") == 0) {
-        def_ = std::make_shared< TaskGeometricAlignment<GeometricLine, GeometricCylinder> >(geom_prim_map_, visualizer_);
+        def_ = std::make_shared< TDefGeometricAlignment<GeometricLine, GeometricCylinder> >(geom_prim_map_, visualizer_);
       } else if (prim_type1.compare("line") == 0 && prim_type2.compare("sphere") == 0) {
-        def_ = std::make_shared< TaskGeometricAlignment<GeometricLine, GeometricSphere> >(geom_prim_map_, visualizer_);
+        def_ = std::make_shared< TDefGeometricAlignment<GeometricLine, GeometricSphere> >(geom_prim_map_, visualizer_);
       } else if (prim_type1.compare("frame") == 0 && prim_type2.compare("frame") == 0) {
-        def_ = std::make_shared< TaskGeometricAlignment<GeometricFrame, GeometricFrame> >(geom_prim_map_, visualizer_);
+        def_ = std::make_shared< TDefGeometricAlignment<GeometricFrame, GeometricFrame> >(geom_prim_map_, visualizer_);
       } else {
         printHiqpWarning("TDefGeomAlign does not support primitive combination of types '" + prim_type1 + "' and '" + prim_type2 + "'!");
         return -1;
@@ -175,16 +177,16 @@ namespace hiqp {
   {
     std::string type = dyn_params.at(0);
 
-    if (type.compare("TDynFirstOrder") == 0) {
-      dyn_ = std::make_shared<DynamicsFirstOrder>(geom_prim_map_, visualizer_);
-    } else if (type.compare("TDynFirstOrderCubic") == 0) {
-      dyn_ = std::make_shared<DynamicsFirstOrderCubic>(geom_prim_map_, visualizer_);
+    if (type.compare("TDynLinear") == 0) {
+      dyn_ = std::make_shared<TDynLinear>(geom_prim_map_, visualizer_);
+    } else if (type.compare("TDynCubic") == 0) {
+      dyn_ = std::make_shared<TDynCubic>(geom_prim_map_, visualizer_);
     } else if (type.compare("TDynJntLimits") == 0) {
-      dyn_ = std::make_shared<DynamicsJntLimits>(geom_prim_map_, visualizer_);
-    } else if (type.compare("TDynMinJerk") == 0) {
-      dyn_ = std::make_shared<DynamicsMinimalJerk>(geom_prim_map_, visualizer_);
+      dyn_ = std::make_shared<TDynJntLimits>(geom_prim_map_, visualizer_);
+    } else if (type.compare("TDynMinimalJerk") == 0) {
+      dyn_ = std::make_shared<TDynMinimalJerk>(geom_prim_map_, visualizer_);
     } else if (type.compare("TDynHyperSin") == 0) {
-      dyn_ = std::make_shared<DynamicsHyperSin>(geom_prim_map_, visualizer_);
+      dyn_ = std::make_shared<TDynHyperSin>(geom_prim_map_, visualizer_);
     } else {
       printHiqpWarning("The task dynamics type name '" + type + "' was not understood!");
       return -1;

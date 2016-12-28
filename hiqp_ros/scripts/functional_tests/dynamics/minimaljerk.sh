@@ -22,4 +22,4 @@ priority: 3
 visible: 1
 active: 1
 def_params: ['TDefGeomProj', 'point', 'point', 'mypoint1 = mypoint2']
-dyn_params: ['TDynMinJerk', '5.0', '1.0']"
+dyn_params: ['TDynMinimalJerk', '5.0', '1.0']"

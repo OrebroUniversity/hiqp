@@ -22,4 +22,4 @@ priority: 3
 visible: 1
 active: 1
 def_params: ['TDefGeomProj', 'point', 'point', 'mypoint3 = mypoint4']
-dyn_params: ['TDynFirstOrderCubic', '1.0']"
+dyn_params: ['TDynCubic', '1.0']"

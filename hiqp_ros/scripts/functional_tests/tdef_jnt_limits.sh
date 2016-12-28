@@ -1,5 +1,5 @@
 rosservice call /yumi/hiqp_joint_velocity_controller/set_task \
-"name: 'task_test_taskjntlimits'
+"name: 'task_jntlimits'
 priority: 3
 visible: 1
 active: 1

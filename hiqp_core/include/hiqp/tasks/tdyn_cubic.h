@@ -14,8 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef HIQP_DYNAMICS_HYPER_SIN_H
-#define HIQP_DYNAMICS_HYPER_SIN_H
+#ifndef HIQP_TDYN_CUBIC_H
+#define HIQP_TDYN_CUBIC_H
 
 #include <hiqp/robot_state.h>
 #include <hiqp/task_dynamics.h>
@@ -25,17 +25,15 @@ namespace hiqp
 namespace tasks
 {
 
-  /*! \brief A general hyperbolic sin task dynamics. Useful for only influencing the manipulator behaviour for task function values within a certain span.
+  /*! \brief A cubic dynamics similar to first-order dynamics but with slower convergence around e=0.
    *  \author Marcus A Johansson */  
-  class DynamicsHyperSin : public TaskDynamics
-  {
+  class TDynCubic : public TaskDynamics {
   public:
-
-    DynamicsHyperSin(std::shared_ptr<GeometricPrimitiveMap> geom_prim_map,
-                       std::shared_ptr<Visualizer> visualizer)
+    TDynCubic(std::shared_ptr<GeometricPrimitiveMap> geom_prim_map,
+                            std::shared_ptr<Visualizer> visualizer)
      : TaskDynamics(geom_prim_map, visualizer) {}
 
-    ~DynamicsHyperSin() noexcept {}
+    ~TDynCubic() noexcept {}
 
     int init(const std::vector<std::string>& parameters,
              RobotStatePtr robot_state,
@@ -49,10 +47,10 @@ namespace tasks
     int monitor();
 
   private:
-    DynamicsHyperSin(const DynamicsHyperSin& other) = delete;
-    DynamicsHyperSin(DynamicsHyperSin&& other) = delete;
-    DynamicsHyperSin& operator=(const DynamicsHyperSin& other) = delete;
-    DynamicsHyperSin& operator=(DynamicsHyperSin&& other) noexcept = delete;
+    TDynCubic(const TDynCubic& other) = delete;
+    TDynCubic(TDynCubic&& other) = delete;
+    TDynCubic& operator=(const TDynCubic& other) = delete;
+    TDynCubic& operator=(TDynCubic&& other) noexcept = delete;
 
     double lambda_;
   };

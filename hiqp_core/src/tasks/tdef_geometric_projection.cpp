@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include <hiqp/tasks/task_geometric_projection.h>
+#include <hiqp/tasks/tdef_geometric_projection.h>
 
 #include <hiqp/geometric_primitives/geometric_point.h>
 #include <hiqp/geometric_primitives/geometric_line.h>
@@ -54,7 +54,7 @@ namespace tasks
   ///////////////////////////////////////////////////////////////////////////////
 
   template<>
-  int TaskGeometricProjection<GeometricPoint, GeometricPoint>::project
+  int TDefGeometricProjection<GeometricPoint, GeometricPoint>::project
   (std::shared_ptr<GeometricPoint> point1, std::shared_ptr<GeometricPoint> point2) {
     KDL::Vector p1__ = pose_a_.M * point1->getPointKDL();
     KDL::Vector p1 = pose_a_.p + p1__;
@@ -79,7 +79,7 @@ namespace tasks
 
 
   template<>
-  int TaskGeometricProjection<GeometricPoint, GeometricLine>::project
+  int TDefGeometricProjection<GeometricPoint, GeometricLine>::project
   (std::shared_ptr<GeometricPoint> point, std::shared_ptr<GeometricLine> line) {
     KDL::Vector p__ = pose_a_.M * point->getPointKDL();
     KDL::Vector p = pose_a_.p + p__;
@@ -116,7 +116,7 @@ namespace tasks
 
 
   template<>
-  int TaskGeometricProjection<GeometricPoint, GeometricPlane>::project
+  int TDefGeometricProjection<GeometricPoint, GeometricPlane>::project
   (std::shared_ptr<GeometricPoint> point, std::shared_ptr<GeometricPlane> plane) {
     KDL::Vector p__ = pose_a_.M * point->getPointKDL();
     KDL::Vector p = pose_a_.p + p__;
@@ -140,7 +140,7 @@ namespace tasks
 
 
   template<>
-  int TaskGeometricProjection<GeometricPoint, GeometricBox>::project
+  int TDefGeometricProjection<GeometricPoint, GeometricBox>::project
   (std::shared_ptr<GeometricPoint> point, std::shared_ptr<GeometricBox> box) 
   {
     KDL::Vector p__ = pose_a_.M * point->getPointKDL();
@@ -180,7 +180,7 @@ namespace tasks
 
 
   template<>
-  int TaskGeometricProjection<GeometricPoint, GeometricCylinder>::project
+  int TDefGeometricProjection<GeometricPoint, GeometricCylinder>::project
   (
    std::shared_ptr<GeometricPoint> point, 
    std::shared_ptr<GeometricCylinder> cylinder
@@ -221,7 +221,7 @@ namespace tasks
 
 
   template<>
-  int TaskGeometricProjection<GeometricPoint, GeometricSphere>::project
+  int TDefGeometricProjection<GeometricPoint, GeometricSphere>::project
   (std::shared_ptr<GeometricPoint> point, std::shared_ptr<GeometricSphere> sphere) {
     KDL::Vector p1__ = pose_a_.M * point->getPointKDL();
     KDL::Vector p1 = pose_a_.p + p1__;
@@ -255,7 +255,7 @@ namespace tasks
   ///////////////////////////////////////////////////////////////////////////////
 
   template<>
-  int TaskGeometricProjection<GeometricLine, GeometricLine>::project
+  int TDefGeometricProjection<GeometricLine, GeometricLine>::project
   (std::shared_ptr<GeometricLine> line1, std::shared_ptr<GeometricLine> line2) {
     KDL::Vector v1 = pose_a_.M * line1->getDirectionKDL();
     KDL::Vector d1__ = pose_a_.M * line1->getOffsetKDL();
@@ -307,7 +307,7 @@ namespace tasks
   ///////////////////////////////////////////////////////////////////////////////
 
   template<>
-  int TaskGeometricProjection<GeometricSphere, GeometricPlane>::project
+  int TDefGeometricProjection<GeometricSphere, GeometricPlane>::project
   (std::shared_ptr<GeometricSphere> sphere, std::shared_ptr<GeometricPlane> plane) {
     KDL::Vector c__ = pose_a_.M * sphere->getCenterKDL();
     KDL::Vector c = pose_a_.p + c__;
@@ -335,7 +335,7 @@ namespace tasks
   }
 
   template<>
-  int TaskGeometricProjection<GeometricSphere, GeometricSphere>::project
+  int TDefGeometricProjection<GeometricSphere, GeometricSphere>::project
   (std::shared_ptr<GeometricSphere> sphere1, std::shared_ptr<GeometricSphere> sphere2) {
     KDL::Vector p1__ = pose_a_.M * sphere1->getCenterKDL();
     KDL::Vector p1 = pose_a_.p + p1__;
@@ -374,7 +374,7 @@ namespace tasks
   ///////////////////////////////////////////////////////////////////////////////
 
   template<>
-  int TaskGeometricProjection<GeometricFrame, GeometricFrame>::project
+  int TDefGeometricProjection<GeometricFrame, GeometricFrame>::project
   (std::shared_ptr<GeometricFrame> frame1, std::shared_ptr<GeometricFrame> frame2) {
     KDL::Vector p1__ = pose_a_.M * frame1->getCenterKDL();
     KDL::Vector p1 = pose_a_.p + p1__;

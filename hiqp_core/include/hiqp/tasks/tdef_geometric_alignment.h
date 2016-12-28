@@ -14,8 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef HIQP_TASK_GEOMETRIC_ALIGNMENT_H
-#define HIQP_TASK_GEOMETRIC_ALIGNMENT_H
+#ifndef HIQP_TDEF_GEOMETRIC_ALIGNMENT_H
+#define HIQP_TDEF_GEOMETRIC_ALIGNMENT_H
 
 #include <string>
 #include <vector>
@@ -34,11 +34,11 @@ namespace tasks
   /*! \brief A task definition that rotates primitives to align with each other.
    *  \author Marcus A Johansson */  
   template<typename PrimitiveA, typename PrimitiveB>
-  class TaskGeometricAlignment : public TaskDefinition {
+  class TDefGeometricAlignment : public TaskDefinition {
   public:
-    TaskGeometricAlignment(std::shared_ptr<GeometricPrimitiveMap> geom_prim_map,
+    TDefGeometricAlignment(std::shared_ptr<GeometricPrimitiveMap> geom_prim_map,
                            std::shared_ptr<Visualizer> visualizer);
-    ~TaskGeometricAlignment() noexcept = default;
+    ~TDefGeometricAlignment() noexcept = default;
 
     int init(const std::vector<std::string>& parameters,
              RobotStatePtr robot_state);
@@ -48,10 +48,10 @@ namespace tasks
     int monitor();
 
   private:
-    TaskGeometricAlignment(const TaskGeometricAlignment& other) = delete;
-    TaskGeometricAlignment(TaskGeometricAlignment&& other) = delete;
-    TaskGeometricAlignment& operator=(const TaskGeometricAlignment& other) = delete;
-    TaskGeometricAlignment& operator=(TaskGeometricAlignment&& other) noexcept = delete;
+    TDefGeometricAlignment(const TDefGeometricAlignment& other) = delete;
+    TDefGeometricAlignment(TDefGeometricAlignment&& other) = delete;
+    TDefGeometricAlignment& operator=(const TDefGeometricAlignment& other) = delete;
+    TDefGeometricAlignment& operator=(TDefGeometricAlignment&& other) noexcept = delete;
 
     int align(std::shared_ptr<PrimitiveA> first, std::shared_ptr<PrimitiveB> second);
     int alignVectors(const KDL::Vector& v1, const KDL::Vector v2);
@@ -78,6 +78,6 @@ namespace tasks
 
 } // namespace hiqp
 
-#include <hiqp/tasks/task_geometric_alignment__impl.h>
+#include <hiqp/tasks/tdef_geometric_alignment__impl.h>
 
 #endif // include guard

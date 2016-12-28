@@ -14,8 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef HIQP_DYNAMICS_MINIMAL_JERK_H
-#define HIQP_DYNAMICS_MINIMAL_JERK_H
+#ifndef HIQP_TDYN_LINEAR_H
+#define HIQP_TDYN_LINEAR_H
 
 #include <hiqp/robot_state.h>
 #include <hiqp/task_dynamics.h>
@@ -25,15 +25,15 @@ namespace hiqp
 namespace tasks
 {
 
-  /*! \brief A task dynamics that enforces minimal jerk throughout the whole motion.
+  /*! \brief A general first-order task dynamics implementation that enforces an exponential decay of the task performance value.
    *  \author Marcus A Johansson */  
-  class DynamicsMinimalJerk : public TaskDynamics {
+  class TDynLinear : public TaskDynamics {
   public:
-    DynamicsMinimalJerk(std::shared_ptr<GeometricPrimitiveMap> geom_prim_map,
-                         std::shared_ptr<Visualizer> visualizer)
-    : TaskDynamics(geom_prim_map, visualizer) {}
+    TDynLinear(std::shared_ptr<GeometricPrimitiveMap> geom_prim_map,
+                       std::shared_ptr<Visualizer> visualizer)
+     : TaskDynamics(geom_prim_map, visualizer) {}
 
-    ~DynamicsMinimalJerk() noexcept = default;
+    ~TDynLinear() noexcept {}
 
     int init(const std::vector<std::string>& parameters,
              RobotStatePtr robot_state,
@@ -47,18 +47,12 @@ namespace tasks
     int monitor();
 
   private:
-    DynamicsMinimalJerk(const DynamicsMinimalJerk& other) = delete;
-    DynamicsMinimalJerk(DynamicsMinimalJerk&& other) = delete;
-    DynamicsMinimalJerk& operator=(const DynamicsMinimalJerk& other) = delete;
-    DynamicsMinimalJerk& operator=(DynamicsMinimalJerk&& other) noexcept = delete;
+    TDynLinear(const TDynLinear& other) = delete;
+    TDynLinear(TDynLinear&& other) = delete;
+    TDynLinear& operator=(const TDynLinear& other) = delete;
+    TDynLinear& operator=(TDynLinear&& other) noexcept = delete;
 
-    HiQPTimePoint                time_start_;
-    double                       total_duration_;
-    double                       gain_;
-    Eigen::VectorXd              e_initial_;
-    Eigen::VectorXd              e_final_;
-    Eigen::VectorXd              e_diff_;
-    double                       f_;
+    double lambda_;
   };
 
 } // namespace tasks

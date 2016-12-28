@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include <hiqp/tasks/task_geometric_alignment.h>
+#include <hiqp/tasks/tdef_geometric_alignment.h>
 
 #include <hiqp/geometric_primitives/geometric_point.h>
 #include <hiqp/geometric_primitives/geometric_line.h>
@@ -35,7 +35,7 @@ namespace tasks
 {
 
 template<>
-int TaskGeometricAlignment<GeometricLine, GeometricLine>::align
+int TDefGeometricAlignment<GeometricLine, GeometricLine>::align
 (
   std::shared_ptr<GeometricLine> line1,
   std::shared_ptr<GeometricLine> line2
@@ -52,7 +52,7 @@ int TaskGeometricAlignment<GeometricLine, GeometricLine>::align
 
 
 template<>
-int TaskGeometricAlignment<GeometricLine, GeometricPlane>::align
+int TDefGeometricAlignment<GeometricLine, GeometricPlane>::align
 (
   std::shared_ptr<GeometricLine> line,
   std::shared_ptr<GeometricPlane> plane
@@ -69,7 +69,7 @@ int TaskGeometricAlignment<GeometricLine, GeometricPlane>::align
 
 
 template<>
-int TaskGeometricAlignment<GeometricLine, GeometricCylinder>::align
+int TDefGeometricAlignment<GeometricLine, GeometricCylinder>::align
 (
   std::shared_ptr<GeometricLine> line,
   std::shared_ptr<GeometricCylinder> cylinder
@@ -95,7 +95,7 @@ int TaskGeometricAlignment<GeometricLine, GeometricCylinder>::align
 
 
 template<>
-int TaskGeometricAlignment<GeometricLine, GeometricSphere>::align
+int TDefGeometricAlignment<GeometricLine, GeometricSphere>::align
 (
   std::shared_ptr<GeometricLine> line,
   std::shared_ptr<GeometricSphere> sphere
@@ -117,7 +117,7 @@ int TaskGeometricAlignment<GeometricLine, GeometricSphere>::align
 
 /// \bug Frame alignment seems not to consider the axis sense (e.g., alignment along x and -x seems the same)
 template<>
-int TaskGeometricAlignment<GeometricFrame, GeometricFrame>::align
+int TDefGeometricAlignment<GeometricFrame, GeometricFrame>::align
 (
   std::shared_ptr<GeometricFrame> frame1,
   std::shared_ptr<GeometricFrame> frame2

@@ -52,16 +52,18 @@ add_library(${PROJECT_NAME} src/utilities.cpp
                             src/geometric_primitives/geometric_primitive_map.cpp
 
                             src/solvers/gurobi_solver.cpp
-                            src/tasks/dynamics_first_order.cpp
-                            src/tasks/dynamics_first_order_cubic.cpp
-                            src/tasks/dynamics_jnt_limits.cpp
-                            src/tasks/dynamics_minimal_jerk.cpp
-                            src/tasks/dynamics_hyper_sin.cpp
-                            src/tasks/task_full_pose.cpp
-                            src/tasks/task_geometric_projection.cpp
-                            src/tasks/task_geometric_alignment.cpp
-                            src/tasks/task_jnt_config.cpp
-                            src/tasks/task_jnt_limits.cpp
+
+                            src/tasks/tdyn_linear.cpp
+                            src/tasks/tdyn_cubic.cpp
+                            src/tasks/tdyn_hyper_sin.cpp
+                            src/tasks/tdyn_jnt_limits.cpp
+                            src/tasks/tdyn_minimal_jerk.cpp
+
+                            src/tasks/tdef_full_pose.cpp
+                            src/tasks/tdef_geometric_alignment.cpp
+                            src/tasks/tdef_geometric_projection.cpp
+                            src/tasks/tdef_jnt_config.cpp
+                            src/tasks/tdef_jnt_limits.cpp
 )
 
 target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} 

@@ -14,12 +14,12 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef HIQP_TASK_JNT_CONFIG_H
-#define HIQP_TASK_JNT_CONFIG_H
+#ifndef HIQP_TDEF_FULL_POSE_H
+#define HIQP_TDEF_FULL_POSE_H
 
 #include <string>
 
-#include <hiqp/hiqp_time_point.h>
+#include <hiqp/robot_state.h>
 #include <hiqp/task_definition.h>
 
 namespace hiqp
@@ -27,14 +27,15 @@ namespace hiqp
 namespace tasks
 {
 
-  /*! \brief A task definition that sets a specific joints position.
-   *  \author Marcus A Johansson */  
-  class TaskJntConfig : public TaskDefinition {
+  /*! \brief Represents a task definition that sets a specific joint configuration. This task definition does not leave any redundancy available to other tasks!
+   *  \author Marcus A Johansson */ 
+  class TDefFullPose : public TaskDefinition {
   public:
-    TaskJntConfig(std::shared_ptr<GeometricPrimitiveMap> geom_prim_map,
-                  std::shared_ptr<Visualizer> visualizer)
+    TDefFullPose(std::shared_ptr<GeometricPrimitiveMap> geom_prim_map,
+                 std::shared_ptr<Visualizer> visualizer)
      : TaskDefinition(geom_prim_map, visualizer) {}
-    ~TaskJntConfig() noexcept {}
+
+    ~TDefFullPose() noexcept {}
 
     int init(const std::vector<std::string>& parameters,
              RobotStatePtr robot_state);
@@ -44,14 +45,12 @@ namespace tasks
     int monitor();
 
   private:
-    TaskJntConfig(const TaskJntConfig& other) = delete;
-    TaskJntConfig(TaskJntConfig&& other) = delete;
-    TaskJntConfig& operator=(const TaskJntConfig& other) = delete;
-    TaskJntConfig& operator=(TaskJntConfig&& other) noexcept = delete;
+    TDefFullPose(const TDefFullPose& other) = delete;
+    TDefFullPose(TDefFullPose&& other) = delete;
+    TDefFullPose& operator=(const TDefFullPose& other) = delete;
+    TDefFullPose& operator=(TDefFullPose&& other) noexcept = delete;
 
-    std::string              link_name_;
-    int                      joint_q_nr_;
-    double                   desired_configuration_;
+    std::vector<double>                desired_configuration_;
   };
 
 } // namespace tasks

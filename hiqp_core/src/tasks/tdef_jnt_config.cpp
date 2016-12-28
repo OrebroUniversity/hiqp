@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include <hiqp/tasks/task_jnt_config.h>
+#include <hiqp/tasks/tdef_jnt_config.h>
 #include <hiqp/utilities.h>
 
 #include <iostream>
@@ -25,11 +25,11 @@ namespace tasks
 {
 
 
-int TaskJntConfig::init(const std::vector<std::string>& parameters,
+int TDefJntConfig::init(const std::vector<std::string>& parameters,
                         RobotStatePtr robot_state) {
   int size = parameters.size();
   if (size != 3) {
-    printHiqpWarning("TaskJntConfig requires 3 parameters, got " 
+    printHiqpWarning("TDefJntConfig requires 3 parameters, got " 
       + std::to_string(size) + "! Initialization failed!");
     return -1;
   }
@@ -39,12 +39,12 @@ int TaskJntConfig::init(const std::vector<std::string>& parameters,
   joint_q_nr_ = kdl_getQNrFromLinkName(robot_state->kdl_tree_, link_name_);
 
   if (joint_q_nr_ < 0) {
-    printHiqpWarning("TaskJntConfig::init, couldn't find joint '" + link_name_ + "'! Initialization failed.");
+    printHiqpWarning("TDefJntConfig::init, couldn't find joint '" + link_name_ + "'! Initialization failed.");
     return -2;
   }
 
   if (!robot_state->isQNrWritable(joint_q_nr_)) {
-    printHiqpWarning("TaskJntConfig::init, the joint '" + link_name_ + "' is not writable! Initialization failed.");
+    printHiqpWarning("TDefJntConfig::init, the joint '" + link_name_ + "' is not writable! Initialization failed.");
     return -3;
   }
 
@@ -64,13 +64,13 @@ int TaskJntConfig::init(const std::vector<std::string>& parameters,
   return 0;
 }
 
-int TaskJntConfig::update(RobotStatePtr robot_state) {
+int TDefJntConfig::update(RobotStatePtr robot_state) {
   const KDL::JntArray &q = robot_state->kdl_jnt_array_vel_.q;
   e_(0) = desired_configuration_ - q(joint_q_nr_);
   return 0;
 }
 
-int TaskJntConfig::monitor() {
+int TDefJntConfig::monitor() {
   return 0;
 }
 

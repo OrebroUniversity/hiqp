@@ -16,14 +16,14 @@
 
 #include <hiqp/utilities.h>
 
-#include <hiqp/tasks/dynamics_minimal_jerk.h>
+#include <hiqp/tasks/tdyn_minimal_jerk.h>
 
 namespace hiqp
 {
 namespace tasks
 {
 
-  int DynamicsMinimalJerk::init(const std::vector<std::string>& parameters,
+  int TDynMinimalJerk::init(const std::vector<std::string>& parameters,
                                 RobotStatePtr robot_state,
                                 const Eigen::VectorXd& e_initial,
                                 const Eigen::VectorXd& e_final) {
@@ -51,7 +51,7 @@ namespace tasks
     return 0;
   }
 
-  int DynamicsMinimalJerk::update(RobotStatePtr robot_state,
+  int TDynMinimalJerk::update(RobotStatePtr robot_state,
                                   const Eigen::VectorXd& e,
                                   const Eigen::MatrixXd& J) {
     e_dot_star_.resize(e.size());
@@ -71,7 +71,7 @@ namespace tasks
     return 0;
   }
 
-  int DynamicsMinimalJerk::monitor() {
+  int TDynMinimalJerk::monitor() {
     return 0;
   }
 

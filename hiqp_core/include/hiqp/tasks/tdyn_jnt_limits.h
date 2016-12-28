@@ -14,8 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef HIQP_DYNAMICS_JNT_LIMITS_H
-#define HIQP_DYNAMICS_JNT_LIMITS_H
+#ifndef HIQP_TDYN_JNT_LIMITS_H
+#define HIQP_TDYN_JNT_LIMITS_H
 
 #include <hiqp/robot_state.h>
 #include <hiqp/task_dynamics.h>
@@ -25,15 +25,15 @@ namespace hiqp
 namespace tasks
 {
 
-  /*! \brief A special task dynamics to be used only with the TaskJntLimits task definition.
+  /*! \brief A special task dynamics to be used only with the TDefJntLimits task definition.
    *  \author Marcus A Johansson */  
-  class DynamicsJntLimits : public TaskDynamics {
+  class TDynJntLimits : public TaskDynamics {
   public:
-    DynamicsJntLimits(std::shared_ptr<GeometricPrimitiveMap> geom_prim_map,
+    TDynJntLimits(std::shared_ptr<GeometricPrimitiveMap> geom_prim_map,
                       std::shared_ptr<Visualizer> visualizer)
     : TaskDynamics(geom_prim_map, visualizer) {}
 
-    ~DynamicsJntLimits() noexcept = default;
+    ~TDynJntLimits() noexcept = default;
 
     int init(const std::vector<std::string>& parameters,
              RobotStatePtr robot_state,
@@ -47,10 +47,10 @@ namespace tasks
     int monitor();
 
   private:
-    DynamicsJntLimits(const DynamicsJntLimits& other) = delete;
-    DynamicsJntLimits(DynamicsJntLimits&& other) = delete;
-    DynamicsJntLimits& operator=(const DynamicsJntLimits& other) = delete;
-    DynamicsJntLimits& operator=(DynamicsJntLimits&& other) noexcept = delete;
+    TDynJntLimits(const TDynJntLimits& other) = delete;
+    TDynJntLimits(TDynJntLimits&& other) = delete;
+    TDynJntLimits& operator=(const TDynJntLimits& other) = delete;
+    TDynJntLimits& operator=(TDynJntLimits&& other) noexcept = delete;
 
     double             dq_max_;
     double             gain_;

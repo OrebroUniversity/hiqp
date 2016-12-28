@@ -14,12 +14,12 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef HIQP_TASK_FULL_POSE_H
-#define HIQP_TASK_FULL_POSE_H
+#ifndef HIQP_TDEF_JNT_CONFIG_H
+#define HIQP_TDEF_JNT_CONFIG_H
 
 #include <string>
 
-#include <hiqp/robot_state.h>
+#include <hiqp/hiqp_time_point.h>
 #include <hiqp/task_definition.h>
 
 namespace hiqp
@@ -27,17 +27,14 @@ namespace hiqp
 namespace tasks
 {
 
-  /*! \brief Represents a task definition that sets a specific joint configuration. This task definition does not leave any redundancy available to other tasks!
-   *  \author Marcus A Johansson */ 
-  class TaskFullPose : public TaskDefinition
-  {
+  /*! \brief A task definition that sets a specific joints position.
+   *  \author Marcus A Johansson */  
+  class TDefJntConfig : public TaskDefinition {
   public:
-
-    TaskFullPose(std::shared_ptr<GeometricPrimitiveMap> geom_prim_map,
-                 std::shared_ptr<Visualizer> visualizer)
+    TDefJntConfig(std::shared_ptr<GeometricPrimitiveMap> geom_prim_map,
+                  std::shared_ptr<Visualizer> visualizer)
      : TaskDefinition(geom_prim_map, visualizer) {}
-
-    ~TaskFullPose() noexcept {}
+    ~TDefJntConfig() noexcept {}
 
     int init(const std::vector<std::string>& parameters,
              RobotStatePtr robot_state);
@@ -47,12 +44,14 @@ namespace tasks
     int monitor();
 
   private:
-    TaskFullPose(const TaskFullPose& other) = delete;
-    TaskFullPose(TaskFullPose&& other) = delete;
-    TaskFullPose& operator=(const TaskFullPose& other) = delete;
-    TaskFullPose& operator=(TaskFullPose&& other) noexcept = delete;
+    TDefJntConfig(const TDefJntConfig& other) = delete;
+    TDefJntConfig(TDefJntConfig&& other) = delete;
+    TDefJntConfig& operator=(const TDefJntConfig& other) = delete;
+    TDefJntConfig& operator=(TDefJntConfig&& other) noexcept = delete;
 
-    std::vector<double>                desired_configuration_;
+    std::string              link_name_;
+    int                      joint_q_nr_;
+    double                   desired_configuration_;
   };
 
 } // namespace tasks

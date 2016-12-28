@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include <hiqp/tasks/task_jnt_limits.h>
+#include <hiqp/tasks/tdef_jnt_limits.h>
 #include <hiqp/utilities.h>
 
 #include <iostream>
@@ -24,12 +24,12 @@ namespace hiqp
 namespace tasks
 {
 
-  int TaskJntLimits::init(const std::vector<std::string>& parameters,
+  int TDefJntLimits::init(const std::vector<std::string>& parameters,
                           RobotStatePtr robot_state) {
     int size = parameters.size();
     if (size != 4)
     {
-      printHiqpWarning("TaskJntLimits requires 4 parameter, got " 
+      printHiqpWarning("TDefJntLimits requires 4 parameter, got " 
         + std::to_string(size) + "! Initialization failed!");
       return -1;
     }
@@ -38,12 +38,12 @@ namespace tasks
     link_frame_q_nr_ = kdl_getQNrFromLinkName(robot_state->kdl_tree_, link_frame_name_);
 
     if (link_frame_q_nr_ < 0) {
-      printHiqpWarning("TaskJntLimits::init, couldn't find joint '" + link_frame_name_ + "'! Initialization failed.");
+      printHiqpWarning("TDefJntLimits::init, couldn't find joint '" + link_frame_name_ + "'! Initialization failed.");
       return -2;
     }
 
     if (!robot_state->isQNrWritable(link_frame_q_nr_)) {
-      printHiqpWarning("TaskJntLimits::init, the joint '" + link_frame_name_ + "' is not writable! Initialization failed.");
+      printHiqpWarning("TDefJntLimits::init, the joint '" + link_frame_name_ + "' is not writable! Initialization failed.");
       return -3;
     }
 
@@ -72,7 +72,7 @@ namespace tasks
     return 0;
   }
 
-  int TaskJntLimits::update(RobotStatePtr robot_state) {
+  int TDefJntLimits::update(RobotStatePtr robot_state) {
     double q = robot_state->kdl_jnt_array_vel_.q(link_frame_q_nr_);
     
     e_(0) = q; //e_(0), and e_(1) do not actually matter, since they're ignored in DynamicsJntLimits where de_*=+/- dq_max
@@ -83,7 +83,7 @@ namespace tasks
     return 0;
   }
 
-  int TaskJntLimits::monitor() {
+  int TDefJntLimits::monitor() {
     return 0;
   }
 

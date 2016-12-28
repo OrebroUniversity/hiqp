@@ -14,8 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef HIQP_TASK_GEOMETRIC_ALIGNMENT__IMPL_H
-#define HIQP_TASK_GEOMETRIC_ALIGNMENT__IMPL_H
+#ifndef HIQP_TDEF_GEOMETRIC_PROJECTION__IMPL_H
+#define HIQP_TDEF_GEOMETRIC_PROJECTION__IMPL_H
 
 #include <sstream>
 #include <iterator>
@@ -28,22 +28,27 @@ namespace tasks
 {
 
   template<typename PrimitiveA, typename PrimitiveB>
-  TaskGeometricAlignment<PrimitiveA, PrimitiveB>::TaskGeometricAlignment(
+  TDefGeometricProjection<PrimitiveA, PrimitiveB>::TDefGeometricProjection(
     std::shared_ptr<GeometricPrimitiveMap> geom_prim_map,
     std::shared_ptr<Visualizer> visualizer)
   : TaskDefinition(geom_prim_map, visualizer) {}
 
+
   template<typename PrimitiveA, typename PrimitiveB>
-  int TaskGeometricAlignment<PrimitiveA, PrimitiveB>::init(const std::vector<std::string>& parameters,
-                                                           RobotStatePtr robot_state) {
+  int TDefGeometricProjection<PrimitiveA, PrimitiveB>::init(const std::vector<std::string>& parameters,
+                                                            RobotStatePtr robot_state) {
     int parameters_size = parameters.size();
-    if (parameters_size != 5) {
-      printHiqpWarning("'" + getTaskName() + "': TDefGeomAlign takes 5 parameters, got " + std::to_string(parameters_size) + "! The task was not added!");
+    if (parameters_size != 4) {
+      printHiqpWarning("'" + getTaskName() + "': TDefGeomProj takes 4 parameters, got " + std::to_string(parameters_size) + "! The task was not added!");
       return -1;
     }
 
-    std::string prim_type1 = parameters.at(1);
-    std::string prim_type2 = parameters.at(2);
+    // Used for debugging
+    // if (parameters.at(2).compare("box") == 0) {
+    //   getGeometricPrimitiveMap()->addGeometricPrimitive("box_center", "point", "world", true, {0, 0, 1, 1}, {0, 0, 0});
+    //   getGeometricPrimitiveMap()->addGeometricPrimitive("box_proj", "point", "world", true, {0, 0, 1, 1}, {0, 0, 0});
+    //   getGeometricPrimitiveMap()->addGeometricPrimitive("box_line", "line", "world", true, {0, 0, 1, 1}, {0, 0, 0, 0, 0, 0});
+    // }
 
     std::stringstream ss(parameters.at(3));
     std::vector<std::string> args(
@@ -51,18 +56,13 @@ namespace tasks
       std::istream_iterator<std::string>{});
 
     if (args.size() != 3) {
-      printHiqpWarning("'" + getTaskName() + "': TDefGeomAlign's parameter nr.4 needs whitespace separation! The task was not added!");
+      printHiqpWarning("'" + getTaskName() + "': TDefGeomProj's parameter nr.4 needs whitespace separation! The task was not added!");
       return -2;
     }
 
-    unsigned int n_task_dimensions = 1;
-    if (prim_type1.compare("frame") == 0 && prim_type2.compare("frame") == 0) {
-      n_task_dimensions = 2;
-    }
-    
     unsigned int n_joints = robot_state->getNumJoints();
-    e_.resize(n_task_dimensions);
-    J_.resize(n_task_dimensions, n_joints);
+    e_.resize(1);
+    J_.resize(1, n_joints);
     performance_measures_.resize(0);
 
     fk_solver_pos_ = std::make_shared<KDL::TreeFkSolverPos_recursive>(robot_state->kdl_tree_);
@@ -71,7 +71,18 @@ namespace tasks
     std::shared_ptr<GeometricPrimitiveMap> gpm = this->getGeometricPrimitiveMap();
 
     primitive_a_ = gpm->getGeometricPrimitive<PrimitiveA>(args.at(0));
+    if (primitive_a_ == nullptr) {
+      printHiqpWarning("In TDefGeometricProjection::init(), couldn't find primitive with name '"
+        + args.at(0) + "'. Unable to create task!");
+      return -3;
+    }
+
     primitive_b_ = gpm->getGeometricPrimitive<PrimitiveB>(args.at(2));
+    if (primitive_b_ == nullptr) {
+      printHiqpWarning("In TDefGeometricProjection::init(), couldn't find primitive with name '"
+        + args.at(2) + "'. Unable to create task!");
+      return -3;
+    }
 
     gpm->addDependencyToPrimitive(args.at(0), this->getTaskName());
     gpm->addDependencyToPrimitive(args.at(2), this->getTaskName());
@@ -85,21 +96,25 @@ namespace tasks
     } else if (args.at(1).compare(">") == 0 || args.at(1).compare(">=") == 0) {
       sign = 1;
     } else {
-      return -3;
+      return -4;
     }
 
-    delta_ = std::stod( parameters.at(4) );
-    task_types_.insert(task_types_.begin(), n_task_dimensions, sign);
+    task_types_.clear();
+    task_types_.insert(task_types_.begin(), 1, sign);
+
     return 0;
   }
 
+
+
+
   template<typename PrimitiveA, typename PrimitiveB>
-  int TaskGeometricAlignment<PrimitiveA, PrimitiveB>::update(RobotStatePtr robot_state) {
+  int TDefGeometricProjection<PrimitiveA, PrimitiveB>::update(RobotStatePtr robot_state) {
     int retval = 0;
 
     retval = fk_solver_pos_->JntToCart(robot_state->kdl_jnt_array_vel_.q, pose_a_, primitive_a_->getFrameId());
     if (retval != 0) {
-      std::cerr << "In TaskGeometricAlignment::apply : Can't solve position "
+      std::cerr << "In TDefGeometricProjection::apply : Can't solve position "
         << "of link '" << primitive_a_->getFrameId() << "'" << " in the "
         << "KDL tree! KDL::TreeFkSolverPos_recursive::JntToCart return "
         << "error code '" << retval << "'\n";
@@ -108,7 +123,7 @@ namespace tasks
 
     retval = fk_solver_pos_->JntToCart(robot_state->kdl_jnt_array_vel_.q, pose_b_, primitive_b_->getFrameId());
     if (retval != 0) {
-      std::cerr << "In TaskGeometricAlignment::apply : Can't solve position "
+      std::cerr << "In TDefGeometricProjection::apply : Can't solve position "
         << "of link '" << primitive_b_->getFrameId() << "'" << " in the "
         << "KDL tree! KDL::TreeFkSolverPos_recursive::JntToCart return "
         << "error code '" << retval << "'\n";
@@ -118,7 +133,7 @@ namespace tasks
     jacobian_a_.resize(robot_state->kdl_jnt_array_vel_.q.rows());
     retval = fk_solver_jac_->JntToJac(robot_state->kdl_jnt_array_vel_.q, jacobian_a_, primitive_a_->getFrameId());
     if (retval != 0) {
-      std::cerr << "In TaskGeometricAlignment::apply : Can't solve jacobian "
+      std::cerr << "In TDefGeometricProjection::apply : Can't solve jacobian "
         << "of link '" << primitive_a_->getFrameId() << "'" << " in the "
         << "KDL tree! KDL::TreeJntToJacSolver return error code "
         << "'" << retval << "'\n";
@@ -128,55 +143,43 @@ namespace tasks
     jacobian_b_.resize(robot_state->kdl_jnt_array_vel_.q.rows());
     retval = fk_solver_jac_->JntToJac(robot_state->kdl_jnt_array_vel_.q, jacobian_b_, primitive_b_->getFrameId());
     if (retval != 0) {
-      std::cerr << "In TaskGeometricAlignment::apply : Can't solve jacobian "
+      std::cerr << "In TDefGeometricProjection::apply : Can't solve jacobian "
         << "of link '" << primitive_b_->getFrameId() << "'" << " in the "
         << "KDL tree! KDL::TreeJntToJacSolver return error code "
         << "'" << retval << "'\n";
       return -4;
     }
-    
-    align(primitive_a_, primitive_b_);
+
+    project(primitive_a_, primitive_b_);
     maskJacobian(robot_state);
     return 0;
   }
 
   template<typename PrimitiveA, typename PrimitiveB>
-  int TaskGeometricAlignment<PrimitiveA, PrimitiveB>::monitor() {
+  int TDefGeometricProjection<PrimitiveA, PrimitiveB>::monitor() {
     return 0;
   }
 
   template<typename PrimitiveA, typename PrimitiveB>
-  void TaskGeometricAlignment<PrimitiveA, PrimitiveB>::maskJacobian(RobotStatePtr robot_state) {
+  KDL::Vector TDefGeometricProjection<PrimitiveA, PrimitiveB>::getVelocityJacobianForTwoPoints(
+    const KDL::Vector& p1, 
+    const KDL::Vector& p2,
+    int q_nr) 
+  {
+    KDL::Twist Ja = jacobian_a_.getColumn(q_nr);
+    KDL::Twist Jb = jacobian_b_.getColumn(q_nr);
+    KDL::Vector Jp1 = Ja.rot * p1;
+    KDL::Vector Jp2 = Jb.rot * p2;
+
+    return ( Jb.vel+Jp2 - (Ja.vel+Jp1) );
+  }
+
+  template<typename PrimitiveA, typename PrimitiveB>
+  void TDefGeometricProjection<PrimitiveA, PrimitiveB>::maskJacobian(RobotStatePtr robot_state) {
     for (unsigned int c=0; c<robot_state->getNumJoints(); ++c) {
       if (!robot_state->isQNrWritable(c))
         J_.col(c).setZero();
     }
-  }
-
-  template<typename PrimitiveA, typename PrimitiveB>
-  int TaskGeometricAlignment<PrimitiveA, PrimitiveB>::alignVectors
-  (
-    const KDL::Vector& v1, 
-    const KDL::Vector v2
-  )
-  {
-    double d = KDL::dot(v1, v2);
-
-    e_(0) = d - std::cos(delta_);
-
-    //std::cout << "e = " << e_(0) << "\n";
-
-    KDL::Vector v = v1 * v2;    // v = v1 x v2
-
-    for (int q_nr = 0; q_nr < jacobian_a_.columns(); ++q_nr)
-    {
-      KDL::Vector Ja = jacobian_a_.getColumn(q_nr).rot;
-      KDL::Vector Jb = jacobian_b_.getColumn(q_nr).rot;
-
-      J_(0, q_nr) = KDL::dot( v, (Ja - Jb) );
-    }
-
-    return 0;
   }
 
 } // namespace tasks
