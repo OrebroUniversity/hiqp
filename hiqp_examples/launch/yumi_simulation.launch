@@ -43,9 +43,9 @@
         args="-urdf -model yumi -param robot_description"/>
 
 
-  <rosparam file="$(find hiqp_ros)/config/yumi.yaml" command="load"/>
-  <rosparam file="$(find hiqp_ros)/config/yumi_preload.yaml" command="load"/>
-  <!--rosparam file="$(find hiqp_ros)/config/yumi_preload_minimal.yaml" command="load"/-->
+  <rosparam file="$(find hiqp_examples)/config/yumi.yaml" command="load"/>
+  <rosparam file="$(find hiqp_examples)/config/yumi_preload.yaml" command="load"/>
+  <!--rosparam file="$(find hiqp_examples)/config/yumi_preload_minimal.yaml" command="load"/-->
 
   <node name="controller_spawner" 
         pkg="controller_manager" 
@@ -63,6 +63,6 @@
     <remap from="/joint_states" to="/yumi/joint_states" />
   </node>
 
-  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find hiqp_ros)/launch/yumi.rviz"/>
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find hiqp_examples)/launch/yumi.rviz"/>
 
 </launch>
