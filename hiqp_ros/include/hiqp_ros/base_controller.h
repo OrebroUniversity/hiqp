@@ -124,13 +124,13 @@ namespace hiqp_ros {
 
   template <typename HardwareInterfaceT>
   void BaseController<HardwareInterfaceT>::update(const ros::Time& time, const ros::Duration& period) {
-    HiQPTimePoint now(time.sec, time.nsec);
-    double elapsed_time = (now-last_sampling_time_point_).toSec();
-    if (elapsed_time*1000 >= desired_sampling_time_) {
+    //HiQPTimePoint now(time.sec, time.nsec);
+    //double elapsed_time = (now-last_sampling_time_point_).toSec();
+    //if (elapsed_time*1000 >= desired_sampling_time_) {
       sampleJointValues();
       computeControls(u_);
       setControls();
-    }
+    //}
   }
 
   template <typename HardwareInterfaceT>

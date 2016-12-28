@@ -4,7 +4,7 @@ yumi:
       publish_rate: 50  
   hiqp_joint_velocity_controller:
     type: hiqp_ros/HiQPJointVelocityController
-    sampling_time: 1.0 # ms
+    #sampling_time: 1.0 # ms, this has been deprecated
     visualization_publish_rate: 50 #Hz
     joints:
       - yumi_joint_1_r
