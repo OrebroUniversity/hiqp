@@ -28,14 +28,15 @@ namespace tasks
                               const Eigen::VectorXd& e_initial,
                               const Eigen::VectorXd& e_final) {
     int size = parameters.size();
-    if (size != 2) {
-      printHiqpWarning("TDynJntLimits requires 2 parameters, got " 
+    if (size != 3) {
+      printHiqpWarning("TDynJntLimits requires 3 parameters, got " 
         + std::to_string(size) + "! Initialization failed!");
       return -1;
     }
 
     e_dot_star_.resize(4);
     dq_max_ = std::stod( parameters.at(1) );
+    gain_ = std::stod( parameters.at(2) );
     performance_measures_.resize(0);
     return 0;
   }
@@ -45,8 +46,8 @@ namespace tasks
                                 const Eigen::MatrixXd& J) {
     e_dot_star_(0) = -dq_max_;
     e_dot_star_(1) = dq_max_;
-    e_dot_star_(2) = -e(2); // first order dynamics with gain = -1
-    e_dot_star_(3) = -e(3); // first order dynamics with gain = -1
+    e_dot_star_(2) = -gain_ * e(2);
+    e_dot_star_(3) = -gain_ * e(3);
     return 0;
   }
 

@@ -53,6 +53,7 @@ namespace tasks
     DynamicsJntLimits& operator=(DynamicsJntLimits&& other) noexcept = delete;
 
     double             dq_max_;
+    double             gain_;
 
   };
 
