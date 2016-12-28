@@ -26,8 +26,4 @@
   <run_depend>orocos_kdl</run_depend>
   <run_depend>kdl_parser</run_depend>
   <run_depend>hiqp_msgs</run_depend>
-
-  <export>
-    <controller_interface plugin="${prefix}/plugins.xml"/>
-  </export>
 </package>

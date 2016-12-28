@@ -20,8 +20,13 @@
 #include <hiqp/utilities.h>
 #include <hiqp/geometric_primitives/geometric_primitive_visualizer.h>
 #include <hiqp/geometric_primitives/geometric_primitive_couter.h>
-//#include <hiqp/tasks/task_geometric_projection.h>
-//#include <hiqp/tasks/dynamics_first_order.h>
+
+#ifdef HIQP_CASADI
+  #include <hiqp/solvers/casadi_solver.h>
+#endif
+#ifdef HIQP_GUROBI
+  #include <hiqp/solvers/gurobi_solver.h>
+#endif
 
 #include <Eigen/Dense>
 
@@ -33,7 +38,12 @@ namespace hiqp {
   TaskManager::TaskManager(std::shared_ptr<Visualizer> visualizer)
   : visualizer_(visualizer) {
     geometric_primitive_map_ = std::make_shared<GeometricPrimitiveMap>();
+    #ifdef HIQP_CASADI
+    solver_ = std::make_shared<CasadiSolver>();
+    #endif
+    #ifdef HIQP_GUROBI
     solver_ = std::make_shared<GurobiSolver>();
+    #endif
   }
 
   TaskManager::~TaskManager() noexcept {}
