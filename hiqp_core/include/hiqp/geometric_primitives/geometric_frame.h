@@ -29,7 +29,9 @@ namespace hiqp
 namespace geometric_primitives
 {
 
-  /*! \brief Parameters: [x, y, z, qw, qx, qy, qz]
+  /*! \brief Parameters: [x, y, z]
+   *                     [x, y, z, ax, ay, az]
+   *                     [x, y, z, qw, qx, qy, qz]
    *  \author Marcus A Johansson */ 
   class GeometricFrame : public GeometricPrimitive {
   public:
@@ -43,8 +45,8 @@ namespace geometric_primitives
 
     int init(const std::vector<double>& parameters) {
       int size = parameters.size();
-      if (size != 7) {
-        printHiqpWarning("GeometricFrame requires 7 parameters, got " 
+      if (!(size == 3 || size == 6 || size == 7)) {
+        printHiqpWarning("GeometricFrame requires 3, 6 or 7 parameters, got " 
           + std::to_string(size) + "! Initialization failed!");
         return -1;
       }
@@ -55,12 +57,27 @@ namespace geometric_primitives
 
       eigen_c_ << kdl_c_(0), kdl_c_(1), kdl_c_(2);
 
-      double w = parameters.at(3);
-      double x = parameters.at(4);
-      double y = parameters.at(5);
-      double z = parameters.at(6);
+      if (size == 6) {
+        double angle1 = parameters.at(3);
+        double angle2 = parameters.at(4);
+        double angle3 = parameters.at(5);
 
-      q_ = Eigen::Quaternion<double>(w, x, y, z);
+        Eigen::Matrix3d m;
+        m = Eigen::AngleAxisd(angle1, Eigen::Vector3d::UnitX())
+            * Eigen::AngleAxisd(angle2, Eigen::Vector3d::UnitY())
+            * Eigen::AngleAxisd(angle3, Eigen::Vector3d::UnitZ());
+        q_ = Eigen::Quaternion<double>(m);
+
+      } else if (size == 7) {
+        double w = parameters.at(3);
+        double x = parameters.at(4);
+        double y = parameters.at(5);
+        double z = parameters.at(6);
+        q_ = Eigen::Quaternion<double>(w, x, y, z);
+
+      } else {
+        q_ = Eigen::Quaternion<double>(1.0, 0.0, 0.0, 0.0);
+      }
 
       Eigen::Vector3d ax = q_._transformVector(Eigen::Vector3d(1,0,0));
       axis_x_ = KDL::Vector(ax(0), ax(1), ax(2));
