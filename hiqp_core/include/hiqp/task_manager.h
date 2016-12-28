@@ -103,6 +103,7 @@ namespace hiqp {
     int removeAllPrimitives();
     int listAllPrimitives();
 
+    int removePriorityLevel(unsigned int priority);
     int activatePriorityLevel(unsigned int priority);
     int deactivatePriorityLevel(unsigned int priority);
     int monitorPriorityLevel(unsigned int priority);

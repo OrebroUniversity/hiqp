@@ -35,6 +35,7 @@
 #include <hiqp_msgs/RemoveAllPrimitives.h>
 #include <hiqp_msgs/ListAllPrimitives.h>
 
+#include <hiqp_msgs/RemovePriorityLevel.h>
 #include <hiqp_msgs/ActivatePriorityLevel.h>
 #include <hiqp_msgs/DeactivatePriorityLevel.h>
 #include <hiqp_msgs/MonitorPriorityLevel.h>
@@ -83,6 +84,7 @@ private:
   bool removeAllPrimitives(hiqp_msgs::RemoveAllPrimitives::Request& req, hiqp_msgs::RemoveAllPrimitives::Response& res);
   bool listAllPrimitives(hiqp_msgs::ListAllPrimitives::Request& req, hiqp_msgs::ListAllPrimitives::Response& res);
 
+  bool removePriorityLevel(hiqp_msgs::RemovePriorityLevel::Request& req, hiqp_msgs::RemovePriorityLevel::Response& res);
   bool activatePriorityLevel(hiqp_msgs::ActivatePriorityLevel::Request& req, hiqp_msgs::ActivatePriorityLevel::Response& res);
   bool deactivatePriorityLevel(hiqp_msgs::DeactivatePriorityLevel::Request& req, hiqp_msgs::DeactivatePriorityLevel::Response& res);
   bool monitorPriorityLevel(hiqp_msgs::MonitorPriorityLevel::Request& req, hiqp_msgs::MonitorPriorityLevel::Response& res);
@@ -106,6 +108,7 @@ private:
   ros::ServiceServer                  remove_all_primitives_service_;
   ros::ServiceServer                  list_all_primitives_service_;
 
+  ros::ServiceServer                  remove_priority_level_service_;
   ros::ServiceServer                  activate_priority_level_service_;
   ros::ServiceServer                  deactivate_priority_level_service_;
   ros::ServiceServer                  monitor_priority_level_service_;

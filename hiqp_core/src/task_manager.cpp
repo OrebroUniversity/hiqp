@@ -92,6 +92,13 @@ namespace hiqp {
     resource_mutex_.unlock();
   }
 
+  void TaskManager::renderPrimitives() {
+    resource_mutex_.lock();
+    GeometricPrimitiveVisualizer geom_prim_vis(visualizer_, 0);
+    geometric_primitive_map_->acceptVisitor(geom_prim_vis);
+    resource_mutex_.unlock();
+  }
+
   int TaskManager::setTask(const std::string& task_name,
                            unsigned int priority,
                            bool visible,
@@ -236,13 +243,6 @@ namespace hiqp {
     resource_mutex_.unlock();
   }
 
-  void TaskManager::renderPrimitives() {
-    resource_mutex_.lock();
-    GeometricPrimitiveVisualizer geom_prim_vis(visualizer_, 0);
-    geometric_primitive_map_->acceptVisitor(geom_prim_vis);
-    resource_mutex_.unlock();
-  }
-
   int TaskManager::setPrimitive(const std::string& name,
                                 const std::string& type,
                                 const std::string& frame_id,
@@ -283,6 +283,20 @@ namespace hiqp {
     geometric_primitive_map_->acceptVisitor(geom_prim_cout);
     resource_mutex_.unlock();
     return 0;
+  }
+
+  int TaskManager::removePriorityLevel(unsigned int priority) {
+    resource_mutex_.lock();
+    TaskMap::iterator it = task_map_.begin();
+    while (it != task_map_.end()) {
+      if (it->second->getPriority() == priority) {
+        geometric_primitive_map_->removeDependency(it->second->getTaskName());
+        it = task_map_.erase(it);
+      } else {
+        ++it;
+      }
+    }
+    resource_mutex_.unlock();
   }
 
   int TaskManager::activatePriorityLevel(unsigned int priority) {

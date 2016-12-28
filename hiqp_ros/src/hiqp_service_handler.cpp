@@ -45,6 +45,8 @@ void HiQPServiceHandler::advertiseAll() {
     "list_all_primitives", &HiQPServiceHandler::listAllPrimitives, this);
 
 
+  remove_priority_level_service_ = node_handle_->advertiseService(
+    "remove_priority_level", &HiQPServiceHandler::removePriorityLevel, this);
   activate_priority_level_service_ = node_handle_->advertiseService(
     "activate_priority_level", &HiQPServiceHandler::activatePriorityLevel, this);
   deactivate_priority_level_service_ = node_handle_->advertiseService(
@@ -157,6 +159,13 @@ bool HiQPServiceHandler::removeAllPrimitives(hiqp_msgs::RemoveAllPrimitives::Req
 bool HiQPServiceHandler::listAllPrimitives(hiqp_msgs::ListAllPrimitives::Request& req, 
                                            hiqp_msgs::ListAllPrimitives::Response& res) {
   task_manager_->listAllPrimitives();
+  res.success = true;
+  return true;
+}
+
+bool HiQPServiceHandler::removePriorityLevel(hiqp_msgs::RemovePriorityLevel::Request& req, 
+                                             hiqp_msgs::RemovePriorityLevel::Response& res) {
+  task_manager_->removePriorityLevel(req.priority);
   res.success = true;
   return true;
 }

@@ -39,6 +39,7 @@ add_service_files(FILES SetTask.srv
                         RemovePrimitive.srv
                         RemoveAllPrimitives.srv
                         ListAllPrimitives.srv
+                        RemovePriorityLevel.srv
                         ActivatePriorityLevel.srv
                         DeactivatePriorityLevel.srv
                         MonitorPriorityLevel.srv
