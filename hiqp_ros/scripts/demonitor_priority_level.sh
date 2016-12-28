@@ -1,0 +1,1 @@
+rosservice call /yumi/hiqp_joint_velocity_controller/demonitor_priority_level "priority: $1"

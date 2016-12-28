@@ -188,7 +188,7 @@ namespace hiqp {
     for (auto&& info : task_info_map) {
       std::cout << info.second << "\n";
     }
-    
+
     return 0;
   }
 
@@ -283,6 +283,42 @@ namespace hiqp {
     geometric_primitive_map_->acceptVisitor(geom_prim_cout);
     resource_mutex_.unlock();
     return 0;
+  }
+
+  int TaskManager::activatePriorityLevel(unsigned int priority) {
+    resource_mutex_.lock();
+    for (auto&& kv : task_map_) {
+      if (kv.second->getPriority() == priority)
+        kv.second->setActive(true);
+    }
+    resource_mutex_.unlock();
+  }
+
+  int TaskManager::deactivatePriorityLevel(unsigned int priority) {
+    resource_mutex_.lock();
+    for (auto&& kv : task_map_) {
+      if (kv.second->getPriority() == priority)
+        kv.second->setActive(false);
+    }
+    resource_mutex_.unlock();
+  }
+
+  int TaskManager::monitorPriorityLevel(unsigned int priority) {
+    resource_mutex_.lock();
+    for (auto&& kv : task_map_) {
+      if (kv.second->getPriority() == priority)
+        kv.second->setMonitored(true);
+    }
+    resource_mutex_.unlock();
+  }
+
+  int TaskManager::demonitorPriorityLevel(unsigned int priority) {
+    resource_mutex_.lock();
+    for (auto&& kv : task_map_) {
+      if (kv.second->getPriority() == priority)
+        kv.second->setMonitored(false);
+    }
+    resource_mutex_.unlock();
   }
 
 } // namespace hiqp

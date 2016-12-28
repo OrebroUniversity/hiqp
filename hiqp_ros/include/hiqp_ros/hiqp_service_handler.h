@@ -35,6 +35,11 @@
 #include <hiqp_msgs/RemoveAllPrimitives.h>
 #include <hiqp_msgs/ListAllPrimitives.h>
 
+#include <hiqp_msgs/ActivatePriorityLevel.h>
+#include <hiqp_msgs/DeactivatePriorityLevel.h>
+#include <hiqp_msgs/MonitorPriorityLevel.h>
+#include <hiqp_msgs/DemonitorPriorityLevel.h>
+
 class HiQPServiceHandler {
 public:
   HiQPServiceHandler() = default;
@@ -58,24 +63,11 @@ private:
   HiQPServiceHandler& operator=(HiQPServiceHandler&& other) noexcept = delete;
 
   /// \todo Change add_primitive to set_primitive ros service
-  /// \todo Add list_all_primitives ros service
   /// \todo Add show_primitive ros service
   /// \todo Add hide_primitive ros service
 
   /// \todo Add activate_controller ros service
   /// \todo Add deactivate_controller ros service
-
-  /// \todo Add activate_task ros service
-  /// \todo Add deactivate_task ros service
-  /// \todo Add show_task ros service
-  /// \todo Add hide_task ros service
-  /// \todo Add monitor_task ros service
-  /// \todo Add unmonitor_task ros service
-
-  /// \todo Add activate_stage ros service
-  /// \todo Add deactivate_stage ros service
-  /// \todo Add monitor_stage ros service
-  /// \todo Add unmonitor_stage ros service
 
   bool setTask(hiqp_msgs::SetTask::Request& req, hiqp_msgs::SetTask::Response& res);
   bool removeTask(hiqp_msgs::RemoveTask::Request& req, hiqp_msgs::RemoveTask::Response& res);
@@ -91,6 +83,11 @@ private:
   bool removeAllPrimitives(hiqp_msgs::RemoveAllPrimitives::Request& req, hiqp_msgs::RemoveAllPrimitives::Response& res);
   bool listAllPrimitives(hiqp_msgs::ListAllPrimitives::Request& req, hiqp_msgs::ListAllPrimitives::Response& res);
 
+  bool activatePriorityLevel(hiqp_msgs::ActivatePriorityLevel::Request& req, hiqp_msgs::ActivatePriorityLevel::Response& res);
+  bool deactivatePriorityLevel(hiqp_msgs::DeactivatePriorityLevel::Request& req, hiqp_msgs::DeactivatePriorityLevel::Response& res);
+  bool monitorPriorityLevel(hiqp_msgs::MonitorPriorityLevel::Request& req, hiqp_msgs::MonitorPriorityLevel::Response& res);
+  bool demonitorPriorityLevel(hiqp_msgs::DemonitorPriorityLevel::Request& req, hiqp_msgs::DemonitorPriorityLevel::Response& res);
+
   std::shared_ptr<ros::NodeHandle>    node_handle_;
   std::shared_ptr<hiqp::TaskManager>  task_manager_;
   hiqp::RobotStatePtr                 robot_state_;
@@ -104,11 +101,15 @@ private:
   ros::ServiceServer                  monitor_task_service_;
   ros::ServiceServer                  demonitor_task_service_;
 
-
   ros::ServiceServer                  add_primitive_service_;
   ros::ServiceServer                  remove_primitive_service_;
   ros::ServiceServer                  remove_all_primitives_service_;
   ros::ServiceServer                  list_all_primitives_service_;
+
+  ros::ServiceServer                  activate_priority_level_service_;
+  ros::ServiceServer                  deactivate_priority_level_service_;
+  ros::ServiceServer                  monitor_priority_level_service_;
+  ros::ServiceServer                  demonitor_priority_level_service_;
 };
 
 #endif

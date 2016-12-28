@@ -19,40 +19,40 @@
 void HiQPServiceHandler::advertiseAll() {
   set_task_service_ = node_handle_->advertiseService(
     "set_task", &HiQPServiceHandler::setTask, this);
-
   remove_task_service_ = node_handle_->advertiseService(
     "remove_task", &HiQPServiceHandler::removeTask, this);
-
   remove_all_tasks_service_ = node_handle_->advertiseService(
     "remove_all_tasks", &HiQPServiceHandler::removeAllTasks, this);
-
   list_all_tasks_service_ = node_handle_->advertiseService(
     "list_all_tasks", &HiQPServiceHandler::listAllTasks, this);
-
   activate_task_service_ = node_handle_->advertiseService(
     "activate_task", &HiQPServiceHandler::activateTask, this);
-
   deactivate_task_service_ = node_handle_->advertiseService(
     "deactivate_task", &HiQPServiceHandler::deactivateTask, this);
-
   monitor_task_service_ = node_handle_->advertiseService(
     "monitor_task", &HiQPServiceHandler::monitorTask, this);
-
   demonitor_task_service_ = node_handle_->advertiseService(
     "demonitor_task", &HiQPServiceHandler::demonitorTask, this);
 
 
   add_primitive_service_ = node_handle_->advertiseService(
     "add_primitive", &HiQPServiceHandler::addPrimitive, this);
-
   remove_primitive_service_ = node_handle_->advertiseService(
     "remove_primitive", &HiQPServiceHandler::removePrimitive, this);
-
   remove_all_primitives_service_ = node_handle_->advertiseService(
     "remove_all_primitives", &HiQPServiceHandler::removeAllPrimitives, this);
-
   list_all_primitives_service_ = node_handle_->advertiseService(
     "list_all_primitives", &HiQPServiceHandler::listAllPrimitives, this);
+
+
+  activate_priority_level_service_ = node_handle_->advertiseService(
+    "activate_priority_level", &HiQPServiceHandler::activatePriorityLevel, this);
+  deactivate_priority_level_service_ = node_handle_->advertiseService(
+    "deactivate_priority_level", &HiQPServiceHandler::deactivatePriorityLevel, this);
+  monitor_priority_level_service_ = node_handle_->advertiseService(
+    "monitor_priority_level", &HiQPServiceHandler::monitorPriorityLevel, this);
+  demonitor_priority_level_service_ = node_handle_->advertiseService(
+    "demonitor_priority_level", &HiQPServiceHandler::demonitorPriorityLevel, this);
 }
 
 bool HiQPServiceHandler::setTask(hiqp_msgs::SetTask::Request& req, 
@@ -157,6 +157,34 @@ bool HiQPServiceHandler::removeAllPrimitives(hiqp_msgs::RemoveAllPrimitives::Req
 bool HiQPServiceHandler::listAllPrimitives(hiqp_msgs::ListAllPrimitives::Request& req, 
                                            hiqp_msgs::ListAllPrimitives::Response& res) {
   task_manager_->listAllPrimitives();
+  res.success = true;
+  return true;
+}
+
+bool HiQPServiceHandler::activatePriorityLevel(hiqp_msgs::ActivatePriorityLevel::Request& req, 
+                                               hiqp_msgs::ActivatePriorityLevel::Response& res) {
+  task_manager_->activatePriorityLevel(req.priority);
+  res.success = true;
+  return true;
+}
+
+bool HiQPServiceHandler::deactivatePriorityLevel(hiqp_msgs::DeactivatePriorityLevel::Request& req, 
+                                                 hiqp_msgs::DeactivatePriorityLevel::Response& res) {
+  task_manager_->deactivatePriorityLevel(req.priority);
+  res.success = true;
+  return true;
+}
+
+bool HiQPServiceHandler::monitorPriorityLevel(hiqp_msgs::MonitorPriorityLevel::Request& req, 
+                                              hiqp_msgs::MonitorPriorityLevel::Response& res) {
+  task_manager_->monitorPriorityLevel(req.priority);
+  res.success = true;
+  return true;
+}
+
+bool HiQPServiceHandler::demonitorPriorityLevel(hiqp_msgs::DemonitorPriorityLevel::Request& req, 
+                                                hiqp_msgs::DemonitorPriorityLevel::Response& res) {
+  task_manager_->demonitorPriorityLevel(req.priority);
   res.success = true;
   return true;
 }

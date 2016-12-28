@@ -38,7 +38,11 @@ add_service_files(FILES SetTask.srv
                         AddPrimitive.srv
                         RemovePrimitive.srv
                         RemoveAllPrimitives.srv
-                        ListAllPrimitives.srv)
+                        ListAllPrimitives.srv
+                        ActivatePriorityLevel.srv
+                        DeactivatePriorityLevel.srv
+                        MonitorPriorityLevel.srv
+                        DemonitorPriorityLevel.srv)
 
 generate_messages(DEPENDENCIES std_msgs
                                geometry_msgs

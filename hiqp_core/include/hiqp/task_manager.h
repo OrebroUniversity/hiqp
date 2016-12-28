@@ -66,6 +66,12 @@ namespace hiqp {
      *         with the task's name and unique identifier. */
     void getTaskMeasures(std::vector<TaskMeasure>& data);
 
+    /// \brief Redraws all primitives using the currently set visualizer
+    void renderPrimitives();
+
+    /// \brief Returns a shared pointer to the common geometric primitive map object
+    inline std::shared_ptr<GeometricPrimitiveMap> getGeometricPrimitiveMap() { return geometric_primitive_map_; }
+
     /*! \brief Adds a new task to the task manager or updates an existing one
      *  \return 0 if the task creation was successful,
      *          -1 is the behaviour_parameters argument was invalid,
@@ -79,7 +85,6 @@ namespace hiqp {
                 const std::vector<std::string>& def_params,
                 const std::vector<std::string>& dyn_params,
                 RobotStatePtr robot_state);
-
     int removeTask(std::string task_name);
     int removeAllTasks();
     int listAllTasks();
@@ -88,23 +93,20 @@ namespace hiqp {
     int monitorTask(const std::string& task_name);
     int demonitorTask(const std::string& task_name);
 
-    void renderPrimitives();
-
     int addPrimitive(const std::string& name,
                      const std::string& type,
                      const std::string& frame_id,
                      bool visible,
                      const std::vector<double>& color,
                      const std::vector<double>& parameters);
-
     int removePrimitive(std::string name);
-
     int removeAllPrimitives();
-
     int listAllPrimitives();
 
-    inline std::shared_ptr<GeometricPrimitiveMap> getGeometricPrimitiveMap() { return geometric_primitive_map_; }
-
+    int activatePriorityLevel(unsigned int priority);
+    int deactivatePriorityLevel(unsigned int priority);
+    int monitorPriorityLevel(unsigned int priority);
+    int demonitorPriorityLevel(unsigned int priority);
 
    private:
     TaskManager(const TaskManager& other) = delete;
