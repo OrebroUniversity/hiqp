@@ -29,6 +29,19 @@ void HiQPServiceHandler::advertiseAll() {
   list_all_tasks_service_ = node_handle_->advertiseService(
     "list_all_tasks", &HiQPServiceHandler::listAllTasks, this);
 
+  activate_task_service_ = node_handle_->advertiseService(
+    "activate_task", &HiQPServiceHandler::activateTask, this);
+
+  deactivate_task_service_ = node_handle_->advertiseService(
+    "deactivate_task", &HiQPServiceHandler::deactivateTask, this);
+
+  monitor_task_service_ = node_handle_->advertiseService(
+    "monitor_task", &HiQPServiceHandler::monitorTask, this);
+
+  demonitor_task_service_ = node_handle_->advertiseService(
+    "demonitor_task", &HiQPServiceHandler::demonitorTask, this);
+
+
   add_primitive_service_ = node_handle_->advertiseService(
     "add_primitive", &HiQPServiceHandler::addPrimitive, this);
 
@@ -54,13 +67,13 @@ bool HiQPServiceHandler::setTask(hiqp_msgs::SetTask::Request& req,
 bool HiQPServiceHandler::removeTask(hiqp_msgs::RemoveTask::Request& req, 
                                     hiqp_msgs::RemoveTask::Response& res) {
   res.success = false;
-  if (task_manager_->removeTask(req.task_name) == 0)
+  if (task_manager_->removeTask(req.name) == 0)
     res.success = true;
 
   if (res.success) {
-    hiqp::printHiqpInfo("Removed task '" + req.task_name + "'.");
+    hiqp::printHiqpInfo("Removed task '" + req.name + "'.");
   } else {
-    hiqp::printHiqpInfo("Couldn't remove task '" + req.task_name + "'!");  
+    hiqp::printHiqpInfo("Couldn't remove task '" + req.name + "'!");  
   }
   return true;
 }
@@ -76,6 +89,33 @@ bool HiQPServiceHandler::removeAllTasks(hiqp_msgs::RemoveAllTasks::Request& req,
 bool HiQPServiceHandler::listAllTasks(hiqp_msgs::ListAllTasks::Request& req, 
                                       hiqp_msgs::ListAllTasks::Response& res) {
   task_manager_->listAllTasks();
+  res.success = true;
+  return true;
+}
+
+bool HiQPServiceHandler::activateTask(hiqp_msgs::ActivateTask::Request& req, 
+                                      hiqp_msgs::ActivateTask::Response& res) {
+  task_manager_->activateTask(req.name);
+  res.success = true;
+  return true;
+}
+bool HiQPServiceHandler::deactivateTask(hiqp_msgs::DeactivateTask::Request& req, 
+                                        hiqp_msgs::DeactivateTask::Response& res) {
+  task_manager_->deactivateTask(req.name);
+  res.success = true;
+  return true;
+}
+
+bool HiQPServiceHandler::monitorTask(hiqp_msgs::MonitorTask::Request& req, 
+                                     hiqp_msgs::MonitorTask::Response& res) {
+  task_manager_->monitorTask(req.name);
+  res.success = true;
+  return true;
+}
+
+bool HiQPServiceHandler::demonitorTask(hiqp_msgs::DemonitorTask::Request& req, 
+                                       hiqp_msgs::DemonitorTask::Response& res) {
+  task_manager_->demonitorTask(req.name);
   res.success = true;
   return true;
 }

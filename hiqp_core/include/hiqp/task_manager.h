@@ -83,9 +83,10 @@ namespace hiqp {
     int removeTask(std::string task_name);
     int removeAllTasks();
     int listAllTasks();
-
-    inline void activateTask(const std::string& name) { task_map_.find(name)->second->setActive(true); }
-    inline void deactivateTask(const std::string& name) { task_map_.find(name)->second->setActive(false); }
+    int activateTask(const std::string& task_name);
+    int deactivateTask(const std::string& task_name);
+    int monitorTask(const std::string& task_name);
+    int demonitorTask(const std::string& task_name);
 
     void renderPrimitives();
 

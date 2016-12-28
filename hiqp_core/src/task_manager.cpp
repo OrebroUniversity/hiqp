@@ -156,32 +156,84 @@ namespace hiqp {
 
   int TaskManager::listAllTasks() {
     resource_mutex_.lock();
-    std::cout << "LISTING ALL REGISTERED TASKS:\n";
-    TaskMap::iterator it = task_map_.begin();
-
     int longest_name_length = 0;
+    TaskMap::iterator it = task_map_.begin();
     while (it != task_map_.end()) {
       if (it->first.size() > longest_name_length)
         longest_name_length = it->first.size();
       ++it;
     }
 
-    std::cout << "Priority | Unique name"; 
-    for (int i=0; i<longest_name_length-11; ++i)
-      std::cout << " ";
-    std::cout << " | Active\n";
-    std::cout << "-------------------------------\n";
-
+    std::multimap<unsigned int, std::string> task_info_map;
     it = task_map_.begin();
     while (it != task_map_.end()) {
-      std::cout 
-        << std::setw(8) << it->second->getPriority() << " | "
-        << std::setw(longest_name_length) << it->first << " | "
-        << std::setw(6) << it->second->getActive() << "\n";
+      std::stringstream ss;
+      ss << std::setw(8) << it->second->getPriority() << " | "
+         << std::setw(longest_name_length) << it->first << " | "
+         << std::setw(6) << it->second->getActive() << " | "
+         << std::setw(9) << it->second->getMonitored();
+      task_info_map.emplace(it->second->getPriority(), ss.str());
       ++it;
     }
     resource_mutex_.unlock();
+
+    std::cout << " - - - LISTING ALL REGISTERED TASKS - - -\n";
+    std::cout << "Priority | Unique name"; 
+    for (int i=0; i<longest_name_length-11; ++i) std::cout << " ";
+    std::cout << " | Active | Monitored\n";
+    std::cout << "----------------------";
+    for (int i=0; i<longest_name_length-11; ++i) std::cout << "-";
+    std::cout << "---------------------\n";
+
+    for (auto&& info : task_info_map) {
+      std::cout << info.second << "\n";
+    }
+    
     return 0;
+  }
+
+  int TaskManager::activateTask(const std::string& task_name) {
+    resource_mutex_.lock();
+    TaskMap::iterator it = task_map_.find(task_name);
+    if (it != task_map_.end()) {
+      it->second->setActive(true);
+    } else {
+      printHiqpWarning("When trying to activate task '" + task_name + "': No task with that name found.");
+    }
+    resource_mutex_.unlock();
+  }
+
+  int TaskManager::deactivateTask(const std::string& task_name) {
+    resource_mutex_.lock();
+    TaskMap::iterator it = task_map_.find(task_name);
+    if (it != task_map_.end()) {
+      it->second->setActive(false);
+    } else {
+      printHiqpWarning("When trying to deactivate task '" + task_name + "': No task with that name found.");
+    }
+    resource_mutex_.unlock();
+  }
+
+  int TaskManager::monitorTask(const std::string& task_name) {
+    resource_mutex_.lock();
+    TaskMap::iterator it = task_map_.find(task_name);
+    if (it != task_map_.end()) {
+      it->second->setMonitored(true);
+    } else {
+      printHiqpWarning("When trying to activate monitoring of task '" + task_name + "': No task with that name found.");
+    }
+    resource_mutex_.unlock();
+  }
+
+  int TaskManager::demonitorTask(const std::string& task_name) {
+    resource_mutex_.lock();
+    TaskMap::iterator it = task_map_.find(task_name);
+    if (it != task_map_.end()) {
+      it->second->setMonitored(false);
+    } else {
+      printHiqpWarning("When trying to deactivate monitoring of task '" + task_name + "': No task with that name found.");
+    }
+    resource_mutex_.unlock();
   }
 
   void TaskManager::renderPrimitives() {

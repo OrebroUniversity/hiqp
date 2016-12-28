@@ -27,13 +27,17 @@ add_message_files(FILES TaskMeasure.msg
                         StringArray.msg
                         Vector3d.msg)
 
-add_service_files(FILES AddPrimitive.srv
-                        SetTask.srv
-                        RemoveAllPrimitives.srv
-                        RemoveAllTasks.srv
-                        RemovePrimitive.srv
+add_service_files(FILES SetTask.srv
                         RemoveTask.srv
+                        RemoveAllTasks.srv
                         ListAllTasks.srv
+                        ActivateTask.srv
+                        DeactivateTask.srv
+                        MonitorTask.srv
+                        DemonitorTask.srv
+                        AddPrimitive.srv
+                        RemovePrimitive.srv
+                        RemoveAllPrimitives.srv
                         ListAllPrimitives.srv)
 
 generate_messages(DEPENDENCIES std_msgs

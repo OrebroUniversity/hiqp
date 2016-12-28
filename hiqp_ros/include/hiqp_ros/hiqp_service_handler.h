@@ -22,10 +22,14 @@
 #include <hiqp/task_manager.h>
 
 #include <hiqp_msgs/SetTask.h>
-#include <hiqp_msgs/UpdateTask.h>
 #include <hiqp_msgs/RemoveTask.h>
 #include <hiqp_msgs/RemoveAllTasks.h>
 #include <hiqp_msgs/ListAllTasks.h>
+#include <hiqp_msgs/ActivateTask.h>
+#include <hiqp_msgs/DeactivateTask.h>
+#include <hiqp_msgs/MonitorTask.h>
+#include <hiqp_msgs/DemonitorTask.h>
+
 #include <hiqp_msgs/AddPrimitive.h>
 #include <hiqp_msgs/RemovePrimitive.h>
 #include <hiqp_msgs/RemoveAllPrimitives.h>
@@ -77,6 +81,10 @@ private:
   bool removeTask(hiqp_msgs::RemoveTask::Request& req, hiqp_msgs::RemoveTask::Response& res);
   bool removeAllTasks(hiqp_msgs::RemoveAllTasks::Request& req, hiqp_msgs::RemoveAllTasks::Response& res);
   bool listAllTasks(hiqp_msgs::ListAllTasks::Request& req, hiqp_msgs::ListAllTasks::Response& res);
+  bool activateTask(hiqp_msgs::ActivateTask::Request& req, hiqp_msgs::ActivateTask::Response& res);
+  bool deactivateTask(hiqp_msgs::DeactivateTask::Request& req, hiqp_msgs::DeactivateTask::Response& res);
+  bool monitorTask(hiqp_msgs::MonitorTask::Request& req, hiqp_msgs::MonitorTask::Response& res);
+  bool demonitorTask(hiqp_msgs::DemonitorTask::Request& req, hiqp_msgs::DemonitorTask::Response& res);
 
   bool addPrimitive(hiqp_msgs::AddPrimitive::Request& req, hiqp_msgs::AddPrimitive::Response& res);
   bool removePrimitive(hiqp_msgs::RemovePrimitive::Request& req, hiqp_msgs::RemovePrimitive::Response& res);
@@ -88,10 +96,15 @@ private:
   hiqp::RobotStatePtr                 robot_state_;
 
   ros::ServiceServer                  set_task_service_;
-  ros::ServiceServer                  update_task_service_;
   ros::ServiceServer                  remove_task_service_;
   ros::ServiceServer                  remove_all_tasks_service_;
   ros::ServiceServer                  list_all_tasks_service_;
+  ros::ServiceServer                  activate_task_service_;
+  ros::ServiceServer                  deactivate_task_service_;
+  ros::ServiceServer                  monitor_task_service_;
+  ros::ServiceServer                  demonitor_task_service_;
+
+
   ros::ServiceServer                  add_primitive_service_;
   ros::ServiceServer                  remove_primitive_service_;
   ros::ServiceServer                  remove_all_primitives_service_;
