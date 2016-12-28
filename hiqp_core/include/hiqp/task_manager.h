@@ -93,7 +93,7 @@ namespace hiqp {
     int monitorTask(const std::string& task_name);
     int demonitorTask(const std::string& task_name);
 
-    int addPrimitive(const std::string& name,
+    int setPrimitive(const std::string& name,
                      const std::string& type,
                      const std::string& frame_id,
                      bool visible,

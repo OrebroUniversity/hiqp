@@ -243,14 +243,14 @@ namespace hiqp {
     resource_mutex_.unlock();
   }
 
-  int TaskManager::addPrimitive(const std::string& name,
+  int TaskManager::setPrimitive(const std::string& name,
                                 const std::string& type,
                                 const std::string& frame_id,
                                 bool visible,
                                 const std::vector<double>& color,
                                 const std::vector<double>& parameters) {
     resource_mutex_.lock();
-    geometric_primitive_map_->addGeometricPrimitive(name, type, frame_id, visible, color, parameters);
+    geometric_primitive_map_->setGeometricPrimitive(name, type, frame_id, visible, color, parameters);
     resource_mutex_.unlock();
     return 0;
   }

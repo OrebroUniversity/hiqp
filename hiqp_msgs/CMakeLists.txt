@@ -35,7 +35,7 @@ add_service_files(FILES SetTask.srv
                         DeactivateTask.srv
                         MonitorTask.srv
                         DemonitorTask.srv
-                        AddPrimitive.srv
+                        SetPrimitive.srv
                         RemovePrimitive.srv
                         RemoveAllPrimitives.srv
                         ListAllPrimitives.srv

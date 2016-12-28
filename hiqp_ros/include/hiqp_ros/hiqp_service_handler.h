@@ -30,7 +30,7 @@
 #include <hiqp_msgs/MonitorTask.h>
 #include <hiqp_msgs/DemonitorTask.h>
 
-#include <hiqp_msgs/AddPrimitive.h>
+#include <hiqp_msgs/SetPrimitive.h>
 #include <hiqp_msgs/RemovePrimitive.h>
 #include <hiqp_msgs/RemoveAllPrimitives.h>
 #include <hiqp_msgs/ListAllPrimitives.h>
@@ -78,7 +78,7 @@ private:
   bool monitorTask(hiqp_msgs::MonitorTask::Request& req, hiqp_msgs::MonitorTask::Response& res);
   bool demonitorTask(hiqp_msgs::DemonitorTask::Request& req, hiqp_msgs::DemonitorTask::Response& res);
 
-  bool addPrimitive(hiqp_msgs::AddPrimitive::Request& req, hiqp_msgs::AddPrimitive::Response& res);
+  bool setPrimitive(hiqp_msgs::SetPrimitive::Request& req, hiqp_msgs::SetPrimitive::Response& res);
   bool removePrimitive(hiqp_msgs::RemovePrimitive::Request& req, hiqp_msgs::RemovePrimitive::Response& res);
   bool removeAllPrimitives(hiqp_msgs::RemoveAllPrimitives::Request& req, hiqp_msgs::RemoveAllPrimitives::Response& res);
   bool listAllPrimitives(hiqp_msgs::ListAllPrimitives::Request& req, hiqp_msgs::ListAllPrimitives::Response& res);
@@ -101,7 +101,7 @@ private:
   ros::ServiceServer                  monitor_task_service_;
   ros::ServiceServer                  demonitor_task_service_;
 
-  ros::ServiceServer                  add_primitive_service_;
+  ros::ServiceServer                  set_primitive_service_;
   ros::ServiceServer                  remove_primitive_service_;
   ros::ServiceServer                  remove_all_primitives_service_;
   ros::ServiceServer                  list_all_primitives_service_;

@@ -35,8 +35,8 @@ void HiQPServiceHandler::advertiseAll() {
     "demonitor_task", &HiQPServiceHandler::demonitorTask, this);
 
 
-  add_primitive_service_ = node_handle_->advertiseService(
-    "add_primitive", &HiQPServiceHandler::addPrimitive, this);
+  set_primitive_service_ = node_handle_->advertiseService(
+    "set_primitive", &HiQPServiceHandler::setPrimitive, this);
   remove_primitive_service_ = node_handle_->advertiseService(
     "remove_primitive", &HiQPServiceHandler::removePrimitive, this);
   remove_all_primitives_service_ = node_handle_->advertiseService(
@@ -120,14 +120,14 @@ bool HiQPServiceHandler::demonitorTask(hiqp_msgs::DemonitorTask::Request& req,
   return true;
 }
 
-bool HiQPServiceHandler::addPrimitive(hiqp_msgs::AddPrimitive::Request& req, 
-                                      hiqp_msgs::AddPrimitive::Response& res) {
-  int retval = task_manager_->addPrimitive(
+bool HiQPServiceHandler::setPrimitive(hiqp_msgs::SetPrimitive::Request& req, 
+                                      hiqp_msgs::SetPrimitive::Response& res) {
+  int retval = task_manager_->setPrimitive(
     req.name, req.type, req.frame_id, req.visible, req.color, req.parameters
   );
   res.success = (retval == 0 ? true : false);
   if (res.success) {
-    hiqp::printHiqpInfo("Added geometric primitive of type '" + req.type + "' with name '" + req.name + "'.");
+    hiqp::printHiqpInfo("Set geometric primitive of type '" + req.type + "' with name '" + req.name + "'.");
   }
   return true;
 }

@@ -1,4 +1,4 @@
-rosservice call /yumi/hiqp_joint_velocity_controller/add_primitive \
+rosservice call /yumi/hiqp_joint_velocity_controller/set_primitive \
 "name: 'mypoint1'
 type: 'point'
 frame_id: 'gripper_r_base'
@@ -6,7 +6,7 @@ visible: true
 color: [0.0, 0.0, 1.0, 0.9]
 parameters: [0.0, 0, 0.1]"
 
-rosservice call /yumi/hiqp_joint_velocity_controller/add_primitive \
+rosservice call /yumi/hiqp_joint_velocity_controller/set_primitive \
 "name: 'mycylinder2'
 type: 'cylinder'
 frame_id: 'yumi_body'

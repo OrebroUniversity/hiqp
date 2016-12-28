@@ -41,7 +41,7 @@ namespace geometric_primitives
     GeometricPrimitiveMap() {}
     ~GeometricPrimitiveMap() noexcept {}
 
-    int addGeometricPrimitive(const std::string& name,
+    int setGeometricPrimitive(const std::string& name,
                               const std::string& type,
                               const std::string& frame_id,
                               bool visible,

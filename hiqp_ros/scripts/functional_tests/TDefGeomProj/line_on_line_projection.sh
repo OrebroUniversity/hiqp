@@ -1,4 +1,4 @@
-rosservice call /yumi/hiqp_joint_velocity_controller/add_primitive \
+rosservice call /yumi/hiqp_joint_velocity_controller/set_primitive \
 "name: 'myline1'
 type: 'line'
 frame_id: 'gripper_r_base'
@@ -6,7 +6,7 @@ visible: true
 color: [0, 1, 0, 1]
 parameters: [1, 0, 0, 0, 0, 0.15]"
 
-rosservice call /yumi/hiqp_joint_velocity_controller/add_primitive \
+rosservice call /yumi/hiqp_joint_velocity_controller/set_primitive \
 "name: 'myline2'
 type: 'line'
 frame_id: 'gripper_l_base'

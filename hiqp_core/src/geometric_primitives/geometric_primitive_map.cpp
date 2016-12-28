@@ -27,7 +27,7 @@ namespace geometric_primitives
 {
 
 /// \todo Add a Capsule primitive among the geometric primitives
-int GeometricPrimitiveMap::addGeometricPrimitive
+int GeometricPrimitiveMap::setGeometricPrimitive
 (
   const std::string& name,
   const std::string& type,
