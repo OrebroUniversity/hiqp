@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package>
   <name>hiqp_examples</name>
-  <version>0.0.1</version>
+  <version>0.0.2</version>
   <description>Examples showing intended use of the HiQP Control Framework</description>
 
   <author email="marcus.adam.johansson@gmail.com">Marcus A Johansson</author>
