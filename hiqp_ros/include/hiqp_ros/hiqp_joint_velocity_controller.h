@@ -62,7 +62,7 @@ namespace hiqp_ros {
 
     void loadRenderingParameters();
     int loadAndSetupTaskMonitoring();
-    void addAllTopicSubscriptions();
+    // void addAllTopicSubscriptions();
     void loadJointLimitsFromParamServer();
     void loadGeometricPrimitivesFromParamServer();
     void loadTasksFromParamServer();

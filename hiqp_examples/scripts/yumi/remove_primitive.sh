@@ -1,1 +1,0 @@
-rosservice call /yumi/hiqp_joint_velocity_controller/remove_primitive "name: '$1'"
