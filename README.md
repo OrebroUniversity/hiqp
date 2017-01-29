@@ -12,12 +12,15 @@ Robert Krug and Todor Stoyanov at the AASS Research Institute at Örebro Univers
 - A capsule primitive will be added to the set of geometric primitives.
 - The framework will be extended to compute controls on a joint acceleration level in order to enable inverse dynamics control. 
 
+## Installation note
+
+HiQP relies on Gurobi to solve Quadratic Programs (QPs). For academic use, a free license can be obtained at http://www.gurobi.com/. Make sure to set the corresponding environment variables as described in http://www.gurobi.com/documentation/6.5/quickstart_linux/software_installation_guid.html. 
+
 ## How to cite HiQP
 
 A publication presenting HiQP is in preparation. In the meantime, please refer to [2].
 
 </br>
 [1] ... O. Kanoun, F. Lamiraux and P.-B. Wieber, Kinematic control of redundant manipulators: Generalizing the task-priority framework to inequality task. IEEE T-RO, 27(4):785-792, 2011.
-
 </br>
 [2] ... M. A. Johansson, Online whole-body control using hierarchical quadratic programming: implementation and evaluation of the HiQP control framework. MSc Thesis, 2016.
