@@ -22,7 +22,7 @@
 
 namespace hiqp
 {
-  /*! \brief An optimization based solver for a set of stages implemented in CasADi.
+  /*! \brief An optimization based solver for a set of stages based on Gurobi.
    *  \author Robert Krug, Marcus A Johansson */
   class GurobiSolver : public HiQPSolver {
   public:

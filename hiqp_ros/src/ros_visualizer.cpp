@@ -521,7 +521,7 @@ void ROSVisualizer::remove(int id) {
 
 
 void ROSVisualizer::removeMany(const std::vector<int>& ids) {
-  std::cout << "removeMany: ";
+  //std::cout << "removeMany: ";
 
   visualization_msgs::MarkerArray marker_array;
   for (int id : ids) {
@@ -533,7 +533,7 @@ void ROSVisualizer::removeMany(const std::vector<int>& ids) {
     marker.action = visualization_msgs::Marker::DELETE; 
     marker_array.markers.push_back(marker);
   }
-  std::cout << "\n";
+  //  std::cout << "\n";
   marker_array_pub_.publish(marker_array);
 }
 

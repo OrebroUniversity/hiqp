@@ -62,7 +62,7 @@ void HiQPJointVelocityController::initialize() {
 
   if (loadAndSetupTaskMonitoring() != 0) return;
 
-  addAllTopicSubscriptions();
+  //addAllTopicSubscriptions();
 
   service_handler_.advertiseAll();
 
@@ -135,12 +135,21 @@ void HiQPJointVelocityController::monitorTasks() {
   }
 }
 
+<<<<<<< HEAD
 void HiQPJointVelocityController::addAllTopicSubscriptions()
 {
   //topic_subscriber_.init( &task_manager_ );
   
   //topic_subscriber_.addSubscription<geometry_msgs::PoseStamped>(
   //  this->getControllerNodeHandle(), "/wintracker_rebase/pose", 100);
+=======
+  // void HiQPJointVelocityController::addAllTopicSubscriptions()
+  // {
+  //   topic_subscriber_.init( &task_manager_ );
+  
+  //   topic_subscriber_.addSubscription<geometry_msgs::PoseStamped>(
+  //     this->getControllerNodeHandle(), "/wintracker_rebase/pose", 100);
+>>>>>>> master
 
   //topic_subscriber_.addSubscription<hiqp_msgs::Vector3d>(
   //  controller_nh_, "/yumi/hiqp_controllers/vector3d", 100
@@ -149,7 +158,7 @@ void HiQPJointVelocityController::addAllTopicSubscriptions()
   //topic_subscriber_.addSubscription<hiqp_msgs::StringArray>(
   //  controller_nh_, "/yumi/hiqp_kinematics_controller/experiment_commands", 100
   //);
-}
+  //}
 
 void HiQPJointVelocityController::loadRenderingParameters() {
   rendering_publish_rate_ = 1000; // defaults to 1 kHz
@@ -283,7 +292,7 @@ void HiQPJointVelocityController::loadTasksFromParamServer() {
   XmlRpc::XmlRpcValue hiqp_preload_tasks;
   if (!this->getControllerNodeHandle().getParam("hiqp_preload_tasks", hiqp_preload_tasks)) {
     ROS_WARN_STREAM("No hiqp_preload_tasks parameter found on "
-      << "the parameter server. No joint limits were loaded!");
+      << "the parameter server. No tasks were loaded!");
   } else {
     bool parsing_success = true;
     for (int i=0; i<hiqp_preload_tasks.size(); ++i) {

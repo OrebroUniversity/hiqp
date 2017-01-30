@@ -1,1 +1,0 @@
-rosservice call /yumi/hiqp_joint_velocity_controller/activate_task "name: '$1'"

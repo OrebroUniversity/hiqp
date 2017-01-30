@@ -76,7 +76,7 @@ namespace hiqp_ros {
     BaseController& operator=(const BaseController& other) = delete;
     BaseController& operator=(BaseController&& other) noexcept = delete;
 
-    void loadDesiredSamplingTime();
+    //void loadDesiredSamplingTime();
     int loadUrdfToKdlTree();
     int loadJointsAndSetJointHandlesMap();
     void sampleJointValues();
@@ -113,7 +113,10 @@ namespace hiqp_ros {
     controller_nh_ptr_.reset(&controller_nh_);
     robot_state_ptr_.reset(&robot_state_data_);
 
-    loadDesiredSamplingTime();
+    //loadDesiredSamplingTime();
+    ros::Time t = ros::Time::now();
+    last_sampling_time_point_.setTimePoint(t.sec, t.nsec);
+
     loadUrdfToKdlTree();
     loadJointsAndSetJointHandlesMap();
     sampleJointValues();
@@ -133,15 +136,15 @@ namespace hiqp_ros {
     //}
   }
 
-  template <typename HardwareInterfaceT>
-  void BaseController<HardwareInterfaceT>::loadDesiredSamplingTime() {
-    desired_sampling_time_ = 1; // milliseconds. (defaults to 1kHz)
-    if (!controller_nh_.getParam("sampling_time", desired_sampling_time_)) {
-      ROS_WARN("Couldn't find parameter 'sampling_time' on the parameter server, defaulting to 1ms (1kHz).");
-    }
-    ros::Time t = ros::Time::now();
-    last_sampling_time_point_.setTimePoint(t.sec, t.nsec);
-  }
+  /* template <typename HardwareInterfaceT> */
+  /* void BaseController<HardwareInterfaceT>::loadDesiredSamplingTime() { */
+  /*   desired_sampling_time_ = 1; // milliseconds. (defaults to 1kHz) */
+  /*   if (!controller_nh_.getParam("sampling_time", desired_sampling_time_)) { */
+  /*     ROS_WARN("Couldn't find parameter 'sampling_time' on the parameter server, defaulting to 1ms (1kHz)."); */
+  /*   } */
+  /*   ros::Time t = ros::Time::now(); */
+  /*   last_sampling_time_point_.setTimePoint(t.sec, t.nsec); */
+  /* } */
 
   template <typename HardwareInterfaceT>
   int BaseController<HardwareInterfaceT>::loadUrdfToKdlTree() {
