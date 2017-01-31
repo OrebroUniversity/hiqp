@@ -124,12 +124,14 @@ bool HiQPServiceHandler::demonitorTask(hiqp_msgs::DemonitorTask::Request& req,
 
 bool HiQPServiceHandler::setPrimitive(hiqp_msgs::SetPrimitive::Request& req, 
                                       hiqp_msgs::SetPrimitive::Response& res) {
-  int retval = task_manager_->setPrimitive(
-    req.name, req.type, req.frame_id, req.visible, req.color, req.parameters
-  );
-  res.success = (retval == 0 ? true : false);
-  if (res.success) {
-    hiqp::printHiqpInfo("Set geometric primitive of type '" + req.type + "' with name '" + req.name + "'.");
+  for(auto primitive : req.primitives) {
+    int retval = task_manager_->setPrimitive(
+      primitive.name, primitive.type, primitive.frame_id, primitive.visible, primitive.color, primitive.parameters
+      );
+    res.success.push_back(retval == 0 ? true : false);
+    if (res.success.back()) {
+      hiqp::printHiqpInfo("Set geometric primitive of type '" + primitive.type + "' with name '" + primitive.name + "'.");
+    }
   }
   return true;
 }
