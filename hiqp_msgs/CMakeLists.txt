@@ -23,6 +23,8 @@ find_package(catkin REQUIRED COMPONENTS message_generation
                                         geometry_msgs)
 
 add_message_files(FILES TaskMeasure.msg
+                        SDFMap.msg
+                        Primitive.msg
                         TaskMeasures.msg
                         StringArray.msg
                         Vector3d.msg)
