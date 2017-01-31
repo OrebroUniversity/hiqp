@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<package>
+  <name>hiqp_client</name>
+  <version>0.0.1</version>
+  <description>Client library for HiQP framework</description>
+
+  <maintainer email="ksatyaki@gmail.com">Chittaranjan Srinivas Swaminathan</maintainer>
+
+  <license>GPLv3</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <build_depend>roscpp</build_depend>  
+  <build_depend>std_msgs</build_depend>
+  <build_depend>geometry_msgs</build_depend>
+  <build_depend>hiqp_msgs</build_depend>
+
+  <run_depend>hiqp_msgs</run_depend>
+  <run_depend>roscpp</run_depend>  
+  <run_depend>std_msgs</run_depend>
+  <run_depend>geometry_msgs</run_depend>
+
+</package>
