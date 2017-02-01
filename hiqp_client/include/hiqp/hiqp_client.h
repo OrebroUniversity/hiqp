@@ -1,6 +1,6 @@
 #include <numeric>
-#include <hiqp_msgs/SetPrimitive.h>
-#include <hiqp_msgs/SetTask.h>
+#include <hiqp_msgs/SetPrimitives.h>
+#include <hiqp_msgs/SetTasks.h>
 #include <ros/ros.h>
 
 namespace hiqp {
@@ -14,14 +14,14 @@ class HiQPClient {
   ros::NodeHandle nh_;
 
   /**
-   * A client to the set_primitive service.
+   * A client to the set_primitives service.
    */ 
-  ros::ServiceClient set_primitive_client_;
+  ros::ServiceClient set_primitives_client_;
 
   /**
-   * A client to the set_task service.
+   * A client to the set_tasks service.
    */
-  ros::ServiceClient set_task_client_;
+  ros::ServiceClient set_tasks_client_;
 
 public:
 
@@ -66,6 +66,8 @@ public:
                 bool monitored,
                 const std::vector <std::string>& def_params,
                 const std::vector <std::string>& dyn_params);
+
+  void setTasks (const std::vector <hiqp_msgs::Task>& tasks);
 
   void deactivateTask (const std::string& name);
   
