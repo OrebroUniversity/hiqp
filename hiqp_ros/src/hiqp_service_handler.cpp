@@ -64,10 +64,6 @@ bool HiQPServiceHandler::setTasks(hiqp_msgs::SetTasks::Request& req,
       task.name, task.priority, task.visible, task.active, task.monitored,
       task.def_params, task.dyn_params, robot_state_);
     res.success.push_back(retval < 0 ? false : true);
-
-    if (res.success.back()) {
-      hiqp::printHiqpInfo("Set task with name '" + task.name + "'.");
-    }
   }
   return true;
 }
