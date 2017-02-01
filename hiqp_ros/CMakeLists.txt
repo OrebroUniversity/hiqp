@@ -49,6 +49,8 @@ add_library(${PROJECT_NAME} src/hiqp_joint_velocity_controller.cpp
                             src/ros_visualizer.cpp
                             src/utilities.cpp)
 
+add_dependencies(${PROJECT_NAME} hiqp_msgs_generate_messages_cpp)
+
 target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} ${orocos_kdl_LIBRARIES} ${GUROBI_LIBS})
 
 install(DIRECTORY include/${PROJECT_NAME}/
