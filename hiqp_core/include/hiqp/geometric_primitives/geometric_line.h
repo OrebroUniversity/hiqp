@@ -52,6 +52,8 @@ namespace geometric_primitives
      *                      </ol>
      * \return 0 on success, -1 if the wrong number of parameters was sent */
     int init(const std::vector<double>& parameters) {
+      GeometricPrimitive::init(parameters);
+      
       int size = parameters.size();
       if (size != 6)
       {

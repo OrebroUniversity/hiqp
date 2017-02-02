@@ -171,6 +171,24 @@ namespace hiqp {
     return 0;
   }
 
+std::vector <TaskInfo> TaskManager::getAllTaskInfo() {
+    resource_mutex_.lock();
+    std::vector <TaskInfo> all_task_info;
+    for(auto it : task_map_) {
+      all_task_info.push_back(
+        TaskInfo(it.second->getTaskName(),
+                 it.second->getPriority(),
+                 it.second->getActive(),
+                 it.second->getMonitored(),
+                 it.second->getDefParams(),
+                 it.second->getDynParams())
+        );
+    }
+
+    resource_mutex_.unlock();
+    return all_task_info;
+  }
+
   int TaskManager::listAllTasks() {
     resource_mutex_.lock();
     int longest_name_length = 0;
@@ -293,6 +311,14 @@ namespace hiqp {
     geometric_primitive_map_->acceptVisitor(geom_prim_cout);
     resource_mutex_.unlock();
     return 0;
+  }
+
+  std::vector <PrimitiveInfo> TaskManager::getAllPrimitiveInfo() {
+    resource_mutex_.lock();
+    std::vector<PrimitiveInfo> all_primitive_info;
+    all_primitive_info = this->geometric_primitive_map_->getAllPrimitiveInfo();
+    resource_mutex_.unlock();
+    return all_primitive_info;
   }
 
   int TaskManager::removePriorityLevel(unsigned int priority) {

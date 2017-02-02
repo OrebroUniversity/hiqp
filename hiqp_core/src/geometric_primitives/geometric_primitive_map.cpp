@@ -321,6 +321,96 @@ void GeometricPrimitiveMap::acceptVisitor(GeometricPrimitiveVisitor& visitor,
   }
 }
 
+std::vector<PrimitiveInfo> GeometricPrimitiveMap::getAllPrimitiveInfo() {
+  std::vector <PrimitiveInfo> all_primitive_info;
+  // point
+  for(auto it : point_map_) {
+    all_primitive_info.push_back(
+      PrimitiveInfo(it.second->getName(),
+                    "point",
+                    it.second->getFrameId(),
+                    it.second->isVisible(),
+                    it.second->getColor(),
+                    it.second->getParameters())
+      );
+  }
+
+  // line
+  for(auto it : line_map_) {
+    all_primitive_info.push_back(
+      PrimitiveInfo(it.second->getName(),
+                    "line",
+                    it.second->getFrameId(),
+                    it.second->isVisible(),
+                    it.second->getColor(),
+                    it.second->getParameters())
+      );
+  }
+
+  // plane
+  for(auto it : plane_map_) {
+    all_primitive_info.push_back(
+      PrimitiveInfo(it.second->getName(),
+                    "plane",
+                    it.second->getFrameId(),
+                    it.second->isVisible(),
+                    it.second->getColor(),
+                    it.second->getParameters())
+      );
+  }
+
+  // box
+  for(auto it : box_map_) {
+    all_primitive_info.push_back(
+      PrimitiveInfo(it.second->getName(),
+                    "box",
+                    it.second->getFrameId(),
+                    it.second->isVisible(),
+                    it.second->getColor(),
+                    it.second->getParameters())
+      );
+  }
+
+  // cylinder
+  for(auto it : cylinder_map_) {
+    all_primitive_info.push_back(
+      PrimitiveInfo(it.second->getName(),
+                    "cylinder",
+                    it.second->getFrameId(),
+                    it.second->isVisible(),
+                    it.second->getColor(),
+                    it.second->getParameters())
+      );
+  }
+
+  // sphere
+  for(auto it : sphere_map_) {
+    all_primitive_info.push_back(
+      PrimitiveInfo(it.second->getName(),
+                    "sphere",
+                    it.second->getFrameId(),
+                    it.second->isVisible(),
+                    it.second->getColor(),
+                    it.second->getParameters())
+      );
+  }
+
+  // frame
+  for(auto it : frame_map_) {
+    all_primitive_info.push_back(
+      PrimitiveInfo(it.second->getName(),
+                    "frame",
+                    it.second->getFrameId(),
+                    it.second->isVisible(),
+                    it.second->getColor(),
+                    it.second->getParameters())
+      );
+  }
+
+  return all_primitive_info;
+    
+}
+
 
 
 

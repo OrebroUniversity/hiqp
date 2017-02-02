@@ -70,6 +70,9 @@ namespace hiqp {
     if (constructDefinition(def_params) != 0) return -3;
     if (constructDynamics(dyn_params) != 0) return -4;
 
+    def_params_ = def_params;
+    dyn_params_ = dyn_params;
+
     def_->task_name_ = task_name_;
     def_->priority_ = priority_;
     def_->active_ = active_;

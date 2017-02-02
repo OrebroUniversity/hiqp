@@ -25,6 +25,8 @@ void HiQPServiceHandler::advertiseAll() {
     "remove_all_tasks", &HiQPServiceHandler::removeAllTasks, this);
   list_all_tasks_service_ = node_handle_->advertiseService(
     "list_all_tasks", &HiQPServiceHandler::listAllTasks, this);
+  get_all_tasks_service_ = node_handle_->advertiseService(
+    "get_all_tasks", &HiQPServiceHandler::getAllTasks, this);
   activate_task_service_ = node_handle_->advertiseService(
     "activate_task", &HiQPServiceHandler::activateTask, this);
   deactivate_task_service_ = node_handle_->advertiseService(
@@ -43,6 +45,8 @@ void HiQPServiceHandler::advertiseAll() {
     "remove_all_primitives", &HiQPServiceHandler::removeAllPrimitives, this);
   list_all_primitives_service_ = node_handle_->advertiseService(
     "list_all_primitives", &HiQPServiceHandler::listAllPrimitives, this);
+  get_all_primitives_service_ = node_handle_->advertiseService(
+    "get_all_primitives", &HiQPServiceHandler::getAllPrimitives, this);
 
 
   remove_priority_level_service_ = node_handle_->advertiseService(
@@ -94,6 +98,22 @@ bool HiQPServiceHandler::listAllTasks(hiqp_msgs::ListAllTasks::Request& req,
                                       hiqp_msgs::ListAllTasks::Response& res) {
   task_manager_->listAllTasks();
   res.success = true;
+  return true;
+}
+
+bool HiQPServiceHandler::getAllTasks(hiqp_msgs::GetAllTasks::Request& req, 
+                                     hiqp_msgs::GetAllTasks::Response& res) {
+  std::vector <hiqp::TaskInfo> all_task_info = task_manager_->getAllTaskInfo();
+  for(auto it : all_task_info) {
+    hiqp_msgs::Task t;
+    t.name = it.name;
+    t.priority = it.priority;
+    t.active = it.active;
+    t.monitored = it.monitored;
+    t.def_params = it.def_params;
+    t.dyn_params = it.dyn_params;
+    res.tasks.push_back(t);
+  }
   return true;
 }
 
@@ -165,6 +185,22 @@ bool HiQPServiceHandler::listAllPrimitives(hiqp_msgs::ListAllPrimitives::Request
                                            hiqp_msgs::ListAllPrimitives::Response& res) {
   task_manager_->listAllPrimitives();
   res.success = true;
+  return true;
+}
+
+bool HiQPServiceHandler::getAllPrimitives(hiqp_msgs::GetAllPrimitives::Request& req, 
+                                     hiqp_msgs::GetAllPrimitives::Response& res) {
+  std::vector <hiqp::PrimitiveInfo> all_task_info = task_manager_->getAllPrimitiveInfo();
+  for(auto it : all_task_info) {
+    hiqp_msgs::Primitive p;
+    p.name = it.name;
+    p.type = it.type;
+    p.frame_id = it.frame_id;
+    p.visible = it.visible;
+    p.color = it.color;
+    p.parameters = it.parameters;
+    res.primitives.push_back(p);
+  }
   return true;
 }
 

@@ -34,6 +34,7 @@ add_service_files(FILES SetTasks.srv
                         RemoveTask.srv
                         RemoveAllTasks.srv
                         ListAllTasks.srv
+                        GetAllTasks.srv
                         ActivateTask.srv
                         DeactivateTask.srv
                         MonitorTask.srv
@@ -42,6 +43,7 @@ add_service_files(FILES SetTasks.srv
                         RemovePrimitive.srv
                         RemoveAllPrimitives.srv
                         ListAllPrimitives.srv
+                        GetAllPrimitives.srv
                         RemovePriorityLevel.srv
                         ActivatePriorityLevel.srv
                         DeactivatePriorityLevel.srv

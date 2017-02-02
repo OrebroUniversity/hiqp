@@ -45,6 +45,7 @@ namespace geometric_primitives
      *  \param parameters : Should be of size 3. Indices 0-2 (required) defines the position of the point.
      * \return 0 on success, -1 if the wrong number of parameters was sent */
     int init(const std::vector<double>& parameters) {
+      GeometricPrimitive::init(parameters);
       int size = parameters.size();
       if (size != 3) {
         printHiqpWarning("GeometricPoint requires 3 parameters, got " 

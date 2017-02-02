@@ -60,6 +60,9 @@ namespace geometric_primitives
     inline double     		getGreenComponent() { return g_; }
     inline double     		getBlueComponent() { return b_; }
     inline double     		getAlphaComponent() { return a_; }
+    inline std::vector<double> getColor() { return {r_, g_, b_, a_}; }
+    inline std::vector<double> getParameters() { return parameters_; }
+    
 
   protected:
     std::string    				               name_;
@@ -67,6 +70,7 @@ namespace geometric_primitives
     bool       						               visible_;
     int                                  visual_id_;
     double       					               r_, g_, b_, a_;
+    std::vector<double>                  parameters_;
 
   private:
     GeometricPrimitive(const GeometricPrimitive& other) = delete;

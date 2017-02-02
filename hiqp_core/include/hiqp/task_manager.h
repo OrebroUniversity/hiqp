@@ -21,6 +21,8 @@
 #include <memory>
 #include <mutex>
 
+#include <hiqp/TaskInfo.h>
+#include <hiqp/PrimitiveInfo.h>
 #include <hiqp/task.h>
 #include <hiqp/visualizer.h>
 #include <hiqp/hiqp_solver.h>
@@ -86,6 +88,7 @@ namespace hiqp {
     int removeTask(std::string task_name);
     int removeAllTasks();
     int listAllTasks();
+    std::vector<TaskInfo> getAllTaskInfo();
     int activateTask(const std::string& task_name);
     int deactivateTask(const std::string& task_name);
     int monitorTask(const std::string& task_name);
@@ -100,6 +103,7 @@ namespace hiqp {
     int removePrimitive(std::string name);
     int removeAllPrimitives();
     int listAllPrimitives();
+    std::vector<PrimitiveInfo> getAllPrimitiveInfo();
 
     int removePriorityLevel(unsigned int priority);
     int activatePriorityLevel(unsigned int priority);

@@ -20,6 +20,7 @@
 #include <map>
 #include <memory>
 
+#include <hiqp/PrimitiveInfo.h>
 #include <hiqp/geometric_primitives/geometric_point.h>
 #include <hiqp/geometric_primitives/geometric_line.h>
 #include <hiqp/geometric_primitives/geometric_plane.h>
@@ -62,7 +63,8 @@ namespace geometric_primitives
     void addDependencyToPrimitive(const std::string& name, const std::string& id);
     void removeDependency(const std::string& id);
     void acceptVisitor(GeometricPrimitiveVisitor& visitor, const std::string& primitive_name = "");
-
+    std::vector<PrimitiveInfo> getAllPrimitiveInfo();
+    
   private:
     GeometricPrimitiveMap(const GeometricPrimitiveMap& other) = delete;
     GeometricPrimitiveMap(GeometricPrimitiveMap&& other) = delete;

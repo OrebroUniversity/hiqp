@@ -19,12 +19,15 @@
 
 #include <ros/ros.h>
 
+#include <hiqp/TaskInfo.h>
+#include <hiqp/PrimitiveInfo.h>
 #include <hiqp/task_manager.h>
 
 #include <hiqp_msgs/SetTasks.h>
 #include <hiqp_msgs/RemoveTask.h>
 #include <hiqp_msgs/RemoveAllTasks.h>
 #include <hiqp_msgs/ListAllTasks.h>
+#include <hiqp_msgs/GetAllTasks.h>
 #include <hiqp_msgs/ActivateTask.h>
 #include <hiqp_msgs/DeactivateTask.h>
 #include <hiqp_msgs/MonitorTask.h>
@@ -34,6 +37,7 @@
 #include <hiqp_msgs/RemovePrimitive.h>
 #include <hiqp_msgs/RemoveAllPrimitives.h>
 #include <hiqp_msgs/ListAllPrimitives.h>
+#include <hiqp_msgs/GetAllPrimitives.h>
 
 #include <hiqp_msgs/RemovePriorityLevel.h>
 #include <hiqp_msgs/ActivatePriorityLevel.h>
@@ -70,6 +74,7 @@ private:
   bool removeTask(hiqp_msgs::RemoveTask::Request& req, hiqp_msgs::RemoveTask::Response& res);
   bool removeAllTasks(hiqp_msgs::RemoveAllTasks::Request& req, hiqp_msgs::RemoveAllTasks::Response& res);
   bool listAllTasks(hiqp_msgs::ListAllTasks::Request& req, hiqp_msgs::ListAllTasks::Response& res);
+  bool getAllTasks(hiqp_msgs::GetAllTasks::Request& req, hiqp_msgs::GetAllTasks::Response& res);
   bool activateTask(hiqp_msgs::ActivateTask::Request& req, hiqp_msgs::ActivateTask::Response& res);
   bool deactivateTask(hiqp_msgs::DeactivateTask::Request& req, hiqp_msgs::DeactivateTask::Response& res);
   bool monitorTask(hiqp_msgs::MonitorTask::Request& req, hiqp_msgs::MonitorTask::Response& res);
@@ -79,6 +84,7 @@ private:
   bool removePrimitive(hiqp_msgs::RemovePrimitive::Request& req, hiqp_msgs::RemovePrimitive::Response& res);
   bool removeAllPrimitives(hiqp_msgs::RemoveAllPrimitives::Request& req, hiqp_msgs::RemoveAllPrimitives::Response& res);
   bool listAllPrimitives(hiqp_msgs::ListAllPrimitives::Request& req, hiqp_msgs::ListAllPrimitives::Response& res);
+  bool getAllPrimitives(hiqp_msgs::GetAllPrimitives::Request& req, hiqp_msgs::GetAllPrimitives::Response& res);
 
   bool removePriorityLevel(hiqp_msgs::RemovePriorityLevel::Request& req, hiqp_msgs::RemovePriorityLevel::Response& res);
   bool activatePriorityLevel(hiqp_msgs::ActivatePriorityLevel::Request& req, hiqp_msgs::ActivatePriorityLevel::Response& res);
@@ -94,6 +100,7 @@ private:
   ros::ServiceServer                  remove_task_service_;
   ros::ServiceServer                  remove_all_tasks_service_;
   ros::ServiceServer                  list_all_tasks_service_;
+  ros::ServiceServer                  get_all_tasks_service_;
   ros::ServiceServer                  activate_task_service_;
   ros::ServiceServer                  deactivate_task_service_;
   ros::ServiceServer                  monitor_task_service_;
@@ -103,6 +110,7 @@ private:
   ros::ServiceServer                  remove_primitive_service_;
   ros::ServiceServer                  remove_all_primitives_service_;
   ros::ServiceServer                  list_all_primitives_service_;
+  ros::ServiceServer                  get_all_primitives_service_;
 
   ros::ServiceServer                  remove_priority_level_service_;
   ros::ServiceServer                  activate_priority_level_service_;

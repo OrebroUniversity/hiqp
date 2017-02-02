@@ -56,6 +56,8 @@ namespace hiqp {
     inline void         setMonitored(bool monitored)       { monitored_ = monitored; }
     inline bool         getMonitored()                     { return monitored_; }
     inline unsigned int getDimensions()                    { if (def_) return def_->getDimensions(); else return 0; }
+    inline std::vector<std::string> getDefParams()         { return def_params_; }
+    inline std::vector<std::string> getDynParams()         { return dyn_params_; }
 
     /*! \brief Recomputes the task performance value, jacobian and its dynamics. */
     int update(RobotStatePtr robot_state);
@@ -106,6 +108,8 @@ namespace hiqp {
     bool                                     active_;
     bool                                     visible_;
     bool                                     monitored_;
+    std::vector<std::string>                 def_params_;
+    std::vector<std::string>                 dyn_params_;
   };
 
 } // namespace hiqp
