@@ -1,6 +1,6 @@
-#include <hiqp/hiqp_client.h>
+#include <hiqp_ros/hiqp_client.h>
 
-namespace hiqp {
+namespace hiqp_ros {
 
 HiQPClient::HiQPClient(const std::string& controller_namespace, bool auto_connect) :
   nh_(controller_namespace) {

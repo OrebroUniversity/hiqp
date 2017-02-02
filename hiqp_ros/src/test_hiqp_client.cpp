@@ -1,10 +1,10 @@
-#include <hiqp/hiqp_client.h>
+#include <hiqp_ros/hiqp_client.h>
 
 int main(int argn, char* args[]) {
 
   ros::init(argn, args, "test_frameonframe");
   
-  hiqp::HiQPClient client("yumi/hiqp_joint_velocity_controller");
+  hiqp_ros::HiQPClient client("yumi/hiqp_joint_velocity_controller");
 
   std::vector <hiqp_msgs::Primitive> primitives;
   hiqp_msgs::Primitive p1, p2;

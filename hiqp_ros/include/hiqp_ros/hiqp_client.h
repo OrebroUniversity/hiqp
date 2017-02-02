@@ -3,7 +3,7 @@
 #include <hiqp_msgs/SetTasks.h>
 #include <ros/ros.h>
 
-namespace hiqp {
+namespace hiqp_ros {
 
 class HiQPClient {
 
