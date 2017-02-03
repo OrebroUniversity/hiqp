@@ -19,35 +19,36 @@
 
 namespace hiqp {
 
-  /*! \brief Represents a time duration in seconds and nanoseconds.
-   *  \author Marcus A Johansson */  
-  class HiQPTimePoint
-  {
-  public:
-    HiQPTimePoint();
-    HiQPTimePoint(unsigned int sec, unsigned int nsec);
-    HiQPTimePoint(const HiQPTimePoint& other);
-    ~HiQPTimePoint();
+/*! \brief Represents a time duration in seconds and nanoseconds.
+ *  \author Marcus A Johansson */
+class HiQPTimePoint {
+ public:
+  HiQPTimePoint();
+  HiQPTimePoint(unsigned int sec, unsigned int nsec);
+  HiQPTimePoint(const HiQPTimePoint& other);
+  ~HiQPTimePoint();
 
-    double toSec() const;
+  double toSec() const;
 
-    inline void setTimePoint(unsigned int sec, unsigned int nsec)
-    { this->sec_ = sec; this->nsec_ = nsec; }
+  inline void setTimePoint(unsigned int sec, unsigned int nsec) {
+    this->sec_ = sec;
+    this->nsec_ = nsec;
+  }
 
-    inline unsigned int getSec() const { return sec_; }
-    inline unsigned int getNSec() const { return nsec_; }
+  inline unsigned int getSec() const { return sec_; }
+  inline unsigned int getNSec() const { return nsec_; }
 
-    HiQPTimePoint& operator=(const HiQPTimePoint& other);
-    HiQPTimePoint operator+(const HiQPTimePoint& other) const;
-    HiQPTimePoint operator-(const HiQPTimePoint& other) const;
-    HiQPTimePoint& operator+=(const HiQPTimePoint& other);
-    HiQPTimePoint& operator-=(const HiQPTimePoint& other);
+  HiQPTimePoint& operator=(const HiQPTimePoint& other);
+  HiQPTimePoint operator+(const HiQPTimePoint& other) const;
+  HiQPTimePoint operator-(const HiQPTimePoint& other) const;
+  HiQPTimePoint& operator+=(const HiQPTimePoint& other);
+  HiQPTimePoint& operator-=(const HiQPTimePoint& other);
 
-  private:
-    unsigned int sec_;
-    unsigned int nsec_;
-  };
+ private:
+  unsigned int sec_;
+  unsigned int nsec_;
+};
 
-} // namespace hiqp
+}  // namespace hiqp
 
-#endif // include guard
+#endif  // include guard

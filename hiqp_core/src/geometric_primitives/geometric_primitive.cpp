@@ -7,7 +7,5 @@ namespace geometric_primitives {
 int GeometricPrimitive::init(const std::vector<double>& parameters) {
   parameters_ = parameters;
 }
-
 }
-
 }

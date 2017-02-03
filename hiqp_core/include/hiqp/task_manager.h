@@ -17,120 +17,116 @@
 #ifndef HIQP_TASK_MANAGER_H
 #define HIQP_TASK_MANAGER_H
 
-#include <vector>
 #include <memory>
 #include <mutex>
+#include <vector>
 
-#include <hiqp/TaskInfo.h>
 #include <hiqp/PrimitiveInfo.h>
-#include <hiqp/task.h>
-#include <hiqp/visualizer.h>
+#include <hiqp/TaskInfo.h>
+#include <hiqp/geometric_primitives/geometric_primitive_map.h>
 #include <hiqp/hiqp_solver.h>
 #include <hiqp/robot_state.h>
-#include <hiqp/geometric_primitives/geometric_primitive_map.h>
-#include <kdl/tree.hpp>
+#include <hiqp/task.h>
+#include <hiqp/visualizer.h>
 #include <kdl/jntarrayvel.hpp>
+#include <kdl/tree.hpp>
 
 namespace hiqp {
 
-  /*! \brief A structure used to get data out of tasks that is to be monitored.
-   *  \author Marcus A Johansson */
-  class TaskMeasure {
-  public:
-    TaskMeasure(const std::string& task_name,
-                       const Eigen::VectorXd& e,
-                       const Eigen::VectorXd& de,
-                       const Eigen::VectorXd& pm)
-    : task_name_(task_name), e_(e), de_(de), pm_(pm) {}
+/*! \brief A structure used to get data out of tasks that is to be monitored.
+ *  \author Marcus A Johansson */
+class TaskMeasure {
+ public:
+  TaskMeasure(const std::string& task_name, const Eigen::VectorXd& e,
+              const Eigen::VectorXd& de, const Eigen::VectorXd& pm)
+      : task_name_(task_name), e_(e), de_(de), pm_(pm) {}
 
-    std::string         task_name_;
-    Eigen::VectorXd     e_;
-    Eigen::VectorXd     de_;
-    Eigen::VectorXd     pm_;
-  };
+  std::string task_name_;
+  Eigen::VectorXd e_;
+  Eigen::VectorXd de_;
+  Eigen::VectorXd pm_;
+};
 
-  /*! \brief The central mediator class in the HiQP framework.
-   *  \author Marcus A Johansson */  
-  class TaskManager {
-  public:
-    TaskManager(std::shared_ptr<Visualizer> visualizer);
-    ~TaskManager() noexcept;
+/*! \brief The central mediator class in the HiQP framework.
+ *  \author Marcus A Johansson */
+class TaskManager {
+ public:
+  TaskManager(std::shared_ptr<Visualizer> visualizer);
+  ~TaskManager() noexcept;
 
-    void init(unsigned int n_controls);
+  void init(unsigned int n_controls);
 
-    /*! \brief Generates controls from a particular robot state. */
-    bool getVelocityControls(RobotStatePtr robot_state,
-                             std::vector<double> &controls);
+  /*! \brief Generates controls from a particular robot state. */
+  bool getVelocityControls(RobotStatePtr robot_state,
+                           std::vector<double>& controls);
 
-    /*! \brief Retrieves the performance measures for every active task along
-     *         with the task's name and unique identifier. */
-    void getTaskMeasures(std::vector<TaskMeasure>& data);
+  /*! \brief Retrieves the performance measures for every active task along
+   *         with the task's name and unique identifier. */
+  void getTaskMeasures(std::vector<TaskMeasure>& data);
 
-    /// \brief Redraws all primitives using the currently set visualizer
-    void renderPrimitives();
+  /// \brief Redraws all primitives using the currently set visualizer
+  void renderPrimitives();
 
-    /// \brief Returns a shared pointer to the common geometric primitive map object
-    inline std::shared_ptr<GeometricPrimitiveMap> getGeometricPrimitiveMap() { return geometric_primitive_map_; }
+  /// \brief Returns a shared pointer to the common geometric primitive map
+  /// object
+  inline std::shared_ptr<GeometricPrimitiveMap> getGeometricPrimitiveMap() {
+    return geometric_primitive_map_;
+  }
 
-    /*! \brief Adds a new task to the task manager or updates an existing one
-     *  \return 0 if the task creation was successful,
-     *          -1 is the behaviour_parameters argument was invalid,
-     *          -2 if the task behaviour name was not recognised,
-     *          -3 if the task name was not recognised */
-    int setTask(const std::string& task_name,
-                unsigned int priority,
-                bool visible,
-                bool active,
-                bool monitored,
-                const std::vector<std::string>& def_params,
-                const std::vector<std::string>& dyn_params,
-                RobotStatePtr robot_state);
-    int removeTask(std::string task_name);
-    int removeAllTasks();
-    int listAllTasks();
-    std::vector<TaskInfo> getAllTaskInfo();
-    int activateTask(const std::string& task_name);
-    int deactivateTask(const std::string& task_name);
-    int monitorTask(const std::string& task_name);
-    int demonitorTask(const std::string& task_name);
+  /*! \brief Adds a new task to the task manager or updates an existing one
+   *  \return 0 if the task creation was successful,
+   *          -1 is the behaviour_parameters argument was invalid,
+   *          -2 if the task behaviour name was not recognised,
+   *          -3 if the task name was not recognised */
+  int setTask(const std::string& task_name, unsigned int priority, bool visible,
+              bool active, bool monitored,
+              const std::vector<std::string>& def_params,
+              const std::vector<std::string>& dyn_params,
+              RobotStatePtr robot_state);
+  int removeTask(std::string task_name);
+  int removeAllTasks();
+  int listAllTasks();
+  std::vector<TaskInfo> getAllTaskInfo();
+  int activateTask(const std::string& task_name);
+  int deactivateTask(const std::string& task_name);
+  int monitorTask(const std::string& task_name);
+  int demonitorTask(const std::string& task_name);
 
-    int setPrimitive(const std::string& name,
-                     const std::string& type,
-                     const std::string& frame_id,
-                     bool visible,
-                     const std::vector<double>& color,
-                     const std::vector<double>& parameters);
-    int removePrimitive(std::string name);
-    int removeAllPrimitives();
-    int listAllPrimitives();
-    std::vector<PrimitiveInfo> getAllPrimitiveInfo();
+  int setPrimitive(const std::string& name, const std::string& type,
+                   const std::string& frame_id, bool visible,
+                   const std::vector<double>& color,
+                   const std::vector<double>& parameters);
+  int removePrimitive(std::string name);
+  int removeAllPrimitives();
+  int listAllPrimitives();
+  std::vector<PrimitiveInfo> getAllPrimitiveInfo();
 
-    int removePriorityLevel(unsigned int priority);
-    int activatePriorityLevel(unsigned int priority);
-    int deactivatePriorityLevel(unsigned int priority);
-    int monitorPriorityLevel(unsigned int priority);
-    int demonitorPriorityLevel(unsigned int priority);
+  int removePriorityLevel(unsigned int priority);
+  int activatePriorityLevel(unsigned int priority);
+  int deactivatePriorityLevel(unsigned int priority);
+  int monitorPriorityLevel(unsigned int priority);
+  int demonitorPriorityLevel(unsigned int priority);
 
-   private:
-    TaskManager(const TaskManager& other) = delete;
-    TaskManager(TaskManager&& other) = delete;
-    TaskManager& operator=(const TaskManager& other) = delete;
-    TaskManager& operator=(TaskManager&& other) noexcept = delete;
+ private:
+  TaskManager(const TaskManager& other) = delete;
+  TaskManager(TaskManager&& other) = delete;
+  TaskManager& operator=(const TaskManager& other) = delete;
+  TaskManager& operator=(TaskManager&& other) noexcept = delete;
 
-    typedef std::map< std::string, std::shared_ptr<Task> > TaskMap;
+  typedef std::map<std::string, std::shared_ptr<Task> > TaskMap;
 
-    std::shared_ptr<GeometricPrimitiveMap>       geometric_primitive_map_;
-    std::shared_ptr<Visualizer>                  visualizer_;
+  std::shared_ptr<GeometricPrimitiveMap> geometric_primitive_map_;
+  std::shared_ptr<Visualizer> visualizer_;
 
-    TaskMap                                      task_map_;
+  TaskMap task_map_;
 
-    std::shared_ptr<HiQPSolver>                  solver_;
+  std::shared_ptr<HiQPSolver> solver_;
 
-    std::mutex                                   resource_mutex_;
+  std::mutex resource_mutex_;
 
-    unsigned int                                 n_controls_;
-  };
+  unsigned int n_controls_;
+};
 
-} // namespace hiqp
+}  // namespace hiqp
 
 #endif

@@ -22,39 +22,39 @@
 #include <hiqp/robot_state.h>
 #include <hiqp/task_definition.h>
 
-namespace hiqp
-{
-namespace tasks
-{
+namespace hiqp {
+namespace tasks {
 
-  /*! \brief Represents a task definition that sets a specific joint configuration. This task definition does not leave any redundancy available to other tasks!
-   *  \author Marcus A Johansson */ 
-  class TDefFullPose : public TaskDefinition {
-  public:
-    TDefFullPose(std::shared_ptr<GeometricPrimitiveMap> geom_prim_map,
-                 std::shared_ptr<Visualizer> visualizer)
-     : TaskDefinition(geom_prim_map, visualizer) {}
+/*! \brief Represents a task definition that sets a specific joint
+ * configuration. This task definition does not leave any redundancy available
+ * to other tasks!
+ *  \author Marcus A Johansson */
+class TDefFullPose : public TaskDefinition {
+ public:
+  TDefFullPose(std::shared_ptr<GeometricPrimitiveMap> geom_prim_map,
+               std::shared_ptr<Visualizer> visualizer)
+      : TaskDefinition(geom_prim_map, visualizer) {}
 
-    ~TDefFullPose() noexcept {}
+  ~TDefFullPose() noexcept {}
 
-    int init(const std::vector<std::string>& parameters,
-             RobotStatePtr robot_state);
+  int init(const std::vector<std::string>& parameters,
+           RobotStatePtr robot_state);
 
-    int update(RobotStatePtr robot_state);
+  int update(RobotStatePtr robot_state);
 
-    int monitor();
+  int monitor();
 
-  private:
-    TDefFullPose(const TDefFullPose& other) = delete;
-    TDefFullPose(TDefFullPose&& other) = delete;
-    TDefFullPose& operator=(const TDefFullPose& other) = delete;
-    TDefFullPose& operator=(TDefFullPose&& other) noexcept = delete;
+ private:
+  TDefFullPose(const TDefFullPose& other) = delete;
+  TDefFullPose(TDefFullPose&& other) = delete;
+  TDefFullPose& operator=(const TDefFullPose& other) = delete;
+  TDefFullPose& operator=(TDefFullPose&& other) noexcept = delete;
 
-    std::vector<double>                desired_configuration_;
-  };
+  std::vector<double> desired_configuration_;
+};
 
-} // namespace tasks
+}  // namespace tasks
 
-} // namespace hiqp
+}  // namespace hiqp
 
-#endif // include guard
+#endif  // include guard

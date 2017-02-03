@@ -18,43 +18,38 @@
 
 #include <hiqp/tasks/tdyn_jnt_limits.h>
 
-namespace hiqp
-{
-namespace tasks
-{
+namespace hiqp {
+namespace tasks {
 
-  int TDynJntLimits::init(const std::vector<std::string>& parameters,
-                              RobotStatePtr robot_state,
-                              const Eigen::VectorXd& e_initial,
-                              const Eigen::VectorXd& e_final) {
-    int size = parameters.size();
-    if (size != 3) {
-      printHiqpWarning("TDynJntLimits requires 3 parameters, got " 
-        + std::to_string(size) + "! Initialization failed!");
-      return -1;
-    }
-
-    e_dot_star_.resize(4);
-    dq_max_ = std::stod( parameters.at(1) );
-    gain_ = std::stod( parameters.at(2) );
-    performance_measures_.resize(0);
-    return 0;
+int TDynJntLimits::init(const std::vector<std::string>& parameters,
+                        RobotStatePtr robot_state,
+                        const Eigen::VectorXd& e_initial,
+                        const Eigen::VectorXd& e_final) {
+  int size = parameters.size();
+  if (size != 3) {
+    printHiqpWarning("TDynJntLimits requires 3 parameters, got " +
+                     std::to_string(size) + "! Initialization failed!");
+    return -1;
   }
 
-  int TDynJntLimits::update(RobotStatePtr robot_state,
-                                const Eigen::VectorXd& e,
-                                const Eigen::MatrixXd& J) {
-    e_dot_star_(0) = -dq_max_;
-    e_dot_star_(1) = dq_max_;
-    e_dot_star_(2) = -gain_ * e(2);
-    e_dot_star_(3) = -gain_ * e(3);
-    return 0;
-  }
+  e_dot_star_.resize(4);
+  dq_max_ = std::stod(parameters.at(1));
+  gain_ = std::stod(parameters.at(2));
+  performance_measures_.resize(0);
+  return 0;
+}
 
-  int TDynJntLimits::monitor() {
-    return 0;
-  }
+int TDynJntLimits::update(RobotStatePtr robot_state, const Eigen::VectorXd& e,
+                          const Eigen::MatrixXd& J) {
+  e_dot_star_(0) = -dq_max_;
+  e_dot_star_(1) = dq_max_;
+  e_dot_star_(2) = -gain_ * e(2);
+  e_dot_star_(3) = -gain_ * e(3);
+  return 0;
+}
 
-} // namespace tasks
+int TDynJntLimits::monitor() { return 0; }
 
-} // namespace hiqp
+}  // namespace tasks
+
+}  // namespace hiqp

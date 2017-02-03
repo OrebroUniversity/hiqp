@@ -18,94 +18,93 @@
 #define HIQP_TASK_DEFINITION_H
 
 #include <iostream>
-#include <vector>
 #include <memory>
+#include <vector>
 
 #include <hiqp/geometric_primitives/geometric_primitive_map.h>
-#include <hiqp/visualizer.h>
 #include <hiqp/robot_state.h>
+#include <hiqp/visualizer.h>
 
 #include <Eigen/Dense>
 
-namespace hiqp
-{
+namespace hiqp {
 
-  using geometric_primitives::GeometricPrimitiveMap;
+using geometric_primitives::GeometricPrimitiveMap;
 
-  class Task;
+class Task;
 
-  /*! \brief Defines the task space and the performance value of a task.
-   *  \author Marcus A Johansson */ 
-  class TaskDefinition
-  {
-  public:
-    TaskDefinition(std::shared_ptr<GeometricPrimitiveMap> geom_prim_map,
-                   std::shared_ptr<Visualizer> visualizer) 
-    : geometric_primitive_map_(geom_prim_map), visualizer_(visualizer) {}
+/*! \brief Defines the task space and the performance value of a task.
+ *  \author Marcus A Johansson */
+class TaskDefinition {
+ public:
+  TaskDefinition(std::shared_ptr<GeometricPrimitiveMap> geom_prim_map,
+                 std::shared_ptr<Visualizer> visualizer)
+      : geometric_primitive_map_(geom_prim_map), visualizer_(visualizer) {}
 
-    ~TaskDefinition() noexcept {}
+  ~TaskDefinition() noexcept {}
 
-    virtual int init(const std::vector<std::string>& parameters,
-                     RobotStatePtr robot_state) = 0;
+  virtual int init(const std::vector<std::string>& parameters,
+                   RobotStatePtr robot_state) = 0;
 
-    virtual int update(RobotStatePtr robot_state) = 0;
+  virtual int update(RobotStatePtr robot_state) = 0;
 
-    virtual int monitor() = 0;
+  virtual int monitor() = 0;
 
-    unsigned int            getDimensions()       { return n_dimensions_; }
-    Eigen::VectorXd         getInitialValue()     { return e_initial_; }
-    Eigen::MatrixXd         getInitialJacobian()  { return J_initial_; }
+  unsigned int getDimensions() { return n_dimensions_; }
+  Eigen::VectorXd getInitialValue() { return e_initial_; }
+  Eigen::MatrixXd getInitialJacobian() { return J_initial_; }
 
-    virtual Eigen::VectorXd getFinalValue(RobotStatePtr robot_state)
-      { return Eigen::VectorXd::Zero(e_.rows()); }
+  virtual Eigen::VectorXd getFinalValue(RobotStatePtr robot_state) {
+    return Eigen::VectorXd::Zero(e_.rows());
+  }
 
-  protected:
-    Eigen::VectorXd                 e_; // the performance value of the task
-    Eigen::MatrixXd                 J_; // the task jacobian
-    std::vector<int>                task_types_; // -1 leq, 0 eq, 1 geq
-    Eigen::VectorXd                 performance_measures_;
-    unsigned int                    n_dimensions_;
+ protected:
+  Eigen::VectorXd e_;            // the performance value of the task
+  Eigen::MatrixXd J_;            // the task jacobian
+  std::vector<int> task_types_;  // -1 leq, 0 eq, 1 geq
+  Eigen::VectorXd performance_measures_;
+  unsigned int n_dimensions_;
 
-    inline std::string  getTaskName()                      { return task_name_; }
-    inline unsigned int getPriority()                      { return priority_; }
-    inline bool         getActive()                        { return active_; }
-    inline bool         getVisible()                       { return visible_; }
-    inline std::shared_ptr<Visualizer> 
-                        getVisualizer()                    { return visualizer_; }
-    inline std::shared_ptr<GeometricPrimitiveMap> 
-                        getGeometricPrimitiveMap()         { return geometric_primitive_map_; }
+  inline std::string getTaskName() { return task_name_; }
+  inline unsigned int getPriority() { return priority_; }
+  inline bool getActive() { return active_; }
+  inline bool getVisible() { return visible_; }
+  inline std::shared_ptr<Visualizer> getVisualizer() { return visualizer_; }
+  inline std::shared_ptr<GeometricPrimitiveMap> getGeometricPrimitiveMap() {
+    return geometric_primitive_map_;
+  }
 
-  private:
-    friend                                    Task;
+ private:
+  friend Task;
 
-    std::shared_ptr<GeometricPrimitiveMap>    geometric_primitive_map_;
-    std::shared_ptr<Visualizer>               visualizer_;
+  std::shared_ptr<GeometricPrimitiveMap> geometric_primitive_map_;
+  std::shared_ptr<Visualizer> visualizer_;
 
-    Eigen::VectorXd                           e_initial_;
-    Eigen::MatrixXd                           J_initial_;
+  Eigen::VectorXd e_initial_;
+  Eigen::MatrixXd J_initial_;
 
-    std::string                               task_name_;
-    unsigned int                              priority_;
-    bool                                      visible_;
-    bool                                      active_;
+  std::string task_name_;
+  unsigned int priority_;
+  bool visible_;
+  bool active_;
 
-    TaskDefinition(const TaskDefinition& other) = delete;
-    TaskDefinition(TaskDefinition&& other) = delete;
-    TaskDefinition& operator=(const TaskDefinition& other) = delete;
-    TaskDefinition& operator=(TaskDefinition&& other) noexcept = delete;
+  TaskDefinition(const TaskDefinition& other) = delete;
+  TaskDefinition(TaskDefinition&& other) = delete;
+  TaskDefinition& operator=(const TaskDefinition& other) = delete;
+  TaskDefinition& operator=(TaskDefinition&& other) noexcept = delete;
 
-    /*! \brief Calls init() of the child class, and properly sets up the TaskDefinition object. */
-    int initialize(const std::vector<std::string>& parameters,
-                   RobotStatePtr robot_state) {
-        if (init(parameters, robot_state) != 0)
-          return -1;
-        update(robot_state);
-        e_initial_ = e_;
-        J_initial_ = J_;
-        return 0;
-    }
-  };
+  /*! \brief Calls init() of the child class, and properly sets up the
+   * TaskDefinition object. */
+  int initialize(const std::vector<std::string>& parameters,
+                 RobotStatePtr robot_state) {
+    if (init(parameters, robot_state) != 0) return -1;
+    update(robot_state);
+    e_initial_ = e_;
+    J_initial_ = J_;
+    return 0;
+  }
+};
 
-} // namespace hiqp
+}  // namespace hiqp
 
-#endif // include guard
+#endif  // include guard

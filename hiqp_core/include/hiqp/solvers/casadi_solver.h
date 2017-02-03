@@ -19,29 +19,25 @@
 
 #include <hiqp/hiqp_solver.h>
 
-namespace hiqp
-{
+namespace hiqp {
 
-  /*! \brief An optimization based solver for a set of stages implemented in CasADi.
-   *  \author Marcus A Johansson */
-  class CasADiSolver : public HiQPSolver {
-  public:
-    CasADiSolver() {}
-    ~CasADiSolver() noexcept {}
+/*! \brief An optimization based solver for a set of stages implemented in
+ * CasADi.
+ *  \author Marcus A Johansson */
+class CasADiSolver : public HiQPSolver {
+ public:
+  CasADiSolver() {}
+  ~CasADiSolver() noexcept {}
 
-    bool solve(std::vector<double>& solution);
+  bool solve(std::vector<double>& solution);
 
-  private:
-    CasADiSolver(const CasADiSolver& other) = delete;
-    CasADiSolver(CasADiSolver&& other) = delete;
-    CasADiSolver& operator=(const CasADiSolver& other) = delete;
-    CasADiSolver& operator=(CasADiSolver&& other) noexcept = delete;
-  };
+ private:
+  CasADiSolver(const CasADiSolver& other) = delete;
+  CasADiSolver(CasADiSolver&& other) = delete;
+  CasADiSolver& operator=(const CasADiSolver& other) = delete;
+  CasADiSolver& operator=(CasADiSolver&& other) noexcept = delete;
+};
 
-} // namespace hiqp
+}  // namespace hiqp
 
-#endif // include guard
-
-
-
-
+#endif  // include guard

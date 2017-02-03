@@ -20,49 +20,46 @@
 #include <hiqp/robot_state.h>
 #include <hiqp/task_dynamics.h>
 
-namespace hiqp
-{
-namespace tasks
-{
+namespace hiqp {
+namespace tasks {
 
-  /*! \brief A task dynamics that enforces minimal jerk throughout the whole motion.
-   *  \author Marcus A Johansson */  
-  class TDynMinimalJerk : public TaskDynamics {
-  public:
-    TDynMinimalJerk(std::shared_ptr<GeometricPrimitiveMap> geom_prim_map,
-                         std::shared_ptr<Visualizer> visualizer)
-    : TaskDynamics(geom_prim_map, visualizer) {}
+/*! \brief A task dynamics that enforces minimal jerk throughout the whole
+ * motion.
+ *  \author Marcus A Johansson */
+class TDynMinimalJerk : public TaskDynamics {
+ public:
+  TDynMinimalJerk(std::shared_ptr<GeometricPrimitiveMap> geom_prim_map,
+                  std::shared_ptr<Visualizer> visualizer)
+      : TaskDynamics(geom_prim_map, visualizer) {}
 
-    ~TDynMinimalJerk() noexcept = default;
+  ~TDynMinimalJerk() noexcept = default;
 
-    int init(const std::vector<std::string>& parameters,
-             RobotStatePtr robot_state,
-             const Eigen::VectorXd& e_initial,
-             const Eigen::VectorXd& e_final);
+  int init(const std::vector<std::string>& parameters,
+           RobotStatePtr robot_state, const Eigen::VectorXd& e_initial,
+           const Eigen::VectorXd& e_final);
 
-    int update(RobotStatePtr robot_state,
-               const Eigen::VectorXd& e,
-               const Eigen::MatrixXd& J);
+  int update(RobotStatePtr robot_state, const Eigen::VectorXd& e,
+             const Eigen::MatrixXd& J);
 
-    int monitor();
+  int monitor();
 
-  private:
-    TDynMinimalJerk(const TDynMinimalJerk& other) = delete;
-    TDynMinimalJerk(TDynMinimalJerk&& other) = delete;
-    TDynMinimalJerk& operator=(const TDynMinimalJerk& other) = delete;
-    TDynMinimalJerk& operator=(TDynMinimalJerk&& other) noexcept = delete;
+ private:
+  TDynMinimalJerk(const TDynMinimalJerk& other) = delete;
+  TDynMinimalJerk(TDynMinimalJerk&& other) = delete;
+  TDynMinimalJerk& operator=(const TDynMinimalJerk& other) = delete;
+  TDynMinimalJerk& operator=(TDynMinimalJerk&& other) noexcept = delete;
 
-    HiQPTimePoint                time_start_;
-    double                       total_duration_;
-    double                       gain_;
-    Eigen::VectorXd              e_initial_;
-    Eigen::VectorXd              e_final_;
-    Eigen::VectorXd              e_diff_;
-    double                       f_;
-  };
+  HiQPTimePoint time_start_;
+  double total_duration_;
+  double gain_;
+  Eigen::VectorXd e_initial_;
+  Eigen::VectorXd e_final_;
+  Eigen::VectorXd e_diff_;
+  double f_;
+};
 
-} // namespace tasks
+}  // namespace tasks
 
-} // namespace hiqp
+}  // namespace hiqp
 
-#endif // include guard
+#endif  // include guard

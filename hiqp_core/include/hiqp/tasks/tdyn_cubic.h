@@ -20,43 +20,40 @@
 #include <hiqp/robot_state.h>
 #include <hiqp/task_dynamics.h>
 
-namespace hiqp
-{
-namespace tasks
-{
+namespace hiqp {
+namespace tasks {
 
-  /*! \brief A cubic dynamics similar to first-order dynamics but with slower convergence around e=0.
-   *  \author Marcus A Johansson */  
-  class TDynCubic : public TaskDynamics {
-  public:
-    TDynCubic(std::shared_ptr<GeometricPrimitiveMap> geom_prim_map,
-                            std::shared_ptr<Visualizer> visualizer)
-     : TaskDynamics(geom_prim_map, visualizer) {}
+/*! \brief A cubic dynamics similar to first-order dynamics but with slower
+ * convergence around e=0.
+ *  \author Marcus A Johansson */
+class TDynCubic : public TaskDynamics {
+ public:
+  TDynCubic(std::shared_ptr<GeometricPrimitiveMap> geom_prim_map,
+            std::shared_ptr<Visualizer> visualizer)
+      : TaskDynamics(geom_prim_map, visualizer) {}
 
-    ~TDynCubic() noexcept {}
+  ~TDynCubic() noexcept {}
 
-    int init(const std::vector<std::string>& parameters,
-             RobotStatePtr robot_state,
-             const Eigen::VectorXd& e_initial,
-             const Eigen::VectorXd& e_final);
+  int init(const std::vector<std::string>& parameters,
+           RobotStatePtr robot_state, const Eigen::VectorXd& e_initial,
+           const Eigen::VectorXd& e_final);
 
-    int update(RobotStatePtr robot_state,
-               const Eigen::VectorXd& e,
-               const Eigen::MatrixXd& J);
+  int update(RobotStatePtr robot_state, const Eigen::VectorXd& e,
+             const Eigen::MatrixXd& J);
 
-    int monitor();
+  int monitor();
 
-  private:
-    TDynCubic(const TDynCubic& other) = delete;
-    TDynCubic(TDynCubic&& other) = delete;
-    TDynCubic& operator=(const TDynCubic& other) = delete;
-    TDynCubic& operator=(TDynCubic&& other) noexcept = delete;
+ private:
+  TDynCubic(const TDynCubic& other) = delete;
+  TDynCubic(TDynCubic&& other) = delete;
+  TDynCubic& operator=(const TDynCubic& other) = delete;
+  TDynCubic& operator=(TDynCubic&& other) noexcept = delete;
 
-    double lambda_;
-  };
+  double lambda_;
+};
 
-} // namespace tasks
+}  // namespace tasks
 
-} // namespace hiqp
+}  // namespace hiqp
 
-#endif // include guard
+#endif  // include guard
