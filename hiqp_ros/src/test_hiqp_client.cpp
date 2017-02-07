@@ -27,10 +27,11 @@ int main(int argn, char* args[]) {
   client.setPrimitives(primitives);
   client.setTask("frameonframe_alignment", 2, true, true, true,
                  {"TDefGeomAlign", "frame", "frame", "r_gripper = target", "0"},
-                 {"TDynLinear", "1.0"});
+                 {"TDynLinear", "1.0"}, hiqp_ros::TaskDoneReaction::DEACTIVATE);
   client.setTask("frameonframe_projection", 2, true, true, true,
                  {"TDefGeomProj", "frame", "frame", "r_gripper = target"},
-                 {"TDynLinear", "1.0"});
+                 {"TDynLinear", "1.0"}, hiqp_ros::TaskDoneReaction::REMOVE);
 
+  ros::spin();
   return 0;
 }
