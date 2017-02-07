@@ -138,7 +138,8 @@ void HiQPJointVelocityController::monitorTasks() {
             measure.pm_.data() + measure.pm_.rows() * measure.pm_.cols());
         msgs.task_measures.push_back(msg);
       }
-      monitoring_pub_.publish(msgs);
+      if(!msgs.task_measures.empty())
+        monitoring_pub_.publish(msgs);
     }
   }
 }
