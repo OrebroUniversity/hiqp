@@ -10,23 +10,23 @@
 #include <hiqp_msgs/TaskMeasures.h>
 
 #include <ros/ros.h>
+#include <sensor_msgs/JointState.h>
 #include <numeric>
 
 namespace hiqp_ros {
 
-enum TaskDoneReaction {
-  NONE = 0,
-  PRINT_INFO = 1,
-  DEACTIVATE = 2,
-  REMOVE = 3
-};
+enum TaskDoneReaction { NONE = 0, PRINT_INFO = 1, DEACTIVATE = 2, REMOVE = 3 };
 
 class HiQPClient {
+  std::string robot_namespace_;
+  std::string controller_namespace_;
   /**
-   * A nodehandle.
+   * A nodehandle for the controller namespace.
    *
    */
   ros::NodeHandle nh_;
+
+  ros::NodeHandle robot_nh_;
 
   /**
    * A client to the set_primitives service.
@@ -60,19 +60,22 @@ class HiQPClient {
 
   ros::Subscriber task_measures_sub_;
 
-  std::map <std::string, TaskDoneReaction> task_name_reaction_map_;
+  std::map<std::string, TaskDoneReaction> task_name_reaction_map_;
 
   double error_tolerance_;
 
-  /** 
+  /**
    * A callback function for monitoring the task.
-   * 
-   * @param task_measures A ConstPtr to message containing a vector of task measures. 
+   *
+   * @param task_measures A ConstPtr to message containing a vector of task
+   * measures.
    */
-  void taskMeasuresCallback(const hiqp_msgs::TaskMeasuresConstPtr& task_measures);
-  
+  void taskMeasuresCallback(
+      const hiqp_msgs::TaskMeasuresConstPtr& task_measures);
+
  public:
-  HiQPClient(const std::string& controller_namespace =
+  HiQPClient(const std::string& robot_namespace,
+             const std::string& controller_namespace =
                  "hiqp_joint_velocity_controller",
              bool auto_connect = true);
 
@@ -114,12 +117,14 @@ class HiQPClient {
                TaskDoneReaction tdr = TaskDoneReaction::PRINT_INFO);
 
   void setTasks(const std::vector<hiqp_msgs::Task>& tasks,
-                const std::vector <TaskDoneReaction>& tdr_vector);
+                const std::vector<TaskDoneReaction>& tdr_vector);
 
   void deactivateTask(const std::string& task_name);
 
   void removeTask(const std::string& task_name);
 
   void removePrimitive(const std::string& primitive_name);
+
+  void setJointAngles(const std::vector<double>& joint_angles);
 };
 }

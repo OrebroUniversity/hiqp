@@ -2,11 +2,15 @@
 
 namespace hiqp_ros {
 
-HiQPClient::HiQPClient(const std::string& controller_namespace,
+HiQPClient::HiQPClient(const std::string& robot_namespace,
+                       const std::string& controller_namespace,
                        bool auto_connect)
-  : nh_(controller_namespace),
-    error_tolerance_(0.001) {
-  // TODO: read error_tolerance from file.
+    : robot_namespace_(robot_namespace),
+      controller_namespace_(controller_namespace),
+      nh_(robot_namespace + "/" + controller_namespace),
+      robot_nh_(robot_namespace),
+      error_tolerance_(1e-12) {
+  // TODO: read error_tolerance from param.
   if (auto_connect) this->connectToServer();
 }
 
@@ -14,12 +18,16 @@ void HiQPClient::connectToServer() {
   set_tasks_client_ = nh_.serviceClient<hiqp_msgs::SetTasks>("set_tasks");
   set_primitives_client_ =
       nh_.serviceClient<hiqp_msgs::SetPrimitives>("set_primitives");
-  activate_task_client_ = nh_.serviceClient<hiqp_msgs::ActivateTask>("activate_task");
-  deactivate_task_client_ = nh_.serviceClient<hiqp_msgs::DeactivateTask>("deactivate_task");
+  activate_task_client_ =
+      nh_.serviceClient<hiqp_msgs::ActivateTask>("activate_task");
+  deactivate_task_client_ =
+      nh_.serviceClient<hiqp_msgs::DeactivateTask>("deactivate_task");
   remove_task_client_ = nh_.serviceClient<hiqp_msgs::RemoveTask>("remove_task");
-  remove_primitive_client_ = nh_.serviceClient<hiqp_msgs::RemovePrimitive> ("remove_primitive");
+  remove_primitive_client_ =
+      nh_.serviceClient<hiqp_msgs::RemovePrimitive>("remove_primitive");
 
-  task_measures_sub_ = nh_.subscribe("task_measures", 1, &HiQPClient::taskMeasuresCallback, this);
+  task_measures_sub_ = nh_.subscribe("task_measures", 1,
+                                     &HiQPClient::taskMeasuresCallback, this);
   ROS_INFO("Connected to HiQP Servers.");
 }
 
@@ -73,8 +81,8 @@ void HiQPClient::setTask(const std::string& name, int16_t priority,
   task.def_params = def_params;
   task.dyn_params = dyn_params;
 
-  std::vector<hiqp_msgs::Task> tasks {task};
-  std::vector<TaskDoneReaction> tdr_vector {tdr};
+  std::vector<hiqp_msgs::Task> tasks{task};
+  std::vector<TaskDoneReaction> tdr_vector{tdr};
 
   setTasks(tasks, tdr_vector);
 }
@@ -93,13 +101,13 @@ void HiQPClient::setTasks(const std::vector<hiqp_msgs::Task>& tasks,
     else
       ROS_WARN("Either all or some of the tasks were not added.");
 
-    // If the service call succeeded and this task was added. We can set up a reaction.
-    for(int i = 0; i < tasks.size(); i++) {
+    // If the service call succeeded and this task was added. We can set up a
+    // reaction.
+    for (int i = 0; i < tasks.size(); i++) {
       auto& task = tasks[i];
       auto& returnVal = setTasksMsg.response.success[i];
-      
-      if(task.monitored && returnVal) {
-        ROS_INFO("Ok here. %d", tdr_vector[i]);
+
+      if (task.monitored && returnVal) {
         task_name_reaction_map_[task.name] = tdr_vector[i];
       }
     }
@@ -112,8 +120,9 @@ void HiQPClient::removeTask(const std::string& task_name) {
   hiqp_msgs::RemoveTask removeTaskMsg;
   removeTaskMsg.request.name = task_name;
 
-  if(!remove_task_client_.call(removeTaskMsg)) {
-    ROS_WARN("Removing task \'%s\' failed. See server output/log for details.", task_name.c_str());
+  if (!remove_task_client_.call(removeTaskMsg)) {
+    ROS_WARN("Removing task \'%s\' failed. See server output/log for details.",
+             task_name.c_str());
   }
 }
 
@@ -122,34 +131,52 @@ void HiQPClient::deactivateTask(const std::string& task_name) {
   hiqp_msgs::DeactivateTask deactivateTaskMsg;
   deactivateTaskMsg.request.name = task_name;
 
-  if(!deactivate_task_client_.call(deactivateTaskMsg)) {
-    ROS_WARN("Deactivating task \'%s\' failed. See server output/log for details.", task_name.c_str());
+  if (!deactivate_task_client_.call(deactivateTaskMsg)) {
+    ROS_WARN(
+        "Deactivating task \'%s\' failed. See server output/log for details.",
+        task_name.c_str());
   }
 }
 
-void HiQPClient::taskMeasuresCallback(const hiqp_msgs::TaskMeasuresConstPtr& task_measures) {
-  for(auto task_measure : task_measures->task_measures) {
-    double sq_error = std::inner_product(task_measure.e.begin(), task_measure.e.end(), task_measure.e.begin(), 0);
+void HiQPClient::taskMeasuresCallback(
+    const hiqp_msgs::TaskMeasuresConstPtr& task_measures) {
+  for (auto task_measure : task_measures->task_measures) {
+    double sq_error =
+        std::inner_product(task_measure.e.begin(), task_measure.e.end(),
+                           task_measure.e.begin(), 0.0);
     auto it = task_name_reaction_map_.find(task_measure.task_name);
-    if(sq_error < error_tolerance_) {
-      ROS_INFO("Error tolerance reached for task: %s.\n", task_measure.task_name.c_str());
-      switch(it->second) {
-      case TaskDoneReaction::PRINT_INFO:
-        std::cout << task_measure;
-        break;
-      case TaskDoneReaction::REMOVE:
-        removeTask(task_measure.task_name);
-        task_name_reaction_map_.erase(it);
-        break;
-      case TaskDoneReaction::DEACTIVATE:
-        deactivateTask(task_measure.task_name);
-        it->second = TaskDoneReaction::NONE;
-        break;
-      default:
-        continue;
+    if (sq_error < error_tolerance_) {
+      ROS_INFO("Error is %lf for task: %s.\n",
+               sq_error,
+               task_measure.task_name.c_str());
+      switch (it->second) {
+        case TaskDoneReaction::PRINT_INFO:
+          std::cout << task_measure;
+          break;
+        case TaskDoneReaction::REMOVE:
+          removeTask(task_measure.task_name);
+          task_name_reaction_map_.erase(it);
+          break;
+        case TaskDoneReaction::DEACTIVATE:
+          deactivateTask(task_measure.task_name);
+          it->second = TaskDoneReaction::NONE;
+          break;
+        default:
+          continue;
       }
     }
   }
 }
 
+void HiQPClient::setJointAngles(const std::vector<double>& joint_angles) {
+
+  std::vector<std::string> def_params{"TDefFullPose"};
+
+  for(auto jointValue : joint_angles) {
+    def_params.push_back(std::to_string(jointValue));
+  }
+  
+  this->setTask("joint_angles_task", 3, true, true, true, def_params,
+                {"TDynLinear", "0.1"}, TaskDoneReaction::REMOVE);
+}
 }
