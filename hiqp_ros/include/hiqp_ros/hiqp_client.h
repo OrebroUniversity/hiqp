@@ -58,11 +58,15 @@ class HiQPClient {
    */
   ros::ServiceClient remove_primitive_client_;
 
+  ros::ServiceClient remove_all_tasks_client_;
+
+  ros::ServiceClient remove_all_primitives_client_;
+
   ros::Subscriber task_measures_sub_;
 
   std::map<std::string, TaskDoneReaction> task_name_reaction_map_;
 
-  double error_tolerance_;
+  std::map<std::string, double> task_name_etol_map_;
 
   /**
    * A callback function for monitoring the task.
@@ -114,10 +118,12 @@ class HiQPClient {
                bool active, bool monitored,
                const std::vector<std::string>& def_params,
                const std::vector<std::string>& dyn_params,
-               TaskDoneReaction tdr = TaskDoneReaction::PRINT_INFO);
+               TaskDoneReaction tdr = TaskDoneReaction::PRINT_INFO,
+               double error_tolerance = 1e-6);
 
   void setTasks(const std::vector<hiqp_msgs::Task>& tasks,
-                const std::vector<TaskDoneReaction>& tdr_vector);
+                const std::vector<TaskDoneReaction>& tdr_vector,
+                const std::vector<double>& etol_vector);
 
   void deactivateTask(const std::string& task_name);
 
@@ -125,6 +131,24 @@ class HiQPClient {
 
   void removePrimitive(const std::string& primitive_name);
 
+  void removeAllTasks();
+
+  void removeAllPrimitives();
+
+  void resetHiQPController();
+
   void setJointAngles(const std::vector<double>& joint_angles);
+
+  void waitForCompletion(const std::string& task_name);
 };
+
+hiqp_msgs::Task createTaskMsg(const std::string& name, int16_t priority,
+                              bool visible, bool active, bool monitored,
+                              const std::vector<std::string>& def_params,
+                              const std::vector<std::string>& dyn_params);
+
+hiqp_msgs::Primitive createPrimitiveMsg(const std::string& name, const std::string& type,
+                                       const std::string& frame_id, bool visible,
+                                       const std::vector<double>& color,
+                                       const std::vector<double>& parameters);
 }
