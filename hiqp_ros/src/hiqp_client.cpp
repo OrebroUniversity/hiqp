@@ -256,8 +256,6 @@ void HiQPClient::resetHiQPController() {
   removeAllTasks();
   removeAllPrimitives();
 }
-}
-
 
 hiqp_msgs::Task createTaskMsg(const std::string& name, int16_t priority,
                               bool visible, bool active, bool monitored,
@@ -288,4 +286,5 @@ hiqp_msgs::Primitive createPrimitiveMsg(const std::string& name, const std::stri
   primitive.parameters = parameters;
 
   return primitive;
+}
 }
