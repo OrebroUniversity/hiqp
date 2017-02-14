@@ -81,10 +81,11 @@ bool GurobiSolver::solve(std::vector<double>& solution) {
     try {
       qp_problem.getSolution(solution);
     } catch (GRBException e) {
-      std::cerr << "In GurobiSolver::QPProblem::getSolution : Gurobi exception "
-                   "with error code "
-                << e.getErrorCode() << ", and error message "
-                << e.getMessage().c_str() << ".\n";
+      ROS_ERROR_THROTTLE(10,
+                                 "In GurobiSolver::QPProblem::getSolution : "
+                                 "Gurobi exception with error code: %d, and "
+                                 "error_message: %s.",
+                                 e.getErrorCode(), e.getMessage().c_str());
       return false;
     }
   }
@@ -209,7 +210,8 @@ void GurobiSolver::QPProblem::solve() {
           "Stage solving runtime %f sec exceeds the set time limit of %f sec.",
           runtime, TIME_LIMIT);
     else
-      ROS_ERROR(
+      ROS_ERROR_THROTTLE(
+          10,
           "In HQPSolver::solve(...): No optimal solution found for stage with "
           "priority %d. Status is %d.",
           0, status);
