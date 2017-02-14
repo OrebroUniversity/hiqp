@@ -11,6 +11,7 @@
 
 #include <ros/ros.h>
 #include <sensor_msgs/JointState.h>
+#include <mutex>
 #include <numeric>
 
 namespace hiqp_ros {
@@ -64,9 +65,9 @@ class HiQPClient {
 
   ros::Subscriber task_measures_sub_;
 
-  std::map<std::string, TaskDoneReaction> task_name_reaction_map_;
+  std::mutex resource_mutex_;
 
-  std::map<std::string, double> task_name_etol_map_;
+  std::map<std::string, double> task_name_sq_error_map_;
 
   /**
    * A callback function for monitoring the task.
@@ -117,13 +118,9 @@ class HiQPClient {
   void setTask(const std::string& name, int16_t priority, bool visible,
                bool active, bool monitored,
                const std::vector<std::string>& def_params,
-               const std::vector<std::string>& dyn_params,
-               TaskDoneReaction tdr = TaskDoneReaction::PRINT_INFO,
-               double error_tolerance = 1e-6);
+               const std::vector<std::string>& dyn_params);
 
-  void setTasks(const std::vector<hiqp_msgs::Task>& tasks,
-                const std::vector<TaskDoneReaction>& tdr_vector,
-                const std::vector<double>& etol_vector);
+  void setTasks(const std::vector<hiqp_msgs::Task>& tasks);
 
   void deactivateTask(const std::string& task_name);
 
@@ -139,7 +136,14 @@ class HiQPClient {
 
   void setJointAngles(const std::vector<double>& joint_angles);
 
-  void waitForCompletion(const std::string& task_name);
+  /**
+   * Wait for a group of tasks to be completed, and then unload them all.
+   *
+   * @param task_names
+   */
+  void waitForCompletion(const std::vector<std::string>& task_names,
+                         const std::vector<TaskDoneReaction>& reactions,
+                         const std::vector<double>& error_tol);
 };
 
 hiqp_msgs::Task createTaskMsg(const std::string& name, int16_t priority,
@@ -147,8 +151,10 @@ hiqp_msgs::Task createTaskMsg(const std::string& name, int16_t priority,
                               const std::vector<std::string>& def_params,
                               const std::vector<std::string>& dyn_params);
 
-hiqp_msgs::Primitive createPrimitiveMsg(const std::string& name, const std::string& type,
-                                       const std::string& frame_id, bool visible,
-                                       const std::vector<double>& color,
-                                       const std::vector<double>& parameters);
+hiqp_msgs::Primitive createPrimitiveMsg(const std::string& name,
+                                        const std::string& type,
+                                        const std::string& frame_id,
+                                        bool visible,
+                                        const std::vector<double>& color,
+                                        const std::vector<double>& parameters);
 }

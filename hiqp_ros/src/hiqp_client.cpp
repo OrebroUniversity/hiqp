@@ -89,8 +89,7 @@ void HiQPClient::setPrimitive(const std::string& name, const std::string& type,
 void HiQPClient::setTask(const std::string& name, int16_t priority,
                          bool visible, bool active, bool monitored,
                          const std::vector<std::string>& def_params,
-                         const std::vector<std::string>& dyn_params,
-                         TaskDoneReaction tdr, double error_tolerance) {
+                         const std::vector<std::string>& dyn_params) {
   hiqp_msgs::Task task;
 
   task.name = name;
@@ -102,23 +101,11 @@ void HiQPClient::setTask(const std::string& name, int16_t priority,
   task.dyn_params = dyn_params;
 
   std::vector<hiqp_msgs::Task> tasks{task};
-  std::vector<TaskDoneReaction> tdr_vector{tdr};
-  std::vector<double> etol_vector{error_tolerance};
 
-  setTasks(tasks, tdr_vector, etol_vector);
+  setTasks(tasks);
 }
 
-void HiQPClient::setTasks(const std::vector<hiqp_msgs::Task>& tasks,
-                          const std::vector<TaskDoneReaction>& tdr_vector,
-                          const std::vector<double>& etol_vector) {
-  if (tasks.size() != tdr_vector.size() ||
-      tdr_vector.size() != etol_vector.size() ||
-      etol_vector.size() != tasks.size()) {
-    ROS_FATAL(
-        "The size of all three vectors should be equal in call to "
-        "HiQPClient::setTasks(). FAILED! ");
-    return;
-  }
+void HiQPClient::setTasks(const std::vector<hiqp_msgs::Task>& tasks) {
   hiqp_msgs::SetTasks setTasksMsg;
   setTasksMsg.request.tasks = tasks;
 
@@ -131,17 +118,6 @@ void HiQPClient::setTasks(const std::vector<hiqp_msgs::Task>& tasks,
     else
       ROS_WARN("Either all or some of the tasks were not added.");
 
-    // If the service call succeeded and this task was added. We can set up a
-    // reaction.
-    for (int i = 0; i < tasks.size(); i++) {
-      auto& task = tasks[i];
-      auto& returnVal = setTasksMsg.response.success[i];
-
-      if (task.monitored && returnVal) {
-        task_name_reaction_map_[task.name] = tdr_vector[i];
-        task_name_etol_map_[task.name] = etol_vector[i];
-      }
-    }
   } else
     ROS_WARN("set_tasks service call failed.");
 }
@@ -169,38 +145,97 @@ void HiQPClient::deactivateTask(const std::string& task_name) {
   }
 }
 
-void HiQPClient::taskMeasuresCallback(
+std::string taskMeasuresAsString(
     const hiqp_msgs::TaskMeasuresConstPtr& task_measures) {
+  std::string s;
   for (auto task_measure : task_measures->task_measures) {
     double sq_error =
         std::inner_product(task_measure.e.begin(), task_measure.e.end(),
                            task_measure.e.begin(), 0.0);
 
-    ROS_INFO_DELAYED_THROTTLE(5.0, "[%s] Progress: %lf",
-                              task_measure.task_name.c_str(),
-                              exp(-sq_error) * 100.0);
-    auto it_reaction = task_name_reaction_map_.find(task_measure.task_name);
-    auto it_error_tolerance = task_name_etol_map_.find(task_measure.task_name);
-    if (sq_error < it_error_tolerance->second) {
-      ROS_INFO("Error is %lf for task: %s.\n", sq_error,
-               task_measure.task_name.c_str());
-      switch (it_reaction->second) {
-        case TaskDoneReaction::PRINT_INFO:
-          std::cout << task_measure;
-          break;
-        case TaskDoneReaction::REMOVE:
-          removeTask(task_measure.task_name);
-          task_name_reaction_map_.erase(it_reaction);
-          task_name_etol_map_.erase(it_error_tolerance);
-          break;
-        case TaskDoneReaction::DEACTIVATE:
-          deactivateTask(task_measure.task_name);
-          it_reaction->second = TaskDoneReaction::NONE;
-          break;
-        default:
-          continue;
+    s += "\n[" + task_measure.task_name + "] Progress: " +
+         std::to_string(exp(-sq_error) * 100.0);
+  }
+  s += "\n";
+  return s;
+}
+
+void HiQPClient::taskMeasuresCallback(
+    const hiqp_msgs::TaskMeasuresConstPtr& task_measures) {
+  resource_mutex_.lock();
+  ROS_INFO_DELAYED_THROTTLE(5.0, "%s",
+                            taskMeasuresAsString(task_measures).c_str());
+  for (auto task_measure : task_measures->task_measures) {
+    double sq_error =
+        std::inner_product(task_measure.e.begin(), task_measure.e.end(),
+                           task_measure.e.begin(), 0.0);
+
+    task_name_sq_error_map_[task_measure.task_name] = sq_error;
+  }
+  resource_mutex_.unlock();
+}
+
+std::string taskNamesVectorAsString(
+    const std::vector<std::string>& task_names) {
+  std::string taskNamesAsString;
+  for (auto task_name : task_names) {
+    taskNamesAsString += task_name + ",";
+  }
+  taskNamesAsString += '\b';
+  return taskNamesAsString;
+}
+
+void HiQPClient::waitForCompletion(
+    const std::vector<std::string>& task_names,
+    const std::vector<TaskDoneReaction>& reactions,
+    const std::vector<double>& error_tol) {
+  ROS_ASSERT(task_names.size() == reactions.size() &&
+             reactions.size() == error_tol.size());
+  int status = 0;
+  while (status < task_names.size()) {
+    ROS_INFO_THROTTLE(5, "[waitForCompletion]: %d out of %ld tasks complete.",
+                      status, task_names.size());
+    status = 0;
+    for (auto i = 0; i < task_names.size(); i++) {
+      auto& task_name = task_names[i];
+      auto& tol = error_tol[i];
+
+      resource_mutex_.lock();
+      auto it_sq_error = task_name_sq_error_map_.find(task_name);
+      if (it_sq_error == task_name_sq_error_map_.end()) {
+        resource_mutex_.unlock();
+        continue;
       }
+
+      if (it_sq_error->second < tol) {
+        status += 1;
+      }
+      resource_mutex_.unlock();
     }
+  }
+
+  ROS_INFO("All tasks completed.");
+
+  for (auto i = 0; i < task_names.size(); i++) {
+    auto& task_name = task_names[i];
+    auto& reaction = reactions[i];
+
+    switch (reaction) {
+      case TaskDoneReaction::NONE:
+        break;
+      case TaskDoneReaction::REMOVE:
+        removeTask(task_name);
+        break;
+      case TaskDoneReaction::PRINT_INFO:
+        ROS_INFO("Task %s completed with error %lf", task_name.c_str(),
+                 task_name_sq_error_map_[task_name]);
+        break;
+      case TaskDoneReaction::DEACTIVATE:
+        deactivateTask(task_name);
+        break;
+    }
+
+    task_name_sq_error_map_.erase(task_name);
   }
 }
 
@@ -213,19 +248,8 @@ void HiQPClient::setJointAngles(const std::vector<double>& joint_angles) {
   }
 
   this->setTask("joint_angles_task", 3, true, true, true, def_params,
-                {"TDynLinear", "0.1"}, TaskDoneReaction::REMOVE, 1e-3);
-}
-
-void HiQPClient::waitForCompletion(const std::string& task_name) {
-  bool task_completed = false;
-  ros::Rate rate(5);
-  while (ros::ok() && !task_completed) {
-    auto it = task_name_reaction_map_.find(task_name);
-    if (it == task_name_reaction_map_.end()) {
-      task_completed = true;
-    }
-    rate.sleep();
-  }
+                {"TDynLinear", "0.5"});
+  waitForCompletion({"joint_angles_task"}, {TaskDoneReaction::REMOVE}, {1e-4});
 }
 
 void HiQPClient::removeAllTasks() {
@@ -273,10 +297,12 @@ hiqp_msgs::Task createTaskMsg(const std::string& name, int16_t priority,
   return task;
 }
 
-hiqp_msgs::Primitive createPrimitiveMsg(const std::string& name, const std::string& type,
-                                       const std::string& frame_id, bool visible,
-                                       const std::vector<double>& color,
-                                       const std::vector<double>& parameters) {
+hiqp_msgs::Primitive createPrimitiveMsg(const std::string& name,
+                                        const std::string& type,
+                                        const std::string& frame_id,
+                                        bool visible,
+                                        const std::vector<double>& color,
+                                        const std::vector<double>& parameters) {
   hiqp_msgs::Primitive primitive;
   primitive.name = name;
   primitive.type = type;
