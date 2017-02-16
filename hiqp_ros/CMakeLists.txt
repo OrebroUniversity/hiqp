@@ -27,12 +27,13 @@ set(GUROBI_LIBS gurobi_c++ gurobi65)
 find_package(catkin REQUIRED COMPONENTS roscpp
                                         controller_interface
                                         visualization_msgs
+                                        kdl_parser
                                         hiqp_core
                                         hiqp_msgs)
 
 find_package(orocos_kdl REQUIRED)
 
-catkin_package(CATKIN_DEPENDS roscpp controller_interface visualization_msgs hiqp_core hiqp_msgs
+catkin_package(CATKIN_DEPENDS roscpp controller_interface visualization_msgs hiqp_core hiqp_msgs kdl_parser
                INCLUDE_DIRS include
                LIBRARIES ${PROJECT_NAME} hiqp_client
                DEPENDS orocos_kdl)
