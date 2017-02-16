@@ -3,8 +3,8 @@
 #include <hiqp_msgs/MonitorTask.h>
 #include <hiqp_msgs/RemoveAllPrimitives.h>
 #include <hiqp_msgs/RemoveAllTasks.h>
-#include <hiqp_msgs/RemovePrimitive.h>
-#include <hiqp_msgs/RemoveTask.h>
+#include <hiqp_msgs/RemovePrimitives.h>
+#include <hiqp_msgs/RemoveTasks.h>
 #include <hiqp_msgs/SetPrimitives.h>
 #include <hiqp_msgs/SetTasks.h>
 #include <hiqp_msgs/TaskMeasures.h>
@@ -50,14 +50,14 @@ class HiQPClient {
   ros::ServiceClient deactivate_task_client_;
 
   /**
-   * A client to the remove_task service.
+   * A client to the remove_tasks service.
    */
-  ros::ServiceClient remove_task_client_;
+  ros::ServiceClient remove_tasks_client_;
 
   /**
    * A client to the remove_primitive service.
    */
-  ros::ServiceClient remove_primitive_client_;
+  ros::ServiceClient remove_primitives_client_;
 
   ros::ServiceClient remove_all_tasks_client_;
 
@@ -126,7 +126,11 @@ class HiQPClient {
 
   void removeTask(const std::string& task_name);
 
+  void removeTasks(const std::vector <std::string>& task_names);
+
   void removePrimitive(const std::string& primitive_name);
+  
+  void removePrimitives(const std::vector <std::string>& primitive_names);
 
   void removeAllTasks();
 

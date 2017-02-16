@@ -19,8 +19,8 @@
 void HiQPServiceHandler::advertiseAll() {
   set_tasks_service_ = node_handle_->advertiseService(
       "set_tasks", &HiQPServiceHandler::setTasks, this);
-  remove_task_service_ = node_handle_->advertiseService(
-      "remove_task", &HiQPServiceHandler::removeTask, this);
+  remove_tasks_service_ = node_handle_->advertiseService(
+      "remove_tasks", &HiQPServiceHandler::removeTasks, this);
   remove_all_tasks_service_ = node_handle_->advertiseService(
       "remove_all_tasks", &HiQPServiceHandler::removeAllTasks, this);
   list_all_tasks_service_ = node_handle_->advertiseService(
@@ -38,8 +38,8 @@ void HiQPServiceHandler::advertiseAll() {
 
   set_primitives_service_ = node_handle_->advertiseService(
       "set_primitives", &HiQPServiceHandler::setPrimitives, this);
-  remove_primitive_service_ = node_handle_->advertiseService(
-      "remove_primitive", &HiQPServiceHandler::removePrimitive, this);
+  remove_primitives_service_ = node_handle_->advertiseService(
+      "remove_primitives", &HiQPServiceHandler::removePrimitives, this);
   remove_all_primitives_service_ = node_handle_->advertiseService(
       "remove_all_primitives", &HiQPServiceHandler::removeAllPrimitives, this);
   list_all_primitives_service_ = node_handle_->advertiseService(
@@ -74,15 +74,19 @@ bool HiQPServiceHandler::setTasks(hiqp_msgs::SetTasks::Request& req,
   return true;
 }
 
-bool HiQPServiceHandler::removeTask(hiqp_msgs::RemoveTask::Request& req,
-                                    hiqp_msgs::RemoveTask::Response& res) {
-  res.success = false;
-  if (task_manager_->removeTask(req.name) == 0) res.success = true;
+bool HiQPServiceHandler::removeTasks(hiqp_msgs::RemoveTasks::Request& req,
+                                     hiqp_msgs::RemoveTasks::Response& res) {
+  for (auto name : req.names) {
+    if (task_manager_->removeTask(name) == 0)
+      res.success.push_back(true);
+    else
+      res.success.push_back(false);
 
-  if (res.success) {
-    hiqp::printHiqpInfo("Removed task '" + req.name + "'.");
-  } else {
-    hiqp::printHiqpInfo("Couldn't remove task '" + req.name + "'!");
+    if (res.success.back()) {
+      hiqp::printHiqpInfo("Removed task '" + name + "'.");
+    } else {
+      hiqp::printHiqpInfo("Couldn't remove task '" + name + "'!");
+    }
   }
   return true;
 }
@@ -165,16 +169,20 @@ bool HiQPServiceHandler::setPrimitives(
   return true;
 }
 
-bool HiQPServiceHandler::removePrimitive(
-    hiqp_msgs::RemovePrimitive::Request& req,
-    hiqp_msgs::RemovePrimitive::Response& res) {
-  res.success = false;
-  if (task_manager_->removePrimitive(req.name) == 0) res.success = true;
+bool HiQPServiceHandler::removePrimitives(
+    hiqp_msgs::RemovePrimitives::Request& req,
+    hiqp_msgs::RemovePrimitives::Response& res) {
+  for (auto name : req.names) {
+    if (task_manager_->removePrimitive(name) == 0)
+      res.success.push_back(true);
+    else
+      res.success.push_back(false);
 
-  if (res.success) {
-    hiqp::printHiqpInfo("Removed primitive '" + req.name + "' successfully!");
-  } else {
-    hiqp::printHiqpInfo("Couldn't remove primitive '" + req.name + "'!");
+    if (res.success.back()) {
+      hiqp::printHiqpInfo("Removed primitive '" + name + "' successfully!");
+    } else {
+      hiqp::printHiqpInfo("Couldn't remove primitive '" + name + "'!");
+    }
   }
   return true;
 }

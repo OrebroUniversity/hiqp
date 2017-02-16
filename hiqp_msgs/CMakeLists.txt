@@ -30,7 +30,7 @@ add_message_files(FILES TaskMeasure.msg
                         Task.msg)
 
 add_service_files(FILES SetTasks.srv
-                        RemoveTask.srv
+                        RemoveTasks.srv
                         RemoveAllTasks.srv
                         ListAllTasks.srv
                         GetAllTasks.srv
@@ -39,7 +39,7 @@ add_service_files(FILES SetTasks.srv
                         MonitorTask.srv
                         DemonitorTask.srv
                         SetPrimitives.srv
-                        RemovePrimitive.srv
+                        RemovePrimitives.srv
                         RemoveAllPrimitives.srv
                         ListAllPrimitives.srv
                         GetAllPrimitives.srv

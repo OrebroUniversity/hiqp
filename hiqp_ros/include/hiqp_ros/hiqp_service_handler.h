@@ -30,13 +30,13 @@
 #include <hiqp_msgs/ListAllTasks.h>
 #include <hiqp_msgs/MonitorTask.h>
 #include <hiqp_msgs/RemoveAllTasks.h>
-#include <hiqp_msgs/RemoveTask.h>
+#include <hiqp_msgs/RemoveTasks.h>
 #include <hiqp_msgs/SetTasks.h>
 
 #include <hiqp_msgs/GetAllPrimitives.h>
 #include <hiqp_msgs/ListAllPrimitives.h>
 #include <hiqp_msgs/RemoveAllPrimitives.h>
-#include <hiqp_msgs/RemovePrimitive.h>
+#include <hiqp_msgs/RemovePrimitives.h>
 #include <hiqp_msgs/SetPrimitives.h>
 
 #include <hiqp_msgs/ActivatePriorityLevel.h>
@@ -72,8 +72,8 @@ class HiQPServiceHandler {
 
   bool setTasks(hiqp_msgs::SetTasks::Request& req,
                 hiqp_msgs::SetTasks::Response& res);
-  bool removeTask(hiqp_msgs::RemoveTask::Request& req,
-                  hiqp_msgs::RemoveTask::Response& res);
+  bool removeTasks(hiqp_msgs::RemoveTasks::Request& req,
+                   hiqp_msgs::RemoveTasks::Response& res);
   bool removeAllTasks(hiqp_msgs::RemoveAllTasks::Request& req,
                       hiqp_msgs::RemoveAllTasks::Response& res);
   bool listAllTasks(hiqp_msgs::ListAllTasks::Request& req,
@@ -91,8 +91,8 @@ class HiQPServiceHandler {
 
   bool setPrimitives(hiqp_msgs::SetPrimitives::Request& req,
                      hiqp_msgs::SetPrimitives::Response& res);
-  bool removePrimitive(hiqp_msgs::RemovePrimitive::Request& req,
-                       hiqp_msgs::RemovePrimitive::Response& res);
+  bool removePrimitives(hiqp_msgs::RemovePrimitives::Request& req,
+                        hiqp_msgs::RemovePrimitives::Response& res);
   bool removeAllPrimitives(hiqp_msgs::RemoveAllPrimitives::Request& req,
                            hiqp_msgs::RemoveAllPrimitives::Response& res);
   bool listAllPrimitives(hiqp_msgs::ListAllPrimitives::Request& req,
@@ -117,7 +117,7 @@ class HiQPServiceHandler {
   hiqp::RobotStatePtr robot_state_;
 
   ros::ServiceServer set_tasks_service_;
-  ros::ServiceServer remove_task_service_;
+  ros::ServiceServer remove_tasks_service_;
   ros::ServiceServer remove_all_tasks_service_;
   ros::ServiceServer list_all_tasks_service_;
   ros::ServiceServer get_all_tasks_service_;
@@ -127,7 +127,7 @@ class HiQPServiceHandler {
   ros::ServiceServer demonitor_task_service_;
 
   ros::ServiceServer set_primitives_service_;
-  ros::ServiceServer remove_primitive_service_;
+  ros::ServiceServer remove_primitives_service_;
   ros::ServiceServer remove_all_primitives_service_;
   ros::ServiceServer list_all_primitives_service_;
   ros::ServiceServer get_all_primitives_service_;
