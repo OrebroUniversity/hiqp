@@ -37,11 +37,19 @@ class Task;
  *  \author Marcus A Johansson */
 class TaskDefinition {
  public:
+  inline TaskDefinition() {}
   TaskDefinition(std::shared_ptr<GeometricPrimitiveMap> geom_prim_map,
                  std::shared_ptr<Visualizer> visualizer)
       : geometric_primitive_map_(geom_prim_map), visualizer_(visualizer) {}
 
   ~TaskDefinition() noexcept {}
+
+  inline void initializeTaskDefinition(
+      std::shared_ptr<GeometricPrimitiveMap> geom_prim_map,
+      std::shared_ptr<Visualizer> visualizer) {
+    geometric_primitive_map_ = geom_prim_map;
+    visualizer_ = visualizer;
+  }
 
   virtual int init(const std::vector<std::string>& parameters,
                    RobotStatePtr robot_state) = 0;

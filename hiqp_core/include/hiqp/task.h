@@ -28,6 +28,8 @@
 
 #include <Eigen/Dense>
 
+#include <pluginlib/class_loader.h>
+
 namespace hiqp {
 
 /*! \brief A Task has a TaskDefinition and a TaskDynamics.
@@ -130,6 +132,8 @@ class Task {
 
   std::shared_ptr<TaskDefinition> def_;
   std::shared_ptr<TaskDynamics> dyn_;
+
+  pluginlib::ClassLoader<TaskDefinition> tdef_loader_;
 
   std::shared_ptr<GeometricPrimitiveMap> geom_prim_map_;
   std::shared_ptr<Visualizer> visualizer_;

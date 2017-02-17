@@ -13,4 +13,8 @@
 
   <build_depend>rosconsole</build_depend>  
   <run_depend>rosconsole</run_depend>
+
+  <build_depend>pluginlib</build_depend>  
+  <run_depend>pluginlib</run_depend>
+
 </package>

@@ -29,11 +29,11 @@ message(${CMAKE_MODULE_PATH})
 set(CMAKE_CXX_FLAGS "-O3 -std=c++11 -Wl,-z,defs")
 set(CMAKE_VERBOSE_MAKEFILE off)
 
-find_package(catkin REQUIRED COMPONENTS rosconsole)
+find_package(catkin REQUIRED COMPONENTS rosconsole pluginlib)
 find_package(orocos_kdl REQUIRED)
 find_package(Eigen3 REQUIRED)
 
-catkin_package(CATKIN_DEPENDS rosconsole
+catkin_package(CATKIN_DEPENDS rosconsole pluginlib
                INCLUDE_DIRS include 
                LIBRARIES ${PROJECT_NAME} 
                DEPENDS orocos_kdl)

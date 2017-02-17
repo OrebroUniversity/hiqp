@@ -51,7 +51,8 @@ using tasks::TDynMinimalJerk;
 
 Task::Task(std::shared_ptr<GeometricPrimitiveMap> geom_prim_map,
            std::shared_ptr<Visualizer> visualizer, int n_controls)
-    : geom_prim_map_(geom_prim_map),
+    : tdef_loader_("hiqp_core", "hiqp::TaskDefinition"),
+      geom_prim_map_(geom_prim_map),
       visualizer_(visualizer),
       n_controls_(n_controls) {}
 
@@ -214,11 +215,15 @@ int Task::constructDefinition(const std::vector<std::string>& def_params) {
       return -1;
     }
   } else {
-    printHiqpWarning("The task definition type name '" + type +
-                     "' was not understood!");
-    return -1;
+    try {
+      def_ = std::shared_ptr<hiqp::TaskDefinition> (tdef_loader_.createClassInstance("hiqp::tasks::" + type));
+      def_->initializeTaskDefinition(geom_prim_map_, visualizer_);
+    } catch (pluginlib::PluginlibException& ex) {
+      printHiqpWarning("The task definition type name '" + type +
+                       "' was not understood!");
+      return -1;
+    }
   }
-
   return 0;
 }
 
