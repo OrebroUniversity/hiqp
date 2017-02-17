@@ -20,43 +20,40 @@
 #include <hiqp/robot_state.h>
 #include <hiqp/task_dynamics.h>
 
-namespace hiqp
-{
-namespace tasks
-{
+namespace hiqp {
+namespace tasks {
 
-  /*! \brief A general first-order task dynamics implementation that enforces an exponential decay of the task performance value.
-   *  \author Marcus A Johansson */  
-  class TDynLinear : public TaskDynamics {
-  public:
-    TDynLinear(std::shared_ptr<GeometricPrimitiveMap> geom_prim_map,
-                       std::shared_ptr<Visualizer> visualizer)
-     : TaskDynamics(geom_prim_map, visualizer) {}
+/*! \brief A general first-order task dynamics implementation that enforces an
+ * exponential decay of the task performance value.
+ *  \author Marcus A Johansson */
+class TDynLinear : public TaskDynamics {
+ public:
+  TDynLinear(std::shared_ptr<GeometricPrimitiveMap> geom_prim_map,
+             std::shared_ptr<Visualizer> visualizer)
+      : TaskDynamics(geom_prim_map, visualizer) {}
 
-    ~TDynLinear() noexcept {}
+  ~TDynLinear() noexcept {}
 
-    int init(const std::vector<std::string>& parameters,
-             RobotStatePtr robot_state,
-             const Eigen::VectorXd& e_initial,
-             const Eigen::VectorXd& e_final);
+  int init(const std::vector<std::string>& parameters,
+           RobotStatePtr robot_state, const Eigen::VectorXd& e_initial,
+           const Eigen::VectorXd& e_final);
 
-    int update(RobotStatePtr robot_state,
-               const Eigen::VectorXd& e,
-               const Eigen::MatrixXd& J);
+  int update(RobotStatePtr robot_state, const Eigen::VectorXd& e,
+             const Eigen::MatrixXd& J);
 
-    int monitor();
+  int monitor();
 
-  private:
-    TDynLinear(const TDynLinear& other) = delete;
-    TDynLinear(TDynLinear&& other) = delete;
-    TDynLinear& operator=(const TDynLinear& other) = delete;
-    TDynLinear& operator=(TDynLinear&& other) noexcept = delete;
+ private:
+  TDynLinear(const TDynLinear& other) = delete;
+  TDynLinear(TDynLinear&& other) = delete;
+  TDynLinear& operator=(const TDynLinear& other) = delete;
+  TDynLinear& operator=(TDynLinear&& other) noexcept = delete;
 
-    double lambda_;
-  };
+  double lambda_;
+};
 
-} // namespace tasks
+}  // namespace tasks
 
-} // namespace hiqp
+}  // namespace hiqp
 
-#endif // include guard
+#endif  // include guard

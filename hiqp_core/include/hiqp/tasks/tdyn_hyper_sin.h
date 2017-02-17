@@ -20,45 +20,40 @@
 #include <hiqp/robot_state.h>
 #include <hiqp/task_dynamics.h>
 
-namespace hiqp
-{
-namespace tasks
-{
+namespace hiqp {
+namespace tasks {
 
-  /*! \brief A general hyperbolic sin task dynamics. Useful for only influencing the manipulator behaviour for task function values within a certain span.
-   *  \author Marcus A Johansson */  
-  class TDynHyperSin : public TaskDynamics
-  {
-  public:
+/*! \brief A general hyperbolic sin task dynamics. Useful for only influencing
+ * the manipulator behaviour for task function values within a certain span.
+ *  \author Marcus A Johansson */
+class TDynHyperSin : public TaskDynamics {
+ public:
+  TDynHyperSin(std::shared_ptr<GeometricPrimitiveMap> geom_prim_map,
+               std::shared_ptr<Visualizer> visualizer)
+      : TaskDynamics(geom_prim_map, visualizer) {}
 
-    TDynHyperSin(std::shared_ptr<GeometricPrimitiveMap> geom_prim_map,
-                       std::shared_ptr<Visualizer> visualizer)
-     : TaskDynamics(geom_prim_map, visualizer) {}
+  ~TDynHyperSin() noexcept {}
 
-    ~TDynHyperSin() noexcept {}
+  int init(const std::vector<std::string>& parameters,
+           RobotStatePtr robot_state, const Eigen::VectorXd& e_initial,
+           const Eigen::VectorXd& e_final);
 
-    int init(const std::vector<std::string>& parameters,
-             RobotStatePtr robot_state,
-             const Eigen::VectorXd& e_initial,
-             const Eigen::VectorXd& e_final);
+  int update(RobotStatePtr robot_state, const Eigen::VectorXd& e,
+             const Eigen::MatrixXd& J);
 
-    int update(RobotStatePtr robot_state,
-               const Eigen::VectorXd& e,
-               const Eigen::MatrixXd& J);
+  int monitor();
 
-    int monitor();
+ private:
+  TDynHyperSin(const TDynHyperSin& other) = delete;
+  TDynHyperSin(TDynHyperSin&& other) = delete;
+  TDynHyperSin& operator=(const TDynHyperSin& other) = delete;
+  TDynHyperSin& operator=(TDynHyperSin&& other) noexcept = delete;
 
-  private:
-    TDynHyperSin(const TDynHyperSin& other) = delete;
-    TDynHyperSin(TDynHyperSin&& other) = delete;
-    TDynHyperSin& operator=(const TDynHyperSin& other) = delete;
-    TDynHyperSin& operator=(TDynHyperSin&& other) noexcept = delete;
+  double lambda_;
+};
 
-    double lambda_;
-  };
+}  // namespace tasks
 
-} // namespace tasks
+}  // namespace hiqp
 
-} // namespace hiqp
-
-#endif // include guard
+#endif  // include guard

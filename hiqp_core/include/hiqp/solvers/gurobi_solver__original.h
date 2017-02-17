@@ -17,36 +17,36 @@
 #ifndef HIQP_GUROBI_SOLVER_H
 #define HIQP_GUROBI_SOLVER_H
 
-#include <hiqp/hiqp_solver.h>
 #include <gurobi_c++.h>
+#include <hiqp/hiqp_solver.h>
 
-namespace hiqp
-{
-  /*! \brief An optimization based solver for a set of stages implemented in CasADi.
-   *  \author Robert Krug, Marcus A Johansson */
-  class GurobiSolver : public HiQPSolver {
-  public:
-    GurobiSolver();
-    ~GurobiSolver() noexcept {}
+namespace hiqp {
+/*! \brief An optimization based solver for a set of stages implemented in
+ * CasADi.
+ *  \author Robert Krug, Marcus A Johansson */
+class GurobiSolver : public HiQPSolver {
+ public:
+  GurobiSolver();
+  ~GurobiSolver() noexcept {}
 
-    bool solve(std::vector<double>& solution);
+  bool solve(std::vector<double>& solution);
 
-  private:
-    GurobiSolver(const GurobiSolver& other) = delete;
-    GurobiSolver(GurobiSolver&& other) = delete;
-    GurobiSolver& operator=(const GurobiSolver& other) = delete;
-    GurobiSolver& operator=(GurobiSolver&& other) noexcept = delete;
+ private:
+  GurobiSolver(const GurobiSolver& other) = delete;
+  GurobiSolver(GurobiSolver&& other) = delete;
+  GurobiSolver& operator=(const GurobiSolver& other) = delete;
+  GurobiSolver& operator=(GurobiSolver&& other) noexcept = delete;
 
-    void reset();
+  void reset();
 
-    GRBEnv             env_;
-    Eigen::VectorXd    x_; // HQP solution (updated sequentially when solving)
-    Eigen::VectorXd    w_; // slack variables (updated sequentially when solving)
-    Eigen::VectorXd    b_;
-    Eigen::MatrixXd    A_;
-    std::vector<char>  senses_;
-  };
+  GRBEnv env_;
+  Eigen::VectorXd x_;  // HQP solution (updated sequentially when solving)
+  Eigen::VectorXd w_;  // slack variables (updated sequentially when solving)
+  Eigen::VectorXd b_;
+  Eigen::MatrixXd A_;
+  std::vector<char> senses_;
+};
 
-} // namespace hiqp
+}  // namespace hiqp
 
-#endif // include guard
+#endif  // include guard

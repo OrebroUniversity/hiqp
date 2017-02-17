@@ -30,70 +30,69 @@ using hiqp::geometric_primitives::GeometricCylinder;
 using hiqp::geometric_primitives::GeometricSphere;
 using hiqp::geometric_primitives::GeometricFrame;
 
-namespace hiqp_ros
-{
+namespace hiqp_ros {
 
-  /// \todo Make node handle pointer a shared pointer
-  /*! \brief
-   *  \author Marcus A Johansson */
-  class ROSVisualizer : public hiqp::Visualizer {
-  public:
-    ROSVisualizer();
-    ~ROSVisualizer() noexcept {}
+/// \todo Make node handle pointer a shared pointer
+/*! \brief
+ *  \author Marcus A Johansson */
+class ROSVisualizer : public hiqp::Visualizer {
+ public:
+  ROSVisualizer();
+  ~ROSVisualizer() noexcept {}
 
-    int init(ros::NodeHandle* controller_nh);
+  int init(ros::NodeHandle* controller_nh);
 
-    int add(std::shared_ptr<GeometricPoint> point);
-    int add(std::shared_ptr<GeometricLine> line);
-    int add(std::shared_ptr<GeometricPlane> plane);
-    int add(std::shared_ptr<GeometricBox> box);
-    int add(std::shared_ptr<GeometricCylinder> cylinder);
-    int add(std::shared_ptr<GeometricSphere> sphere);
-    int add(std::shared_ptr<GeometricFrame> frame);
+  int add(std::shared_ptr<GeometricPoint> point);
+  int add(std::shared_ptr<GeometricLine> line);
+  int add(std::shared_ptr<GeometricPlane> plane);
+  int add(std::shared_ptr<GeometricBox> box);
+  int add(std::shared_ptr<GeometricCylinder> cylinder);
+  int add(std::shared_ptr<GeometricSphere> sphere);
+  int add(std::shared_ptr<GeometricFrame> frame);
 
-    void update(int id, std::shared_ptr<GeometricPoint> point);
-    void update(int id, std::shared_ptr<GeometricLine> line);
-    void update(int id, std::shared_ptr<GeometricPlane> plane);
-    void update(int id, std::shared_ptr<GeometricBox> box);
-    void update(int id, std::shared_ptr<GeometricCylinder> cylinder);
-    void update(int id, std::shared_ptr<GeometricSphere> sphere);
-    void update(int id, std::shared_ptr<GeometricFrame> frame);
+  void update(int id, std::shared_ptr<GeometricPoint> point);
+  void update(int id, std::shared_ptr<GeometricLine> line);
+  void update(int id, std::shared_ptr<GeometricPlane> plane);
+  void update(int id, std::shared_ptr<GeometricBox> box);
+  void update(int id, std::shared_ptr<GeometricCylinder> cylinder);
+  void update(int id, std::shared_ptr<GeometricSphere> sphere);
+  void update(int id, std::shared_ptr<GeometricFrame> frame);
 
-    void remove(int id);
+  void remove(int id);
 
-    void removeMany(const std::vector<int>& ids);
+  void removeMany(const std::vector<int>& ids);
 
-  private:
-    ROSVisualizer(const ROSVisualizer& other) = delete;
-    ROSVisualizer(ROSVisualizer&& other) = delete;
-    ROSVisualizer& operator=(const ROSVisualizer& other) = delete;
-    ROSVisualizer& operator=(ROSVisualizer&& other) noexcept = delete;
+ private:
+  ROSVisualizer(const ROSVisualizer& other) = delete;
+  ROSVisualizer(ROSVisualizer&& other) = delete;
+  ROSVisualizer& operator=(const ROSVisualizer& other) = delete;
+  ROSVisualizer& operator=(ROSVisualizer&& other) noexcept = delete;
 
-    int apply(int id, std::shared_ptr<GeometricPoint> point, int action);
-    int apply(int id, std::shared_ptr<GeometricLine> line, int action);
-    int apply(int id, std::shared_ptr<GeometricPlane> plane, int action);
-    int apply(int id, std::shared_ptr<GeometricBox> box, int action);
-    int apply(int id, std::shared_ptr<GeometricCylinder> cylinder, int action);
-    int apply(int id, std::shared_ptr<GeometricSphere> sphere, int action);
-    int apply(int id, std::shared_ptr<GeometricFrame> frame, int action);
+  int apply(int id, std::shared_ptr<GeometricPoint> point, int action);
+  int apply(int id, std::shared_ptr<GeometricLine> line, int action);
+  int apply(int id, std::shared_ptr<GeometricPlane> plane, int action);
+  int apply(int id, std::shared_ptr<GeometricBox> box, int action);
+  int apply(int id, std::shared_ptr<GeometricCylinder> cylinder, int action);
+  int apply(int id, std::shared_ptr<GeometricSphere> sphere, int action);
+  int apply(int id, std::shared_ptr<GeometricFrame> frame, int action);
 
-    enum {ACTION_ADD = 0, ACTION_MODIFY = 1};
+  enum { ACTION_ADD = 0, ACTION_MODIFY = 1 };
 
-    const std::string       kNamespace = "/yumi";
-    const double            kInfiniteLength = 12;
-    const double            kPointRadius    = 0.002;
-    const double            kLineRadius     = 0.0005;
-    const double            kPlaneThickness = 0.001;
-    const double            kFrameArrowRadius = 0.0017;
-    const double            kFrameArrowLength = 0.04;
+  const std::string kNamespace = "/yumi";
+  const double kInfiniteLength = 12;
+  const double kPointRadius = 0.002;
+  const double kLineRadius = 0.0005;
+  const double kPlaneThickness = 0.001;
+  const double kFrameArrowRadius = 0.0017;
+  const double kFrameArrowLength = 0.04;
 
-    ros::NodeHandle*        controller_nh_;
+  ros::NodeHandle* controller_nh_;
 
-    ros::Publisher          marker_array_pub_;
+  ros::Publisher marker_array_pub_;
 
-    std::size_t             next_id_;
-  };
+  std::size_t next_id_;
+};
 
-} // namespace hiqp
+}  // namespace hiqp
 
-#endif // include guard
+#endif  // include guard

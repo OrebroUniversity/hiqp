@@ -22,40 +22,38 @@
 #include <hiqp/hiqp_time_point.h>
 #include <hiqp/task_definition.h>
 
-namespace hiqp
-{
-namespace tasks
-{
+namespace hiqp {
+namespace tasks {
 
-  /*! \brief A task definition that sets a specific joints position.
-   *  \author Marcus A Johansson */  
-  class TDefJntConfig : public TaskDefinition {
-  public:
-    TDefJntConfig(std::shared_ptr<GeometricPrimitiveMap> geom_prim_map,
-                  std::shared_ptr<Visualizer> visualizer)
-     : TaskDefinition(geom_prim_map, visualizer) {}
-    ~TDefJntConfig() noexcept {}
+/*! \brief A task definition that sets a specific joints position.
+ *  \author Marcus A Johansson */
+class TDefJntConfig : public TaskDefinition {
+ public:
+  TDefJntConfig(std::shared_ptr<GeometricPrimitiveMap> geom_prim_map,
+                std::shared_ptr<Visualizer> visualizer)
+      : TaskDefinition(geom_prim_map, visualizer) {}
+  ~TDefJntConfig() noexcept {}
 
-    int init(const std::vector<std::string>& parameters,
-             RobotStatePtr robot_state);
+  int init(const std::vector<std::string>& parameters,
+           RobotStatePtr robot_state);
 
-    int update(RobotStatePtr robot_state);
+  int update(RobotStatePtr robot_state);
 
-    int monitor();
+  int monitor();
 
-  private:
-    TDefJntConfig(const TDefJntConfig& other) = delete;
-    TDefJntConfig(TDefJntConfig&& other) = delete;
-    TDefJntConfig& operator=(const TDefJntConfig& other) = delete;
-    TDefJntConfig& operator=(TDefJntConfig&& other) noexcept = delete;
+ private:
+  TDefJntConfig(const TDefJntConfig& other) = delete;
+  TDefJntConfig(TDefJntConfig&& other) = delete;
+  TDefJntConfig& operator=(const TDefJntConfig& other) = delete;
+  TDefJntConfig& operator=(TDefJntConfig&& other) noexcept = delete;
 
-    std::string              link_name_;
-    int                      joint_q_nr_;
-    double                   desired_configuration_;
-  };
+  std::string link_name_;
+  int joint_q_nr_;
+  double desired_configuration_;
+};
 
-} // namespace tasks
+}  // namespace tasks
 
-} // namespace hiqp
+}  // namespace hiqp
 
-#endif // include guard
+#endif  // include guard

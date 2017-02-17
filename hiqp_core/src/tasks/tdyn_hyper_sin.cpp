@@ -14,51 +14,46 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include <limits>
 #include <cmath>
+#include <limits>
 
 #include <hiqp/utilities.h>
 
 #include <hiqp/tasks/tdyn_hyper_sin.h>
 
-namespace hiqp
-{
-namespace tasks
-{
+namespace hiqp {
+namespace tasks {
 
-  int TDynHyperSin::init(const std::vector<std::string>& parameters,
-                               RobotStatePtr robot_state,
-                               const Eigen::VectorXd& e_initial,
-                               const Eigen::VectorXd& e_final) {
-    int size = parameters.size();
-    if (size != 2) {
-      printHiqpWarning("TDynFirstOrder requires 2 parameters, got " 
-        + std::to_string(size) + "! Initialization failed!");
-      return -1;
-    }
-
-    lambda_ = std::stod( parameters.at(1) );
-
-    e_dot_star_.resize(e_initial.rows());
-    performance_measures_.resize(e_initial.rows());
-
-    return 0;
+int TDynHyperSin::init(const std::vector<std::string>& parameters,
+                       RobotStatePtr robot_state,
+                       const Eigen::VectorXd& e_initial,
+                       const Eigen::VectorXd& e_final) {
+  int size = parameters.size();
+  if (size != 2) {
+    printHiqpWarning("TDynFirstOrder requires 2 parameters, got " +
+                     std::to_string(size) + "! Initialization failed!");
+    return -1;
   }
 
-  int TDynHyperSin::update(RobotStatePtr robot_state,
-                                 const Eigen::VectorXd& e,
-                                 const Eigen::MatrixXd& J) {
-    e_dot_star_.resize(e.size());
-    for (unsigned int i=0; i<e.size(); ++i) {
-      e_dot_star_(i) = -lambda_ * std::sinh( e(i) );
-    }
-    return 0;
+  lambda_ = std::stod(parameters.at(1));
+
+  e_dot_star_.resize(e_initial.rows());
+  performance_measures_.resize(e_initial.rows());
+
+  return 0;
+}
+
+int TDynHyperSin::update(RobotStatePtr robot_state, const Eigen::VectorXd& e,
+                         const Eigen::MatrixXd& J) {
+  e_dot_star_.resize(e.size());
+  for (unsigned int i = 0; i < e.size(); ++i) {
+    e_dot_star_(i) = -lambda_ * std::sinh(e(i));
   }
+  return 0;
+}
 
-  int TDynHyperSin::monitor() {
-    return 0;
-  }
+int TDynHyperSin::monitor() { return 0; }
 
-} // namespace tasks
+}  // namespace tasks
 
-} // namespace hiqp
+}  // namespace hiqp

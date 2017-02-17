@@ -26,44 +26,65 @@ namespace hiqp {
 
 namespace geometric_primitives {
 
-  /*! \brief A Geometric Primitive Visitor that prints info about the primitive it visits to std::cout.
-   *  \author Marcus A Johansson */
-  class GeometricPrimitiveCouter : public GeometricPrimitiveVisitor {
-  public:
-    GeometricPrimitiveCouter() = default;
+/*! \brief A Geometric Primitive Visitor that prints info about the primitive it
+ * visits to std::cout.
+ *  \author Marcus A Johansson */
+class GeometricPrimitiveCouter : public GeometricPrimitiveVisitor {
+ public:
+  GeometricPrimitiveCouter() = default;
 
-    ~GeometricPrimitiveCouter() noexcept = default;
+  ~GeometricPrimitiveCouter() noexcept = default;
 
-    void visit(std::shared_ptr<GeometricPoint> point) { print(point); std::cout << "point\n"; }
-    void visit(std::shared_ptr<GeometricLine> line) { print(line); std::cout << "line\n"; }
-    void visit(std::shared_ptr<GeometricPlane> plane) { print(plane); std::cout << "plane\n"; }
-    void visit(std::shared_ptr<GeometricBox> box) { print(box); std::cout << "box\n"; }
-    void visit(std::shared_ptr<GeometricCylinder> cylinder) { print(cylinder); std::cout << "cylinder\n"; }
-    void visit(std::shared_ptr<GeometricSphere> sphere) { print(sphere); std::cout << "sphere\n"; }
-    void visit(std::shared_ptr<GeometricFrame> frame) { print(frame); std::cout << "frame\n"; }
-
-
-  private:
-    GeometricPrimitiveCouter(const GeometricPrimitiveCouter& other) = delete;
-    GeometricPrimitiveCouter(GeometricPrimitiveCouter&& other) = delete;
-    GeometricPrimitiveCouter& operator=(const GeometricPrimitiveCouter& other) = delete;
-    GeometricPrimitiveCouter& operator=(GeometricPrimitiveCouter&& other) noexcept = delete;
-
-    template <typename Primitive>
-    void print(std::shared_ptr<Primitive> primitive);
-
-  };
-
-  template <typename Primitive>
-  void GeometricPrimitiveCouter::print(std::shared_ptr<Primitive> primitive) {
-    std::cout << primitive->getName() << ", " 
-              << primitive->getFrameId() << ", "
-              << primitive->isVisible() << ", "
-              << primitive->getVisualId() << ", ";
+  void visit(std::shared_ptr<GeometricPoint> point) {
+    print(point);
+    std::cout << "point\n";
+  }
+  void visit(std::shared_ptr<GeometricLine> line) {
+    print(line);
+    std::cout << "line\n";
+  }
+  void visit(std::shared_ptr<GeometricPlane> plane) {
+    print(plane);
+    std::cout << "plane\n";
+  }
+  void visit(std::shared_ptr<GeometricBox> box) {
+    print(box);
+    std::cout << "box\n";
+  }
+  void visit(std::shared_ptr<GeometricCylinder> cylinder) {
+    print(cylinder);
+    std::cout << "cylinder\n";
+  }
+  void visit(std::shared_ptr<GeometricSphere> sphere) {
+    print(sphere);
+    std::cout << "sphere\n";
+  }
+  void visit(std::shared_ptr<GeometricFrame> frame) {
+    print(frame);
+    std::cout << "frame\n";
   }
 
-} // namespace geometric_primitives
+ private:
+  GeometricPrimitiveCouter(const GeometricPrimitiveCouter& other) = delete;
+  GeometricPrimitiveCouter(GeometricPrimitiveCouter&& other) = delete;
+  GeometricPrimitiveCouter& operator=(const GeometricPrimitiveCouter& other) =
+      delete;
+  GeometricPrimitiveCouter& operator=(
+      GeometricPrimitiveCouter&& other) noexcept = delete;
 
-} // namespace hiqp
+  template <typename Primitive>
+  void print(std::shared_ptr<Primitive> primitive);
+};
 
-#endif // include guard
+template <typename Primitive>
+void GeometricPrimitiveCouter::print(std::shared_ptr<Primitive> primitive) {
+  std::cout << primitive->getName() << ", " << primitive->getFrameId() << ", "
+            << primitive->isVisible() << ", " << primitive->getVisualId()
+            << ", ";
+}
+
+}  // namespace geometric_primitives
+
+}  // namespace hiqp
+
+#endif  // include guard
