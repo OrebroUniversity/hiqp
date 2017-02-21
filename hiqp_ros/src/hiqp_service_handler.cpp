@@ -17,8 +17,8 @@
 #include <hiqp_ros/hiqp_service_handler.h>
 
 void HiQPServiceHandler::advertiseAll() {
-  set_task_service_ = node_handle_->advertiseService(
-    "set_task", &HiQPServiceHandler::setTask, this);
+  set_tasks_service_ = node_handle_->advertiseService(
+    "set_tasks", &HiQPServiceHandler::setTasks, this);
   remove_task_service_ = node_handle_->advertiseService(
     "remove_task", &HiQPServiceHandler::removeTask, this);
   remove_all_tasks_service_ = node_handle_->advertiseService(
@@ -35,8 +35,8 @@ void HiQPServiceHandler::advertiseAll() {
     "demonitor_task", &HiQPServiceHandler::demonitorTask, this);
 
 
-  set_primitive_service_ = node_handle_->advertiseService(
-    "set_primitive", &HiQPServiceHandler::setPrimitive, this);
+  set_primitives_service_ = node_handle_->advertiseService(
+    "set_primitives", &HiQPServiceHandler::setPrimitives, this);
   remove_primitive_service_ = node_handle_->advertiseService(
     "remove_primitive", &HiQPServiceHandler::removePrimitive, this);
   remove_all_primitives_service_ = node_handle_->advertiseService(
@@ -57,12 +57,14 @@ void HiQPServiceHandler::advertiseAll() {
     "demonitor_priority_level", &HiQPServiceHandler::demonitorPriorityLevel, this);
 }
 
-bool HiQPServiceHandler::setTask(hiqp_msgs::SetTask::Request& req, 
-                                 hiqp_msgs::SetTask::Response& res) {
-  int retval = task_manager_->setTask(
-    req.name, req.priority, req.visible, req.active, req.monitored,
-    req.def_params, req.dyn_params, robot_state_);
-  res.success = (retval < 0 ? false : true);
+bool HiQPServiceHandler::setTasks(hiqp_msgs::SetTasks::Request& req, 
+                                 hiqp_msgs::SetTasks::Response& res) {
+  for(auto task : req.tasks) {
+    int retval = task_manager_->setTask(
+      task.name, task.priority, task.visible, task.active, task.monitored,
+      task.def_params, task.dyn_params, robot_state_);
+    res.success.push_back(retval < 0 ? false : true);
+  }
   return true;
 }
 
@@ -122,14 +124,17 @@ bool HiQPServiceHandler::demonitorTask(hiqp_msgs::DemonitorTask::Request& req,
   return true;
 }
 
-bool HiQPServiceHandler::setPrimitive(hiqp_msgs::SetPrimitive::Request& req, 
-                                      hiqp_msgs::SetPrimitive::Response& res) {
-  int retval = task_manager_->setPrimitive(
-    req.name, req.type, req.frame_id, req.visible, req.color, req.parameters
-  );
-  res.success = (retval == 0 ? true : false);
-  if (res.success) {
-    hiqp::printHiqpInfo("Set geometric primitive of type '" + req.type + "' with name '" + req.name + "'.");
+bool HiQPServiceHandler::setPrimitives(hiqp_msgs::SetPrimitives::Request& req, 
+                                      hiqp_msgs::SetPrimitives::Response& res) {
+  for(auto primitive : req.primitives) {
+    int retval = task_manager_->setPrimitive(
+      primitive.name, primitive.type, primitive.frame_id,
+      primitive.visible, primitive.color, primitive.parameters);
+    res.success.push_back(retval == 0 ? true : false);
+    
+    if (res.success.back()) {
+      hiqp::printHiqpInfo("Set geometric primitive of type '" + primitive.type + "' with name '" + primitive.name + "'.");
+    }
   }
   return true;
 }

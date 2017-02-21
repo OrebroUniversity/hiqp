@@ -23,11 +23,13 @@ find_package(catkin REQUIRED COMPONENTS message_generation
                                         geometry_msgs)
 
 add_message_files(FILES TaskMeasure.msg
+                        Primitive.msg
                         TaskMeasures.msg
                         StringArray.msg
-                        Vector3d.msg)
+                        Vector3d.msg
+                        Task.msg)
 
-add_service_files(FILES SetTask.srv
+add_service_files(FILES SetTasks.srv
                         RemoveTask.srv
                         RemoveAllTasks.srv
                         ListAllTasks.srv
@@ -35,7 +37,7 @@ add_service_files(FILES SetTask.srv
                         DeactivateTask.srv
                         MonitorTask.srv
                         DemonitorTask.srv
-                        SetPrimitive.srv
+                        SetPrimitives.srv
                         RemovePrimitive.srv
                         RemoveAllPrimitives.srv
                         ListAllPrimitives.srv

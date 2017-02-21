@@ -21,7 +21,7 @@
 
 #include <hiqp/task_manager.h>
 
-#include <hiqp_msgs/SetTask.h>
+#include <hiqp_msgs/SetTasks.h>
 #include <hiqp_msgs/RemoveTask.h>
 #include <hiqp_msgs/RemoveAllTasks.h>
 #include <hiqp_msgs/ListAllTasks.h>
@@ -30,7 +30,7 @@
 #include <hiqp_msgs/MonitorTask.h>
 #include <hiqp_msgs/DemonitorTask.h>
 
-#include <hiqp_msgs/SetPrimitive.h>
+#include <hiqp_msgs/SetPrimitives.h>
 #include <hiqp_msgs/RemovePrimitive.h>
 #include <hiqp_msgs/RemoveAllPrimitives.h>
 #include <hiqp_msgs/ListAllPrimitives.h>
@@ -63,14 +63,10 @@ private:
   HiQPServiceHandler& operator=(const HiQPServiceHandler& other) = delete;
   HiQPServiceHandler& operator=(HiQPServiceHandler&& other) noexcept = delete;
 
-  /// \todo Change add_primitive to set_primitive ros service
-  /// \todo Add show_primitive ros service
-  /// \todo Add hide_primitive ros service
-
   /// \todo Add activate_controller ros service
   /// \todo Add deactivate_controller ros service
 
-  bool setTask(hiqp_msgs::SetTask::Request& req, hiqp_msgs::SetTask::Response& res);
+  bool setTasks(hiqp_msgs::SetTasks::Request& req, hiqp_msgs::SetTasks::Response& res);
   bool removeTask(hiqp_msgs::RemoveTask::Request& req, hiqp_msgs::RemoveTask::Response& res);
   bool removeAllTasks(hiqp_msgs::RemoveAllTasks::Request& req, hiqp_msgs::RemoveAllTasks::Response& res);
   bool listAllTasks(hiqp_msgs::ListAllTasks::Request& req, hiqp_msgs::ListAllTasks::Response& res);
@@ -79,7 +75,7 @@ private:
   bool monitorTask(hiqp_msgs::MonitorTask::Request& req, hiqp_msgs::MonitorTask::Response& res);
   bool demonitorTask(hiqp_msgs::DemonitorTask::Request& req, hiqp_msgs::DemonitorTask::Response& res);
 
-  bool setPrimitive(hiqp_msgs::SetPrimitive::Request& req, hiqp_msgs::SetPrimitive::Response& res);
+  bool setPrimitives(hiqp_msgs::SetPrimitives::Request& req, hiqp_msgs::SetPrimitives::Response& res);
   bool removePrimitive(hiqp_msgs::RemovePrimitive::Request& req, hiqp_msgs::RemovePrimitive::Response& res);
   bool removeAllPrimitives(hiqp_msgs::RemoveAllPrimitives::Request& req, hiqp_msgs::RemoveAllPrimitives::Response& res);
   bool listAllPrimitives(hiqp_msgs::ListAllPrimitives::Request& req, hiqp_msgs::ListAllPrimitives::Response& res);
@@ -94,7 +90,7 @@ private:
   std::shared_ptr<hiqp::TaskManager>  task_manager_;
   hiqp::RobotStatePtr                 robot_state_;
 
-  ros::ServiceServer                  set_task_service_;
+  ros::ServiceServer                  set_tasks_service_;
   ros::ServiceServer                  remove_task_service_;
   ros::ServiceServer                  remove_all_tasks_service_;
   ros::ServiceServer                  list_all_tasks_service_;
@@ -103,7 +99,7 @@ private:
   ros::ServiceServer                  monitor_task_service_;
   ros::ServiceServer                  demonitor_task_service_;
 
-  ros::ServiceServer                  set_primitive_service_;
+  ros::ServiceServer                  set_primitives_service_;
   ros::ServiceServer                  remove_primitive_service_;
   ros::ServiceServer                  remove_all_primitives_service_;
   ros::ServiceServer                  list_all_primitives_service_;
