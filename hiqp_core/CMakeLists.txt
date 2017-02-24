@@ -29,20 +29,16 @@ message(${CMAKE_MODULE_PATH})
 set(CMAKE_CXX_FLAGS "-O3 -std=c++11 -Wl,-z,defs")
 set(CMAKE_VERBOSE_MAKEFILE off)
 
-find_package(catkin REQUIRED COMPONENTS roscpp
-                                        controller_interface
-                                        visualization_msgs
-                                        kdl_parser
-                                        hiqp_msgs)
+find_package(catkin REQUIRED COMPONENTS rosconsole pluginlib)
 find_package(orocos_kdl REQUIRED)
 find_package(Eigen3 REQUIRED)
 
-catkin_package(CATKIN_DEPENDS roscpp controller_interface visualization_msgs kdl_parser hiqp_msgs
+catkin_package(CATKIN_DEPENDS rosconsole pluginlib
                INCLUDE_DIRS include 
                LIBRARIES ${PROJECT_NAME} 
                DEPENDS orocos_kdl)
 
-include_directories(include ${catkin_INCLUDE_DIRS})
+include_directories(include ${catkin_INCLUDE_DIRS} ${EIGEN3_INCLUDE_DIR})
 
 set(SOLVER_SOURCE_FILE "")
 if(${HIQP_QPSOLVER_BACKEND} STREQUAL "qpoases")
@@ -73,6 +69,7 @@ add_library(${PROJECT_NAME} src/utilities.cpp
                             src/task_manager.cpp
                             src/task.cpp
 
+                            src/geometric_primitives/geometric_primitive.cpp
                             src/geometric_primitives/geometric_primitive_map.cpp
 
                             ${SOLVER_SOURCE_FILE}

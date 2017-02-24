@@ -34,44 +34,39 @@ using hiqp::geometric_primitives::GeometricCylinder;
 using hiqp::geometric_primitives::GeometricSphere;
 using hiqp::geometric_primitives::GeometricFrame;
 
-namespace hiqp_ros
-{
+namespace hiqp_ros {
 
-	class ROSTopicSubscriber {
-	public:
+class ROSTopicSubscriber {
+ public:
+  ROSTopicSubscriber() {}
+  ~ROSTopicSubscriber() {}
 
-		ROSTopicSubscriber() {}
-		~ROSTopicSubscriber() {}
+  int init(hiqp::TaskManager* task_manager) { task_manager_ = task_manager; }
 
-		int init(hiqp::TaskManager* task_manager)	{
-			task_manager_ = task_manager;
-		}
+  template <typename ROSMessageType>
+  int addSubscription(ros::NodeHandle& controller_nh,
+                      const std::string& topic_name, unsigned int buffer_size) {
+    sub = controller_nh.subscribe(
+        topic_name, buffer_size,
+        &ROSTopicSubscriber::topicCallback<ROSMessageType>, this);
+    ROS_INFO_STREAM("Subsribed to topic '" << topic_name << "'");
+  }
 
-		template<typename ROSMessageType>
-		int addSubscription(ros::NodeHandle &controller_nh,
-											  const std::string& topic_name,
-												unsigned int buffer_size) {
-			sub = controller_nh.subscribe(
-				topic_name, buffer_size, &ROSTopicSubscriber::topicCallback<ROSMessageType>, this);
-			ROS_INFO_STREAM("Subsribed to topic '" << topic_name << "'");
-		}
+  /*! \brief Implement this function for your own message! */
+  template <typename ROSMessageType>
+  void topicCallback(const ROSMessageType& msg);
 
-		/*! \brief Implement this function for your own message! */
-		template<typename ROSMessageType>
-		void topicCallback(const ROSMessageType& msg);
+ private:
+  ROSTopicSubscriber(const ROSTopicSubscriber& other) = delete;
+  ROSTopicSubscriber(ROSTopicSubscriber&& other) = delete;
+  ROSTopicSubscriber& operator=(const ROSTopicSubscriber& other) = delete;
+  ROSTopicSubscriber& operator=(ROSTopicSubscriber&& other) noexcept = delete;
 
-	private:
-		ROSTopicSubscriber(const ROSTopicSubscriber& other) = delete;
-		ROSTopicSubscriber(ROSTopicSubscriber&& other) = delete;
-		ROSTopicSubscriber& operator=(const ROSTopicSubscriber& other) = delete;
-		ROSTopicSubscriber& operator=(ROSTopicSubscriber&& other) noexcept = delete;
+  ros::Subscriber sub;
 
-		ros::Subscriber 					sub;
+  hiqp::TaskManager* task_manager_;
+};
 
-		hiqp::TaskManager* 							task_manager_;
+}  // namespace hiqp
 
-	};
-
-} // namespace hiqp
-
-#endif // Include guard
+#endif  // Include guard

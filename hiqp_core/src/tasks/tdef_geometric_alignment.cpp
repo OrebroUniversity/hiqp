@@ -16,91 +16,65 @@
 
 #include <hiqp/tasks/tdef_geometric_alignment.h>
 
-#include <hiqp/geometric_primitives/geometric_point.h>
-#include <hiqp/geometric_primitives/geometric_line.h>
-#include <hiqp/geometric_primitives/geometric_plane.h>
 #include <hiqp/geometric_primitives/geometric_box.h>
 #include <hiqp/geometric_primitives/geometric_cylinder.h>
-#include <hiqp/geometric_primitives/geometric_sphere.h>
 #include <hiqp/geometric_primitives/geometric_frame.h>
+#include <hiqp/geometric_primitives/geometric_line.h>
+#include <hiqp/geometric_primitives/geometric_plane.h>
+#include <hiqp/geometric_primitives/geometric_point.h>
+#include <hiqp/geometric_primitives/geometric_sphere.h>
 
 #include <hiqp/utilities.h>
 
-#include <iostream>
 #include <cmath>
+#include <iostream>
 
-namespace hiqp
-{
-namespace tasks
-{
+namespace hiqp {
+namespace tasks {
 
-template<>
-int TDefGeometricAlignment<GeometricLine, GeometricLine>::align
-(
-  std::shared_ptr<GeometricLine> line1,
-  std::shared_ptr<GeometricLine> line2
-)
-{
+template <>
+int TDefGeometricAlignment<GeometricLine, GeometricLine>::align(
+    std::shared_ptr<GeometricLine> line1,
+    std::shared_ptr<GeometricLine> line2) {
   KDL::Vector v1 = pose_a_.M * line1->getDirectionKDL();
   KDL::Vector v2 = pose_b_.M * line2->getDirectionKDL();
 
   return alignVectors(v1, v2);
 }
 
-
-
-
-
-template<>
-int TDefGeometricAlignment<GeometricLine, GeometricPlane>::align
-(
-  std::shared_ptr<GeometricLine> line,
-  std::shared_ptr<GeometricPlane> plane
-)
-{
+template <>
+int TDefGeometricAlignment<GeometricLine, GeometricPlane>::align(
+    std::shared_ptr<GeometricLine> line,
+    std::shared_ptr<GeometricPlane> plane) {
   KDL::Vector v1 = pose_a_.M * line->getDirectionKDL();
-  KDL::Vector v2 = - ( pose_b_.M * plane->getNormalKDL() );
+  KDL::Vector v2 = -(pose_b_.M * plane->getNormalKDL());
 
   return alignVectors(v1, v2);
 }
 
-
-
-
-
-template<>
-int TDefGeometricAlignment<GeometricLine, GeometricCylinder>::align
-(
-  std::shared_ptr<GeometricLine> line,
-  std::shared_ptr<GeometricCylinder> cylinder
-)
-{
-  KDL::Vector v1 = - (pose_a_.M * line->getDirectionKDL());
+template <>
+int TDefGeometricAlignment<GeometricLine, GeometricCylinder>::align(
+    std::shared_ptr<GeometricLine> line,
+    std::shared_ptr<GeometricCylinder> cylinder) {
+  KDL::Vector v1 = -(pose_a_.M * line->getDirectionKDL());
 
   KDL::Vector p = pose_a_.p + pose_a_.M * line->getOffsetKDL();
   KDL::Vector d = pose_b_.p + pose_b_.M * cylinder->getOffsetKDL();
   KDL::Vector v = pose_b_.M * cylinder->getDirectionKDL();
 
-  KDL::Vector x = KDL::dot( (p-d), v) * v;
+  KDL::Vector x = KDL::dot((p - d), v) * v;
 
-  KDL::Vector v2 = (p-d) - x;
+  KDL::Vector v2 = (p - d) - x;
 
   v2.Normalize();
 
   return alignVectors(v1, v2);
 }
 
-
-
-
-
-template<>
-int TDefGeometricAlignment<GeometricLine, GeometricSphere>::align
-(
-  std::shared_ptr<GeometricLine> line,
-  std::shared_ptr<GeometricSphere> sphere
-)
-{
+template <>
+int TDefGeometricAlignment<GeometricLine, GeometricSphere>::align(
+    std::shared_ptr<GeometricLine> line,
+    std::shared_ptr<GeometricSphere> sphere) {
   KDL::Vector v1 = pose_a_.M * line->getDirectionKDL();
 
   KDL::Vector p = pose_a_.p + pose_a_.M * line->getOffsetKDL();
@@ -113,16 +87,12 @@ int TDefGeometricAlignment<GeometricLine, GeometricSphere>::align
   return alignVectors(v1, v2);
 }
 
-
-
-/// \bug Frame alignment seems not to consider the axis sense (e.g., alignment along x and -x seems the same)
-template<>
-int TDefGeometricAlignment<GeometricFrame, GeometricFrame>::align
-(
-  std::shared_ptr<GeometricFrame> frame1,
-  std::shared_ptr<GeometricFrame> frame2
-)
-{
+/// \bug Frame alignment seems not to consider the axis sense (e.g., alignment
+/// along x and -x seems the same)
+template <>
+int TDefGeometricAlignment<GeometricFrame, GeometricFrame>::align(
+    std::shared_ptr<GeometricFrame> frame1,
+    std::shared_ptr<GeometricFrame> frame2) {
   KDL::Vector ax1 = pose_a_.M * frame1->getAxisXKDL();
   KDL::Vector ax2 = pose_b_.M * frame2->getAxisXKDL();
   KDL::Vector ay1 = pose_a_.M * frame1->getAxisYKDL();
@@ -140,29 +110,13 @@ int TDefGeometricAlignment<GeometricFrame, GeometricFrame>::align
   for (int q_nr = 0; q_nr < jacobian_a_.columns(); ++q_nr) {
     KDL::Vector Ja = jacobian_a_.getColumn(q_nr).rot;
     KDL::Vector Jb = jacobian_b_.getColumn(q_nr).rot;
-    J_(0, q_nr) = KDL::dot( v1, (Ja - Jb) );
-    J_(1, q_nr) = KDL::dot( v2, (Ja - Jb) );
+    J_(0, q_nr) = KDL::dot(v1, (Ja - Jb));
+    J_(1, q_nr) = KDL::dot(v2, (Ja - Jb));
   }
 
   return 0;
 }
 
+}  // namespace tasks
 
-
-
-
-} // namespace tasks
-
-} // namespace hiqp
-
-
-
-
-
-
-
-
-
-
-
-
+}  // namespace hiqp

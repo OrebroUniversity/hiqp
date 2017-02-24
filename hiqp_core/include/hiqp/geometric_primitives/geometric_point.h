@@ -24,63 +24,61 @@
 
 #include <Eigen/Dense>
 
-namespace hiqp
-{
-namespace geometric_primitives
-{
+namespace hiqp {
+namespace geometric_primitives {
 
-  /*! \brief Parameters: [x, y, z]
-   *  \author Marcus A Johansson */ 
-  class GeometricPoint : public GeometricPrimitive {
-  public:
-    GeometricPoint(const std::string& name,
-                   const std::string& frame_id,
-                   bool visible,
-                   const std::vector<double>& color)
-    : GeometricPrimitive(name, frame_id, visible, color) {}
-    
-    ~GeometricPoint() noexcept {}
+/*! \brief Parameters: [x, y, z]
+ *  \author Marcus A Johansson */
+class GeometricPoint : public GeometricPrimitive {
+ public:
+  GeometricPoint(const std::string& name, const std::string& frame_id,
+                 bool visible, const std::vector<double>& color)
+      : GeometricPrimitive(name, frame_id, visible, color) {}
 
-    /*! \brief Parses a set of parameters and initializes the point.
-     *  \param parameters : Should be of size 3. Indices 0-2 (required) defines the position of the point.
-     * \return 0 on success, -1 if the wrong number of parameters was sent */
-    int init(const std::vector<double>& parameters) {
-      int size = parameters.size();
-      if (size != 3) {
-        printHiqpWarning("GeometricPoint requires 3 parameters, got " 
-          + std::to_string(size) + "! Initialization failed!");
-        return -1;
-      }
+  ~GeometricPoint() noexcept {}
 
-      kdl_p_(0) = parameters.at(0);
-      kdl_p_(1) = parameters.at(1);
-      kdl_p_(2) = parameters.at(2);
-
-      eigen_p_ << kdl_p_(0), kdl_p_(1), kdl_p_(2);
-      return 0;
+  /*! \brief Parses a set of parameters and initializes the point.
+   *  \param parameters : Should be of size 3. Indices 0-2 (required) defines
+   * the position of the point.
+   * \return 0 on success, -1 if the wrong number of parameters was sent */
+  int init(const std::vector<double>& parameters) {
+    GeometricPrimitive::init(parameters);
+    int size = parameters.size();
+    if (size != 3) {
+      printHiqpWarning("GeometricPoint requires 3 parameters, got " +
+                       std::to_string(size) + "! Initialization failed!");
+      return -1;
     }
 
-    inline const KDL::Vector&       getPointKDL()   { return kdl_p_; }
+    kdl_p_(0) = parameters.at(0);
+    kdl_p_(1) = parameters.at(1);
+    kdl_p_(2) = parameters.at(2);
 
-    inline const Eigen::Vector3d&   getPointEigen() { return eigen_p_; }
+    eigen_p_ << kdl_p_(0), kdl_p_(1), kdl_p_(2);
+    return 0;
+  }
 
-    inline double getX() { return kdl_p_(0); }
-    inline double getY() { return kdl_p_(1); }
-    inline double getZ() { return kdl_p_(2); }
+  inline const KDL::Vector& getPointKDL() { return kdl_p_; }
 
-  protected:
-    KDL::Vector        kdl_p_;
-    Eigen::Vector3d    eigen_p_;
+  inline const Eigen::Vector3d& getPointEigen() { return eigen_p_; }
 
-  private:
-    GeometricPoint(const GeometricPoint& other) = delete;
-    GeometricPoint(GeometricPoint&& other) = delete;
-    GeometricPoint& operator=(const GeometricPoint& other) = delete;
-    GeometricPoint& operator=(GeometricPoint&& other) noexcept = delete;
-  };
+  inline double getX() { return kdl_p_(0); }
+  inline double getY() { return kdl_p_(1); }
+  inline double getZ() { return kdl_p_(2); }
 
-} // namespace geometric_primitives
+ protected:
+  KDL::Vector kdl_p_;
+  Eigen::Vector3d eigen_p_;
 
-} // namespace hiqp
+ private:
+  GeometricPoint(const GeometricPoint& other) = delete;
+  GeometricPoint(GeometricPoint&& other) = delete;
+  GeometricPoint& operator=(const GeometricPoint& other) = delete;
+  GeometricPoint& operator=(GeometricPoint&& other) noexcept = delete;
+};
 
-#endif // include guard
+}  // namespace geometric_primitives
+
+}  // namespace hiqp
+
+#endif  // include guard

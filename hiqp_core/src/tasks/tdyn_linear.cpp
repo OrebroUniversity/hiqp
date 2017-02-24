@@ -20,42 +20,37 @@
 
 #include <hiqp/tasks/tdyn_linear.h>
 
-namespace hiqp
-{
-namespace tasks
-{
+namespace hiqp {
+namespace tasks {
 
-  int TDynLinear::init(const std::vector<std::string>& parameters,
-                               RobotStatePtr robot_state,
-                               const Eigen::VectorXd& e_initial,
-                               const Eigen::VectorXd& e_final) {
-    int size = parameters.size();
-    if (size != 2) {
-      printHiqpWarning("TDynFirstOrder requires 2 parameters, got " 
-        + std::to_string(size) + "! Initialization failed!");
-      return -1;
-    }
-
-    lambda_ = std::stod( parameters.at(1) );
-
-    e_dot_star_.resize(e_initial.rows());
-    performance_measures_.resize(e_initial.rows());
-
-    return 0;
+int TDynLinear::init(const std::vector<std::string>& parameters,
+                     RobotStatePtr robot_state,
+                     const Eigen::VectorXd& e_initial,
+                     const Eigen::VectorXd& e_final) {
+  int size = parameters.size();
+  if (size != 2) {
+    printHiqpWarning("TDynFirstOrder requires 2 parameters, got " +
+                     std::to_string(size) + "! Initialization failed!");
+    return -1;
   }
 
-  int TDynLinear::update(RobotStatePtr robot_state,
-                                 const Eigen::VectorXd& e,
-                                 const Eigen::MatrixXd& J) {
-    //e_dot_star_.resize(e.size());
-    e_dot_star_ = -lambda_ * e;
-    return 0;
-  }
+  lambda_ = std::stod(parameters.at(1));
 
-  int TDynLinear::monitor() {
-    return 0;
-  }
+  e_dot_star_.resize(e_initial.rows());
+  performance_measures_.resize(e_initial.rows());
 
-} // namespace tasks
+  return 0;
+}
 
-} // namespace hiqp
+int TDynLinear::update(RobotStatePtr robot_state, const Eigen::VectorXd& e,
+                       const Eigen::MatrixXd& J) {
+  // e_dot_star_.resize(e.size());
+  e_dot_star_ = -lambda_ * e;
+  return 0;
+}
+
+int TDynLinear::monitor() { return 0; }
+
+}  // namespace tasks
+
+}  // namespace hiqp

@@ -18,43 +18,37 @@
 
 #include <hiqp/tasks/tdyn_cubic.h>
 
-namespace hiqp
-{
-namespace tasks
-{
+namespace hiqp {
+namespace tasks {
 
-  int TDynCubic::init(const std::vector<std::string>& parameters,
-                                    RobotStatePtr robot_state,
-                                    const Eigen::VectorXd& e_initial,
-                                    const Eigen::VectorXd& e_final) {
-    int size = parameters.size();
-    if (size != 2) {
-      printHiqpWarning("TDynFirstOrderCubic requires 2 parameters, got " 
-                        + std::to_string(size) + "! Initialization failed!");
-      return -1;
-    }
-
-    lambda_ = std::stod( parameters.at(1) );
-    e_dot_star_.resize(e_initial.rows());
-    performance_measures_.resize(e_initial.rows());
-    return 0;
+int TDynCubic::init(const std::vector<std::string>& parameters,
+                    RobotStatePtr robot_state, const Eigen::VectorXd& e_initial,
+                    const Eigen::VectorXd& e_final) {
+  int size = parameters.size();
+  if (size != 2) {
+    printHiqpWarning("TDynFirstOrderCubic requires 2 parameters, got " +
+                     std::to_string(size) + "! Initialization failed!");
+    return -1;
   }
 
-  int TDynCubic::update(RobotStatePtr robot_state,
-                                      const Eigen::VectorXd& e,
-                                      const Eigen::MatrixXd& J) {
-    e_dot_star_.resize(e.size());
-    std::cout << "i'mhere\n";
-    for (unsigned int i=0; i<e_dot_star_.size(); ++i) {
-      e_dot_star_(i) = -lambda_ * e(i)*e(i)*e(i);
-    }
-    return 0;
+  lambda_ = std::stod(parameters.at(1));
+  e_dot_star_.resize(e_initial.rows());
+  performance_measures_.resize(e_initial.rows());
+  return 0;
+}
+
+int TDynCubic::update(RobotStatePtr robot_state, const Eigen::VectorXd& e,
+                      const Eigen::MatrixXd& J) {
+  e_dot_star_.resize(e.size());
+  std::cout << "i'mhere\n";
+  for (unsigned int i = 0; i < e_dot_star_.size(); ++i) {
+    e_dot_star_(i) = -lambda_ * e(i) * e(i) * e(i);
   }
+  return 0;
+}
 
-  int TDynCubic::monitor() {
-    return 0;
-  }
+int TDynCubic::monitor() { return 0; }
 
-} // namespace tasks
+}  // namespace tasks
 
-} // namespace hiqp
+}  // namespace hiqp

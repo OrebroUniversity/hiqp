@@ -19,42 +19,44 @@
 
 #include <memory>
 
-#include <hiqp/geometric_primitives/geometric_point.h>
-#include <hiqp/geometric_primitives/geometric_line.h>
-#include <hiqp/geometric_primitives/geometric_plane.h>
 #include <hiqp/geometric_primitives/geometric_box.h>
 #include <hiqp/geometric_primitives/geometric_cylinder.h>
-#include <hiqp/geometric_primitives/geometric_sphere.h>
 #include <hiqp/geometric_primitives/geometric_frame.h>
+#include <hiqp/geometric_primitives/geometric_line.h>
+#include <hiqp/geometric_primitives/geometric_plane.h>
+#include <hiqp/geometric_primitives/geometric_point.h>
+#include <hiqp/geometric_primitives/geometric_sphere.h>
 
 namespace hiqp {
 
 namespace geometric_primitives {
 
-  /*! \brief 
-   * {author Marcus A Johansson */
-  class GeometricPrimitiveVisitor {
-  public:
-    GeometricPrimitiveVisitor() {}
-    ~GeometricPrimitiveVisitor() noexcept {}
+/*! \brief
+ * {author Marcus A Johansson */
+class GeometricPrimitiveVisitor {
+ public:
+  GeometricPrimitiveVisitor() {}
+  ~GeometricPrimitiveVisitor() noexcept {}
 
-    virtual void visit(std::shared_ptr<GeometricPoint> point) = 0;
-    virtual void visit(std::shared_ptr<GeometricLine> line) = 0;
-    virtual void visit(std::shared_ptr<GeometricPlane> plane) = 0;
-    virtual void visit(std::shared_ptr<GeometricBox> box) = 0;
-    virtual void visit(std::shared_ptr<GeometricCylinder> cylinder) = 0;
-    virtual void visit(std::shared_ptr<GeometricSphere> sphere) = 0;
-    virtual void visit(std::shared_ptr<GeometricFrame> frame) = 0;
+  virtual void visit(std::shared_ptr<GeometricPoint> point) = 0;
+  virtual void visit(std::shared_ptr<GeometricLine> line) = 0;
+  virtual void visit(std::shared_ptr<GeometricPlane> plane) = 0;
+  virtual void visit(std::shared_ptr<GeometricBox> box) = 0;
+  virtual void visit(std::shared_ptr<GeometricCylinder> cylinder) = 0;
+  virtual void visit(std::shared_ptr<GeometricSphere> sphere) = 0;
+  virtual void visit(std::shared_ptr<GeometricFrame> frame) = 0;
 
-  private:
-    GeometricPrimitiveVisitor(const GeometricPrimitiveVisitor& other) = delete;
-    GeometricPrimitiveVisitor(GeometricPrimitiveVisitor&& other) = delete;
-    GeometricPrimitiveVisitor& operator=(const GeometricPrimitiveVisitor& other) = delete;
-    GeometricPrimitiveVisitor& operator=(GeometricPrimitiveVisitor&& other) noexcept = delete;
-  };
+ private:
+  GeometricPrimitiveVisitor(const GeometricPrimitiveVisitor& other) = delete;
+  GeometricPrimitiveVisitor(GeometricPrimitiveVisitor&& other) = delete;
+  GeometricPrimitiveVisitor& operator=(const GeometricPrimitiveVisitor& other) =
+      delete;
+  GeometricPrimitiveVisitor& operator=(
+      GeometricPrimitiveVisitor&& other) noexcept = delete;
+};
 
-} // namespace geometric_primitives
+}  // namespace geometric_primitives
 
-} // namespace hiqp
+}  // namespace hiqp
 
-#endif // include guard
+#endif  // include guard
