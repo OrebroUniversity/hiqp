@@ -27,6 +27,7 @@
 #include <hiqp/tasks/tdyn_hyper_sin.h>
 #include <hiqp/tasks/tdyn_jnt_limits.h>
 #include <hiqp/tasks/tdyn_minimal_jerk.h>
+#include <hiqp/tasks/tdyn_constant.h>
 
 #include <hiqp/utilities.h>
 
@@ -48,6 +49,7 @@ namespace hiqp {
   using tasks::TDynHyperSin;
   using tasks::TDynJntLimits;
   using tasks::TDynMinimalJerk;
+  using tasks::TDynConstant;
 
   Task::Task(std::shared_ptr<GeometricPrimitiveMap> geom_prim_map,
              std::shared_ptr<Visualizer> visualizer,
@@ -187,6 +189,8 @@ namespace hiqp {
       dyn_ = std::make_shared<TDynMinimalJerk>(geom_prim_map_, visualizer_);
     } else if (type.compare("TDynHyperSin") == 0) {
       dyn_ = std::make_shared<TDynHyperSin>(geom_prim_map_, visualizer_);
+    }else if (type.compare("TDynConstant") == 0) {
+      dyn_ = std::make_shared<TDynConstant>(geom_prim_map_, visualizer_);
     } else {
       printHiqpWarning("The task dynamics type name '" + type + "' was not understood!");
       return -1;
