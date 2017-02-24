@@ -18,38 +18,55 @@ cmake_minimum_required(VERSION 2.8.6)
 project(hiqp_ros)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR})
-set(CMAKE_CXX_FLAGS "-O3 -std=c++11 -Wl,-z,defs")
+set(CMAKE_CXX_FLAGS "-O3 -std=c++14 -Wl,-z,defs")
 
-set(GUROBI_INCLUDE_DIR "$ENV{GUROBI_HOME}/include") 
+set(GUROBI_INCLUDE_DIR "$ENV{GUROBI_HOME}/include")
 set(GUROBI_LIB_DIR "$ENV{GUROBI_HOME}/lib")
 set(GUROBI_LIBS gurobi_c++ gurobi65)
 
 find_package(catkin REQUIRED COMPONENTS roscpp
                                         controller_interface
                                         visualization_msgs
+                                        kdl_parser
                                         hiqp_core
                                         hiqp_msgs)
 
 find_package(orocos_kdl REQUIRED)
-find_package(Eigen3 REQUIRED)
 
-catkin_package(CATKIN_DEPENDS roscpp controller_interface visualization_msgs hiqp_core hiqp_msgs
+catkin_package(CATKIN_DEPENDS roscpp controller_interface visualization_msgs hiqp_core hiqp_msgs kdl_parser
                INCLUDE_DIRS include
-               LIBRARIES ${PROJECT_NAME}
+               LIBRARIES ${PROJECT_NAME} hiqp_client
                DEPENDS orocos_kdl)
 
-include_directories(include ${catkin_INCLUDE_DIRS})
-include_directories(${GUROBI_INCLUDE_DIR})
+include_directories(
+  include
+  ${catkin_INCLUDE_DIRS}
+)
 
+include_directories(${GUROBI_INCLUDE_DIR})
 link_directories(${GUROBI_LIB_DIR})
 
+# hiqp-ros library
 add_library(${PROJECT_NAME} src/hiqp_joint_velocity_controller.cpp
                             src/hiqp_service_handler.cpp
                             src/ros_topic_subscriber.cpp
                             src/ros_visualizer.cpp
                             src/utilities.cpp)
 
+add_dependencies(${PROJECT_NAME} hiqp_msgs_generate_messages_cpp)
+
 target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} ${orocos_kdl_LIBRARIES} ${GUROBI_LIBS})
+
+# hiqp-client library
+add_library(hiqp_client src/hiqp_client.cpp)
+add_dependencies(hiqp_client hiqp_msgs_generate_messages_cpp)
+target_link_libraries(hiqp_client ${catkin_LIBRARIES} ${GUROBI_LIBS})
+
+# hiqp_client_test
+add_executable (test_hiqp_client src/test_hiqp_client.cpp)
+add_dependencies(test_hiqp_client hiqp_msgs_generate_messages_cpp)
+target_link_libraries(test_hiqp_client hiqp_client ${catkin_LIBRARIES})
+
 
 install(DIRECTORY include/${PROJECT_NAME}/
         DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
