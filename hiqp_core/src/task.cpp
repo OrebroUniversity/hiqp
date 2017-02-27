@@ -28,6 +28,7 @@
 #include <hiqp/tasks/tdyn_linear.h>
 #include <hiqp/tasks/tdyn_minimal_jerk.h>
 #include <hiqp/tasks/tdyn_constant.h>
+#include <hiqp/tasks/tdyn_random.h>
 
 #include <hiqp/utilities.h>
 
@@ -50,6 +51,7 @@ using tasks::TDynHyperSin;
 using tasks::TDynJntLimits;
 using tasks::TDynMinimalJerk;
 using tasks::TDynConstant;
+using tasks::TDynRandom;
 
 Task::Task(std::shared_ptr<GeometricPrimitiveMap> geom_prim_map,
            std::shared_ptr<Visualizer> visualizer, int n_controls)
@@ -244,7 +246,9 @@ int Task::constructDynamics(const std::vector<std::string>& dyn_params) {
     dyn_ = std::make_shared<TDynHyperSin>(geom_prim_map_, visualizer_);
   } else if (type.compare("TDynConstant") == 0) {
     dyn_ = std::make_shared<TDynConstant>(geom_prim_map_, visualizer_);
-  } else {
+  } else if (type.compare("TDynRandom") == 0) {
+    dyn_ = std::make_shared<TDynRandom>(geom_prim_map_, visualizer_);
+  }else {
     printHiqpWarning("The task dynamics type name '" + type +
                      "' was not understood!");
     return -1;

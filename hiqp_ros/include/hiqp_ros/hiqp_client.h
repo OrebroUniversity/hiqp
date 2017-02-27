@@ -147,7 +147,8 @@ class HiQPClient {
    */
   void waitForCompletion(const std::vector<std::string>& task_names,
                          const std::vector<TaskDoneReaction>& reactions,
-                         const std::vector<double>& error_tol);
+                         const std::vector<double>& error_tol,
+                         const double max_exec_time=0);
 };
 
 hiqp_msgs::Task createTaskMsg(const std::string& name, int16_t priority,
