@@ -28,7 +28,8 @@
 #include <hiqp/tasks/tdyn_linear.h>
 #include <hiqp/tasks/tdyn_minimal_jerk.h>
 #include <hiqp/tasks/tdyn_constant.h>
-#include <hiqp/tasks/tdyn_random.h>
+// #include <hiqp/tasks/tdyn_random.h>
+// #include <hiqp/tasks/tdyn_policy.h>
 
 #include <hiqp/utilities.h>
 
@@ -51,11 +52,13 @@ using tasks::TDynHyperSin;
 using tasks::TDynJntLimits;
 using tasks::TDynMinimalJerk;
 using tasks::TDynConstant;
-using tasks::TDynRandom;
+// using tasks::TDynRandom;
+// using tasks::TDynPolicy;
 
 Task::Task(std::shared_ptr<GeometricPrimitiveMap> geom_prim_map,
            std::shared_ptr<Visualizer> visualizer, int n_controls)
     : tdef_loader_("hiqp_core", "hiqp::TaskDefinition"),
+      tdyn_loader_("hiqp_core", "hiqp::TaskDynamics"),
       geom_prim_map_(geom_prim_map),
       visualizer_(visualizer),
       n_controls_(n_controls) {}
@@ -218,16 +221,16 @@ int Task::constructDefinition(const std::vector<std::string>& def_params) {
           prim_type1 + "' and '" + prim_type2 + "'!");
       return -1;
     }
-  } else {
-    try {
-      def_ = std::shared_ptr<hiqp::TaskDefinition> (tdef_loader_.createClassInstance("hiqp::tasks::" + type));
-      def_->initializeTaskDefinition(geom_prim_map_, visualizer_);
-    } catch (pluginlib::PluginlibException& ex) {
-      printHiqpWarning("The task definition type name '" + type +
-                       "' was not understood!");
-      return -1;
+    } else {
+      try {
+        def_ = std::shared_ptr<hiqp::TaskDefinition> (tdef_loader_.createClassInstance("hiqp::tasks::" + type));
+        def_->initializeTaskDefinition(geom_prim_map_, visualizer_);
+      } catch (pluginlib::PluginlibException& ex) {
+        printHiqpWarning("The task definition type name '" + type +
+                         "' was not understood!");
+        return -1;
+      }
     }
-  }
   return 0;
 }
 
@@ -246,12 +249,20 @@ int Task::constructDynamics(const std::vector<std::string>& dyn_params) {
     dyn_ = std::make_shared<TDynHyperSin>(geom_prim_map_, visualizer_);
   } else if (type.compare("TDynConstant") == 0) {
     dyn_ = std::make_shared<TDynConstant>(geom_prim_map_, visualizer_);
-  } else if (type.compare("TDynRandom") == 0) {
-    dyn_ = std::make_shared<TDynRandom>(geom_prim_map_, visualizer_);
-  }else {
-    printHiqpWarning("The task dynamics type name '" + type +
-                     "' was not understood!");
-    return -1;
+  } 
+  // else if (type.compare("TDynRandom") == 0) {
+    // dyn_ = std::make_shared<TDynRandom>(geom_prim_map_, visualizer_);
+   else {
+    try {
+      ROS_INFO("Testing");
+      dyn_ = std::shared_ptr<hiqp::TaskDynamics> (tdyn_loader_.createClassInstance("hiqp::tasks::" + type));
+      dyn_->initializeTaskDynamics(geom_prim_map_, visualizer_);
+    } catch (pluginlib::PluginlibException& ex) {
+      ROS_ERROR("The plugin failed to load for some reason. Error: %s", ex.what());
+        printHiqpWarning("The task dynamics type name '" + type +
+                         "' was not understood!");
+        return -1;
+    }
   }
 
   return 0;

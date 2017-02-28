@@ -134,6 +134,7 @@ class Task {
   std::shared_ptr<TaskDynamics> dyn_;
 
   pluginlib::ClassLoader<TaskDefinition> tdef_loader_;
+  pluginlib::ClassLoader<TaskDynamics> tdyn_loader_;
 
   std::shared_ptr<GeometricPrimitiveMap> geom_prim_map_;
   std::shared_ptr<Visualizer> visualizer_;

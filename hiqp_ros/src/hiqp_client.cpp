@@ -224,39 +224,37 @@ std::string taskNamesVectorAsString(
 void HiQPClient::waitForCompletion(
     const std::vector<std::string>& task_names,
     const std::vector<TaskDoneReaction>& reactions,
-    const std::vector<double>& error_tol, const double max_exec_time) {
+    const std::vector<double>& error_tol,
+    double max_exec_time) {
   ROS_ASSERT(task_names.size() == reactions.size() &&
              reactions.size() == error_tol.size());
   int status = 0;
-  // ros::Time start_time;
-  // ros::Duration max_duration(max_exec_time);
-  ROS_INFO("waitForCompletion");
-
+  ros::Time start = ros::Time::now();;
+  ros::Duration max_exec_dur(max_exec_time);
   while (status < task_names.size()) {
     ROS_INFO_THROTTLE(5, "[waitForCompletion]: %d out of %ld tasks complete.",
                       status, task_names.size());
     status = 0;
-    // start_time = ros::Time::now();
     for (auto i = 0; i < task_names.size(); i++) {
       auto& task_name = task_names[i];
       auto& tol = error_tol[i];
 
       resource_mutex_.lock();
       auto it_sq_error = task_name_sq_error_map_.find(task_name);
-
+      if(max_exec_time!=0 && ((ros::Time::now()-start)>max_exec_dur)){
+        ROS_INFO("Max exection time exceeded");
+        status += 1;
+        resource_mutex_.unlock();
+        break;
+      }
       if (it_sq_error == task_name_sq_error_map_.end()) {
         resource_mutex_.unlock();
         continue;
       }
-      // if (max_exec_time!=0 && ((ros::Time::now() - start_time) > max_duration)){
-      //   ROS_INFO("Max execution time exceeded");
-      //   status += 1;
-      //   resource_mutex_.unlock();
-      //   break;
-      // }
       if (it_sq_error->second < tol) {
         status += 1;
       }
+      resource_mutex_.unlock();
     }
   }
 
@@ -297,7 +295,7 @@ void HiQPClient::setJointAngles(const std::vector<double>& joint_angles) {
 
   this->setTask("joint_angles_task", 3, true, true, true, def_params,
                 {"TDynLinear", "0.5"});
-  ROS_INFO("Setting the joint angles");
+  waitForCompletion({"joint_angles_task"}, {TaskDoneReaction::REMOVE}, {1e-3});
 }
 
 void HiQPClient::removeAllTasks() {
