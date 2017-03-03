@@ -85,14 +85,17 @@ int Task::init(const std::vector<std::string>& def_params,
   dyn_->visible_ = visible_;
 
   if (def_->initialize(def_params, robot_state) != 0) return -5;
+  // ROS_INFO("Task Definition created.");
 
   if (dyn_->init(dyn_params, robot_state, def_->getInitialValue(),
                  def_->getFinalValue(robot_state)) != 0)
     return -6;
+  // ROS_INFO("Task Dynamics created.");
 
   if (!checkConsistency(robot_state)) return -7;
 
   // The task was successfully setup
+  // ROS_INFO("Done");
   return 0;
 }
 
@@ -216,11 +219,13 @@ int Task::constructDefinition(const std::vector<std::string>& def_params) {
     }
   } else {
     try {
-      def_ = std::shared_ptr<hiqp::TaskDefinition> (tdef_loader_.createClassInstance("hiqp::tasks::" + type));
+      def_ = std::shared_ptr<hiqp::TaskDefinition>(
+          tdef_loader_.createClassInstance("hiqp::tasks::" + type));
       def_->initializeTaskDefinition(geom_prim_map_, visualizer_);
     } catch (pluginlib::PluginlibException& ex) {
       printHiqpWarning("The task definition type name '" + type +
                        "' was not understood!");
+      ROS_ERROR("tdef_loader_ returned error: %s", ex.what());
       return -1;
     }
   }
@@ -276,13 +281,12 @@ bool Task::checkConsistency(RobotStatePtr robot_state) {
   }
 
   if (def_->task_types_.size() != def_->J_.rows()) {
-    printHiqpWarning(
-        "The task '" + task_name_ +
-        "' is inconsistent after initialization (dimension mismatch). " +
-        "Size of task types array (task_types_.size()) is " +
-        std::to_string(def_->task_types_.size()) + ", " +
-        "number of rows of task jacobian (J_.rows()) is " +
-        std::to_string(def_->J_.rows()));
+    ROS_WARN_THROTTLE(
+        3,
+        "The task '%s' is inconsistent after initialization (dimension "
+        "mismatch). Size of task types array (task_types_.size()) is %ld, "
+        "number of rows of task jacobian (J_.rows()) is %ld.",
+        task_name_.c_str(), def_->task_types_.size(), def_->J_.rows());
     return false;
   }
 
