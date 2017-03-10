@@ -127,6 +127,7 @@ void HiQPJointVelocityController::monitorTasks() {
       for (auto&& measure : measures) {
         hiqp_msgs::TaskMeasure msg;
         msg.task_name = measure.task_name_;
+        msg.task_type = measure.task_type_;
         msg.e = std::vector<double>(
             measure.e_.data(),
             measure.e_.data() + measure.e_.rows() * measure.e_.cols());

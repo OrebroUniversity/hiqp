@@ -37,11 +37,12 @@ namespace hiqp {
  *  \author Marcus A Johansson */
 class TaskMeasure {
  public:
-  TaskMeasure(const std::string& task_name, const Eigen::VectorXd& e,
+  TaskMeasure(const std::string& task_name, const int task_type, const Eigen::VectorXd& e,
               const Eigen::VectorXd& de, const Eigen::VectorXd& pm)
-      : task_name_(task_name), e_(e), de_(de), pm_(pm) {}
+    : task_name_(task_name), task_type_(task_type), e_(e), de_(de), pm_(pm) {}
 
   std::string task_name_;
+  int task_type_;
   Eigen::VectorXd e_;
   Eigen::VectorXd de_;
   Eigen::VectorXd pm_;
