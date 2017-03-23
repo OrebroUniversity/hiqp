@@ -84,7 +84,10 @@ int Task::init(const std::vector<std::string>& def_params,
   dyn_->active_ = active_;
   dyn_->visible_ = visible_;
 
-  if (def_->initialize(def_params, robot_state) != 0) return -5;
+  if (def_->initialize(def_params, robot_state) != 0) {
+    def_.reset();
+    return -5;
+  }
   // ROS_INFO("Task Definition created.");
 
   if (dyn_->init(dyn_params, robot_state, def_->getInitialValue(),
