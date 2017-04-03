@@ -79,8 +79,6 @@ add_library(${PROJECT_NAME} src/utilities.cpp
                             src/tasks/tdyn_hyper_sin.cpp
                             src/tasks/tdyn_jnt_limits.cpp
                             src/tasks/tdyn_minimal_jerk.cpp
-                            src/tasks/tdyn_constant.cpp
-                            # src/tasks/tdyn_random.cpp
 
                             src/tasks/tdef_full_pose.cpp
                             src/tasks/tdef_geometric_alignment.cpp

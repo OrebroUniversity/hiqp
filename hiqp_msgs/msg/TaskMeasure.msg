@@ -15,6 +15,10 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 string         task_name     # unique string identifier for the task
+int32          EQ = 0        # Equality task
+int32          GEQ = 1       # Greater than or equal to
+int32          LEQ = -1      # Less than or equal to
+int32          task_type     # Task Type (eq, geq or leq as above)
 float64[]      e             # the task performance value at this time step
 float64[]      de            # the task dynamics value at this time step
 float64[]      pm            # the user-defined custom performance monitoring values for thsi task at this time step

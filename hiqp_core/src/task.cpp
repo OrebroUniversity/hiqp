@@ -27,9 +27,6 @@
 #include <hiqp/tasks/tdyn_jnt_limits.h>
 #include <hiqp/tasks/tdyn_linear.h>
 #include <hiqp/tasks/tdyn_minimal_jerk.h>
-#include <hiqp/tasks/tdyn_constant.h>
-// #include <hiqp/tasks/tdyn_random.h>
-// #include <hiqp/tasks/tdyn_policy.h>
 
 #include <hiqp/utilities.h>
 
@@ -51,9 +48,6 @@ using tasks::TDynCubic;
 using tasks::TDynHyperSin;
 using tasks::TDynJntLimits;
 using tasks::TDynMinimalJerk;
-using tasks::TDynConstant;
-// using tasks::TDynRandom;
-// using tasks::TDynPolicy;
 
 Task::Task(std::shared_ptr<GeometricPrimitiveMap> geom_prim_map,
            std::shared_ptr<Visualizer> visualizer, int n_controls)
@@ -91,15 +85,21 @@ int Task::init(const std::vector<std::string>& def_params,
   dyn_->active_ = active_;
   dyn_->visible_ = visible_;
 
-  if (def_->initialize(def_params, robot_state) != 0) return -5;
+  if (def_->initialize(def_params, robot_state) != 0) {
+    def_.reset();
+    return -5;
+  }
+  // ROS_INFO("Task Definition created.");
 
   if (dyn_->init(dyn_params, robot_state, def_->getInitialValue(),
                  def_->getFinalValue(robot_state)) != 0)
     return -6;
+  // ROS_INFO("Task Dynamics created.");
 
   if (!checkConsistency(robot_state)) return -7;
 
   // The task was successfully setup
+  // ROS_INFO("Done");
   return 0;
 }
 
@@ -221,15 +221,16 @@ int Task::constructDefinition(const std::vector<std::string>& def_params) {
           prim_type1 + "' and '" + prim_type2 + "'!");
       return -1;
     }
-    } else {
-      try {
-        def_ = std::shared_ptr<hiqp::TaskDefinition> (tdef_loader_.createClassInstance("hiqp::tasks::" + type));
-        def_->initializeTaskDefinition(geom_prim_map_, visualizer_);
-      } catch (pluginlib::PluginlibException& ex) {
-        printHiqpWarning("The task definition type name '" + type +
-                         "' was not understood!");
-        return -1;
-      }
+  } else {
+    try {
+      def_ = std::shared_ptr<hiqp::TaskDefinition>(
+          tdef_loader_.createClassInstance("hiqp::tasks::" + type));
+      def_->initializeTaskDefinition(geom_prim_map_, visualizer_);
+    } catch (pluginlib::PluginlibException& ex) {
+      printHiqpWarning("The task definition type name '" + type +
+                       "' was not understood!");
+      ROS_ERROR("tdef_loader_ returned error: %s", ex.what());
+      return -1;
     }
   return 0;
 }
@@ -247,14 +248,9 @@ int Task::constructDynamics(const std::vector<std::string>& dyn_params) {
     dyn_ = std::make_shared<TDynMinimalJerk>(geom_prim_map_, visualizer_);
   } else if (type.compare("TDynHyperSin") == 0) {
     dyn_ = std::make_shared<TDynHyperSin>(geom_prim_map_, visualizer_);
-  } else if (type.compare("TDynConstant") == 0) {
-    dyn_ = std::make_shared<TDynConstant>(geom_prim_map_, visualizer_);
   } 
-  // else if (type.compare("TDynRandom") == 0) {
-    // dyn_ = std::make_shared<TDynRandom>(geom_prim_map_, visualizer_);
-   else {
+  else {
     try {
-      ROS_INFO("Testing");
       dyn_ = std::shared_ptr<hiqp::TaskDynamics> (tdyn_loader_.createClassInstance("hiqp::tasks::" + type));
       dyn_->initializeTaskDynamics(geom_prim_map_, visualizer_);
     } catch (pluginlib::PluginlibException& ex) {
@@ -295,13 +291,12 @@ bool Task::checkConsistency(RobotStatePtr robot_state) {
   }
 
   if (def_->task_types_.size() != def_->J_.rows()) {
-    printHiqpWarning(
-        "The task '" + task_name_ +
-        "' is inconsistent after initialization (dimension mismatch). " +
-        "Size of task types array (task_types_.size()) is " +
-        std::to_string(def_->task_types_.size()) + ", " +
-        "number of rows of task jacobian (J_.rows()) is " +
-        std::to_string(def_->J_.rows()));
+    ROS_WARN_THROTTLE(
+        3,
+        "The task '%s' is inconsistent after initialization (dimension "
+        "mismatch). Size of task types array (task_types_.size()) is %ld, "
+        "number of rows of task jacobian (J_.rows()) is %ld.",
+        task_name_.c_str(), def_->task_types_.size(), def_->J_.rows());
     return false;
   }
 

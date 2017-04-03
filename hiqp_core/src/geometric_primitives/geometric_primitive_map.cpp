@@ -136,8 +136,6 @@ int GeometricPrimitiveMap::removeGeometricPrimitive(std::string name) {
                                          all_primitive_names_.end(), name),
                              all_primitive_names_.end());
 
-  printHiqpInfo("Removed geometric primitive '" + name + "'.");
-
   return 0;
 }
 

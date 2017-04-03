@@ -92,8 +92,9 @@ void TaskManager::getTaskMeasures(std::vector<TaskMeasure>& data) {
     if (kv.second->getMonitored()) {
       kv.second->monitor();
       data.push_back(TaskMeasure(
-          kv.second->getTaskName(), kv.second->getValue(),
-          kv.second->getDynamics(), kv.second->getPerformanceMeasures()));
+          kv.second->getTaskName(), kv.second->getTaskTypes()[0],
+          kv.second->getValue(), kv.second->getDynamics(),
+          kv.second->getPerformanceMeasures()));
     }
   }
   resource_mutex_.unlock();

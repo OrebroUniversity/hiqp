@@ -185,12 +185,23 @@ std::string taskMeasuresAsString(
     const hiqp_msgs::TaskMeasuresConstPtr& task_measures) {
   std::string s;
   for (auto task_measure : task_measures->task_measures) {
-    double sq_error =
+    
+    double sq_error;
+    if (task_measure.task_type == 0) {
+      sq_error =
         std::inner_product(task_measure.e.begin(), task_measure.e.end(),
                            task_measure.e.begin(), 0.0);
 
-    s += "\n[" + task_measure.task_name + "] Progress: " +
+      s += "\n[" + task_measure.task_name + "] Progress: " +
          std::to_string(exp(-sq_error) * 100.0);
+    }
+    else {
+      sq_error = task_measure.e[0];
+      s += "\n[" + task_measure.task_name + "] Progress: " +
+        (sq_error * task_measure.task_type > 0 ? "In limits" : "Off limits");
+    }
+
+
   }
   s += "\n";
   return s;
@@ -202,10 +213,14 @@ void HiQPClient::taskMeasuresCallback(
   ROS_INFO_DELAYED_THROTTLE(5.0, "%s",
                             taskMeasuresAsString(task_measures).c_str());
   for (auto task_measure : task_measures->task_measures) {
-    double sq_error =
-        std::inner_product(task_measure.e.begin(), task_measure.e.end(),
-                           task_measure.e.begin(), 0.0);
-
+    double sq_error;
+    if(task_measure.task_type == hiqp_msgs::TaskMeasure::EQ)
+      sq_error = std::inner_product(task_measure.e.begin(), task_measure.e.end(),
+                                    task_measure.e.begin(), 0.0);
+    else
+      sq_error = task_measure.e[0];
+    
+    task_name_task_type_map_[task_measure.task_name] = task_measure.task_type;
     task_name_sq_error_map_[task_measure.task_name] = sq_error;
   }
   resource_mutex_.unlock();
@@ -231,6 +246,7 @@ void HiQPClient::waitForCompletion(
   int status = 0;
   ros::Time start = ros::Time::now();;
   ros::Duration max_exec_dur(max_exec_time);
+  bool time_exceeded = false;
   while (status < task_names.size()) {
     ROS_INFO_THROTTLE(5, "[waitForCompletion]: %d out of %ld tasks complete.",
                       status, task_names.size());
@@ -241,20 +257,33 @@ void HiQPClient::waitForCompletion(
 
       resource_mutex_.lock();
       auto it_sq_error = task_name_sq_error_map_.find(task_name);
+      
       if(max_exec_time!=0 && ((ros::Time::now()-start)>max_exec_dur)){
         ROS_INFO("Max exection time exceeded");
         status += 1;
         resource_mutex_.unlock();
+        time_exceeded = true;
         break;
       }
       if (it_sq_error == task_name_sq_error_map_.end()) {
         resource_mutex_.unlock();
         continue;
       }
-      if (it_sq_error->second < tol) {
-        status += 1;
+
+      if(task_name_task_type_map_[task_name] == 0) {
+        if (it_sq_error->second < tol) {
+          status += 1;
+        }
+      }
+      else {
+        if (it_sq_error->second*task_name_task_type_map_[task_name] > 0.0) {
+          status += 1;
+        }
       }
       resource_mutex_.unlock();
+    }
+    if (time_exceeded){
+      break;
     }
   }
 
@@ -294,8 +323,8 @@ void HiQPClient::setJointAngles(const std::vector<double>& joint_angles) {
   }
 
   this->setTask("joint_angles_task", 3, true, true, true, def_params,
-                {"TDynLinear", "0.5"});
-  waitForCompletion({"joint_angles_task"}, {TaskDoneReaction::REMOVE}, {1e-3});
+                {"TDynLinear", "0.75"});
+  waitForCompletion({"joint_angles_task"}, {TaskDoneReaction::REMOVE}, {1e-2});
 }
 
 void HiQPClient::removeAllTasks() {
