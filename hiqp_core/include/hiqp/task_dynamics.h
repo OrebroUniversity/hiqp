@@ -37,11 +37,21 @@ class Task;
  *  \author Marcus A Johansson */
 class TaskDynamics {
  public:
+  inline TaskDynamics() {}
+
   TaskDynamics(std::shared_ptr<GeometricPrimitiveMap> geom_prim_map,
                std::shared_ptr<Visualizer> visualizer)
       : geometric_primitive_map_(geom_prim_map), visualizer_(visualizer) {}
 
   ~TaskDynamics() noexcept {}
+
+  inline void initializeTaskDynamics(
+      std::shared_ptr<GeometricPrimitiveMap> geom_prim_map,
+               std::shared_ptr<Visualizer> visualizer) {
+    geometric_primitive_map_ = geom_prim_map;
+    visualizer_ = visualizer;
+  }
+
 
   virtual int init(const std::vector<std::string>& parameters,
                    RobotStatePtr robot_state, const Eigen::VectorXd& e_initial,

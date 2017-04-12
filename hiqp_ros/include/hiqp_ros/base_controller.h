@@ -255,8 +255,8 @@ void BaseController<HardwareInterfaceT>::sampleJointValues() {
     effort(handle.first) = handle.second.getEffort();
   }
   /* std::cerr<<"sampled joint positions: "<<q.data.transpose()<<std::endl; */
-  /* std::cerr<<"sampled joint velocities: "<<qdot.data.transpose()<<std::endl;
-   */
+   // std::cerr<<"sampled joint velocities: "<<qdot.data.transpose()<<std::endl;
+   
   /* std::cerr<<"sampled joint efforts: "<<effort.data.transpose()<<std::endl;
    */
 

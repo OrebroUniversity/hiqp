@@ -239,10 +239,14 @@ std::string taskNamesVectorAsString(
 void HiQPClient::waitForCompletion(
     const std::vector<std::string>& task_names,
     const std::vector<TaskDoneReaction>& reactions,
-    const std::vector<double>& error_tol) {
+    const std::vector<double>& error_tol,
+    double max_exec_time) {
   ROS_ASSERT(task_names.size() == reactions.size() &&
              reactions.size() == error_tol.size());
   int status = 0;
+  ros::Time start = ros::Time::now();;
+  ros::Duration max_exec_dur(max_exec_time);
+  bool time_exceeded = false;
   while (status < task_names.size()) {
     ROS_INFO_THROTTLE(5, "[waitForCompletion]: %d out of %ld tasks complete.",
                       status, task_names.size());
@@ -253,6 +257,14 @@ void HiQPClient::waitForCompletion(
 
       resource_mutex_.lock();
       auto it_sq_error = task_name_sq_error_map_.find(task_name);
+      
+      if(max_exec_time!=0 && ((ros::Time::now()-start)>max_exec_dur)){
+        ROS_INFO("Max exection time exceeded");
+        status += 1;
+        resource_mutex_.unlock();
+        time_exceeded = true;
+        break;
+      }
       if (it_sq_error == task_name_sq_error_map_.end()) {
         resource_mutex_.unlock();
         continue;
@@ -269,6 +281,9 @@ void HiQPClient::waitForCompletion(
         }
       }
       resource_mutex_.unlock();
+    }
+    if (time_exceeded){
+      break;
     }
   }
 

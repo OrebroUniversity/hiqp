@@ -52,6 +52,7 @@ using tasks::TDynMinimalJerk;
 Task::Task(std::shared_ptr<GeometricPrimitiveMap> geom_prim_map,
            std::shared_ptr<Visualizer> visualizer, int n_controls)
     : tdef_loader_("hiqp_core", "hiqp::TaskDefinition"),
+      tdyn_loader_("hiqp_core", "hiqp::TaskDynamics"),
       geom_prim_map_(geom_prim_map),
       visualizer_(visualizer),
       n_controls_(n_controls) {}
@@ -231,7 +232,6 @@ int Task::constructDefinition(const std::vector<std::string>& def_params) {
       ROS_ERROR("tdef_loader_ returned error: %s", ex.what());
       return -1;
     }
-  }
   return 0;
 }
 
@@ -248,10 +248,17 @@ int Task::constructDynamics(const std::vector<std::string>& dyn_params) {
     dyn_ = std::make_shared<TDynMinimalJerk>(geom_prim_map_, visualizer_);
   } else if (type.compare("TDynHyperSin") == 0) {
     dyn_ = std::make_shared<TDynHyperSin>(geom_prim_map_, visualizer_);
-  } else {
-    printHiqpWarning("The task dynamics type name '" + type +
-                     "' was not understood!");
-    return -1;
+  } 
+  else {
+    try {
+      dyn_ = std::shared_ptr<hiqp::TaskDynamics> (tdyn_loader_.createClassInstance("hiqp::tasks::" + type));
+      dyn_->initializeTaskDynamics(geom_prim_map_, visualizer_);
+    } catch (pluginlib::PluginlibException& ex) {
+      ROS_ERROR("The plugin failed to load for some reason. Error: %s", ex.what());
+        printHiqpWarning("The task dynamics type name '" + type +
+                         "' was not understood!");
+        return -1;
+    }
   }
 
   return 0;
