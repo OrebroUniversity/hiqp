@@ -168,22 +168,6 @@ void HiQPJointVelocityController::monitorTasks() {
   }
 }
 
-// void HiQPJointVelocityController::addAllTopicSubscriptions()
-// {
-//   topic_subscriber_.init( &task_manager_ );
-
-//   topic_subscriber_.addSubscription<geometry_msgs::PoseStamped>(
-//     this->getControllerNodeHandle(), "/wintracker_rebase/pose", 100);
-
-// topic_subscriber_.addSubscription<hiqp_msgs::Vector3d>(
-//  controller_nh_, "/yumi/hiqp_controllers/vector3d", 100
-//);
-
-// topic_subscriber_.addSubscription<hiqp_msgs::StringArray>(
-//  controller_nh_, "/yumi/hiqp_kinematics_controller/experiment_commands", 100
-//);
-//}
-
 void HiQPJointVelocityController::loadRenderingParameters() {
   rendering_publish_rate_ = 1000;  // defaults to 1 kHz
   if (!this->getControllerNodeHandle().getParam("visualization_publish_rate",
