@@ -33,8 +33,6 @@ find_package(catkin REQUIRED COMPONENTS roscpp
 
 find_package(orocos_kdl REQUIRED)
 
-find_package(Boost REQUIRED COMPONENTS timer)
-
 catkin_package(CATKIN_DEPENDS roscpp controller_interface visualization_msgs hiqp_core hiqp_msgs kdl_parser
                INCLUDE_DIRS include
                LIBRARIES ${PROJECT_NAME} hiqp_client
@@ -43,7 +41,6 @@ catkin_package(CATKIN_DEPENDS roscpp controller_interface visualization_msgs hiq
 include_directories(
   include
   ${catkin_INCLUDE_DIRS}
-  ${Boost_INCLUDE_DIRS}
   ${GUROBI_INCLUDE_DIR}
 )
 
@@ -58,7 +55,7 @@ add_library(${PROJECT_NAME} src/hiqp_joint_velocity_controller.cpp
 
 add_dependencies(${PROJECT_NAME} hiqp_msgs_generate_messages_cpp)
 
-target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} ${orocos_kdl_LIBRARIES} ${GUROBI_LIBS} ${Boost_LIBRARIES})
+target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} ${orocos_kdl_LIBRARIES} ${GUROBI_LIBS})
 
 # hiqp-client library
 add_library(hiqp_client src/hiqp_client.cpp)

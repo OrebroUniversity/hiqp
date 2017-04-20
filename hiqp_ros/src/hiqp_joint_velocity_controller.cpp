@@ -81,7 +81,17 @@ void HiQPJointVelocityController::computeControls(Eigen::VectorXd& u) {
   if (!is_active_) return;
 
   std::vector<double> outcon(u.size());
+
+  // Time the velocity control computation
+
+  auto t_begin = std::chrono::high_resolution_clock::now();
   task_manager_.getVelocityControls(this->getRobotState(), outcon);
+  auto t_end = std::chrono::high_resolution_clock::now();
+
+  static double total = 0.0;
+  static int n = 0;
+  std::chrono::duration<double, std::milli> opt_time = t_end - t_begin;
+
   int i = 0;
   for (auto&& oc : outcon) {
     u(i++) = oc;
@@ -90,6 +100,20 @@ void HiQPJointVelocityController::computeControls(Eigen::VectorXd& u) {
   renderPrimitives();
 
   monitorTasks();
+
+  if (outcon.size() != 0) {
+    if (total > 3000.0) {
+      std::cout << "Velocity Controls computation took " << total / n
+                << " milliseconds.\n";
+
+      fflush(stdout);
+      n = 0;
+      total = 0.0;
+    } else {
+      n++;
+      total += static_cast<double>(opt_time.count());
+    }
+  }
 
   return;
 }
@@ -139,8 +163,7 @@ void HiQPJointVelocityController::monitorTasks() {
             measure.pm_.data() + measure.pm_.rows() * measure.pm_.cols());
         msgs.task_measures.push_back(msg);
       }
-      if(!msgs.task_measures.empty())
-        monitoring_pub_.publish(msgs);
+      if (!msgs.task_measures.empty()) monitoring_pub_.publish(msgs);
     }
   }
 }
