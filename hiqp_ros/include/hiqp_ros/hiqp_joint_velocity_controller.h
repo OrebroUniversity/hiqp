@@ -62,7 +62,7 @@ class HiQPJointVelocityController
   HiQPJointVelocityController& operator=(
       HiQPJointVelocityController&& other) noexcept = delete;
 
-  void monitorTasks();
+  void monitorTasks(double vel_ctl_comp_time);
   void renderPrimitives();
 
   void loadRenderingParameters();

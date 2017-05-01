@@ -9,7 +9,6 @@ HiQPClient::HiQPClient(const std::string& robot_namespace,
       controller_namespace_(controller_namespace),
       nh_(robot_namespace + "/" + controller_namespace),
       robot_nh_(robot_namespace) {
-  // TODO: read error_tolerance from param.
   if (auto_connect) this->connectToServer();
 }
 
@@ -185,23 +184,19 @@ std::string taskMeasuresAsString(
     const hiqp_msgs::TaskMeasuresConstPtr& task_measures) {
   std::string s;
   for (auto task_measure : task_measures->task_measures) {
-    
     double sq_error;
     if (task_measure.task_type == 0) {
       sq_error =
-        std::inner_product(task_measure.e.begin(), task_measure.e.end(),
-                           task_measure.e.begin(), 0.0);
+          std::inner_product(task_measure.e.begin(), task_measure.e.end(),
+                             task_measure.e.begin(), 0.0);
 
       s += "\n[" + task_measure.task_name + "] Progress: " +
-         std::to_string(exp(-sq_error) * 100.0);
-    }
-    else {
+           std::to_string(exp(-sq_error) * 100.0);
+    } else {
       sq_error = task_measure.e[0];
       s += "\n[" + task_measure.task_name + "] Progress: " +
-        (sq_error * task_measure.task_type > 0 ? "In limits" : "Off limits");
+           (sq_error * task_measure.task_type > 0 ? "In limits" : "Off limits");
     }
-
-
   }
   s += "\n";
   return s;
@@ -214,12 +209,13 @@ void HiQPClient::taskMeasuresCallback(
                             taskMeasuresAsString(task_measures).c_str());
   for (auto task_measure : task_measures->task_measures) {
     double sq_error;
-    if(task_measure.task_type == hiqp_msgs::TaskMeasure::EQ)
-      sq_error = std::inner_product(task_measure.e.begin(), task_measure.e.end(),
-                                    task_measure.e.begin(), 0.0);
+    if (task_measure.task_type == hiqp_msgs::TaskMeasure::EQ)
+      sq_error =
+          std::inner_product(task_measure.e.begin(), task_measure.e.end(),
+                             task_measure.e.begin(), 0.0);
     else
       sq_error = task_measure.e[0];
-    
+
     task_name_task_type_map_[task_measure.task_name] = task_measure.task_type;
     task_name_sq_error_map_[task_measure.task_name] = sq_error;
   }
@@ -239,15 +235,15 @@ std::string taskNamesVectorAsString(
 void HiQPClient::waitForCompletion(
     const std::vector<std::string>& task_names,
     const std::vector<TaskDoneReaction>& reactions,
-    const std::vector<double>& error_tol,
-    double max_exec_time) {
+    const std::vector<double>& error_tol, double max_exec_time) {
   ROS_ASSERT(task_names.size() == reactions.size() &&
              reactions.size() == error_tol.size());
   int status = 0;
-  ros::Time start = ros::Time::now();;
+  ros::Time start = ros::Time::now();
+  ;
   ros::Duration max_exec_dur(max_exec_time);
   bool time_exceeded = false;
-  while (status < task_names.size()) {
+  while (status < task_names.size() && ros::ok()) {
     ROS_INFO_THROTTLE(5, "[waitForCompletion]: %d out of %ld tasks complete.",
                       status, task_names.size());
     status = 0;
@@ -257,8 +253,8 @@ void HiQPClient::waitForCompletion(
 
       resource_mutex_.lock();
       auto it_sq_error = task_name_sq_error_map_.find(task_name);
-      
-      if(max_exec_time!=0 && ((ros::Time::now()-start)>max_exec_dur)){
+
+      if (max_exec_time != 0 && ((ros::Time::now() - start) > max_exec_dur)) {
         ROS_INFO("Max exection time exceeded");
         status += 1;
         resource_mutex_.unlock();
@@ -270,19 +266,18 @@ void HiQPClient::waitForCompletion(
         continue;
       }
 
-      if(task_name_task_type_map_[task_name] == 0) {
+      if (task_name_task_type_map_[task_name] == 0) {
         if (it_sq_error->second < tol) {
           status += 1;
         }
-      }
-      else {
-        if (it_sq_error->second*task_name_task_type_map_[task_name] > 0.0) {
+      } else {
+        if (it_sq_error->second * task_name_task_type_map_[task_name] > 0.0) {
           status += 1;
         }
       }
       resource_mutex_.unlock();
     }
-    if (time_exceeded){
+    if (time_exceeded) {
       break;
     }
   }
@@ -314,17 +309,22 @@ void HiQPClient::waitForCompletion(
   removeTasks(tasks_to_remove);
 }
 
-void HiQPClient::setJointAngles(const std::vector<double>& joint_angles) {
-  // TODO: Read joint angles task error tolerance from param server.
+void HiQPClient::setJointAngles(const std::vector<double>& joint_angles,
+                                bool remove) {
   std::vector<std::string> def_params{"TDefFullPose"};
 
   for (auto jointValue : joint_angles) {
     def_params.push_back(std::to_string(jointValue));
   }
 
-  this->setTask("joint_angles_task", 3, true, true, true, def_params,
+  this->setTask("joint_configuration", 3, true, true, true, def_params,
                 {"TDynLinear", "0.75"});
-  waitForCompletion({"joint_angles_task"}, {TaskDoneReaction::REMOVE}, {1e-2});
+  if (remove)
+    waitForCompletion({"joint_configuration"}, {TaskDoneReaction::REMOVE},
+                      {1e-2});
+  else
+    waitForCompletion({"joint_configuration"}, {TaskDoneReaction::NONE},
+                      {1e-2});
 }
 
 void HiQPClient::removeAllTasks() {

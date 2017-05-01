@@ -21,4 +21,4 @@ int32          LEQ = -1      # Less than or equal to
 int32          task_type     # Task Type (eq, geq or leq as above)
 float64[]      e             # the task performance value at this time step
 float64[]      de            # the task dynamics value at this time step
-float64[]      pm            # the user-defined custom performance monitoring values for thsi task at this time step
+float64[]      pm            # the user-defined custom performance monitoring values for this task at this time step

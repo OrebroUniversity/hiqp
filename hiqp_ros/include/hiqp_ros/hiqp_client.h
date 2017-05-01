@@ -139,7 +139,7 @@ class HiQPClient {
 
   void resetHiQPController();
 
-  void setJointAngles(const std::vector<double>& joint_angles);
+  void setJointAngles(const std::vector<double>& joint_angles, bool remove = true);
 
   /**
    * Wait for a group of tasks to be completed, and then unload them all.
