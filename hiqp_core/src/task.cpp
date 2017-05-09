@@ -234,6 +234,7 @@ int Task::constructDefinition(const std::vector<std::string>& def_params) {
     }
   return 0;
 }
+}
 
 int Task::constructDynamics(const std::vector<std::string>& dyn_params) {
   std::string type = dyn_params.at(0);
