@@ -12,13 +12,13 @@ class HiQPJointTrajectoryController {
  public:
   actionlib::SimpleActionServer<control_msgs::FollowJointTrajectoryAction>
       joint_trajectory_action_server_;
-  HiQPJointTrajectoryController(ros::NodeHandle nh, const std::string& robot_namespace, const std::string& arm_namespace);
+  HiQPJointTrajectoryController(ros::NodeHandle nh, const std::string& robot_namespace, const std::string& arm_namespace, hiqp_ros::HiQPClient& hiqp_client);
 
  protected:
   ros::NodeHandle nh_;
-  hiqp_ros::HiQPClient hiqp_client_;
   std::string arm_namespace_;
 
+  hiqp_ros::HiQPClient& hiqp_client_;
   static ros::Subscriber joint_state_sub_;
   static void jointStateCallback(const sensor_msgs::JointStateConstPtr& joint_state_msg);
   static std::vector<double> joint_state_;

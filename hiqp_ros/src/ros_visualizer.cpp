@@ -550,7 +550,6 @@ void ROSVisualizer::removeMany(const std::vector<int>& ids) {
 
   visualization_msgs::MarkerArray marker_array;
   for (int id : ids) {
-    std::cout << id << ", ";
     visualization_msgs::Marker marker;
     marker.header.stamp = ros::Time::now();
     marker.ns = kNamespace;

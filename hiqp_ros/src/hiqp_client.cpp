@@ -191,7 +191,8 @@ std::string taskMeasuresAsString(
                              task_measure.e.begin(), 0.0);
 
       s += "\n[" + task_measure.task_name + "] Progress: " +
-           std::to_string(exp(-sq_error) * 100.0);
+           std::to_string(exp(-sq_error) * 100.0) + ", Error: " +
+           std::to_string(sq_error);
     } else {
       sq_error = task_measure.e[0];
       s += "\n[" + task_measure.task_name + "] Progress: " +
@@ -240,7 +241,7 @@ void HiQPClient::waitForCompletion(
              reactions.size() == error_tol.size());
   int status = 0;
   ros::Time start = ros::Time::now();
-  ;
+  
   ros::Duration max_exec_dur(max_exec_time);
   bool time_exceeded = false;
   while (status < task_names.size() && ros::ok()) {
@@ -271,7 +272,8 @@ void HiQPClient::waitForCompletion(
           status += 1;
         }
       } else {
-        if (it_sq_error->second * task_name_task_type_map_[task_name] > 0.0) {
+        if (it_sq_error->second * task_name_task_type_map_[task_name] >
+            -1 * tol) {
           status += 1;
         }
       }
