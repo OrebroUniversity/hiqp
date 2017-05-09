@@ -66,6 +66,7 @@ void HiQPServiceHandler::advertiseAll() {
 bool HiQPServiceHandler::setTasks(hiqp_msgs::SetTasks::Request& req,
                                   hiqp_msgs::SetTasks::Response& res) {
   for (auto task : req.tasks) {
+    
     int retval = task_manager_->setTask(
         task.name, task.priority, task.visible, task.active, task.monitored,
         task.def_params, task.dyn_params, robot_state_);
