@@ -29,44 +29,46 @@
 
 namespace hiqp {
 
-using geometric_primitives::GeometricPrimitiveMap;
+  using geometric_primitives::GeometricPrimitiveMap;
 
-class Task;
-
+  class Task;
+  namespace tasks{
+    class TDefMetaTask;
+  }
 /*! \brief Defines the task space and the performance value of a task.
  *  \author Marcus A Johansson */
-class TaskDefinition {
- public:
-  inline TaskDefinition() {}
-  TaskDefinition(std::shared_ptr<GeometricPrimitiveMap> geom_prim_map,
-                 std::shared_ptr<Visualizer> visualizer)
-      : geometric_primitive_map_(geom_prim_map), visualizer_(visualizer) {}
+  class TaskDefinition {
+  public:
+    inline TaskDefinition() {}
+    TaskDefinition(std::shared_ptr<GeometricPrimitiveMap> geom_prim_map,
+     std::shared_ptr<Visualizer> visualizer)
+    : geometric_primitive_map_(geom_prim_map), visualizer_(visualizer) {}
 
-  ~TaskDefinition() noexcept {}
+    ~TaskDefinition() noexcept {}
 
-  inline void initializeTaskDefinition(
+    inline void initializeTaskDefinition(
       std::shared_ptr<GeometricPrimitiveMap> geom_prim_map,
       std::shared_ptr<Visualizer> visualizer) {
-    geometric_primitive_map_ = geom_prim_map;
-    visualizer_ = visualizer;
-  }
+      geometric_primitive_map_ = geom_prim_map;
+      visualizer_ = visualizer;
+    }
 
-  virtual int init(const std::vector<std::string>& parameters,
-                   RobotStatePtr robot_state) = 0;
+    virtual int init(const std::vector<std::string>& parameters,
+     RobotStatePtr robot_state) = 0;
 
-  virtual int update(RobotStatePtr robot_state) = 0;
+    virtual int update(RobotStatePtr robot_state) = 0;
 
-  virtual int monitor() = 0;
+    virtual int monitor() = 0;
 
-  unsigned int getDimensions() { return n_dimensions_; }
-  Eigen::VectorXd getInitialValue() { return e_initial_; }
-  Eigen::MatrixXd getInitialJacobian() { return J_initial_; }
+    unsigned int getDimensions() { return n_dimensions_; }
+    Eigen::VectorXd getInitialValue() { return e_initial_; }
+    Eigen::MatrixXd getInitialJacobian() { return J_initial_; }
 
-  virtual Eigen::VectorXd getFinalValue(RobotStatePtr robot_state) {
-    return Eigen::VectorXd::Zero(e_.rows());
-  }
+    virtual Eigen::VectorXd getFinalValue(RobotStatePtr robot_state) {
+      return Eigen::VectorXd::Zero(e_.rows());
+    }
 
- protected:
+  protected:
   Eigen::VectorXd e_;            // the performance value of the task
   Eigen::MatrixXd J_;            // the task jacobian
   std::vector<int> task_types_;  // -1 leq, 0 eq, 1 geq
@@ -82,8 +84,9 @@ class TaskDefinition {
     return geometric_primitive_map_;
   }
 
- private:
+private:
   friend Task;
+  friend tasks::TDefMetaTask;
 
   std::shared_ptr<GeometricPrimitiveMap> geometric_primitive_map_;
   std::shared_ptr<Visualizer> visualizer_;
@@ -104,7 +107,7 @@ class TaskDefinition {
   /*! \brief Calls init() of the child class, and properly sets up the
    * TaskDefinition object. */
   int initialize(const std::vector<std::string>& parameters,
-                 RobotStatePtr robot_state) {
+   RobotStatePtr robot_state) {
     if (init(parameters, robot_state) != 0) return -1;
     update(robot_state);
     e_initial_ = e_;

@@ -1,3 +1,4 @@
+
 // The HiQP Control Framework, an optimal control framework targeted at robotics
 // Copyright (C) 2016 Marcus A Johansson
 //
@@ -21,6 +22,7 @@
 #include <hiqp/tasks/tdef_geometric_projection.h>
 #include <hiqp/tasks/tdef_jnt_config.h>
 #include <hiqp/tasks/tdef_jnt_limits.h>
+#include <hiqp/tasks/tdef_meta_task.h>
 
 #include <hiqp/tasks/tdyn_cubic.h>
 #include <hiqp/tasks/tdyn_hyper_sin.h>
@@ -42,6 +44,7 @@ using tasks::TDefGeometricAlignment;
 using tasks::TDefGeometricProjection;
 using tasks::TDefJntConfig;
 using tasks::TDefJntLimits;
+using tasks::TDefMetaTask;
 
 using tasks::TDynLinear;
 using tasks::TDynCubic;
@@ -70,6 +73,7 @@ int Task::init(const std::vector<std::string>& def_params,
   }
 
   if (constructDefinition(def_params) != 0) return -3;
+
   if (constructDynamics(dyn_params) != 0) return -4;
 
   def_params_ = def_params;
@@ -89,6 +93,7 @@ int Task::init(const std::vector<std::string>& def_params,
     def_.reset();
     return -5;
   }
+
   // ROS_INFO("Task Definition created.");
 
   if (dyn_->init(dyn_params, robot_state, def_->getInitialValue(),
@@ -221,7 +226,10 @@ int Task::constructDefinition(const std::vector<std::string>& def_params) {
           prim_type1 + "' and '" + prim_type2 + "'!");
       return -1;
     }
-  } else {
+  } else if (type.compare("TDefMetaTask") == 0) {
+    def_ = std::make_shared<TDefMetaTask>(geom_prim_map_, visualizer_);
+  }
+  else {
     try {
       def_ = std::shared_ptr<hiqp::TaskDefinition>(
           tdef_loader_.createClassInstance("hiqp::tasks::" + type));
