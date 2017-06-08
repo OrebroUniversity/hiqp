@@ -24,92 +24,91 @@
 
 #include <Eigen/Dense>
 
-namespace hiqp
-{
-namespace geometric_primitives
-{
+namespace hiqp {
+namespace geometric_primitives {
 
-  /*! \brief Implements a line defined by an arbitrary point and a directional vector. Parameters: [dir.x, dir.y, dir.z, offset.x, offset.y, offset.z]
-   *         The offset variables define the point on the line, the direction variables the direction (not necessarily unitary)
-   *  \author Marcus A Johansson */  
-  class GeometricLine : public GeometricPrimitive {
-  public:
+/*! \brief Implements a line defined by an arbitrary point and a directional
+ * vector. Parameters: [dir.x, dir.y, dir.z, offset.x, offset.y, offset.z]
+ *         The offset variables define the point on the line, the direction
+ * variables the direction (not necessarily unitary)
+ *  \author Marcus A Johansson */
+class GeometricLine : public GeometricPrimitive {
+ public:
+  GeometricLine(const std::string& name, const std::string& frame_id,
+                bool visible, const std::vector<double>& color)
+      : GeometricPrimitive(name, frame_id, visible, color) {}
 
-    GeometricLine(const std::string& name,
-                  const std::string& frame_id,
-                  bool visible,
-                  const std::vector<double>& color)
-     : GeometricPrimitive(name, frame_id, visible, color) {}
+  ~GeometricLine() noexcept = default;
 
-    ~GeometricLine() noexcept = default;
+  /*! \brief Parses a set of parameters and initializes the line.
+   *
+   *  \param parameters : Should be of size 6.<ol>
+   *                      <li>Indices 0-2 (required) defines the directional
+   * vector of the cylinder.</li>
+   *                      <li>Indices 3-5 (required) defines the position of a
+   * point on the cylinder's coaxial line.</li>
+   *                      </ol>
+   * \return 0 on success, -1 if the wrong number of parameters was sent */
+  int init(const std::vector<double>& parameters) {
+    GeometricPrimitive::init(parameters);
 
-
-    /*! \brief Parses a set of parameters and initializes the line.
-     *
-     *  \param parameters : Should be of size 6.<ol>
-     *                      <li>Indices 0-2 (required) defines the directional vector of the cylinder.</li>
-     *                      <li>Indices 3-5 (required) defines the position of a point on the cylinder's coaxial line.</li>
-     *                      </ol>
-     * \return 0 on success, -1 if the wrong number of parameters was sent */
-    int init(const std::vector<double>& parameters) {
-      int size = parameters.size();
-      if (size != 6)
-      {
-        printHiqpWarning("GeometricLine requires 6 parameters, got " 
-          + std::to_string(size) + "! Initialization failed!");
-        return -1;
-      }
-
-      kdl_v_(0) = parameters.at(0);
-      kdl_v_(1) = parameters.at(1);
-      kdl_v_(2) = parameters.at(2);
-      
-      kdl_v_.Normalize();
-      
-      kdl_p_(0) = parameters.at(3);
-      kdl_p_(1) = parameters.at(4);
-      kdl_p_(2) = parameters.at(5);
-
-      l_ = -1; // infinitely long line
-
-      eigen_v_ << kdl_v_(0), kdl_v_(1), kdl_v_(2);
-      eigen_p_ << kdl_p_(0), kdl_p_(1), kdl_p_(2);
-
-      return 0;
+    int size = parameters.size();
+    if (size != 6) {
+      printHiqpWarning("GeometricLine requires 6 parameters, got " +
+                       std::to_string(size) + "! Initialization failed!");
+      return -1;
     }
 
-    inline const KDL::Vector&      getDirectionKDL()    { return kdl_v_; }
-    inline const Eigen::Vector3d&  getDirectionEigen()  { return eigen_v_; }
-    inline const KDL::Vector&      getOffsetKDL()       { return kdl_p_; }
-    inline const Eigen::Vector3d&  getOffsetEigen()     { return eigen_p_; }
-    inline bool                    isInfinite()         { return (l_ < 0); }
+    kdl_v_(0) = parameters.at(0);
+    kdl_v_(1) = parameters.at(1);
+    kdl_v_(2) = parameters.at(2);
 
-    inline double getDirectionX() { return kdl_v_(0); }
-    inline double getDirectionY() { return kdl_v_(1); }
-    inline double getDirectionZ() { return kdl_v_(2); }
+    kdl_v_.Normalize();
 
-    inline double getOffsetX() { return kdl_p_(0); }
-    inline double getOffsetY() { return kdl_p_(1); }
-    inline double getOffsetZ() { return kdl_p_(2); }
+    kdl_p_(0) = parameters.at(3);
+    kdl_p_(1) = parameters.at(4);
+    kdl_p_(2) = parameters.at(5);
 
-  protected:
-    KDL::Vector      kdl_v_; // the directional vector of the line
-    Eigen::Vector3d  eigen_v_;
+    l_ = -1;  // infinitely long line
 
-    KDL::Vector      kdl_p_; // the offset
-    Eigen::Vector3d  eigen_p_;
+    eigen_v_ << kdl_v_(0), kdl_v_(1), kdl_v_(2);
+    eigen_p_ << kdl_p_(0), kdl_p_(1), kdl_p_(2);
 
-    double          l_; // the length of the line segment, 
-                         // negative if the line is infinite
-  private:
-    GeometricLine(const GeometricLine& other) = delete;
-    GeometricLine(GeometricLine&& other) = delete;
-    GeometricLine& operator=(const GeometricLine& other) = delete;
-    GeometricLine& operator=(GeometricLine&& other) noexcept = delete;
-  };
+    return 0;
+  }
 
-} // namespace geometric_primitives
+  inline const KDL::Vector& getDirectionKDL() { return kdl_v_; }
+  inline const Eigen::Vector3d& getDirectionEigen() { return eigen_v_; }
+  inline const KDL::Vector& getOffsetKDL() { return kdl_p_; }
+  inline const Eigen::Vector3d& getOffsetEigen() { return eigen_p_; }
+  inline bool isInfinite() { return (l_ < 0); }
 
-} // namespace hiqp
+  inline double getDirectionX() { return kdl_v_(0); }
+  inline double getDirectionY() { return kdl_v_(1); }
+  inline double getDirectionZ() { return kdl_v_(2); }
 
-#endif // include guard
+  inline double getOffsetX() { return kdl_p_(0); }
+  inline double getOffsetY() { return kdl_p_(1); }
+  inline double getOffsetZ() { return kdl_p_(2); }
+
+ protected:
+  KDL::Vector kdl_v_;  // the directional vector of the line
+  Eigen::Vector3d eigen_v_;
+
+  KDL::Vector kdl_p_;  // the offset
+  Eigen::Vector3d eigen_p_;
+
+  double l_;  // the length of the line segment,
+              // negative if the line is infinite
+ private:
+  GeometricLine(const GeometricLine& other) = delete;
+  GeometricLine(GeometricLine&& other) = delete;
+  GeometricLine& operator=(const GeometricLine& other) = delete;
+  GeometricLine& operator=(GeometricLine&& other) noexcept = delete;
+};
+
+}  // namespace geometric_primitives
+
+}  // namespace hiqp
+
+#endif  // include guard

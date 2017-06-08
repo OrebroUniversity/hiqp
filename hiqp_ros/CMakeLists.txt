@@ -27,12 +27,15 @@ set(GUROBI_LIBS gurobi_c++ gurobi65)
 find_package(catkin REQUIRED COMPONENTS roscpp
                                         controller_interface
                                         visualization_msgs
+                                        kdl_parser
                                         hiqp_core
-                                        hiqp_msgs)
+                                        hiqp_msgs
+                                        control_msgs
+                                        actionlib)
 
 find_package(orocos_kdl REQUIRED)
 
-catkin_package(CATKIN_DEPENDS roscpp controller_interface visualization_msgs hiqp_core hiqp_msgs
+catkin_package(CATKIN_DEPENDS roscpp controller_interface visualization_msgs hiqp_core hiqp_msgs kdl_parser control_msgs actionlib
                INCLUDE_DIRS include
                LIBRARIES ${PROJECT_NAME} hiqp_client
                DEPENDS orocos_kdl)
@@ -40,9 +43,9 @@ catkin_package(CATKIN_DEPENDS roscpp controller_interface visualization_msgs hiq
 include_directories(
   include
   ${catkin_INCLUDE_DIRS}
+  ${GUROBI_INCLUDE_DIR}
 )
 
-include_directories(${GUROBI_INCLUDE_DIR})
 link_directories(${GUROBI_LIB_DIR})
 
 # hiqp-ros library
@@ -60,6 +63,11 @@ target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} ${orocos_kdl_LIBRARIES
 add_library(hiqp_client src/hiqp_client.cpp)
 add_dependencies(hiqp_client hiqp_msgs_generate_messages_cpp)
 target_link_libraries(hiqp_client ${catkin_LIBRARIES} ${GUROBI_LIBS})
+
+# hiqp-joint-trajectory-controller
+add_executable(hiqp_joint_trajectory_controller_node src/hiqp_joint_trajectory_controller.cpp)
+add_dependencies(hiqp_joint_trajectory_controller_node ${catkin_EXPORTED_TARGETS})
+target_link_libraries(hiqp_joint_trajectory_controller_node hiqp_client ${catkin_LIBRARIES} ${GUROBI_LIBS})
 
 # hiqp_client_test
 add_executable (test_hiqp_client src/test_hiqp_client.cpp)

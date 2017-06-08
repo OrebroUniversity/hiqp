@@ -14,8 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include <iostream>
 #include <cmath>
+#include <iostream>
 
 #include <hiqp_ros/ros_visualizer.h>
 
@@ -24,18 +24,18 @@
 
 #include <Eigen/Dense>
 
-namespace hiqp_ros
-{
+namespace hiqp_ros {
 
-  double marker_lifetime = 10; // added markers live for 1 second
+double marker_lifetime = 10;  // added markers live for 1 second
 
-  ROSVisualizer::ROSVisualizer() : next_id_(0) {}
+ROSVisualizer::ROSVisualizer() : next_id_(0) {}
 
-  int ROSVisualizer::init(ros::NodeHandle* controller_nh) {
-    controller_nh_ = controller_nh;
-    marker_array_pub_ = controller_nh_->advertise<visualization_msgs::MarkerArray>
-    ("visualization_marker", 1);
-  }
+int ROSVisualizer::init(ros::NodeHandle* controller_nh) {
+  controller_nh_ = controller_nh;
+  marker_array_pub_ =
+      controller_nh_->advertise<visualization_msgs::MarkerArray>(
+          "visualization_marker", 1);
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 //                                                                            //
@@ -43,313 +43,334 @@ namespace hiqp_ros
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-  int ROSVisualizer::apply(int id, std::shared_ptr<GeometricPoint> point, int action) {
-    visualization_msgs::Marker marker;
+int ROSVisualizer::apply(int id, std::shared_ptr<GeometricPoint> point,
+                         int action) {
+  visualization_msgs::Marker marker;
 
-    marker.header.frame_id = "/" + point->getFrameId();
-    marker.header.stamp = ros::Time::now();
-    marker.ns = kNamespace;
-    if (action == ACTION_ADD)  marker.id = next_id_;
-    else                       marker.id = id;
-    marker.type = visualization_msgs::Marker::SPHERE;
-    marker.action = visualization_msgs::Marker::ADD; 
+  marker.header.frame_id = "/" + point->getFrameId();
+  marker.header.stamp = ros::Time::now();
+  marker.ns = kNamespace;
+  if (action == ACTION_ADD)
+    marker.id = next_id_;
+  else
+    marker.id = id;
+  marker.type = visualization_msgs::Marker::SPHERE;
+  marker.action = visualization_msgs::Marker::ADD;
 
-    marker.pose.position.x = point->getX();
-    marker.pose.position.y = point->getY();
-    marker.pose.position.z = point->getZ();
+  marker.pose.position.x = point->getX();
+  marker.pose.position.y = point->getY();
+  marker.pose.position.z = point->getZ();
 
-    marker.pose.orientation.x = 0.0;
-    marker.pose.orientation.y = 0.0;
-    marker.pose.orientation.z = 0.0;
-    marker.pose.orientation.w = 1.0;
+  marker.pose.orientation.x = 0.0;
+  marker.pose.orientation.y = 0.0;
+  marker.pose.orientation.z = 0.0;
+  marker.pose.orientation.w = 1.0;
 
-    marker.scale.x = 2*kPointRadius;
-    marker.scale.y = 2*kPointRadius;
-    marker.scale.z = 2*kPointRadius;
+  marker.scale.x = 2 * kPointRadius;
+  marker.scale.y = 2 * kPointRadius;
+  marker.scale.z = 2 * kPointRadius;
 
-    marker.color.r = point->getRedComponent();
-    marker.color.g = point->getGreenComponent();
-    marker.color.b = point->getBlueComponent();
-    marker.color.a = point->getAlphaComponent();
+  marker.color.r = point->getRedComponent();
+  marker.color.g = point->getGreenComponent();
+  marker.color.b = point->getBlueComponent();
+  marker.color.a = point->getAlphaComponent();
 
-    marker.lifetime = ros::Duration(marker_lifetime);
+  marker.lifetime = ros::Duration(marker_lifetime);
 
-    visualization_msgs::MarkerArray marker_array;
-    marker_array.markers.push_back(marker);
-    marker_array_pub_.publish(marker_array);
+  visualization_msgs::MarkerArray marker_array;
+  marker_array.markers.push_back(marker);
+  marker_array_pub_.publish(marker_array);
 
-    if (action == ACTION_ADD) {
-      next_id_++;
-      return next_id_-1;
-    } else {
-      return id;
-    }
+  if (action == ACTION_ADD) {
+    next_id_++;
+    return next_id_ - 1;
+  } else {
+    return id;
   }
+}
 
-  int ROSVisualizer::apply(int id, std::shared_ptr<GeometricLine> line, int action) {
-    visualization_msgs::Marker marker;
+int ROSVisualizer::apply(int id, std::shared_ptr<GeometricLine> line,
+                         int action) {
+  visualization_msgs::Marker marker;
 
-    marker.header.frame_id = "/" + line->getFrameId();
-    marker.header.stamp = ros::Time::now();
-    marker.ns = kNamespace;
-    if (action == ACTION_ADD)  marker.id = next_id_;
-    else                       marker.id = id;
-    marker.type = visualization_msgs::Marker::CYLINDER;
-    marker.action = visualization_msgs::Marker::ADD; 
+  marker.header.frame_id = "/" + line->getFrameId();
+  marker.header.stamp = ros::Time::now();
+  marker.ns = kNamespace;
+  if (action == ACTION_ADD)
+    marker.id = next_id_;
+  else
+    marker.id = id;
+  marker.type = visualization_msgs::Marker::CYLINDER;
+  marker.action = visualization_msgs::Marker::ADD;
 
-    double length = kInfiniteLength;
+  double length = kInfiniteLength;
 
-    Eigen::Vector3d v = line->getDirectionEigen();
-    Eigen::Vector3d p = line->getOffsetEigen();
+  Eigen::Vector3d v = line->getDirectionEigen();
+  Eigen::Vector3d p = line->getOffsetEigen();
 
-    // Quaternion that aligns the z-axis with the line direction
-    Eigen::Quaterniond q;
-    q.setFromTwoVectors(Eigen::Vector3d::UnitZ(), v);
+  // Quaternion that aligns the z-axis with the line direction
+  Eigen::Quaterniond q;
+  q.setFromTwoVectors(Eigen::Vector3d::UnitZ(), v);
 
-    marker.pose.position.x = p(0);
-    marker.pose.position.y = p(1);
-    marker.pose.position.z = p(2);
+  marker.pose.position.x = p(0);
+  marker.pose.position.y = p(1);
+  marker.pose.position.z = p(2);
 
-    marker.pose.orientation.x = q.x();
-    marker.pose.orientation.y = q.y();
-    marker.pose.orientation.z = q.z();
-    marker.pose.orientation.w = q.w();
+  marker.pose.orientation.x = q.x();
+  marker.pose.orientation.y = q.y();
+  marker.pose.orientation.z = q.z();
+  marker.pose.orientation.w = q.w();
 
-    marker.scale.x = 2*kLineRadius;
-    marker.scale.y = 2*kLineRadius;
-    marker.scale.z = length;
+  marker.scale.x = 2 * kLineRadius;
+  marker.scale.y = 2 * kLineRadius;
+  marker.scale.z = length;
 
-    marker.color.r = line->getRedComponent();
-    marker.color.g = line->getGreenComponent();
-    marker.color.b = line->getBlueComponent();
-    marker.color.a = line->getAlphaComponent();
+  marker.color.r = line->getRedComponent();
+  marker.color.g = line->getGreenComponent();
+  marker.color.b = line->getBlueComponent();
+  marker.color.a = line->getAlphaComponent();
 
-    marker.lifetime = ros::Duration(marker_lifetime);
+  marker.lifetime = ros::Duration(marker_lifetime);
 
-    visualization_msgs::MarkerArray marker_array;
-    marker_array.markers.push_back(marker);
-    marker_array_pub_.publish(marker_array);
+  visualization_msgs::MarkerArray marker_array;
+  marker_array.markers.push_back(marker);
+  marker_array_pub_.publish(marker_array);
 
-    if (action == ACTION_ADD) {
-      next_id_++;
-      return next_id_-1;
-    } else {
-      return id;
-    }
+  if (action == ACTION_ADD) {
+    next_id_++;
+    return next_id_ - 1;
+  } else {
+    return id;
   }
+}
 
-  int ROSVisualizer::apply(int id, std::shared_ptr<GeometricPlane> plane, int action) {
-    visualization_msgs::Marker marker;
+int ROSVisualizer::apply(int id, std::shared_ptr<GeometricPlane> plane,
+                         int action) {
+  visualization_msgs::Marker marker;
 
-    marker.header.frame_id = "/" + plane->getFrameId();
-    marker.header.stamp = ros::Time::now();
-    marker.ns = kNamespace;
-    if (action == ACTION_ADD)  marker.id = next_id_;
-    else                       marker.id = id;
-    marker.type = visualization_msgs::Marker::CYLINDER;
-    marker.action = visualization_msgs::Marker::ADD; 
+  marker.header.frame_id = "/" + plane->getFrameId();
+  marker.header.stamp = ros::Time::now();
+  marker.ns = kNamespace;
+  if (action == ACTION_ADD)
+    marker.id = next_id_;
+  else
+    marker.id = id;
+  marker.type = visualization_msgs::Marker::CYLINDER;
+  marker.action = visualization_msgs::Marker::ADD;
 
-    Eigen::Vector3d v = plane->getNormalEigen();
-    Eigen::Vector3d p = plane->getOffset() * v;
+  Eigen::Vector3d v = plane->getNormalEigen();
+  Eigen::Vector3d p = plane->getOffset() * v;
 
-    // Quaternion that aligns the z-axis with the line direction
-    Eigen::Quaterniond q;
-    q.setFromTwoVectors(Eigen::Vector3d::UnitZ(), v);
+  // Quaternion that aligns the z-axis with the line direction
+  Eigen::Quaterniond q;
+  q.setFromTwoVectors(Eigen::Vector3d::UnitZ(), v);
 
-    marker.pose.position.x = p(0);
-    marker.pose.position.y = p(1);
-    marker.pose.position.z = p(2);
+  marker.pose.position.x = p(0);
+  marker.pose.position.y = p(1);
+  marker.pose.position.z = p(2);
 
-    marker.pose.orientation.x = q.x();
-    marker.pose.orientation.y = q.y();
-    marker.pose.orientation.z = q.z();
-    marker.pose.orientation.w = q.w();
+  marker.pose.orientation.x = q.x();
+  marker.pose.orientation.y = q.y();
+  marker.pose.orientation.z = q.z();
+  marker.pose.orientation.w = q.w();
 
-    marker.scale.x = kInfiniteLength;
-    marker.scale.y = kInfiniteLength;
-    marker.scale.z = kPlaneThickness;
+  marker.scale.x = kInfiniteLength;
+  marker.scale.y = kInfiniteLength;
+  marker.scale.z = kPlaneThickness;
 
-    marker.color.r = plane->getRedComponent();
-    marker.color.g = plane->getGreenComponent();
-    marker.color.b = plane->getBlueComponent();
-    marker.color.a = plane->getAlphaComponent();
+  marker.color.r = plane->getRedComponent();
+  marker.color.g = plane->getGreenComponent();
+  marker.color.b = plane->getBlueComponent();
+  marker.color.a = plane->getAlphaComponent();
 
-    marker.lifetime = ros::Duration(marker_lifetime);
+  marker.lifetime = ros::Duration(marker_lifetime);
 
-    visualization_msgs::MarkerArray marker_array;
-    marker_array.markers.push_back(marker);
-    marker_array_pub_.publish(marker_array);
+  visualization_msgs::MarkerArray marker_array;
+  marker_array.markers.push_back(marker);
+  marker_array_pub_.publish(marker_array);
 
-    if (action == ACTION_ADD) {
-      next_id_++;
-      return next_id_-1;
-    } else {
-      return id;
-    }
+  if (action == ACTION_ADD) {
+    next_id_++;
+    return next_id_ - 1;
+  } else {
+    return id;
   }
+}
 
+int ROSVisualizer::apply(int id, std::shared_ptr<GeometricBox> box,
+                         int action) {
+  visualization_msgs::Marker marker;
 
-  int ROSVisualizer::apply(int id, std::shared_ptr<GeometricBox> box, int action) {
-    visualization_msgs::Marker marker;
+  marker.header.frame_id = "/" + box->getFrameId();
+  marker.header.stamp = ros::Time::now();
+  marker.ns = kNamespace;
+  if (action == ACTION_ADD)
+    marker.id = next_id_;
+  else
+    marker.id = id;
+  marker.type = visualization_msgs::Marker::CUBE;
+  marker.action = visualization_msgs::Marker::ADD;
 
-    marker.header.frame_id = "/" + box->getFrameId();
-    marker.header.stamp = ros::Time::now();
-    marker.ns = kNamespace;
-    if (action == ACTION_ADD)  marker.id = next_id_;
-    else                       marker.id = id;
-    marker.type = visualization_msgs::Marker::CUBE;
-    marker.action = visualization_msgs::Marker::ADD; 
+  Eigen::Vector3d p = box->getCenterEigen();
+  Eigen::Quaterniond q = box->getQuaternionEigen();
 
-    Eigen::Vector3d p = box->getCenterEigen();
-    Eigen::Quaterniond q = box->getQuaternionEigen();
+  marker.pose.position.x = p(0);
+  marker.pose.position.y = p(1);
+  marker.pose.position.z = p(2);
 
-    marker.pose.position.x = p(0);
-    marker.pose.position.y = p(1);
-    marker.pose.position.z = p(2);
+  marker.pose.orientation.x = q.x();
+  marker.pose.orientation.y = q.y();
+  marker.pose.orientation.z = q.z();
+  marker.pose.orientation.w = q.w();
 
-    marker.pose.orientation.x = q.x();
-    marker.pose.orientation.y = q.y();
-    marker.pose.orientation.z = q.z();
-    marker.pose.orientation.w = q.w();
+  marker.scale.x = box->getDimX();
+  marker.scale.y = box->getDimY();
+  marker.scale.z = box->getDimZ();
 
-    marker.scale.x = box->getDimX();
-    marker.scale.y = box->getDimY();
-    marker.scale.z = box->getDimZ();
+  marker.color.r = box->getRedComponent();
+  marker.color.g = box->getGreenComponent();
+  marker.color.b = box->getBlueComponent();
+  marker.color.a = box->getAlphaComponent();
 
-    marker.color.r = box->getRedComponent();
-    marker.color.g = box->getGreenComponent();
-    marker.color.b = box->getBlueComponent();
-    marker.color.a = box->getAlphaComponent();
+  marker.lifetime = ros::Duration(marker_lifetime);
 
-    marker.lifetime = ros::Duration(marker_lifetime);
+  visualization_msgs::MarkerArray marker_array;
+  marker_array.markers.push_back(marker);
+  marker_array_pub_.publish(marker_array);
 
-    visualization_msgs::MarkerArray marker_array;
-    marker_array.markers.push_back(marker);
-    marker_array_pub_.publish(marker_array);
-
-    if (action == ACTION_ADD) {
-      next_id_++;
-      return next_id_-1;
-    } else {
-      return id;
-    }
+  if (action == ACTION_ADD) {
+    next_id_++;
+    return next_id_ - 1;
+  } else {
+    return id;
   }
+}
 
-  int ROSVisualizer::apply(int id, std::shared_ptr<GeometricCylinder> cylinder, int action) {
-    visualization_msgs::Marker marker;
+int ROSVisualizer::apply(int id, std::shared_ptr<GeometricCylinder> cylinder,
+                         int action) {
+  visualization_msgs::Marker marker;
 
-    marker.header.frame_id = "/" + cylinder->getFrameId();
-    marker.header.stamp = ros::Time::now();
-    marker.ns = kNamespace;
-    if (action == ACTION_ADD)  marker.id = next_id_;
-    else                       marker.id = id;
-    marker.type = visualization_msgs::Marker::CYLINDER;
-    marker.action = visualization_msgs::Marker::ADD; 
+  marker.header.frame_id = "/" + cylinder->getFrameId();
+  marker.header.stamp = ros::Time::now();
+  marker.ns = kNamespace;
+  if (action == ACTION_ADD)
+    marker.id = next_id_;
+  else
+    marker.id = id;
+  marker.type = visualization_msgs::Marker::CYLINDER;
+  marker.action = visualization_msgs::Marker::ADD;
 
-    double height = (cylinder->isInfinite() ? 0 : cylinder->getHeight());
+  double height = (cylinder->isInfinite() ? 0 : cylinder->getHeight());
 
-    Eigen::Vector3d v = cylinder->getDirectionEigen();
-    Eigen::Vector3d p = cylinder->getOffsetEigen() + v*height/2;
+  Eigen::Vector3d v = cylinder->getDirectionEigen();
+  Eigen::Vector3d p = cylinder->getOffsetEigen() + v * height / 2;
 
-    // Quaternion that aligns the z-axis with the line direction
-    Eigen::Quaterniond q;
-    q.setFromTwoVectors(Eigen::Vector3d::UnitZ(), v);
+  // Quaternion that aligns the z-axis with the line direction
+  Eigen::Quaterniond q;
+  q.setFromTwoVectors(Eigen::Vector3d::UnitZ(), v);
 
-    marker.pose.position.x = p(0);
-    marker.pose.position.y = p(1);
-    marker.pose.position.z = p(2);
+  marker.pose.position.x = p(0);
+  marker.pose.position.y = p(1);
+  marker.pose.position.z = p(2);
 
-    marker.pose.orientation.x = q.x();
-    marker.pose.orientation.y = q.y();
-    marker.pose.orientation.z = q.z();
-    marker.pose.orientation.w = q.w();
+  marker.pose.orientation.x = q.x();
+  marker.pose.orientation.y = q.y();
+  marker.pose.orientation.z = q.z();
+  marker.pose.orientation.w = q.w();
 
-    marker.scale.x = 2*cylinder->getRadius();
-    marker.scale.y = 2*cylinder->getRadius();
-    marker.scale.z = (cylinder->isInfinite() ? kInfiniteLength : height);
+  marker.scale.x = 2 * cylinder->getRadius();
+  marker.scale.y = 2 * cylinder->getRadius();
+  marker.scale.z = (cylinder->isInfinite() ? kInfiniteLength : height);
 
-    marker.color.r = cylinder->getRedComponent();
-    marker.color.g = cylinder->getGreenComponent();
-    marker.color.b = cylinder->getBlueComponent();
-    marker.color.a = cylinder->getAlphaComponent();
+  marker.color.r = cylinder->getRedComponent();
+  marker.color.g = cylinder->getGreenComponent();
+  marker.color.b = cylinder->getBlueComponent();
+  marker.color.a = cylinder->getAlphaComponent();
 
-    marker.lifetime = ros::Duration(marker_lifetime);
+  marker.lifetime = ros::Duration(marker_lifetime);
 
-    visualization_msgs::MarkerArray marker_array;
-    marker_array.markers.push_back(marker);
-    marker_array_pub_.publish(marker_array);
+  visualization_msgs::MarkerArray marker_array;
+  marker_array.markers.push_back(marker);
+  marker_array_pub_.publish(marker_array);
 
-    if (action == ACTION_ADD) {
-      next_id_++;
-      return next_id_-1;
-    } else {
-      return id;
-    }
+  if (action == ACTION_ADD) {
+    next_id_++;
+    return next_id_ - 1;
+  } else {
+    return id;
   }
+}
 
- int ROSVisualizer::apply(int id, std::shared_ptr<GeometricSphere> sphere, int action) {
-   visualization_msgs::Marker marker;
+int ROSVisualizer::apply(int id, std::shared_ptr<GeometricSphere> sphere,
+                         int action) {
+  visualization_msgs::Marker marker;
 
-   marker.header.frame_id = "/" + sphere->getFrameId();
-   marker.header.stamp = ros::Time::now();
-   marker.ns = kNamespace;
-   if (action == ACTION_ADD)  marker.id = next_id_;
-   else                       marker.id = id;
-   marker.type = visualization_msgs::Marker::SPHERE;
-   marker.action = visualization_msgs::Marker::ADD; 
+  marker.header.frame_id = "/" + sphere->getFrameId();
+  marker.header.stamp = ros::Time::now();
+  marker.ns = kNamespace;
+  if (action == ACTION_ADD)
+    marker.id = next_id_;
+  else
+    marker.id = id;
+  marker.type = visualization_msgs::Marker::SPHERE;
+  marker.action = visualization_msgs::Marker::ADD;
 
-   marker.pose.position.x = sphere->getX();
-   marker.pose.position.y = sphere->getY();
-   marker.pose.position.z = sphere->getZ();
+  marker.pose.position.x = sphere->getX();
+  marker.pose.position.y = sphere->getY();
+  marker.pose.position.z = sphere->getZ();
 
-   marker.pose.orientation.x = 0.0;
-   marker.pose.orientation.y = 0.0;
-   marker.pose.orientation.z = 0.0;
-   marker.pose.orientation.w = 1.0;
+  marker.pose.orientation.x = 0.0;
+  marker.pose.orientation.y = 0.0;
+  marker.pose.orientation.z = 0.0;
+  marker.pose.orientation.w = 1.0;
 
-   marker.scale.x = 2*sphere->getRadius();
-   marker.scale.y = 2*sphere->getRadius();
-   marker.scale.z = 2*sphere->getRadius();
+  marker.scale.x = 2 * sphere->getRadius();
+  marker.scale.y = 2 * sphere->getRadius();
+  marker.scale.z = 2 * sphere->getRadius();
 
-   marker.color.r = sphere->getRedComponent();
-   marker.color.g = sphere->getGreenComponent();
-   marker.color.b = sphere->getBlueComponent();
-   marker.color.a = sphere->getAlphaComponent();
+  marker.color.r = sphere->getRedComponent();
+  marker.color.g = sphere->getGreenComponent();
+  marker.color.b = sphere->getBlueComponent();
+  marker.color.a = sphere->getAlphaComponent();
 
-   marker.lifetime = ros::Duration(marker_lifetime);
+  marker.lifetime = ros::Duration(marker_lifetime);
 
-   visualization_msgs::MarkerArray marker_array;
-   marker_array.markers.push_back(marker);
-   marker_array_pub_.publish(marker_array);
+  visualization_msgs::MarkerArray marker_array;
+  marker_array.markers.push_back(marker);
+  marker_array_pub_.publish(marker_array);
 
-   if (action == ACTION_ADD) {
-     next_id_++;
-     return next_id_-1;
-   } else {
-     return id;
-   }
- }
-
-  Eigen::Quaterniond euler2Quaternion(const double roll, const double pitch, const double yaw) {
-    Eigen::AngleAxisd rollAngle(roll, Eigen::Vector3d::UnitZ());
-    Eigen::AngleAxisd yawAngle(yaw, Eigen::Vector3d::UnitY());
-    Eigen::AngleAxisd pitchAngle(pitch, Eigen::Vector3d::UnitX());
-
-    Eigen::Quaterniond q = rollAngle * yawAngle * pitchAngle;
-    return q;
+  if (action == ACTION_ADD) {
+    next_id_++;
+    return next_id_ - 1;
+  } else {
+    return id;
   }
+}
 
- int ROSVisualizer::apply(int id, std::shared_ptr<GeometricFrame> frame, int action) {
+Eigen::Quaterniond euler2Quaternion(const double roll, const double pitch,
+                                    const double yaw) {
+  Eigen::AngleAxisd rollAngle(roll, Eigen::Vector3d::UnitZ());
+  Eigen::AngleAxisd yawAngle(yaw, Eigen::Vector3d::UnitY());
+  Eigen::AngleAxisd pitchAngle(pitch, Eigen::Vector3d::UnitX());
+
+  Eigen::Quaterniond q = rollAngle * yawAngle * pitchAngle;
+  return q;
+}
+
+int ROSVisualizer::apply(int id, std::shared_ptr<GeometricFrame> frame,
+                         int action) {
   visualization_msgs::MarkerArray marker_array;
   {
     visualization_msgs::Marker marker;
     marker.header.frame_id = "/" + frame->getFrameId();
     marker.header.stamp = ros::Time::now();
     marker.ns = kNamespace;
-    if (action == ACTION_ADD)  marker.id = next_id_;
-    else                       marker.id = id;
+    if (action == ACTION_ADD)
+      marker.id = next_id_;
+    else
+      marker.id = id;
     marker.type = visualization_msgs::Marker::ARROW;
-    marker.action = visualization_msgs::Marker::ADD; 
+    marker.action = visualization_msgs::Marker::ADD;
     marker.pose.position.x = frame->getX();
     marker.pose.position.y = frame->getY();
     marker.pose.position.z = frame->getZ();
@@ -358,11 +379,11 @@ namespace hiqp_ros
     marker.pose.orientation.z = frame->getQZ();
     marker.pose.orientation.w = frame->getQW();
     marker.scale.x = kFrameArrowLength;
-    marker.scale.y = 2*kFrameArrowRadius;
-    marker.scale.z = 2*kFrameArrowRadius;
-    marker.color.r = 1.0;//0.5*frame->getRedComponent() + 0.5;
-    marker.color.g = 0.0;//0.5*frame->getGreenComponent();
-    marker.color.b = 0.0;//0.5*frame->getBlueComponent();
+    marker.scale.y = 2 * kFrameArrowRadius;
+    marker.scale.z = 2 * kFrameArrowRadius;
+    marker.color.r = 1.0;  // 0.5*frame->getRedComponent() + 0.5;
+    marker.color.g = 0.0;  // 0.5*frame->getGreenComponent();
+    marker.color.b = 0.0;  // 0.5*frame->getBlueComponent();
     marker.color.a = frame->getAlphaComponent();
     marker.lifetime = ros::Duration(marker_lifetime);
     marker_array.markers.push_back(marker);
@@ -372,25 +393,27 @@ namespace hiqp_ros
     marker.header.frame_id = "/" + frame->getFrameId();
     marker.header.stamp = ros::Time::now();
     marker.ns = kNamespace;
-    if (action == ACTION_ADD)  marker.id = next_id_+1;
-    else                       marker.id = id+1;
+    if (action == ACTION_ADD)
+      marker.id = next_id_ + 1;
+    else
+      marker.id = id + 1;
     marker.type = visualization_msgs::Marker::ARROW;
-    marker.action = visualization_msgs::Marker::ADD; 
+    marker.action = visualization_msgs::Marker::ADD;
     marker.pose.position.x = frame->getX();
     marker.pose.position.y = frame->getY();
     marker.pose.position.z = frame->getZ();
     Eigen::Quaternion<double> rotq(0.70710678118, 0, 0, 0.70710678118);
-    Eigen::Quaternion<double> resq = frame->getQuaternionEigen()*rotq;
+    Eigen::Quaternion<double> resq = frame->getQuaternionEigen() * rotq;
     marker.pose.orientation.x = resq.x();
     marker.pose.orientation.y = resq.y();
     marker.pose.orientation.z = resq.z();
     marker.pose.orientation.w = resq.w();
     marker.scale.x = kFrameArrowLength;
-    marker.scale.y = 2*kFrameArrowRadius;
-    marker.scale.z = 2*kFrameArrowRadius;
-    marker.color.r = 0.0;//0.5*frame->getRedComponent() + 0.5;
-    marker.color.g = 1.0;//0.5*frame->getGreenComponent();
-    marker.color.b = 0.0;//0.5*frame->getBlueComponent();
+    marker.scale.y = 2 * kFrameArrowRadius;
+    marker.scale.z = 2 * kFrameArrowRadius;
+    marker.color.r = 0.0;  // 0.5*frame->getRedComponent() + 0.5;
+    marker.color.g = 1.0;  // 0.5*frame->getGreenComponent();
+    marker.color.b = 0.0;  // 0.5*frame->getBlueComponent();
     marker.color.a = frame->getAlphaComponent();
     marker.lifetime = ros::Duration(marker_lifetime);
     marker_array.markers.push_back(marker);
@@ -400,25 +423,27 @@ namespace hiqp_ros
     marker.header.frame_id = "/" + frame->getFrameId();
     marker.header.stamp = ros::Time::now();
     marker.ns = kNamespace;
-    if (action == ACTION_ADD)  marker.id = next_id_+2;
-    else                       marker.id = id+2;
+    if (action == ACTION_ADD)
+      marker.id = next_id_ + 2;
+    else
+      marker.id = id + 2;
     marker.type = visualization_msgs::Marker::ARROW;
-    marker.action = visualization_msgs::Marker::ADD; 
+    marker.action = visualization_msgs::Marker::ADD;
     marker.pose.position.x = frame->getX();
     marker.pose.position.y = frame->getY();
     marker.pose.position.z = frame->getZ();
     Eigen::Quaternion<double> rotq(0.70710678118, 0, -0.70710678118, 0);
-    Eigen::Quaternion<double> resq = frame->getQuaternionEigen()*rotq;
+    Eigen::Quaternion<double> resq = frame->getQuaternionEigen() * rotq;
     marker.pose.orientation.x = resq.x();
     marker.pose.orientation.y = resq.y();
     marker.pose.orientation.z = resq.z();
     marker.pose.orientation.w = resq.w();
     marker.scale.x = kFrameArrowLength;
-    marker.scale.y = 2*kFrameArrowRadius;
-    marker.scale.z = 2*kFrameArrowRadius;
-    marker.color.r = 0.0;//0.5*frame->getRedComponent() + 0.5;
-    marker.color.g = 0.0;//0.5*frame->getGreenComponent();
-    marker.color.b = 1.0;//0.5*frame->getBlueComponent();
+    marker.scale.y = 2 * kFrameArrowRadius;
+    marker.scale.z = 2 * kFrameArrowRadius;
+    marker.color.r = 0.0;  // 0.5*frame->getRedComponent() + 0.5;
+    marker.color.g = 0.0;  // 0.5*frame->getGreenComponent();
+    marker.color.b = 1.0;  // 0.5*frame->getBlueComponent();
     marker.color.a = frame->getAlphaComponent();
     marker.lifetime = ros::Duration(marker_lifetime);
     marker_array.markers.push_back(marker);
@@ -428,7 +453,7 @@ namespace hiqp_ros
 
   if (action == ACTION_ADD) {
     next_id_ += 3;
-    return next_id_-3;
+    return next_id_ - 3;
   } else {
     return id;
   }
@@ -490,7 +515,8 @@ void ROSVisualizer::update(int id, std::shared_ptr<GeometricBox> box) {
   apply(id, box, ACTION_MODIFY);
 }
 
-void ROSVisualizer::update(int id, std::shared_ptr<GeometricCylinder> cylinder) {
+void ROSVisualizer::update(int id,
+                           std::shared_ptr<GeometricCylinder> cylinder) {
   apply(id, cylinder, ACTION_MODIFY);
 }
 
@@ -513,28 +539,26 @@ void ROSVisualizer::remove(int id) {
   marker.header.stamp = ros::Time::now();
   marker.ns = kNamespace;
   marker.id = id;
-  marker.action = visualization_msgs::Marker::DELETE; 
+  marker.action = visualization_msgs::Marker::DELETE;
   visualization_msgs::MarkerArray marker_array;
   marker_array.markers.push_back(marker);
   marker_array_pub_.publish(marker_array);
 }
 
-
 void ROSVisualizer::removeMany(const std::vector<int>& ids) {
-  //std::cout << "removeMany: ";
+  // std::cout << "removeMany: ";
 
   visualization_msgs::MarkerArray marker_array;
   for (int id : ids) {
-    std::cout << id << ", ";
     visualization_msgs::Marker marker;
     marker.header.stamp = ros::Time::now();
     marker.ns = kNamespace;
     marker.id = id;
-    marker.action = visualization_msgs::Marker::DELETE; 
+    marker.action = visualization_msgs::Marker::DELETE;
     marker_array.markers.push_back(marker);
   }
   //  std::cout << "\n";
   marker_array_pub_.publish(marker_array);
 }
 
-} // namespace hiqp
+}  // namespace hiqp

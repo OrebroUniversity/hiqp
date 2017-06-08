@@ -20,75 +20,80 @@
 #include <string>
 #include <vector>
 
-#include <ros/ros.h>
 #include <hardware_interface/joint_command_interface.h>
+#include <ros/ros.h>
 
-#include <kdl/tree.hpp>
 #include <kdl/jntarray.hpp>
 #include <kdl/jntarrayvel.hpp>
+#include <kdl/tree.hpp>
 #include <kdl_parser/kdl_parser.hpp>
 
-#include <hiqp/task_manager.h>
 #include <hiqp/hiqp_time_point.h>
+#include <hiqp/task_manager.h>
 
 #include <hiqp_ros/base_controller.h>
-#include <hiqp_ros/ros_visualizer.h>
-#include <hiqp_ros/ros_topic_subscriber.h>
 #include <hiqp_ros/hiqp_service_handler.h>
+#include <hiqp_ros/ros_topic_subscriber.h>
+#include <hiqp_ros/ros_visualizer.h>
 
 #include <fstream>
 
 namespace hiqp_ros {
-  typedef hardware_interface::VelocityJointInterface JointVelocityInterface;
+typedef hardware_interface::VelocityJointInterface JointVelocityInterface;
 
-  /*! \brief A joint velocity controller that provides full access to the HiQP control framework
-   *  \author Marcus A Johansson */  
-  class HiQPJointVelocityController : public BaseController<JointVelocityInterface> {
-  public:
-    HiQPJointVelocityController();
-    ~HiQPJointVelocityController() noexcept;
-    
-    void initialize();
-    void computeControls(Eigen::VectorXd& u);
+/*! \brief A joint velocity controller that provides full access to the HiQP
+ * control framework
+ *  \author Marcus A Johansson */
+class HiQPJointVelocityController
+    : public BaseController<JointVelocityInterface> {
+ public:
+  HiQPJointVelocityController();
+  ~HiQPJointVelocityController() noexcept;
 
-  private:
-    HiQPJointVelocityController(const HiQPJointVelocityController& other) = delete;
-    HiQPJointVelocityController(HiQPJointVelocityController&& other) = delete;
-    HiQPJointVelocityController& operator=(const HiQPJointVelocityController& other) = delete;
-    HiQPJointVelocityController& operator=(HiQPJointVelocityController&& other) noexcept = delete;
+  void initialize();
+  void computeControls(Eigen::VectorXd& u);
 
-    void monitorTasks();
-    void renderPrimitives();
+ private:
+  HiQPJointVelocityController(const HiQPJointVelocityController& other) =
+      delete;
+  HiQPJointVelocityController(HiQPJointVelocityController&& other) = delete;
+  HiQPJointVelocityController& operator=(
+      const HiQPJointVelocityController& other) = delete;
+  HiQPJointVelocityController& operator=(
+      HiQPJointVelocityController&& other) noexcept = delete;
 
-    void loadRenderingParameters();
-    int loadAndSetupTaskMonitoring();
-    // void addAllTopicSubscriptions();
-    void loadJointLimitsFromParamServer();
-    void loadGeometricPrimitivesFromParamServer();
-    void loadTasksFromParamServer();
+  void monitorTasks(double vel_ctl_comp_time);
+  void renderPrimitives();
 
-    bool                                              is_active_;
+  void loadRenderingParameters();
+  int loadAndSetupTaskMonitoring();
+  // void addAllTopicSubscriptions();
+  void loadJointLimitsFromParamServer();
+  void loadGeometricPrimitivesFromParamServer();
+  void loadTasksFromParamServer();
 
-    bool                                              monitoring_active_;
-    double                                            monitoring_publish_rate_;
-    ros::Time                                         last_monitoring_update_;
+  bool is_active_;
 
-    double                                            rendering_publish_rate_;
-    ros::Time                                         last_rendering_update_;
+  bool monitoring_active_;
+  double monitoring_publish_rate_;
+  ros::Time last_monitoring_update_;
 
-    ros::Publisher                                    monitoring_pub_;
+  double rendering_publish_rate_;
+  ros::Time last_rendering_update_;
 
-    ROSTopicSubscriber                                topic_subscriber_;
+  ros::Publisher monitoring_pub_;
 
-    HiQPServiceHandler                                service_handler_; // takes care of all ros service calls
+  ROSTopicSubscriber topic_subscriber_;
 
-    ROSVisualizer                                     ros_visualizer_;
-    std::shared_ptr<Visualizer>                       visualizer_;
-    
-    hiqp::TaskManager                                 task_manager_;
-    std::shared_ptr<hiqp::TaskManager>                task_manager_ptr_;
-  };
+  HiQPServiceHandler service_handler_;  // takes care of all ros service calls
 
-} // namespace hiqp
+  ROSVisualizer ros_visualizer_;
+  std::shared_ptr<Visualizer> visualizer_;
 
-#endif // include guard
+  hiqp::TaskManager task_manager_;
+  std::shared_ptr<hiqp::TaskManager> task_manager_ptr_;
+};
+
+}  // namespace hiqp
+
+#endif  // include guard

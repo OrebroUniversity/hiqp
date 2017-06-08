@@ -17,97 +17,138 @@
 #ifndef TASK_H
 #define TASK_H
 
+#include <memory>
 #include <string>
 #include <vector>
-#include <memory>
 
 #include <hiqp/geometric_primitives/geometric_primitive_map.h>
-#include <hiqp/visualizer.h>
 #include <hiqp/task_definition.h>
 #include <hiqp/task_dynamics.h>
+#include <hiqp/visualizer.h>
 
 #include <Eigen/Dense>
 
+#include <pluginlib/class_loader.h>
+
 namespace hiqp {
 
-  /*! \brief A Task has a TaskDefinition and a TaskDynamics.
-   *  \author Marcus A Johansson */
-  class Task {
-  public:
-    Task(std::shared_ptr<GeometricPrimitiveMap> geom_prim_map,
-         std::shared_ptr<Visualizer> visualizer,
-         int n_controls);
+/*! \brief A Task has a TaskDefinition and a TaskDynamics.
+ *  \author Marcus A Johansson */
+class Task {
+ public:
+  Task(std::shared_ptr<GeometricPrimitiveMap> geom_prim_map,
+       std::shared_ptr<Visualizer> visualizer, int n_controls);
 
-    ~Task() noexcept {}
+  ~Task() noexcept {}
 
-    /*! \brief This should be called after all fields of Task are set properly. */
-    int init(const std::vector<std::string>& def_params,
-             const std::vector<std::string>& dyn_params,
-             RobotStatePtr robot_state);
+  /*! \brief This should be called after all fields of Task are set properly. */
+  int init(const std::vector<std::string>& def_params,
+           const std::vector<std::string>& dyn_params,
+           RobotStatePtr robot_state);
 
-    inline void         setTaskName(const std::string& name) { task_name_ = name; }
-    inline std::string  getTaskName()                      { return task_name_; }
-    inline void         setPriority(unsigned int priority) { priority_ = priority; }
-    inline unsigned int getPriority()                      { return priority_; }
-    inline void         setActive(bool active)             { active_ = active; }
-    inline bool         getActive()                        { return active_; }
-    inline void         setVisible(bool visible)           { visible_ = visible; }
-    inline bool         getVisible()                       { return visible_; }
-    inline void         setMonitored(bool monitored)       { monitored_ = monitored; }
-    inline bool         getMonitored()                     { return monitored_; }
-    inline unsigned int getDimensions()                    { if (def_) return def_->getDimensions(); else return 0; }
+  inline void setTaskName(const std::string& name) { task_name_ = name; }
+  inline std::string getTaskName() { return task_name_; }
+  inline void setPriority(unsigned int priority) { priority_ = priority; }
+  inline unsigned int getPriority() { return priority_; }
+  inline void setActive(bool active) { active_ = active; }
+  inline bool getActive() { return active_; }
+  inline void setVisible(bool visible) { visible_ = visible; }
+  inline bool getVisible() { return visible_; }
+  inline void setMonitored(bool monitored) { monitored_ = monitored; }
+  inline bool getMonitored() { return monitored_; }
+  inline unsigned int getDimensions() {
+    if (def_)
+      return def_->getDimensions();
+    else
+      return 0;
+  }
+  inline std::vector<std::string> getDefParams() { return def_params_; }
+  inline std::vector<std::string> getDynParams() { return dyn_params_; }
 
-    /*! \brief Recomputes the task performance value, jacobian and its dynamics. */
-    int update(RobotStatePtr robot_state);
+  /*! \brief Recomputes the task performance value, jacobian and its dynamics.
+   */
+  int update(RobotStatePtr robot_state);
 
-    void monitor() {if (def_) def_->monitor(); if (dyn_) dyn_->monitor();}
+  void monitor() {
+    if (def_) def_->monitor();
+    if (dyn_) dyn_->monitor();
+  }
 
-    /*! \brief Returns the task function performance values as a vector. */
-    Eigen::VectorXd getValue() const      
-      { if (def_) return def_->e_; else return Eigen::VectorXd(); }
+  /*! \brief Returns the task function performance values as a vector. */
+  Eigen::VectorXd getValue() const {
+    if (def_)
+      return def_->e_;
+    else
+      return Eigen::VectorXd();
+  }
 
-    /*! \brief Returns the task jacobian as a matrix. */
-    Eigen::MatrixXd getJacobian() const   
-      { if (def_) return def_->J_; else return Eigen::MatrixXd(); }
+  /*! \brief Returns the task jacobian as a matrix. */
+  Eigen::MatrixXd getJacobian() const {
+    if (def_)
+      return def_->J_;
+    else
+      return Eigen::MatrixXd();
+  }
 
-    /*! \brief Returns the task dynamics as a vector. */
-    Eigen::VectorXd getDynamics() const   
-      { if (dyn_) return dyn_->e_dot_star_; else return Eigen::VectorXd(); }
+  /*! \brief Returns the task dynamics as a vector. */
+  Eigen::VectorXd getDynamics() const {
+    if (dyn_)
+      return dyn_->e_dot_star_;
+    else
+      return Eigen::VectorXd();
+  }
 
-    /*! \brief Returns the task types (leq/eq/geq task) for each dimension of the task space. Returns a vector or -1, 0 or 1 for leq, eq and geq tasks respectively. */
-    std::vector<int> getTaskTypes() const  
-      { if (def_) return def_->task_types_; else return std::vector<int>(); }
+  /*! \brief Returns the task types (leq/eq/geq task) for each dimension of the
+   * task space. Returns a vector or -1, 0 or 1 for leq, eq and geq tasks
+   * respectively. */
+  std::vector<int> getTaskTypes() const {
+    if (def_)
+      return def_->task_types_;
+    else
+      return std::vector<int>();
+  }
 
-    /*! \brief Returns the user-defined custom performance measures defined in the monitor() member function in a child class of TaskDefinition. */
-    Eigen::VectorXd getPerformanceMeasures() const 
-      { if (def_) return def_->performance_measures_; else return Eigen::VectorXd(); }
+  /*! \brief Returns the user-defined custom performance measures defined in the
+   * monitor() member function in a child class of TaskDefinition. */
+  Eigen::VectorXd getPerformanceMeasures() const {
+    if (def_)
+      return def_->performance_measures_;
+    else
+      return Eigen::VectorXd();
+  }
 
-  private:
-    Task(const Task& other) = delete;
-    Task(Task&& other) = delete;
-    Task& operator=(const Task& other) = delete;
-    Task& operator=(Task&& other) noexcept = delete;
+ private:
+  Task(const Task& other) = delete;
+  Task(Task&& other) = delete;
+  Task& operator=(const Task& other) = delete;
+  Task& operator=(Task&& other) noexcept = delete;
 
-    int constructDefinition(const std::vector<std::string>& def_params);
-    int constructDynamics(const std::vector<std::string>& dyn_params);
+  int constructDefinition(const std::vector<std::string>& def_params);
+  int constructDynamics(const std::vector<std::string>& dyn_params);
 
-    /// \brief Checks the consistency of the task definition and dynamics, i.e. the sizes of e, J, de*, task types, and number of joints of the robot
-    bool checkConsistency(RobotStatePtr robot_state);
+  /// \brief Checks the consistency of the task definition and dynamics, i.e.
+  /// the sizes of e, J, de*, task types, and number of joints of the robot
+  bool checkConsistency(RobotStatePtr robot_state);
 
-    std::shared_ptr<TaskDefinition>          def_;
-    std::shared_ptr<TaskDynamics>            dyn_;
+  std::shared_ptr<TaskDefinition> def_;
+  std::shared_ptr<TaskDynamics> dyn_;
 
-    std::shared_ptr<GeometricPrimitiveMap>   geom_prim_map_;
-    std::shared_ptr<Visualizer>              visualizer_;
+  pluginlib::ClassLoader<TaskDefinition> tdef_loader_;
+  pluginlib::ClassLoader<TaskDynamics> tdyn_loader_;
 
-    unsigned int                             n_controls_;
-    std::string                              task_name_;
-    unsigned int                             priority_;
-    bool                                     active_;
-    bool                                     visible_;
-    bool                                     monitored_;
-  };
+  std::shared_ptr<GeometricPrimitiveMap> geom_prim_map_;
+  std::shared_ptr<Visualizer> visualizer_;
 
-} // namespace hiqp
+  unsigned int n_controls_;
+  std::string task_name_;
+  unsigned int priority_;
+  bool active_;
+  bool visible_;
+  bool monitored_;
+  std::vector<std::string> def_params_;
+  std::vector<std::string> dyn_params_;
+};
 
-#endif // include guard
+}  // namespace hiqp
+
+#endif  // include guard

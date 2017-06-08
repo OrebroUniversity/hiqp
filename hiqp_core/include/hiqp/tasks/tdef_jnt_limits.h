@@ -22,43 +22,41 @@
 #include <hiqp/robot_state.h>
 #include <hiqp/task_definition.h>
 
-namespace hiqp
-{
-namespace tasks
-{
+namespace hiqp {
+namespace tasks {
 
-  /*! \brief A task definition that sets velocity and position limitations of a specific joint.
-   *  \author Marcus A Johansson */  
-  class TDefJntLimits : public TaskDefinition {
-  public:
-    TDefJntLimits(std::shared_ptr<GeometricPrimitiveMap> geom_prim_map,
-                    std::shared_ptr<Visualizer> visualizer)
-    : TaskDefinition(geom_prim_map, visualizer) {}
+/*! \brief A task definition that sets velocity and position limitations of a
+ * specific joint.
+ *  \author Marcus A Johansson */
+class TDefJntLimits : public TaskDefinition {
+ public:
+  TDefJntLimits(std::shared_ptr<GeometricPrimitiveMap> geom_prim_map,
+                std::shared_ptr<Visualizer> visualizer)
+      : TaskDefinition(geom_prim_map, visualizer) {}
 
-    ~TDefJntLimits() noexcept = default;
+  ~TDefJntLimits() noexcept = default;
 
-    int init(const std::vector<std::string>& parameters,
-             RobotStatePtr robot_state);
+  int init(const std::vector<std::string>& parameters,
+           RobotStatePtr robot_state);
 
-    int update(RobotStatePtr robot_state);
+  int update(RobotStatePtr robot_state);
 
-    int monitor();
+  int monitor();
 
-  private:
-    TDefJntLimits(const TDefJntLimits& other) = delete;
-    TDefJntLimits(TDefJntLimits&& other) = delete;
-    TDefJntLimits& operator=(const TDefJntLimits& other) = delete;
-    TDefJntLimits& operator=(TDefJntLimits&& other) noexcept = delete;
+ private:
+  TDefJntLimits(const TDefJntLimits& other) = delete;
+  TDefJntLimits(TDefJntLimits&& other) = delete;
+  TDefJntLimits& operator=(const TDefJntLimits& other) = delete;
+  TDefJntLimits& operator=(TDefJntLimits&& other) noexcept = delete;
 
-    std::string              link_frame_name_;
-    std::size_t              link_frame_q_nr_;
-    double                   jnt_upper_bound_;
-    double                   jnt_lower_bound_;
+  std::string link_frame_name_;
+  std::size_t link_frame_q_nr_;
+  double jnt_upper_bound_;
+  double jnt_lower_bound_;
+};
 
-  }; 
+}  // namespace tasks
 
-} // namespace tasks
+}  // namespace hiqp
 
-} // namespace hiqp
-
-#endif // include guard
+#endif  // include guard
