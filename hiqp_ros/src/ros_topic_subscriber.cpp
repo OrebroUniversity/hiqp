@@ -97,7 +97,7 @@ void ROSTopicSubscriber::topicCallback<tf::tfMessage>(
 	    }
 	    task_manager_->getGeometricPrimitiveMap()
 		->updateGeometricPrimitive<GeometricFrame>(child_frame, parameters);
-	    ROS_INFO("updated frame %s",child_frame.c_str());
+	    //ROS_INFO("updated frame %s",child_frame.c_str());
 	    continue;
 	}
 	
