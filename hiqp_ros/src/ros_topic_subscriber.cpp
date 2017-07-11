@@ -71,7 +71,7 @@ void ROSTopicSubscriber::topicCallback<tf::tfMessage>(
 	} 
 	//try to lookup parent frame in the kdl tree. if it exists, we can add the primitive
 	if(hiqp::kdl_getQNrFromLinkName(robot_state_ptr_->kdl_tree_, parent_frame) < 0) {
-	    ROS_WARN("parent frame %s is not in the kdl tree!", parent_frame.c_str());
+	    //ROS_WARN("parent frame %s is not in the kdl tree!", parent_frame.c_str());
 	    continue;
 	    /*
 	    //check parent is not in the geometry map either
@@ -90,7 +90,7 @@ void ROSTopicSubscriber::topicCallback<tf::tfMessage>(
 	//if yes, we simply update the parameters
 	if(prim_exists) {
 	    if(update_parent) {
-		ROS_INFO("changing parent frame %s", child_frame.c_str());
+		//ROS_INFO("changing parent frame %s", child_frame.c_str());
 		task_manager_->getGeometricPrimitiveMap()
 		    ->getGeometricPrimitive<GeometricFrame>(child_frame)->resetFrameId(parent_frame);
 	    
