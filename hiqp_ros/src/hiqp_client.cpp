@@ -124,7 +124,7 @@ bool HiQPClient::setTasks(const std::vector<hiqp_msgs::Task>& tasks) {
       ROS_WARN("Either all or some of the tasks were not added.");
     }
     
-    return (returnValue != setTasksMsg.response.success.size());
+    return (returnValue == setTasksMsg.response.success.size());
   } else {
     ROS_WARN("set_tasks service call failed.");
   }
