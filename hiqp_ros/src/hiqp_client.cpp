@@ -332,7 +332,7 @@ void HiQPClient::waitForCompletion(
 }
 
 bool HiQPClient::setJointAngles(const std::vector<double>& joint_angles,
-                                bool remove) {
+                                bool remove, double tol) {
   std::vector<std::string> def_params{"TDefFullPose"};
 
   for (auto jointValue : joint_angles) {
@@ -344,11 +344,11 @@ bool HiQPClient::setJointAngles(const std::vector<double>& joint_angles,
   if (ret) {
       if (remove) {
 	  waitForCompletion({"joint_configuration"}, {TaskDoneReaction::REMOVE},
-		  {1e-2});
+		  {tol});
       }
       else {
 	  waitForCompletion({"joint_configuration"}, {TaskDoneReaction::NONE},
-		  {1e-2});
+		  {tol});
       }
   } else {
       ROS_ERROR("could not set joint configuration task");
