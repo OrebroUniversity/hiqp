@@ -66,6 +66,7 @@ bool TaskManager::getVelocityControls(RobotStatePtr robot_state,
       if (kv.second->update(robot_state) == 0) {
         solver_->appendStage(kv.second->getPriority(), kv.second->getDynamics(),
                              kv.second->getJacobian(),
+			     kv.second->getJacobianDerivative(),
                              kv.second->getTaskTypes());
       }
     }

@@ -83,7 +83,7 @@ int TDynLinear::init(const std::vector<std::string>& parameters, RobotStatePtr r
 
 int TDynLinear::update(RobotStatePtr robot_state, const Eigen::VectorXd& e, const Eigen::VectorXd& e_dot, const Eigen::MatrixXd& J, const Eigen::MatrixXd& J_dot) {
   //PD control law
-  e_ddot_star_=Kp_*e+Kd_*e_dot;
+  e_ddot_star_= -Kp_*e-Kd_*e_dot;
   return 0;
 }
 

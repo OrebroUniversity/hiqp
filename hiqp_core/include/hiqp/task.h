@@ -90,6 +90,14 @@ class Task {
       return Eigen::MatrixXd();
   }
 
+    /*! \brief Returns the task jacobian derivative as a matrix. */
+  Eigen::MatrixXd getJacobianDerivative() const {
+    if (def_)
+      return def_->J_dot_;
+    else
+      return Eigen::MatrixXd();
+  }
+
   /*! \brief Returns the task dynamics as a vector. */
   Eigen::VectorXd getDynamics() const {
     if (dyn_)

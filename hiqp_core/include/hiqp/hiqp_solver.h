@@ -29,8 +29,9 @@ namespace hiqp {
  *  \author Marcus A Johansson */
 struct HiQPStage {
   int nRows;
-  Eigen::VectorXd e_dot_star_;
+  Eigen::VectorXd e_ddot_star_;
   Eigen::MatrixXd J_;
+  Eigen::MatrixXd J_dot_;
   std::vector<int> constraint_signs_;
 };
 
@@ -52,17 +53,22 @@ class HiQPSolver {
   /*! \brief Appends the internal set of stages with a task. If a stage with the
    * priority is not currently present in the stages map, it is created,
    * otherwise the task is appended to that existing stage. */
-  int appendStage(std::size_t priority_level, const Eigen::VectorXd& e_dot_star,
+  int appendStage(std::size_t priority_level, const Eigen::VectorXd& e_ddot_star,
                   const Eigen::MatrixXd& J,
+                  const Eigen::MatrixXd& J_dot,
                   const std::vector<int>& constraint_signs) {
+    int dim=e_ddot_star.rows();
+    assert((J.rows()==dim) && (J_dot.rows()==dim) && (constraint_signs.size()==dim));
+    
     StageMap::iterator it = stages_map_.find(priority_level);
 
     if (it == stages_map_.end()) {
       HiQPStage stage;
-      stage.e_dot_star_ = e_dot_star;
+      stage.e_ddot_star_ = e_ddot_star;
       stage.J_ = J;
+      stage.J_dot_ = J_dot;
       stage.constraint_signs_ = constraint_signs;
-      stage.nRows = e_dot_star.rows();
+      stage.nRows = dim;
       stages_map_.emplace(priority_level, stage);
       // DEBUG =============================================
       /* std::cerr<<std::setprecision(2)<<"append new stage: "<<std::endl; */
@@ -71,11 +77,11 @@ class HiQPSolver {
       /* for (unsigned int k=0;k<stage.constraint_signs_.size();k++) */
       /*   std::cerr<<stage.constraint_signs_[k]<<" "; */
 
-      /* std::cerr<<std::endl<<"de*:
-       * "<<stage.e_dot_star_.transpose()<<std::endl; */
+      /* std::cerr<<std::endl<<"dde*:
+       * "<<stage.e_ddot_star_.transpose()<<std::endl; */
       // DEBUG END ==========================================
     } else {
-      int rows = it->second.e_dot_star_.rows() + e_dot_star.rows();
+      int rows = it->second.e_ddot_star_.rows() + e_ddot_star.rows();
       // DEBUG =============================================
       /* std::cerr<<std::setprecision(2)<<"HiQPSolver::appendStage - before
        * appending existing stage: "<<std::endl; */
@@ -84,21 +90,21 @@ class HiQPSolver {
       /* for (unsigned int k=0;k<it->second.constraint_signs_.size();k++) */
       /*  std::cerr<<it->second.constraint_signs_[k]<<" "; */
 
-      /* std::cerr<<std::endl<<"de*:
-       * "<<it->second.e_dot_star_.transpose()<<std::endl;  */
+      /* std::cerr<<std::endl<<"dde*:
+       * "<<it->second.e_ddot_star_.transpose()<<std::endl;  */
       // DEBUG END ==========================================
 
-      Eigen::VectorXd edotstar__(rows);
-      edotstar__ << it->second.e_dot_star_, e_dot_star;
-      it->second.e_dot_star_.resize(rows);
-      it->second.e_dot_star_ = edotstar__;
+      Eigen::VectorXd eddotstar__(rows);
+      eddotstar__ << it->second.e_ddot_star_, e_ddot_star;
+      it->second.e_ddot_star_.resize(rows);
+      it->second.e_ddot_star_ = eddotstar__;
       Eigen::MatrixXd J__(rows, it->second.J_.cols());
       J__ << it->second.J_, J;
       it->second.J_ = J__;
       it->second.constraint_signs_.insert(it->second.constraint_signs_.end(),
                                           constraint_signs.begin(),
                                           constraint_signs.end());
-      it->second.nRows += e_dot_star.rows();
+      it->second.nRows += dim;
       // DEBUG =============================================
       /* std::cerr<<std::setprecision(2)<<"HiQPSolver::appendStage - after
        * appending existing stage: "<<std::endl; */
@@ -107,8 +113,8 @@ class HiQPSolver {
       /* for (unsigned int k=0;k<it->second.constraint_signs_.size();k++) */
       /*  std::cerr<<it->second.constraint_signs_[k]<<" "; */
 
-      /* std::cerr<<std::endl<<"de*:
-       * "<<it->second.e_dot_star_.transpose()<<std::endl;  */
+      /* std::cerr<<std::endl<<"dde*:
+       * "<<it->second.e_ddot_star_.transpose()<<std::endl;  */
       // DEBUG END ==========================================
     }
 

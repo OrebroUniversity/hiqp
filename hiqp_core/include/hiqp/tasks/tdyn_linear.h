@@ -48,8 +48,8 @@ class TDynLinear : public TaskDynamics {
   TDynLinear& operator=(TDynLinear&& other) noexcept = delete;
 
   
-  Eigen::MatrixXd Kp_; ///Controller proportional gain matrix
-  Eigen::MatrixXd Kd_; ///Controller derivative gain matrix
+  Eigen::MatrixXd Kp_; ///< Controller proportional gain matrix
+  Eigen::MatrixXd Kd_; ///< Controller derivative gain matrix
 };
 
 }  // namespace tasks

@@ -258,7 +258,7 @@ void GurobiSolver::HQPConstraints::appendConstraints(
   }
 
   de_.conservativeResize(n_acc_stage_dims_ + n_stage_dims_);
-  de_.tail(n_stage_dims_) = current_stage.e_dot_star_;
+  de_.tail(n_stage_dims_) = current_stage.e_ddot_star_;
   J_.conservativeResize(n_acc_stage_dims_ + n_stage_dims_, Eigen::NoChange);
   J_.bottomRows(n_stage_dims_) = current_stage.J_;
   w_.conservativeResize(n_acc_stage_dims_ + n_stage_dims_);
