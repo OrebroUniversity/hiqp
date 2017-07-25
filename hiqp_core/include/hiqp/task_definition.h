@@ -61,17 +61,24 @@ namespace hiqp {
     virtual int monitor() = 0;
 
     unsigned int getDimensions() { return n_dimensions_; }
-    Eigen::VectorXd getInitialValue() { return e_initial_; }
+    Eigen::VectorXd getInitialTaskValue() { return e_initial_; }
     Eigen::MatrixXd getInitialJacobian() { return J_initial_; }
+    Eigen::VectorXd getInitialTaskDerivative() { return e_dot_initial_; }
+    Eigen::MatrixXd getInitialJacobianDerivative() { return J_dot_initial_; }
 
-    virtual Eigen::VectorXd getFinalValue(RobotStatePtr robot_state) {
+    virtual Eigen::VectorXd getFinalTaskValue(RobotStatePtr robot_state) {
       return Eigen::VectorXd::Zero(e_.rows());
+    }
+        virtual Eigen::VectorXd getFinalTaskDerivative(RobotStatePtr robot_state) {
+      return Eigen::VectorXd::Zero(e_dot_.rows());
     }
 
   protected:
-  Eigen::VectorXd e_;            // the performance value of the task
-  Eigen::MatrixXd J_;            // the task jacobian
-  std::vector<int> task_types_;  // -1 leq, 0 eq, 1 geq
+  Eigen::VectorXd e_;            /// the task function value
+  Eigen::VectorXd e_dot_;        /// the task function derivative
+  Eigen::MatrixXd J_;            /// the task jacobian
+  Eigen::MatrixXd J_dot_;        /// the task jacobian derivative
+  std::vector<int> task_types_;  /// -1 leq, 0 eq, 1 geq
   Eigen::VectorXd performance_measures_;
   unsigned int n_dimensions_;
 
@@ -93,7 +100,9 @@ private:
 
   Eigen::VectorXd e_initial_;
   Eigen::MatrixXd J_initial_;
-
+  Eigen::VectorXd e_dot_initial_;
+  Eigen::MatrixXd J_dot_initial_;
+  
   std::string task_name_;
   unsigned int priority_;
   bool visible_;
@@ -112,6 +121,9 @@ private:
     update(robot_state);
     e_initial_ = e_;
     J_initial_ = J_;
+    e_dot_initial_ = e_dot_;
+    J_dot_initial_ = J_dot_;
+
     return 0;
   }
 };

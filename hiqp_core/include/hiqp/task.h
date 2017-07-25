@@ -93,7 +93,7 @@ class Task {
   /*! \brief Returns the task dynamics as a vector. */
   Eigen::VectorXd getDynamics() const {
     if (dyn_)
-      return dyn_->e_dot_star_;
+      return dyn_->e_ddot_star_;
     else
       return Eigen::VectorXd();
   }

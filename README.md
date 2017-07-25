@@ -24,3 +24,16 @@ A publication presenting HiQP is in preparation. In the meantime, please refer t
 [1] ... O. Kanoun, F. Lamiraux and P.-B. Wieber, Kinematic control of redundant manipulators: Generalizing the task-priority framework to inequality task. IEEE T-RO, 27(4):785-792, 2011.
 </br>
 [2] ... M. A. Johansson, Online whole-body control using hierarchical quadratic programming: implementation and evaluation of the HiQP control framework. MSc Thesis, 2016.
+
+## TODO
+
+* Rename TaskDynamics to TaskControllers to better reflect their purpose
+   -> rename TDynLinear to PDController
+   -> rename Task::getDynamics() to Task::getControls()
+* Rework Task::checkConsistency(RobotStatePtr robot_state)
+* To control in acceleration, the TaskDynamics have to be a function of e & de
+* TaskDynamics::update(...) should not need the Jacobian/Jacobian derivative as parameter, as the dynamics (controllers) live in task space
+* What's tasks::TDefMetaTask?
+* Renamed TaskDefinition::getInitialValue() to TaskDefinition::getInitialTaskValue()
+* Both TaskDefinition and TaskDynamics have a member variable performance_measures_ which seems nowhere to be used
+

@@ -32,8 +32,7 @@ using geometric_primitives::GeometricPrimitiveMap;
 
 class Task;
 
-/*! \brief A task dynamics enforces the optimizer to produce controls that
- * results is a certain velocity of the task performance value.
+/*! \brief A task dynamics enforces the optimizer to produce controls that yield a desired task acceleration
  *  \author Marcus A Johansson */
 class TaskDynamics {
  public:
@@ -53,17 +52,14 @@ class TaskDynamics {
   }
 
 
-  virtual int init(const std::vector<std::string>& parameters,
-                   RobotStatePtr robot_state, const Eigen::VectorXd& e_initial,
-                   const Eigen::VectorXd& e_final) = 0;
+  virtual int init(const std::vector<std::string>& parameters, RobotStatePtr robot_state, const Eigen::VectorXd& e_initial, const Eigen::VectorXd& e_dot_initial, const Eigen::VectorXd& e_final, const Eigen::VectorXd& e_dot_final) = 0;
 
-  virtual int update(RobotStatePtr robot_state, const Eigen::VectorXd& e,
-                     const Eigen::MatrixXd& J) = 0;
+  virtual int update(RobotStatePtr robot_state, const Eigen::VectorXd& e, const Eigen::VectorXd& e_dot, const Eigen::MatrixXd& J, const Eigen::MatrixXd& J_dot) = 0;
 
   virtual int monitor() = 0;
 
  protected:
-  Eigen::VectorXd e_dot_star_;
+  Eigen::VectorXd e_ddot_star_;
   Eigen::VectorXd performance_measures_;
 
   inline std::string getTaskName() { return task_name_; }

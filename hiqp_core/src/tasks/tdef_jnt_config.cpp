@@ -50,21 +50,37 @@ int TDefJntConfig::init(const std::vector<std::string>& parameters,
   desired_configuration_ = std::stod(parameters.at(2));
 
   unsigned int n_joints = robot_state->getNumJoints();
+  performance_measures_.resize(0);
+  task_types_.insert(task_types_.begin(), 1, 0); //equality task
+  const KDL::JntArray& q = robot_state->kdl_jnt_array_vel_.q;
+  const KDL::JntArray& q_dot = robot_state->kdl_jnt_array_vel_.qdot;
+  
   e_.resize(1);
   J_.resize(1, n_joints);
-  performance_measures_.resize(0);
-  task_types_.insert(task_types_.begin(), 1, 0);
-
-  for (int i = 0; i < n_joints; ++i) J_(0, i) = 0;
-
+  e_dot_.resize(1);
+  J_dot_.resize(1, n_joints);
+  
+  //Jacobian is constant 
+  J_.setZero();
   J_(0, joint_q_nr_) = -1;
 
+  //Jacobian derivative is zero
+  J_dot_.setZero();
+
+  //Initialize e, e_dot
+  e_(0) = desired_configuration_ - q(joint_q_nr_);
+  e_dot_(0)= -q_dot(joint_q_nr_);
+    
   return 0;
 }
 
 int TDefJntConfig::update(RobotStatePtr robot_state) {
   const KDL::JntArray& q = robot_state->kdl_jnt_array_vel_.q;
+  const KDL::JntArray& q_dot = robot_state->kdl_jnt_array_vel_.qdot;
+  
   e_(0) = desired_configuration_ - q(joint_q_nr_);
+  e_dot_(0)= -q_dot(joint_q_nr_);
+  
   return 0;
 }
 
