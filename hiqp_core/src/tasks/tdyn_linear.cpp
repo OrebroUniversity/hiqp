@@ -21,74 +21,79 @@
 #include <hiqp/tasks/tdyn_linear.h>
 
 namespace hiqp {
-namespace tasks {
+  namespace tasks {
 
 
-int TDynLinear::init(const std::vector<std::string>& parameters, RobotStatePtr robot_state, const Eigen::VectorXd& e_initial, const Eigen::VectorXd& e_dot_initial, const Eigen::VectorXd& e_final, const Eigen::VectorXd& e_dot_final) {
-  int dim = e_initial.rows();
-  int size = parameters.size();
-  assert((e_dot_initial.rows()==dim) && (e_final.rows() == dim) && (e_dot_final.rows() == dim) );
+    int TDynLinear::init(const std::vector<std::string>& parameters, RobotStatePtr robot_state, const Eigen::VectorXd& e_initial, const Eigen::VectorXd& e_dot_initial, const Eigen::VectorXd& e_final, const Eigen::VectorXd& e_dot_final) {
+      int dim = e_initial.rows();
+      int size = parameters.size();
+      assert((e_dot_initial.rows()==dim) && (e_final.rows() == dim) && (e_dot_final.rows() == dim) );
   
-  if (size != 2*dim*dim+1) {
-      printHiqpWarning("TDynLinear for a " + std::to_string(dim) + "-dimensional task requires " + std::to_string(2*dim*dim+1) +" parameters, got " + std::to_string(size) + "! Initialization failed!");
-    return -1;
-  }
+      if ((size != 2*dim*dim+1) && (size != 3)) {
+	printHiqpWarning("TDynLinear for a " + std::to_string(dim) + "-dimensional task requires either " + std::to_string(2*dim*dim+1) +" or 3 parameters, got " + std::to_string(size) + "! Initialization failed!");
+	return -1;
+      }
   
-  //read the gain matrices
-  double* Kp_data = new double[dim*dim];
-  double* Kd_data = new double[dim*dim];
-  for (int i=0; i<dim*dim; i++){
-    Kp_data[i]=std::stod(parameters.at(i+1));
-    Kd_data[i]=stod(parameters.at(dim*dim+1+i));
-  }
-  Kp_ = (Eigen::Map<Eigen::MatrixXd>(Kp_data,dim,dim)).transpose();
-  Kd_ = (Eigen::Map<Eigen::MatrixXd>(Kd_data,dim,dim)).transpose();
-  delete Kp_data;
-  delete Kd_data;
-
-  //assemble the corresponding dynamics matrix [0 I, -Kp_ -Kd_]
-  Eigen::MatrixXd A(2*dim,2*dim);
-  A.setZero();
-  A.topRightCorner(dim,dim)=Eigen::MatrixXd::Identity(dim,dim);
-  A.bottomLeftCorner(dim,dim)= -Kp_;
-  A.bottomRightCorner(dim,dim)= -Kd_;
+      //read the gain matrices - if only one P and D parameter is given, the Kp/Kd matrices are assumed to be diagonal with common gain
+      if(size==3){
+	Kp_=Eigen::MatrixXd::Identity(dim,dim)*std::stod(parameters.at(1));
+	Kd_=Eigen::MatrixXd::Identity(dim,dim)*std::stod(parameters.at(2));
+      }
+      else{ //read the full matrices
+	double* Kp_data = new double[dim*dim];
+	double* Kd_data = new double[dim*dim];
+	for (int i=0; i<dim*dim; i++){
+	  Kp_data[i]=std::stod(parameters.at(i+1));
+	  Kd_data[i]=stod(parameters.at(dim*dim+1+i));
+	}
+	Kp_ = (Eigen::Map<Eigen::MatrixXd>(Kp_data,dim,dim)).transpose();
+	Kd_ = (Eigen::Map<Eigen::MatrixXd>(Kd_data,dim,dim)).transpose();
+	delete Kp_data;
+	delete Kd_data;
+      }
+      //assemble the corresponding dynamics matrix [0 I, -Kp_ -Kd_]
+      Eigen::MatrixXd A(2*dim,2*dim);
+      A.setZero();
+      A.topRightCorner(dim,dim)=Eigen::MatrixXd::Identity(dim,dim);
+      A.bottomLeftCorner(dim,dim)= -Kp_;
+      A.bottomRightCorner(dim,dim)= -Kd_;
   
-  //assert that the controller dynamics are stable
-  Eigen::EigenSolver<Eigen::MatrixXd> es(A, false);
-  if (es.eigenvalues().real().maxCoeff() >= 0.0) {
-      printHiqpWarning("Unstable controller dynamics! Initialization failed!");
-    return -1;
-  }
+      //assert that the controller dynamics are stable
+      Eigen::EigenSolver<Eigen::MatrixXd> es(A, false);
+      if (es.eigenvalues().real().maxCoeff() >= 0.0) {
+	printHiqpWarning("Unstable controller dynamics! Initialization failed!");
+	return -1;
+      }
 
-  //initialize the controller
-   e_ddot_star_= -Kp_*e_initial-Kd_*e_dot_initial;
-  performance_measures_.resize(dim);
+      //initialize the controller
+      e_ddot_star_= -Kp_*e_initial-Kd_*e_dot_initial;
+      performance_measures_.resize(dim);
 
-  // //=============Debug======================
-  // std::cerr<<"e_initial: "<<e_initial.transpose()<<std::endl;
-  // std::cerr<<"e_dot_initial: "<<e_dot_initial.transpose()<<std::endl;
-  // std::cerr<<"e_final: "<<e_final.transpose()<<std::endl;
-  // std::cerr<<"e_dot_final: "<<e_dot_final.transpose()<<std::endl;
-  // std::cerr<<"dim: "<<dim<<std::endl;
-  // std::cerr<<"size: "<<size<<std::endl;
-  // std::cerr<<"Kp: "<<std::endl<<Kp_<<std::endl;
-  // std::cerr<<"Kd: "<<std::endl<<Kd_<<std::endl;
-  // std::cerr<<"A: "<<std::endl<<A<<std::endl;
-  // std::cerr<<"Eigenvalues: "<<es.eigenvalues().transpose()<<std::endl;
-  // std::cerr<<"e_ddot_star: "<<e_ddot_star_.transpose()<<std::endl;
-  // //===========End Debug====================
+      // //=============Debug======================
+      // std::cerr<<"e_initial: "<<e_initial.transpose()<<std::endl;
+      // std::cerr<<"e_dot_initial: "<<e_dot_initial.transpose()<<std::endl;
+      // std::cerr<<"e_final: "<<e_final.transpose()<<std::endl;
+      // std::cerr<<"e_dot_final: "<<e_dot_final.transpose()<<std::endl;
+      // std::cerr<<"dim: "<<dim<<std::endl;
+      // std::cerr<<"size: "<<size<<std::endl;
+      // std::cerr<<"Kp: "<<std::endl<<Kp_<<std::endl;
+      // std::cerr<<"Kd: "<<std::endl<<Kd_<<std::endl;
+      // std::cerr<<"A: "<<std::endl<<A<<std::endl;
+      // std::cerr<<"Eigenvalues: "<<es.eigenvalues().transpose()<<std::endl;
+      // std::cerr<<"e_ddot_star: "<<e_ddot_star_.transpose()<<std::endl;
+      // // //===========End Debug====================
   
-  return 0;
-}
+      return 0;
+    }
 
-int TDynLinear::update(RobotStatePtr robot_state, const Eigen::VectorXd& e, const Eigen::VectorXd& e_dot, const Eigen::MatrixXd& J, const Eigen::MatrixXd& J_dot) {
-  //PD control law
-  e_ddot_star_= -Kp_*e-Kd_*e_dot;
-  return 0;
-}
+    int TDynLinear::update(RobotStatePtr robot_state, const Eigen::VectorXd& e, const Eigen::VectorXd& e_dot, const Eigen::MatrixXd& J, const Eigen::MatrixXd& J_dot) {
+      //PD control law
+      e_ddot_star_= -Kp_*e-Kd_*e_dot;
+      return 0;
+    }
 
-int TDynLinear::monitor() { return 0; }
+    int TDynLinear::monitor() { return 0; }
 
-}  // namespace tasks
+  }  // namespace tasks
 
 }  // namespace hiqp

@@ -17,7 +17,7 @@
 
 #include <hiqp/task.h>
 
-// #include <hiqp/tasks/tdef_full_pose.h>
+#include <hiqp/tasks/tdef_full_pose.h>
 // #include <hiqp/tasks/tdef_geometric_alignment.h>
 // #include <hiqp/tasks/tdef_geometric_projection.h>
 #include <hiqp/tasks/tdef_jnt_config.h>
@@ -39,7 +39,7 @@
 
 namespace hiqp {
 
-// using tasks::TDefFullPose;
+   using tasks::TDefFullPose;
 // using tasks::TDefGeometricAlignment;
 // using tasks::TDefGeometricProjection;
    using tasks::TDefJntConfig;
@@ -130,10 +130,10 @@ int Task::constructDefinition(const std::vector<std::string>& def_params) {
 
   if (type.compare("TDefJntConfig") == 0) {
     def_ = std::make_shared<TDefJntConfig>(geom_prim_map_, visualizer_);
+  } else if (type.compare("TDefFullPose") == 0) {
+    def_ = std::make_shared<TDefFullPose>(geom_prim_map_, visualizer_);
   }
-  //  else if (type.compare("TDefFullPose") == 0) {
-  //   def_ = std::make_shared<TDefFullPose>(geom_prim_map_, visualizer_);
-  // } else if (type.compare("TDefJntLimits") == 0) {
+  // else if (type.compare("TDefJntLimits") == 0) {
   //   def_ = std::make_shared<TDefJntLimits>(geom_prim_map_, visualizer_);
   // } else if (type.compare("TDefGeomProj") == 0) {
   //   std::string prim_type1 = def_params.at(1);

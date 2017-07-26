@@ -21,62 +21,79 @@
 #include <iostream>
 
 namespace hiqp {
-namespace tasks {
+  namespace tasks {
 
-int TDefFullPose::init(const std::vector<std::string>& parameters,
-                       RobotStatePtr robot_state) {
-  int size = parameters.size();
-  unsigned int n_controls = robot_state->getNumControls();
-  unsigned int n_joints = robot_state->getNumJoints();
-  if (size != 1 && size != n_controls + 1) {
-    printHiqpWarning("TDefFullPose requires 1 or " +
-                     std::to_string(n_controls + 1) + " parameters, got " +
-                     std::to_string(size) + "! Initialization failed!");
-    return -1;
-  }
+    int TDefFullPose::init(const std::vector<std::string>& parameters,
+			   RobotStatePtr robot_state) {
+      int size = parameters.size();
+      unsigned int n_controls = robot_state->getNumControls();
+      unsigned int n_joints = robot_state->getNumJoints();
+      if (size != 1 && size != n_controls + 1) {
+	printHiqpWarning("TDefFullPose requires 1 or " +
+			 std::to_string(n_controls + 1) + " parameters, got " +
+			 std::to_string(size) + "! Initialization failed!");
+	return -1;
+      }
 
-  if (size == 1) {
-    desired_configuration_ = std::vector<double>(n_controls, 0);
-  } else {
-    desired_configuration_.resize(0);
-    for (int i = 1; i < n_controls + 1; ++i) {
-      desired_configuration_.push_back(std::stod(parameters.at(i)));
+      if (size == 1) {
+	desired_configuration_ = std::vector<double>(n_controls, 0);
+      } else {
+	desired_configuration_.resize(0);
+	for (int i = 1; i < n_controls + 1; ++i) {
+	  desired_configuration_.push_back(std::stod(parameters.at(i)));
+	}
+      }
+
+      e_ = Eigen::VectorXd::Zero(n_controls);
+      e_dot_ = Eigen::VectorXd::Zero(n_controls);
+      J_ = Eigen::MatrixXd::Zero(n_controls, n_joints);
+      J_dot_ = Eigen::MatrixXd::Zero(n_controls, n_joints);
+      performance_measures_.resize(0);
+      task_types_.insert(task_types_.begin(), n_controls, 0); //equality task
+  
+      // The jacobian is constant with zero-columns for non-writable joints
+      // -1  0  0  0  0
+      //  0 -1  0  0  0
+      //  0  0  0 -1  0
+      for (int c = 0, r = 0; c < n_joints; ++c) {
+	if (robot_state->isQNrWritable(c)) {
+	  J_(r, c) = -1;
+	  r++;
+	}
+      }
+
+      //Initialize e, e_dot
+      const KDL::JntArray& q = robot_state->kdl_jnt_array_vel_.q;
+      const KDL::JntArray& q_dot = robot_state->kdl_jnt_array_vel_.qdot;
+      int j=0;
+      for (int i=0; i<n_controls; i++){
+	if (robot_state->isQNrWritable(i)) {
+	  e_(j)=desired_configuration_.at(j)-q(i);
+	  e_dot_(j)=-q_dot(i);
+	  j++;
+	}
+      }
+    
+
+      return 0;
     }
-  }
 
-  e_ = Eigen::VectorXd::Zero(n_controls);
-  J_ = Eigen::MatrixXd::Zero(n_controls, n_joints);
-  performance_measures_.resize(0);
-  task_types_.insert(task_types_.begin(), n_controls, 0);
-
-  // The jacobian has zero-columns for non-writable joints
-  // -1  0  0  0  0
-  //  0 -1  0  0  0
-  //  0  0  0 -1  0
-  for (int c = 0, r = 0; c < n_joints; ++c) {
-    if (robot_state->isQNrWritable(c)) {
-      J_(r, c) = -1;
-      r++;
+    int TDefFullPose::update(RobotStatePtr robot_state) {
+      const KDL::JntArray& q = robot_state->kdl_jnt_array_vel_.q;
+      const KDL::JntArray& q_dot = robot_state->kdl_jnt_array_vel_.qdot;
+      int j = 0;
+      for (int i = 0; i < q.rows(); ++i) {
+	if (robot_state->isQNrWritable(i)) {
+	  e_(j) = desired_configuration_.at(j) - q(i);
+	  e_dot_(j)=-q_dot(i);
+	  j++;
+	}
+      }
+      return 0;
     }
-  }
 
-  return 0;
-}
+    int TDefFullPose::monitor() { return 0; }
 
-int TDefFullPose::update(RobotStatePtr robot_state) {
-  const KDL::JntArray& q = robot_state->kdl_jnt_array_vel_.q;
-  int j = 0;
-  for (int i = 0; i < q.rows(); ++i) {
-    if (robot_state->isQNrWritable(i)) {
-      e_(j) = desired_configuration_.at(j) - q(i);
-      j++;
-    }
-  }
-  return 0;
-}
-
-int TDefFullPose::monitor() { return 0; }
-
-}  // namespace tasks
+  }  // namespace tasks
 
 }  // namespace hiqp
