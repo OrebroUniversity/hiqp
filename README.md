@@ -29,11 +29,15 @@ A publication presenting HiQP is in preparation. In the meantime, please refer t
 
 * Rename TaskDynamics to TaskControllers to better reflect their purpose
    -> rename TDynLinear to PDController
-   -> rename Task::getDynamics() to Task::getControls()
-* Rework Task::checkConsistency(RobotStatePtr robot_state)
+   -> rename Task::getDynamics() to Task::getControls() or Task::getTaskSpaceControls()
+   -> rename Task::getValue() to Task::getError()
+   -> rename Task::getValueDerivative() to Task::getErrorDerivative()
+* Renamed TaskManager::getVelocityControls(...) to TaskManager::getAccelerationControls(...) 
+* Reworked the TaskMeasure class and corresponding message: contains now the task function value (de), task function derivative (dde) and the desired task acceleration dde as computed by the task space control law (TaskDynamics)
+* Need to rework Task::checkConsistency(RobotStatePtr robot_state)
 * To control in acceleration, the TaskDynamics have to be a function of e & de
 * TaskDynamics::update(...) should not need the Jacobian/Jacobian derivative as parameter, as the dynamics (controllers) live in task space
 * What's tasks::TDefMetaTask?
 * Renamed TaskDefinition::getInitialValue() to TaskDefinition::getInitialTaskValue()
 * Both TaskDefinition and TaskDynamics have a member variable performance_measures_ which seems nowhere to be used
-
+* Should rename e_ddot to dde and e_dot to de everywhere for consistency

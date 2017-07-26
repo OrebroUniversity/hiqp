@@ -74,10 +74,18 @@ class Task {
     if (dyn_) dyn_->monitor();
   }
 
-  /*! \brief Returns the task function performance values as a vector. */
+  /*! \brief Returns the task function values as a vector. */
   Eigen::VectorXd getValue() const {
     if (def_)
       return def_->e_;
+    else
+      return Eigen::VectorXd();
+  }
+
+    /*! \brief Returns the task function value derivatives as a vector. */
+  Eigen::VectorXd getValueDerivative() const {
+    if (def_)
+      return def_->e_dot_;
     else
       return Eigen::VectorXd();
   }

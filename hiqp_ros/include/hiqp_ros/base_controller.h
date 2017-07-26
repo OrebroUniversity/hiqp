@@ -78,7 +78,9 @@ class BaseController
   inline void setDesiredSamplingTime(double desired_sampling_time) {
     desired_sampling_time_ = desired_sampling_time;
   }
-
+  
+  ros::Duration period_;
+  
  private:
   BaseController(const BaseController& other) = delete;
   BaseController(BaseController&& other) = delete;
@@ -105,7 +107,6 @@ class BaseController
   HardwareInterfaceT* hardware_interface_;
   JointHandleMap joint_handles_map_;
   std::mutex handles_mutex_;
-
   unsigned int n_joints_;
 };
 
@@ -141,6 +142,7 @@ void BaseController<HardwareInterfaceT>::update(const ros::Time& time,
   // HiQPTimePoint now(time.sec, time.nsec);
   // double elapsed_time = (now-last_sampling_time_point_).toSec();
   // if (elapsed_time*1000 >= desired_sampling_time_) {
+  period_=period;
   sampleJointValues();
   computeControls(u_);
   setControls();

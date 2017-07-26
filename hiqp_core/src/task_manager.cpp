@@ -50,7 +50,7 @@ TaskManager::~TaskManager() noexcept {}
 
 void TaskManager::init(unsigned int n_controls) { n_controls_ = n_controls; }
 
-bool TaskManager::getVelocityControls(RobotStatePtr robot_state,
+bool TaskManager::getAccelerationControls(RobotStatePtr robot_state,
                                       std::vector<double>& controls) {
   if (task_map_.size() < 1) {
     for (int i = 0; i < controls.size(); ++i) controls.at(i) = 0;
@@ -64,9 +64,11 @@ bool TaskManager::getVelocityControls(RobotStatePtr robot_state,
   for (auto&& kv : task_map_) {
     if (kv.second->getActive()) {
       if (kv.second->update(robot_state) == 0) {
-        solver_->appendStage(kv.second->getPriority(), kv.second->getDynamics(),
+        solver_->appendStage(kv.second->getPriority(),
+			     kv.second->getDynamics(),
                              kv.second->getJacobian(),
 			     kv.second->getJacobianDerivative(),
+			     robot_state->kdl_jnt_array_vel_.qdot,
                              kv.second->getTaskTypes());
       }
     }
@@ -93,8 +95,11 @@ void TaskManager::getTaskMeasures(std::vector<TaskMeasure>& data) {
     if (kv.second->getMonitored()) {
       kv.second->monitor();
       data.push_back(TaskMeasure(
-          kv.second->getTaskName(), kv.second->getTaskTypes()[0],
-          kv.second->getValue(), kv.second->getDynamics(),
+          kv.second->getTaskName(),
+	  kv.second->getTaskTypes()[0],
+          kv.second->getValue(),
+          kv.second->getValueDerivative(),
+	  kv.second->getDynamics(),
           kv.second->getPerformanceMeasures()));
     }
   }

@@ -33,18 +33,19 @@
 
 namespace hiqp {
 
-/*! \brief A structure used to get data out of tasks that is to be monitored.
+/*! \brief A structure used to retrieve monitoring data from tasks.
  *  \author Marcus A Johansson */
 class TaskMeasure {
  public:
   TaskMeasure(const std::string& task_name, const int task_type, const Eigen::VectorXd& e,
-              const Eigen::VectorXd& de, const Eigen::VectorXd& pm)
-    : task_name_(task_name), task_type_(task_type), e_(e), de_(de), pm_(pm) {}
+              const Eigen::VectorXd& de, const Eigen::VectorXd& dde_star, const Eigen::VectorXd& pm)
+    : task_name_(task_name), task_type_(task_type), e_(e), de_(de), dde_star_(dde_star), pm_(pm) {}
 
   std::string task_name_;
   int task_type_;
   Eigen::VectorXd e_;
   Eigen::VectorXd de_;
+  Eigen::VectorXd dde_star_;
   Eigen::VectorXd pm_;
 };
 
@@ -58,7 +59,7 @@ class TaskManager {
   void init(unsigned int n_controls);
 
   /*! \brief Generates controls from a particular robot state. */
-  bool getVelocityControls(RobotStatePtr robot_state,
+  bool getAccelerationControls(RobotStatePtr robot_state,
                            std::vector<double>& controls);
 
   /*! \brief Retrieves the performance measures for every active task along

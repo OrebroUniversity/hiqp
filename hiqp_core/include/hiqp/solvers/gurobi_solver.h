@@ -28,10 +28,6 @@ class GurobiSolver : public HiQPSolver {
   GurobiSolver();
   ~GurobiSolver() noexcept {}
 
-  /*! \brief Builds and solves the QP:
-   *         min 0.5x^2 + 0.5w^2
-   *         where J*dq + w = de*
-   */
   bool solve(std::vector<double>& solution);
 
  private:
@@ -39,19 +35,19 @@ class GurobiSolver : public HiQPSolver {
   GurobiSolver(GurobiSolver&& other) = delete;
   GurobiSolver& operator=(const GurobiSolver& other) = delete;
   GurobiSolver& operator=(GurobiSolver&& other) noexcept = delete;
-
+  
+/*! \brief maintains the accumulated constraints for solving the QP in the p-th stage. After appending constraints, the entries of the slack variables w_ correspond to the previously found solutions and zeros for the current (to be solved) stage */
   struct HQPConstraints {
     HQPConstraints() : n_acc_stage_dims_(0) {}
 
     void reset(unsigned int n_solution_dims);
     void appendConstraints(const HiQPStage& current_stage);
 
-    unsigned int n_acc_stage_dims_;  // number of accumulated dimensions of all
-                                     // the previously solved stages
-    unsigned int n_stage_dims_;  // number of dimensions of the current stage
+    unsigned int n_acc_stage_dims_;  ///< number of accumulated dimensions of all the previously solved stages
+    unsigned int n_stage_dims_;  ///< number of dimensions of the current stage
     Eigen::VectorXd w_;
-    Eigen::VectorXd de_;
-    Eigen::MatrixXd J_;
+    Eigen::VectorXd b_;
+    Eigen::MatrixXd B_;
     std::vector<char> constraint_signs_;
   };
 
@@ -69,9 +65,9 @@ class GurobiSolver : public HiQPSolver {
     HQPConstraints& hqp_constraints_;
     unsigned int solution_dims_;
 
-    GRBVar* dq_;     // objective variables for joint velocities
-    double* lb_dq_;  // lower bounds for dq
-    double* ub_dq_;  // upper bounds for dq
+    GRBVar* ddq_;     // objective variables for joint accelerations
+    double* lb_ddq_;  // lower bounds for ddq
+    double* ub_ddq_;  // upper bounds for ddq
 
     GRBVar* w_;     // slack variables
     double* lb_w_;  // lower bounds for w
@@ -79,7 +75,7 @@ class GurobiSolver : public HiQPSolver {
 
     double* rhsides_;      // Right-hand-side constants
     GRBLinExpr* lhsides_;  // Left-hand-side expressions
-    double* coeff_dq_;     // Coeffs of dq in LHS expression
+    double* coeff_ddq_;     // Coeffs of dq in LHS expression
     double* coeff_w_;      // Coeffs of w in LHS expression
 
     GRBConstr* constraints_;  //

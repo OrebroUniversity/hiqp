@@ -99,27 +99,27 @@ GurobiSolver::QPProblem::QPProblem(const GRBEnv& env,
     : model_(env),
       hqp_constraints_(hqp_constraints),
       solution_dims_(solution_dims),
-      lb_dq_(nullptr),
-      ub_dq_(nullptr),
-      dq_(nullptr),
+      lb_ddq_(nullptr),
+      ub_ddq_(nullptr),
+      ddq_(nullptr),
       lb_w_(nullptr),
       ub_w_(nullptr),
       w_(nullptr),
       rhsides_(nullptr),
       lhsides_(nullptr),
-      coeff_dq_(nullptr),
+      coeff_ddq_(nullptr),
       coeff_w_(nullptr),
       constraints_(nullptr) {}
 
 GurobiSolver::QPProblem::~QPProblem() {
-  delete[] lb_dq_;
-  delete[] ub_dq_;
-  delete[] dq_;
+  delete[] lb_ddq_;
+  delete[] ub_ddq_;
+  delete[] ddq_;
   delete[] lb_w_;
   delete[] ub_w_;
   delete[] w_;
   delete[] rhsides_;
-  delete[] coeff_dq_;
+  delete[] coeff_ddq_;
   delete[] coeff_w_;
   delete[] lhsides_;
   delete[] constraints_;
@@ -130,42 +130,44 @@ void GurobiSolver::QPProblem::setup() {
   unsigned int acc_stage_dims = hqp_constraints_.n_acc_stage_dims_;
   unsigned int total_stage_dims = stage_dims + acc_stage_dims;
 
-  // Allocate and set lower and upper bounds for joint velocities and slack
+  // Allocate and set lower and upper bounds for joint accelerations and slack
   // variables
-  lb_dq_ = new double[solution_dims_];
-  ub_dq_ = new double[solution_dims_];
-  std::fill_n(lb_dq_, solution_dims_, -GRB_INFINITY);
-  std::fill_n(ub_dq_, solution_dims_, GRB_INFINITY);
+  lb_ddq_ = new double[solution_dims_];
+  ub_ddq_ = new double[solution_dims_];
+  std::fill_n(lb_ddq_, solution_dims_, -GRB_INFINITY);
+  std::fill_n(ub_ddq_, solution_dims_, GRB_INFINITY);
 
   lb_w_ = new double[stage_dims];
   ub_w_ = new double[stage_dims];
   std::fill_n(lb_w_, stage_dims, -GRB_INFINITY);
   std::fill_n(ub_w_, stage_dims, GRB_INFINITY);
 
-  dq_ = model_.addVars(lb_dq_, ub_dq_, NULL, NULL, NULL, solution_dims_);
+  ddq_ = model_.addVars(lb_ddq_, ub_ddq_, NULL, NULL, NULL, solution_dims_);
   w_ = model_.addVars(lb_w_, ub_w_, NULL, NULL, NULL, stage_dims);
   model_.update();
 
   // Allocate and set right-hand-side constants
   rhsides_ = new double[total_stage_dims];
   Eigen::Map<Eigen::VectorXd>(rhsides_, total_stage_dims) =
-      hqp_constraints_.de_ + hqp_constraints_.w_;
+      hqp_constraints_.b_ + hqp_constraints_.w_;
 
   // Allocate and set left-hand-side expressions
   lhsides_ = new GRBLinExpr[total_stage_dims];
-  coeff_dq_ = new double[solution_dims_];
+  coeff_ddq_ = new double[solution_dims_];
   coeff_w_ = new double[stage_dims];
 
+  // lhs corresponding to the previously solved stages (w/o slacks in the decision variables)
   for (unsigned int i = 0; i < acc_stage_dims; ++i) {
-    Eigen::Map<Eigen::VectorXd>(coeff_dq_, solution_dims_) =
-        hqp_constraints_.J_.row(i);
-    lhsides_[i].addTerms(coeff_dq_, dq_, solution_dims_);
+    Eigen::Map<Eigen::VectorXd>(coeff_ddq_, solution_dims_) =
+        hqp_constraints_.B_.row(i);
+    lhsides_[i].addTerms(coeff_ddq_, ddq_, solution_dims_);
   }
 
+  // lhs for the current stage (with slacks in the decision variables)
   for (unsigned int i = 0; i < stage_dims; ++i) {
-    Eigen::Map<Eigen::VectorXd>(coeff_dq_, solution_dims_) =
-        hqp_constraints_.J_.row(acc_stage_dims + i);
-    lhsides_[acc_stage_dims + i].addTerms(coeff_dq_, dq_, solution_dims_);
+    Eigen::Map<Eigen::VectorXd>(coeff_ddq_, solution_dims_) =
+        hqp_constraints_.B_.row(acc_stage_dims + i);
+    lhsides_[acc_stage_dims + i].addTerms(coeff_ddq_, ddq_, solution_dims_);
     if (acc_stage_dims == 0)
       // Force the slack variables to be zero in the highest stage
       lhsides_[acc_stage_dims + i] -= w_[i] * 0.0;
@@ -180,9 +182,9 @@ void GurobiSolver::QPProblem::setup() {
 
   // Add objective function
   GRBQuadExpr obj;
-  std::fill_n(coeff_dq_, solution_dims_, TIKHONOV_FACTOR);
+  std::fill_n(coeff_ddq_, solution_dims_, TIKHONOV_FACTOR);
   std::fill_n(coeff_w_, stage_dims, 1.0);
-  obj.addTerms(coeff_dq_, dq_, dq_, solution_dims_);
+  obj.addTerms(coeff_ddq_, ddq_, ddq_, solution_dims_);
   obj.addTerms(coeff_w_, w_, w_, stage_dims);
   model_.setObjective(obj, GRB_MINIMIZE);
   model_.update();
@@ -212,7 +214,7 @@ void GurobiSolver::QPProblem::solve() {
     else
       ROS_ERROR_THROTTLE(
           10,
-          "In HQPSolver::solve(...): No optimal solution found for stage with "
+          "In GurobiSolver::QPProblem::solve(...): No optimal solution found for stage with "
           "priority %d. Status is %d.",
           0, status);
 
@@ -226,7 +228,7 @@ void GurobiSolver::QPProblem::getSolution(std::vector<double>& solution) {
   unsigned int acc_stage_dims = hqp_constraints_.n_acc_stage_dims_;
 
   for (unsigned int i = 0; i < solution_dims_; ++i)
-    solution.at(i) = dq_[i].get(GRB_DoubleAttr_X);
+    solution.at(i) = ddq_[i].get(GRB_DoubleAttr_X);
 
   for (unsigned int i = 0; i < stage_dims; ++i)
     hqp_constraints_.w_(acc_stage_dims + i) = w_[i].get(GRB_DoubleAttr_X);
@@ -236,8 +238,8 @@ void GurobiSolver::HQPConstraints::reset(unsigned int n_solution_dims) {
   n_acc_stage_dims_ = 0;
   n_stage_dims_ = 0;
   w_.resize(0);
-  de_.resize(0);
-  J_.resize(0, n_solution_dims);
+  b_.resize(0);
+  B_.resize(0, n_solution_dims);
   constraint_signs_.clear();
 }
 
@@ -247,6 +249,7 @@ void GurobiSolver::HQPConstraints::appendConstraints(
   n_acc_stage_dims_ += n_stage_dims_;
   n_stage_dims_ = current_stage.nRows;
 
+  //append the constraint signs 
   for (unsigned int i = 0; i < n_stage_dims_; ++i) {
     if (current_stage.constraint_signs_.at(i) < 0)
       constraint_signs_.push_back(GRB_LESS_EQUAL);
@@ -257,10 +260,10 @@ void GurobiSolver::HQPConstraints::appendConstraints(
     }
   }
 
-  de_.conservativeResize(n_acc_stage_dims_ + n_stage_dims_);
-  de_.tail(n_stage_dims_) = current_stage.e_ddot_star_;
-  J_.conservativeResize(n_acc_stage_dims_ + n_stage_dims_, Eigen::NoChange);
-  J_.bottomRows(n_stage_dims_) = current_stage.J_;
+  b_.conservativeResize(n_acc_stage_dims_ + n_stage_dims_);
+  b_.tail(n_stage_dims_) = current_stage.b_;
+  B_.conservativeResize(n_acc_stage_dims_ + n_stage_dims_, Eigen::NoChange);
+  B_.bottomRows(n_stage_dims_) = current_stage.B_;
   w_.conservativeResize(n_acc_stage_dims_ + n_stage_dims_);
   w_.tail(n_stage_dims_).setZero();
 }

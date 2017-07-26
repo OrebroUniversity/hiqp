@@ -75,25 +75,30 @@ void HiQPJointVelocityController::initialize() {
   loadGeometricPrimitivesFromParamServer();
 
   loadTasksFromParamServer();
+
+  u_vel_ = Eigen::VectorXd::Zero(getNJoints());
 }
 
 void HiQPJointVelocityController::computeControls(Eigen::VectorXd& u) {
   if (!is_active_) return;
 
-  std::vector<double> outcon(u.size());
+   std::vector<double> u_acc(u.size());
 
-  // Time the velocity control computation
-
+  // Time the acceleration control computation
   auto t_begin = std::chrono::high_resolution_clock::now();
-  task_manager_.getVelocityControls(this->getRobotState(), outcon);
+  task_manager_.getAccelerationControls(this->getRobotState(), u_acc);
   auto t_end = std::chrono::high_resolution_clock::now();
   std::chrono::duration<double, std::milli> opt_time = t_end - t_begin;
 
   int i = 0;
-  for (auto&& oc : outcon) {
+  for (auto&& oc : u_acc) {
     u(i++) = oc;
   }
 
+  //integrate the acceleration controls once to obtain corresponding velocity controls
+  u=u_vel_+u*period_.toSec();
+  u_vel_=u; //store the computed velocity controls for the next integration step
+    
   renderPrimitives();
 
   monitorTasks(static_cast<double>(opt_time.count()));
@@ -134,7 +139,7 @@ void HiQPJointVelocityController::renderPrimitives() {
   }
 }
 
-void HiQPJointVelocityController::monitorTasks(double vel_ctl_comp_time) {
+void HiQPJointVelocityController::monitorTasks(double acc_ctl_comp_time) {
   if (monitoring_active_) {
     ros::Time now = ros::Time::now();
     ros::Duration d = now - last_monitoring_update_;
@@ -155,12 +160,15 @@ void HiQPJointVelocityController::monitorTasks(double vel_ctl_comp_time) {
         msg.de = std::vector<double>(
             measure.de_.data(),
             measure.de_.data() + measure.de_.rows() * measure.de_.cols());
+	msg.dde_star = std::vector<double>(
+            measure.dde_star_.data(),
+            measure.dde_star_.data() + measure.dde_star_.rows() * measure.dde_star_.cols());
         msg.pm = std::vector<double>(
             measure.pm_.data(),
             measure.pm_.data() + measure.pm_.rows() * measure.pm_.cols());
         msgs.task_measures.push_back(msg);
       }
-      msgs.vel_ctl_comp_time = vel_ctl_comp_time;
+      msgs.acc_ctl_comp_time = acc_ctl_comp_time;
       if (!msgs.task_measures.empty()) monitoring_pub_.publish(msgs);
     }
   }

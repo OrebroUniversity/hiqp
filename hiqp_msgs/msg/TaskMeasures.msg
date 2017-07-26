@@ -14,6 +14,6 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-time           stamp            # time stamp of this monitoring data set
-float64        vel_ctl_comp_time # time taken to compute velocity controls
-TaskMeasure[]  task_measures    # array of task measures
+time           stamp             # time stamp of this monitoring data set
+float64        acc_ctl_comp_time # time taken to compute acceleration controls
+TaskMeasure[]  task_measures     # array of task measures
