@@ -34,12 +34,9 @@ class TDynJntLimits : public TaskDynamics {
 
   ~TDynJntLimits() noexcept = default;
 
-  int init(const std::vector<std::string>& parameters,
-           RobotStatePtr robot_state, const Eigen::VectorXd& e_initial,
-           const Eigen::VectorXd& e_final);
+  int init(const std::vector<std::string>& parameters, RobotStatePtr robot_state, const Eigen::VectorXd& e_initial, const Eigen::VectorXd& e_dot_initial, const Eigen::VectorXd& e_final, const Eigen::VectorXd& e_dot_final);
 
-  int update(RobotStatePtr robot_state, const Eigen::VectorXd& e,
-             const Eigen::MatrixXd& J);
+  int update(RobotStatePtr robot_state, const Eigen::VectorXd& e, const Eigen::VectorXd& e_dot, const Eigen::MatrixXd& J, const Eigen::MatrixXd& J_dot);
 
   int monitor();
 
@@ -49,8 +46,7 @@ class TDynJntLimits : public TaskDynamics {
   TDynJntLimits& operator=(const TDynJntLimits& other) = delete;
   TDynJntLimits& operator=(TDynJntLimits&& other) noexcept = delete;
 
-  double dq_max_;
-  double gain_;
+  double Kp_ql_, Kd_ql_, Kp_dql_;
 };
 
 }  // namespace tasks

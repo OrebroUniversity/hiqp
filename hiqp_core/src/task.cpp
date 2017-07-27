@@ -21,14 +21,14 @@
 // #include <hiqp/tasks/tdef_geometric_alignment.h>
 // #include <hiqp/tasks/tdef_geometric_projection.h>
 #include <hiqp/tasks/tdef_jnt_config.h>
-// #include <hiqp/tasks/tdef_jnt_limits.h>
+#include <hiqp/tasks/tdef_jnt_limits.h>
 // #include <hiqp/tasks/tdef_meta_task.h>
 
-#include <hiqp/tasks/tdyn_cubic.h>
-#include <hiqp/tasks/tdyn_hyper_sin.h>
+// #include <hiqp/tasks/tdyn_cubic.h>
+// #include <hiqp/tasks/tdyn_hyper_sin.h>
 #include <hiqp/tasks/tdyn_jnt_limits.h>
 #include <hiqp/tasks/tdyn_linear.h>
-#include <hiqp/tasks/tdyn_minimal_jerk.h>
+// #include <hiqp/tasks/tdyn_minimal_jerk.h>
 
 #include <hiqp/utilities.h>
 
@@ -43,13 +43,13 @@ namespace hiqp {
 // using tasks::TDefGeometricAlignment;
 // using tasks::TDefGeometricProjection;
    using tasks::TDefJntConfig;
-// using tasks::TDefJntLimits;
+   using tasks::TDefJntLimits;
 // using tasks::TDefMetaTask;
 
 using tasks::TDynLinear;
 // using tasks::TDynCubic;
 // using tasks::TDynHyperSin;
-// using tasks::TDynJntLimits;
+using tasks::TDynJntLimits;
 // using tasks::TDynMinimalJerk;
 
 Task::Task(std::shared_ptr<GeometricPrimitiveMap> geom_prim_map,
@@ -133,9 +133,10 @@ int Task::constructDefinition(const std::vector<std::string>& def_params) {
   } else if (type.compare("TDefFullPose") == 0) {
     def_ = std::make_shared<TDefFullPose>(geom_prim_map_, visualizer_);
   }
-  // else if (type.compare("TDefJntLimits") == 0) {
-  //   def_ = std::make_shared<TDefJntLimits>(geom_prim_map_, visualizer_);
-  // } else if (type.compare("TDefGeomProj") == 0) {
+   else if (type.compare("TDefJntLimits") == 0) {
+     def_ = std::make_shared<TDefJntLimits>(geom_prim_map_, visualizer_);
+   }
+  //else if (type.compare("TDefGeomProj") == 0) {
   //   std::string prim_type1 = def_params.at(1);
   //   std::string prim_type2 = def_params.at(2);
   //   if (prim_type1.compare("point") == 0 && prim_type2.compare("point") == 0) {
@@ -249,10 +250,11 @@ int Task::constructDynamics(const std::vector<std::string>& dyn_params) {
 
   if (type.compare("TDynLinear") == 0) {
     dyn_ = std::make_shared<TDynLinear>(geom_prim_map_, visualizer_);
-  // } else if (type.compare("TDynCubic") == 0) {
+    }
+  else if (type.compare("TDynJntLimits") == 0) {
+     dyn_ = std::make_shared<TDynJntLimits>(geom_prim_map_, visualizer_);
+  //else if (type.compare("TDynCubic") == 0) {
   //   dyn_ = std::make_shared<TDynCubic>(geom_prim_map_, visualizer_);
-  // } else if (type.compare("TDynJntLimits") == 0) {
-  //   dyn_ = std::make_shared<TDynJntLimits>(geom_prim_map_, visualizer_);
   // } else if (type.compare("TDynMinimalJerk") == 0) {
   //   dyn_ = std::make_shared<TDynMinimalJerk>(geom_prim_map_, visualizer_);
   // } else if (type.compare("TDynHyperSin") == 0) {

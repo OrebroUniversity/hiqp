@@ -51,8 +51,10 @@ class TDefJntLimits : public TaskDefinition {
 
   std::string link_frame_name_;
   std::size_t link_frame_q_nr_;
-  double jnt_upper_bound_;
-  double jnt_lower_bound_;
+  double q_lb_;
+  double q_ub_;
+  double dq_max_;
+  double inf_zone_;
 };
 
 }  // namespace tasks
