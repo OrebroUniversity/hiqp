@@ -65,8 +65,16 @@ void HiQPJointVelocityController::initialize() {
 
   if (loadAndSetupTaskMonitoring() != 0) return;
 
-  //TODO: there should be an option in the config file to enable/disable this feature
-  addAllTopicSubscriptions();
+  bool tf_primitives = false;
+  if (!this->getControllerNodeHandle().getParam("load_primitives_from_tf",
+                                                tf_primitives)) {
+    ROS_WARN(
+        "Couldn't find parameter 'load_primitives_from_tf' on parameter "
+        "server, defaulting to no tf primitive tracking.");
+  }
+  if(tf_primitives) {
+      addTfTopicSubscriptions();
+  }
 
   service_handler_.advertiseAll();
 
@@ -366,7 +374,7 @@ void HiQPJointVelocityController::loadTasksFromParamServer() {
   }
 }
 
-void HiQPJointVelocityController::addAllTopicSubscriptions()
+void HiQPJointVelocityController::addTfTopicSubscriptions()
 {
    topic_subscriber_.init( &task_manager_, this->getRobotState() );
 
