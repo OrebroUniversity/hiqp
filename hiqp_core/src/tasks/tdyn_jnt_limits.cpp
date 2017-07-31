@@ -44,17 +44,17 @@ int TDynJntLimits::init(const std::vector<std::string>& parameters, RobotStatePt
 
   performance_measures_.resize(0);
       // //=============Debug======================
-      std::cerr<<"e_initial: "<<e_initial.transpose()<<std::endl;
-      std::cerr<<"e_dot_initial: "<<e_dot_initial.transpose()<<std::endl;
-      std::cerr<<"e_final: "<<e_final.transpose()<<std::endl;
-      std::cerr<<"e_dot_final: "<<e_dot_final.transpose()<<std::endl;
-      std::cerr<<"size: "<<size<<std::endl;
-      std::cerr<<"Kp_ql: "<<std::endl<<Kp_ql_<<std::endl;
-      std::cerr<<"Kd_ql: "<<std::endl<<Kd_ql_<<std::endl;
-        std::cerr<<"Kp_dql: "<<std::endl<<Kp_dql_<<std::endl;
-      std::cerr<<"e_ddot_star: "<<e_ddot_star_.transpose()<<std::endl;
+      // std::cerr<<"e_initial: "<<e_initial.transpose()<<std::endl;
+      // std::cerr<<"e_dot_initial: "<<e_dot_initial.transpose()<<std::endl;
+      // std::cerr<<"e_final: "<<e_final.transpose()<<std::endl;
+      // std::cerr<<"e_dot_final: "<<e_dot_final.transpose()<<std::endl;
+      // std::cerr<<"size: "<<size<<std::endl;
+      // std::cerr<<"Kp_ql: "<<std::endl<<Kp_ql_<<std::endl;
+      // std::cerr<<"Kd_ql: "<<std::endl<<Kd_ql_<<std::endl;
+      //   std::cerr<<"Kp_dql: "<<std::endl<<Kp_dql_<<std::endl;
+      // std::cerr<<"e_ddot_star: "<<e_ddot_star_.transpose()<<std::endl;
       // //===========End Debug====================
-  
+
   return 0;
 }
 

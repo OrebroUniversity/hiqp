@@ -57,14 +57,6 @@ namespace hiqp {
       assert(q_ub_ > q_lb_);
       assert(dq_max_ > 0.0);
       assert((inf_zone_ > 0) && (inf_zone_ < (q_ub_ - q_lb_)));
-
-      //DEBUG===================================
-      std::cerr<<"q_lb: "<<q_lb_<<std::endl;
-      std::cerr<<"q_ub: "<<q_ub_<<std::endl;
-      std::cerr<<"dq_max: "<<dq_max_<<std::endl;
-      std::cerr<<"inf zone: "<<inf_zone_<<std::endl;
-      //DEBUG END===============================
-
       
       e_.resize(4);
       e_dot_.resize(4);
@@ -92,12 +84,12 @@ namespace hiqp {
       e_(1) = q_ub_ - q;
       e_dot_(0) = -q_dot;
       e_dot_(1) = -q_dot;
-      if(abs(e_(0)) > inf_zone_){
+      if(fabs(e_(0)) > inf_zone_){
 	e_(0)=0.0;
-	e_dot_(1)=0.0;
+	e_dot_(0)=0.0;
 	J_(0,link_frame_q_nr_)=0.0;
       }
-      if(abs(e_(1)) > inf_zone_){
+      if(fabs(e_(1)) > inf_zone_){
 	e_(1)=0.0;
 	e_dot_(1)=0.0;
         J_(1,link_frame_q_nr_)=0.0;
@@ -108,17 +100,29 @@ namespace hiqp {
       //the error derivatives for joint velocity limits are actually not defined as we are controlling in acceleration
       e_dot_(2) = 0.0;
       e_dot_(3) = 0.0;
-      
+
+      //DEBUG===================================
+      // std::cerr<<"q_lb_: "<<q_lb_<<std::endl;
+      // std::cerr<<"q_ub_: "<<q_ub_<<std::endl;
+      // std::cerr<<"dq_max_: "<<dq_max_<<std::endl;
+      // std::cerr<<"inf_zone_: "<<inf_zone_<<std::endl;
+      // std::cerr<<"q: "<<q<<std::endl;
+      // std::cerr<<"q_dot: "<<q_dot<<std::endl;
+      // std::cerr<<"e_: "<<e_.transpose()<<std::endl;
+      // std::cerr<<"e_dot_: "<<e_dot_.transpose()<<std::endl;
+      // std::cerr<<"J_: "<<std::endl<<J_<<std::endl;
+      //DEBUG END===============================
+
       return 0;
     }
 
     int TDefJntLimits::update(RobotStatePtr robot_state) {
       double q = robot_state->kdl_jnt_array_vel_.q(link_frame_q_nr_);
       double q_dot = robot_state->kdl_jnt_array_vel_.qdot(link_frame_q_nr_);
-     
-      if(abs(e_(0)) > inf_zone_){
+
+      if(fabs(q_lb_ - q) > inf_zone_){
 	e_(0)=0.0;
-	e_dot_(1)=0.0;
+	e_dot_(0)=0.0;
 	J_(0,link_frame_q_nr_)=0.0;
       }
       else{
@@ -126,7 +130,7 @@ namespace hiqp {
 	e_dot_(0) = -q_dot;
 	J_(0,link_frame_q_nr_)=-1.0;
       }
-      if(abs(e_(1)) > inf_zone_){
+      if(fabs(q_ub_ - q) > inf_zone_){
 	e_(1)=0.0;
 	e_dot_(1)=0.0;
 	J_(1,link_frame_q_nr_)=0.0;
@@ -142,6 +146,20 @@ namespace hiqp {
       //the error derivatives for joint velocity limits are actually not defined as we are controlling in acceleration
       e_dot_(2) = 0.0;
       e_dot_(3) = 0.0;
+
+      //DEBUG===================================
+      std::cerr<<"q_lb_: "<<q_lb_<<std::endl;
+      std::cerr<<"q_ub_: "<<q_ub_<<std::endl;
+      std::cerr<<"dq_max_: "<<dq_max_<<std::endl;
+      std::cerr<<"inf_zone_: "<<inf_zone_<<std::endl;
+      std::cerr<<"q: "<<q<<std::endl;
+      std::cerr<<"q_dot: "<<q_dot<<std::endl;
+      std::cerr<<"e_: "<<e_.transpose()<<std::endl;
+      std::cerr<<"e_dot_: "<<e_dot_.transpose()<<std::endl;
+      std::cerr<<"J_: "<<std::endl<<J_<<std::endl;
+      std::cerr<<"fabs(q_lb_ - q): "<<fabs(q_lb_ - q)<<std::endl;
+      std::cerr<<"fabs(q_ub_ - q): "<<fabs(q_ub_ - q)<<std::endl;      
+      //DEBUG END===============================
       return 0;
     }
 
