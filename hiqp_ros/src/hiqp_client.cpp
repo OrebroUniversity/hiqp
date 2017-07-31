@@ -124,7 +124,7 @@ bool HiQPClient::setTasks(const std::vector<hiqp_msgs::Task>& tasks) {
       ROS_WARN("Either all or some of the tasks were not added.");
     }
     
-    return (returnValue != setTasksMsg.response.success.size());
+    return (returnValue == setTasksMsg.response.success.size());
   } else {
     ROS_WARN("set_tasks service call failed.");
   }
@@ -332,7 +332,7 @@ void HiQPClient::waitForCompletion(
 }
 
 bool HiQPClient::setJointAngles(const std::vector<double>& joint_angles,
-                                bool remove) {
+                                bool remove, double tol) {
   std::vector<std::string> def_params{"TDefFullPose"};
 
   for (auto jointValue : joint_angles) {
@@ -342,12 +342,16 @@ bool HiQPClient::setJointAngles(const std::vector<double>& joint_angles,
   bool ret = this->setTask("joint_configuration", 3, true, true, true, def_params,
                 {"TDynLinear", "0.75"});
   if (ret) {
-      if (remove)
+      if (remove) {
 	  waitForCompletion({"joint_configuration"}, {TaskDoneReaction::REMOVE},
-		  {1e-2});
-      else
+		  {tol});
+      }
+      else {
 	  waitForCompletion({"joint_configuration"}, {TaskDoneReaction::NONE},
-		  {1e-2});
+		  {tol});
+      }
+  } else {
+      ROS_ERROR("could not set joint configuration task");
   }
 
   return ret;
@@ -355,7 +359,7 @@ bool HiQPClient::setJointAngles(const std::vector<double>& joint_angles,
 
 bool HiQPClient::removeAllTasks() {
   hiqp_msgs::RemoveAllTasks removeAllTasksMsg;
-  if (remove_all_primitives_client_.call(removeAllTasksMsg)) {
+  if (remove_all_tasks_client_.call(removeAllTasksMsg)) {
     if (removeAllTasksMsg.response.success) {
       ROS_INFO("All tasks removed.");
       return true;

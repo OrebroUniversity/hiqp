@@ -22,8 +22,7 @@ find_package(catkin REQUIRED COMPONENTS message_generation
                                         visualization_msgs
                                         geometry_msgs)
 
-add_message_files(FILES PoseWithName.msg
-			TaskMeasure.msg
+add_message_files(FILES TaskMeasure.msg
                         Primitive.msg
                         TaskMeasures.msg
                         StringArray.msg
