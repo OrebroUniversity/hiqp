@@ -248,16 +248,25 @@ void HiQPJointVelocityController::loadJointLimitsFromParamServer() {
             std::to_string(static_cast<double>(limitations[1])));
         def_params.push_back(
             std::to_string(static_cast<double>(limitations[2])));
+ def_params.push_back(
+            std::to_string(static_cast<double>(limitations[0])));
+ def_params.push_back(
+            std::to_string(static_cast<double>(limitations[3])));
 
         std::vector<std::string> dyn_params;
         dyn_params.push_back("TDynJntLimits");
         dyn_params.push_back(
-            std::to_string(static_cast<double>(limitations[0])));
-        dyn_params.push_back(
-            std::to_string(static_cast<double>(limitations[3])));
+            std::to_string(static_cast<double>(limitations[4])));
 
-        task_manager_.setTask(link_frame + "_jntlimits", 1, true, true, false,
-                              def_params, dyn_params, this->getRobotState());
+        if(task_manager_.setTask(link_frame + "_jntlimits", 1, true, true, false,
+				 def_params, dyn_params, this->getRobotState()) !=0){
+        ROS_WARN_STREAM(
+            "Error while loading "
+            << "hiqp_preload_jnt_limits parameter from the "
+            << "parameter server. Could not set task.");
+        parsing_success = false;
+	}
+	  
       } catch (const XmlRpc::XmlRpcException& e) {
         ROS_WARN_STREAM(
             "Error while loading "

@@ -94,11 +94,11 @@ int Task::init(const std::vector<std::string>& def_params,
     return -5;
   }
 
-  // ROS_INFO("Task Definition created.");
+  //ROS_INFO("Task Definition created.");
 
   if (dyn_->init(dyn_params, robot_state, def_->getInitialTaskValue(), def_->getInitialTaskDerivative(), def_->getFinalTaskValue(robot_state), def_->getFinalTaskDerivative(robot_state)) != 0)
     return -6;
-  // ROS_INFO("Task Dynamics created.");
+  //ROS_INFO("Task Dynamics created.");
 
   if (!checkConsistency(robot_state)) return -7;
 
