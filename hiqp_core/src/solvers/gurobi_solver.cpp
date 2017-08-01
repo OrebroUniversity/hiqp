@@ -52,9 +52,33 @@ bool GurobiSolver::solve(std::vector<double>& solution) {
 
   for (auto&& kv : stages_map_) {
     current_priority = kv.first;
+
     const HiQPStage& current_stage = kv.second;
 
+    //DEBUG =========================================
+    // std::cerr<<"Current stage: "<<std::endl;
+    // std::cerr<<"stage priority: "<<current_priority<<std::endl;
+    // std::cerr<<"B_: "<<std::endl<<current_stage.B_<<std::endl;
+    // std::cerr<<"constraint_signs_: ";
+    // for (int i=0; i<current_stage.constraint_signs_.size();i++)
+    //   std::cerr<<current_stage.constraint_signs_[i]<<" ";
+
+    // std::cerr<<std::endl;
+    // std::cerr<<"b_: "<<std::endl<<current_stage.b_<<std::endl;
+    //END DEBUG =========================================
+	
     hqp_constraints_.appendConstraints(current_stage);
+    //DEBUG =========================================
+    // std::cerr<<"HQP Constraints: "<<std::endl;
+    // std::cerr<<"B_: "<<std::endl<<hqp_constraints_.B_<<std::endl;
+    // std::cerr<<"constraint_signs_: ";
+    // for (int i=0; i<hqp_constraints_.constraint_signs_.size();i++)
+    //   std::cerr<<hqp_constraints_.constraint_signs_[i]<<" ";
+
+    // std::cerr<<std::endl;
+    // std::cerr<<"b_: "<<std::endl<<hqp_constraints_.b_<<std::endl;
+    // std::cerr<<"w_: "<<std::endl<<hqp_constraints_.w_<<std::endl;
+    //END DEBUG =========================================
 
     QPProblem qp_problem(env_, hqp_constraints_, n_solution_dims_);
 

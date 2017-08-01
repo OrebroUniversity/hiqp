@@ -89,8 +89,8 @@ class HiQPJointVelocityController
 
   ROSVisualizer ros_visualizer_;
   std::shared_ptr<Visualizer> visualizer_;
-  Eigen::VectorXd u_vel_;
   hiqp::TaskManager task_manager_;
+  Eigen::VectorXd u_vel_;
   std::shared_ptr<hiqp::TaskManager> task_manager_ptr_;
 };
 
