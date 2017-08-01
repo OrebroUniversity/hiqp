@@ -42,3 +42,4 @@ A publication presenting HiQP is in preparation. In the meantime, please refer t
 * Both TaskDefinition and TaskDynamics have a member variable performance_measures_ which seems nowhere to be used
 * Should rename e_ddot to dde and e_dot to de everywhere for consistency
 * Remove ROS-specific stuff from hiqp_core (error printouts ...)
+* Disabled measured sampling time update in the controler base class as it proved to be fragile (could yield 0.0)

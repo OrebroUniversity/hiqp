@@ -236,14 +236,15 @@ void GurobiSolver::QPProblem::solve() {
           "Stage solving runtime %f sec exceeds the set time limit of %f sec.",
           runtime, TIME_LIMIT);
     else
-      ROS_ERROR_THROTTLE(
-          10,
+      ROS_ERROR(
           "In GurobiSolver::QPProblem::solve(...): No optimal solution found for stage with "
           "priority %d. Status is %d.",
           0, status);
-
-    // model.write("/home/rkg/Desktop/model.lp");
-    // model.write("/home/yumi/Desktop/model.sol");
+    
+    //DEBUG =======================================
+     model_.write("/home/rkg/Desktop/model.lp");
+     exit(0);
+    //DEBUG END ====================================
   }
 }
 

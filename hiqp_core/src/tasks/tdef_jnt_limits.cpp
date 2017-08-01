@@ -65,49 +65,45 @@ namespace hiqp {
       performance_measures_.resize(0);
 
       task_types_.resize(4);
-      task_types_.at(0) = -1;   // < lower joint limit 
-      task_types_.at(1) = 1;  // > upper joint limit
-      task_types_.at(2) = -1;   // < lower joint velocity limit
-      task_types_.at(3) = 1;  // > upper joint velocity limit
-
-      // Jacobian entries are -1 at column link_frame_q_nr_ and 0 otherwise
-      for (int i = 0; i < 4; ++i) {
-	for (int j = 0; j < n_joints; ++j) {
-	  J_(i, j) = (j == link_frame_q_nr_ ? -1 : 0);
-	}
-      }
+      task_types_.at(0) = -1;   // < upper joint limit 
+      task_types_.at(1) = 1;  // > lower joint limit
+      task_types_.at(2) = -1;   // < upper joint velocity limit
+      task_types_.at(3) = 1;  // > lower joint velocity limit
 
       J_dot_.setZero();
+      J_.setZero();
+      J_(2,link_frame_q_nr_)=1.0;
+      J_(3,link_frame_q_nr_)=1.0;      
       
       //Initialize e, e_dot
-      if((q_lb_ - q) > -inf_zone_){
-	e_(0) = q_lb_ - q;
-	e_dot_(0) = -q_dot;
-	J_(0,link_frame_q_nr_)=-1.0;
-      }
-      else{
+      if((q_ub_ - q) > inf_zone_){
+        J_(0,link_frame_q_nr_)=0.0;
 	e_(0)=0.0;
 	e_dot_(0)=0.0;
-	J_(0,link_frame_q_nr_)=0.0;
-      }
-      if((q_ub_ - q) < inf_zone_){
-	e_(1) = q_ub_ - q;
-	e_dot_(1) = -q_dot;
-        J_(1,link_frame_q_nr_)=-1.0;
       }
       else{
+	J_(0,link_frame_q_nr_)=1.0;
+	e_(0)=q_ub_-q; //upper joint limit
+	e_dot_(0)=-q_dot;
+      }
+      if((q_lb_ - q) < -inf_zone_){
+	J_(1,link_frame_q_nr_)=0.0;
 	e_(1)=0.0;
 	e_dot_(1)=0.0;
-	J_(1,link_frame_q_nr_)=0.0;
       }
-      
-      e_(2) = -dq_max_ - q_dot;
-      e_(3) = dq_max_ - q_dot;
+      else{
+	J_(1,link_frame_q_nr_)=1.0;
+	e_(1)=q_lb_-q; //lower joint limit
+	e_dot_(1)=-q_dot;
+      }
 
-      //the error derivatives for joint velocity limits are actually not defined as we are controlling in acceleration
-      e_dot_(2) = 0.0;
-      e_dot_(3) = 0.0;
+      e_(2)=dq_max_-q_dot; //upper joint velocity limit
+      e_(3)=-dq_max_-q_dot; //lower joint velocity limit      
 
+          //the error derivatives for joint velocity limits are actually not defined as we are controlling in acceleration
+      e_dot_(2)=0.0;
+      e_dot_(3)=0.0;
+ 
       //DEBUG===================================
       // std::cerr<<"q_lb_: "<<q_lb_<<std::endl;
       // std::cerr<<"q_ub_: "<<q_ub_<<std::endl;
@@ -119,7 +115,7 @@ namespace hiqp {
       // std::cerr<<"e_dot_: "<<e_dot_.transpose()<<std::endl;
       // std::cerr<<"J_: "<<std::endl<<J_<<std::endl;
       //DEBUG END===============================
-
+      
       return 0;
     }
 
@@ -127,50 +123,33 @@ namespace hiqp {
       double q = robot_state->kdl_jnt_array_vel_.q(link_frame_q_nr_);
       double q_dot = robot_state->kdl_jnt_array_vel_.qdot(link_frame_q_nr_);
 
-      if((q_lb_ - q) > -inf_zone_){
-      	e_(0) = q_lb_ - q;
-      	e_dot_(0) = -q_dot;
-      	J_(0,link_frame_q_nr_)=-1.0;
+      if((q_ub_ - q) > inf_zone_){
+        J_(0,link_frame_q_nr_)=0.0;
+	e_(0)=0.0;
+	e_dot_(0)=0.0;
       }
       else{
-      	e_(0)=0.0;
-      	e_dot_(0)=0.0;
-      	J_(0,link_frame_q_nr_)=0.0;
+	J_(0,link_frame_q_nr_)=1.0;
+	e_(0)=q_ub_-q; //upper joint limit
+	e_dot_(0)=-q_dot;
       }
-      if((q_ub_ - q) < inf_zone_){
-      	e_(1) = q_ub_ - q;
-      	e_dot_(1) = -q_dot;
-        J_(1,link_frame_q_nr_)=-1.0;
+      if((q_lb_ - q) < -inf_zone_){
+	J_(1,link_frame_q_nr_)=0.0;
+	e_(1)=0.0;
+	e_dot_(1)=0.0;
       }
       else{
-      	e_(1)=0.0;
-      	e_dot_(1)=0.0;
-      	J_(1,link_frame_q_nr_)=0.0;
+	J_(1,link_frame_q_nr_)=1.0;
+	e_(1)=q_lb_-q; //lower joint limit
+	e_dot_(1)=-q_dot;
       }
 
-      // DEBUG: remove influence zone from update
-      //  	e_(0) = q_lb_ - q;
-      //  	e_dot_(0) = -q_dot;
-      //   e_(1) = q_ub_ - q;
-      //  	e_dot_(1) = -q_dot;
-      // 	J_(0,link_frame_q_nr_)=-1.0;
-      // J_(1,link_frame_q_nr_)=-1.0;
-      // END DEBUG
-      
-      e_(2) = -dq_max_ - q_dot;
-      e_(3) = dq_max_ - q_dot;
+      e_(2)=dq_max_-q_dot; //upper joint velocity limit
+      e_(3)=-dq_max_-q_dot; //lower joint velocity limit      
 
-      // HACK: remove joint velocity limit
-      e_(2) = 0.0;
-      e_(3) = 0.0;
-
-      J_(2,link_frame_q_nr_)=0.0;
-      J_(3,link_frame_q_nr_)=0.0;
-      // END HACK
-      
-      //the error derivatives for joint velocity limits are actually not defined as we are controlling in acceleration
-      e_dot_(2) = 0.0;
-      e_dot_(3) = 0.0;
+          //the error derivatives for joint velocity limits are actually not defined as we are controlling in acceleration
+      e_dot_(2)=0.0;
+      e_dot_(3)=0.0;     
 
       //DEBUG===================================
       // std::cerr<<"q_lb_: "<<q_lb_<<std::endl;

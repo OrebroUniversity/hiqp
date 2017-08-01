@@ -262,12 +262,14 @@ void BaseController<HardwareInterfaceT>::sampleJointValues() {
   /* std::cerr<<"sampled joint efforts: "<<effort.data.transpose()<<std::endl;
    */
 
-  ros::Time t = ros::Time::now();
-  robot_state_data_.sampling_time_point_.setTimePoint(t.sec, t.nsec);
-  robot_state_data_.sampling_time_ =
-      (robot_state_data_.sampling_time_point_ - last_sampling_time_point_)
-          .toSec();
-  last_sampling_time_point_.setTimePoint(t.sec, t.nsec);
+  robot_state_data_.sampling_time_ = period_.toSec();
+//rtkg: disabled measured sampling time update as it proved to be fragile (could yield 0.0)
+  //ros::Time t = ros::Time::now();
+  //robot_state_data_.sampling_time_point_.setTimePoint(t.sec, t.nsec);
+  //robot_state_data_.sampling_time_ =
+  //    (robot_state_data_.sampling_time_point_ - last_sampling_time_point_)
+  //        .toSec();
+  //last_sampling_time_point_.setTimePoint(t.sec, t.nsec);
   handles_mutex_.unlock();
 }
 

@@ -24,34 +24,30 @@ namespace tasks {
 int TDynJntLimits::init(const std::vector<std::string>& parameters, RobotStatePtr robot_state, const Eigen::VectorXd& e_initial, const Eigen::VectorXd& e_dot_initial, const Eigen::VectorXd& e_final, const Eigen::VectorXd& e_dot_final) {
         assert((e_dot_initial.rows()==4) && (e_final.rows() == 4) && (e_dot_final.rows() == 4) );
   int size = parameters.size();
-  if (size != 4) {
-    printHiqpWarning("TDynJntLimits requires 4 parameters, got " +
+  if (size != 2) {
+    printHiqpWarning("TDynJntLimits requires 2 parameters, got " +
                      std::to_string(size) + "! Initialization failed!");
     return -1;
   }
-
-
-  Kp_ql_=std::stod(parameters.at(1)); //P gain for joint limits
-  Kd_ql_=std::stod(parameters.at(2)); //D gain for joint limits
-  Kp_dql_=std::stod(parameters.at(3));//P gain for joint velocity limits
+  Kp_=std::stod(parameters.at(1)); //P gain for joint limits
 
   //initialize the controller
   e_ddot_star_.resize(4);
-  e_ddot_star_(0)=-Kp_ql_*e_initial(0)-Kd_ql_*e_dot_initial(0); //lower joint limit
-  e_ddot_star_(1)=-Kp_ql_*e_initial(1)-Kd_ql_*e_dot_initial(1);//upper joint limit
-  e_ddot_star_(2)=-Kp_dql_*e_initial(2);//lower joint velociy limit
-  e_ddot_star_(3)=-Kp_dql_*e_initial(3);//upper joint velocity limit
+  double dt=robot_state->sampling_time_;
+  e_ddot_star_(0)= 1/dt*(Kp_*e_initial(0)+e_dot_initial(0));///upper joint limit
+  e_ddot_star_(1)= 1/dt*(Kp_*e_initial(1)+e_dot_initial(1));///lower joint limit
+  e_ddot_star_(2)= 1/dt*e_initial(2);//upper joint velocity limit
+  e_ddot_star_(3)= 1/dt*e_initial(3);//lower joint velocity limit
 
   performance_measures_.resize(0);
+
       // //=============Debug======================
       // std::cerr<<"e_initial: "<<e_initial.transpose()<<std::endl;
       // std::cerr<<"e_dot_initial: "<<e_dot_initial.transpose()<<std::endl;
       // std::cerr<<"e_final: "<<e_final.transpose()<<std::endl;
       // std::cerr<<"e_dot_final: "<<e_dot_final.transpose()<<std::endl;
       // std::cerr<<"size: "<<size<<std::endl;
-      // std::cerr<<"Kp_ql: "<<std::endl<<Kp_ql_<<std::endl;
-      // std::cerr<<"Kd_ql: "<<std::endl<<Kd_ql_<<std::endl;
-      //   std::cerr<<"Kp_dql: "<<std::endl<<Kp_dql_<<std::endl;
+      // std::cerr<<"Kp_: "<<std::endl<<Kp_<<std::endl;
       // std::cerr<<"e_ddot_star: "<<e_ddot_star_.transpose()<<std::endl;
       // //===========End Debug====================
 
@@ -59,10 +55,17 @@ int TDynJntLimits::init(const std::vector<std::string>& parameters, RobotStatePt
 }
 
 int TDynJntLimits::update(RobotStatePtr robot_state, const Eigen::VectorXd& e, const Eigen::VectorXd& e_dot, const Eigen::MatrixXd& J, const Eigen::MatrixXd& J_dot){
-  e_ddot_star_(0)=-Kp_ql_*e(0)-Kd_ql_*e_dot(0); //lower joint limit
-  e_ddot_star_(1)=-Kp_ql_*e(1)-Kd_ql_*e_dot(1);//upper joint limit
-  e_ddot_star_(2)=-Kp_dql_*e(2);//lower joint velociy limit
-  e_ddot_star_(3)=-Kp_dql_*e(3);//upper joint velocity limit
+  double dt=robot_state->sampling_time_;
+  e_ddot_star_(0)= 1/dt*(Kp_*e(0)+e_dot(0));///upper joint limit
+  e_ddot_star_(1)= 1/dt*(Kp_*e(1)+e_dot(1));///lower joint limit
+  e_ddot_star_(2)= 1/dt*e(2);//upper joint velocity limit
+  e_ddot_star_(3)= 1/dt*e(3);//lower joint velocity limit
+
+  //DEBUG===================================
+  // std::cerr<<"dt: "<<dt<<std::endl;
+  // std::cerr<<"e_ddot_star_: "<<e_ddot_star_.transpose()<<std::endl;
+  // std::cerr<<"==========================================="<<std::endl;
+  //DEBUG END ===============================
   return 0;
 }
 

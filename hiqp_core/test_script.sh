@@ -13,8 +13,8 @@ rosservice call /yumi/hiqp_joint_velocity_controller/set_tasks \
   active: 1
   monitored: 1
   #def_params: ['TDefJntLimits', 'yumi_link_1_r', '-2.94', '2.94', '1.4835', '0.1'] #lower/upper joint limit, max joint vel, influence zone
-  def_params: ['TDefJntLimits', 'yumi_link_1_r', '-2.0', '2.0', '1.4835', '0.1']
-  dyn_params: ['TDynJntLimits', '2.0', '20.0', '1.0'] 
+  def_params: ['TDefJntLimits', 'yumi_link_1_r', '-2.0', '2.0', '1.4835', '0.2']
+  dyn_params: ['TDynJntLimits', '10'] 
 #- name: 'full_pose'
 #  priority: 3
 #  visible: 1
