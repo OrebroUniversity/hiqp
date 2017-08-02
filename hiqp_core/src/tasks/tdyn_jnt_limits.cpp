@@ -39,6 +39,12 @@ int TDynJntLimits::init(const std::vector<std::string>& parameters, RobotStatePt
   e_ddot_star_(2)= 1/dt*e_initial(2);//upper joint velocity limit
   e_ddot_star_(3)= 1/dt*e_initial(3);//lower joint velocity limit
 
+  //Truncate the desired accelerations from the joint limit avoidance in order to avoid possible infeasibilites with the opposite joint velocity limit avoidance
+  if(e_ddot_star_(0) < e_ddot_star_(3))
+    e_ddot_star_(0) = e_ddot_star_(3);
+  if(e_ddot_star_(1) > e_ddot_star_(2))
+    e_ddot_star_(1)=e_ddot_star_(2);
+  
   performance_measures_.resize(0);
 
       // //=============Debug======================
@@ -61,11 +67,20 @@ int TDynJntLimits::update(RobotStatePtr robot_state, const Eigen::VectorXd& e, c
   e_ddot_star_(2)= 1/dt*e(2);//upper joint velocity limit
   e_ddot_star_(3)= 1/dt*e(3);//lower joint velocity limit
 
+  //Truncate the desired accelerations from the joint limit avoidance in order to avoid possible infeasibilites with the opposite joint velocity limit avoidance
+  if(e_ddot_star_(0) < e_ddot_star_(3))
+    e_ddot_star_(0) = e_ddot_star_(3);
+  if(e_ddot_star_(1) > e_ddot_star_(2))
+    e_ddot_star_(1)=e_ddot_star_(2);
+  
   //DEBUG===================================
+  // if(fabs(e_ddot_star_(0)) > 1000){
   // std::cerr<<"dt: "<<dt<<std::endl;
-  // std::cerr<<"e_ddot_star_: "<<e_ddot_star_.transpose()<<std::endl;
-  // std::cerr<<"==========================================="<<std::endl;
+  std::cerr<<"e_ddot_star_: "<<e_ddot_star_.transpose()<<std::endl;
+  std::cerr<<"==========================================="<<std::endl;
+  // }
   //DEBUG END ===============================
+  
   return 0;
 }
 

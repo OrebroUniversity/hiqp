@@ -104,11 +104,23 @@ void HiQPJointVelocityController::computeControls(Eigen::VectorXd& u) {
   for (auto&& oc : u_acc) {
     u(i++) = oc;
   }
-
+  //OPTION 1: store prev. control velocities for integration
+  std::cerr<<"acc_controls: "<<u(0)<<std::endl;
+  std::cerr<<"old vel controls: "<<u_vel_(0)<<std::endl;
   //integrate the acceleration controls once to obtain corresponding velocity controls
   u=u_vel_+u*period_.toSec();
   u_vel_=u; //store the computed velocity controls for the next integration step
-    
+  std::cerr<<"new vel controls: "<<u(0)<<std::endl;
+
+  //OPTION 2: integrate the measured joint velocity values
+  // Eigen::VectorXd qdot=this->getRobotState()->kdl_jnt_array_vel_.qdot.data;
+  //    std::cerr<<"acc_controls: "<<u(0)<<std::endl;
+  //    std::cerr<<"measured vel: "<<qdot(0)<<std::endl;
+  //   u=qdot+period_.toSec()*u;
+  //       std::cerr<<"vel_controls: "<<u(0)<<std::endl;
+  // 	  std::cerr<<"*****************************************"<<std::endl;
+
+	  
   renderPrimitives();
 
   monitorTasks(static_cast<double>(opt_time.count()));

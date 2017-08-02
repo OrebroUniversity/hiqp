@@ -56,7 +56,7 @@ namespace hiqp {
       inf_zone_= std::stod(parameters.at(5));
       assert(q_ub_ > q_lb_);
       assert(dq_max_ > 0.0);
-      assert((inf_zone_ > 0) && (inf_zone_ < (q_ub_ - q_lb_)));
+      assert((inf_zone_ > 0) && (inf_zone_ <= (q_ub_ - q_lb_)));
       
       e_.resize(4);
       e_dot_.resize(4);
@@ -105,6 +105,7 @@ namespace hiqp {
       e_dot_(3)=0.0;
  
       //DEBUG===================================
+      // std::cerr<<"link_frame_name_: "<<link_frame_name_<<std::endl;
       // std::cerr<<"q_lb_: "<<q_lb_<<std::endl;
       // std::cerr<<"q_ub_: "<<q_ub_<<std::endl;
       // std::cerr<<"dq_max_: "<<dq_max_<<std::endl;
@@ -152,7 +153,9 @@ namespace hiqp {
       e_dot_(3)=0.0;     
 
       //DEBUG===================================
-      // std::cerr<<"q_lb_: "<<q_lb_<<std::endl;
+      // if(link_frame_q_nr_ == 0){
+      // std::cerr<<"link_frame_name_: "<<link_frame_name_<<std::endl;
+      // std::cerr<<"link_frame_q_nr_: "<<link_frame_q_nr_<<std::endl;          std::cerr<<"q_lb_: "<<q_lb_<<std::endl;
       // std::cerr<<"q_ub_: "<<q_ub_<<std::endl;
       // std::cerr<<"dq_max_: "<<dq_max_<<std::endl;
       // std::cerr<<"inf_zone_: "<<inf_zone_<<std::endl;
@@ -163,6 +166,7 @@ namespace hiqp {
       // std::cerr<<"J_: "<<std::endl<<J_<<std::endl;
       // std::cerr<<"(q_lb_ - q): "<<(q_lb_ - q)<<std::endl;
       // std::cerr<<"(q_ub_ - q): "<<(q_ub_ - q)<<std::endl;
+      // }
       //DEBUG END===============================
       return 0;
     }

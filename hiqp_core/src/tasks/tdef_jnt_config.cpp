@@ -80,6 +80,16 @@ int TDefJntConfig::update(RobotStatePtr robot_state) {
   
   e_(0) = desired_configuration_ - q(joint_q_nr_);
   e_dot_(0)= -q_dot(joint_q_nr_);
+
+    //DEBUG===================================
+      // if(joint_q_nr_ == 0){
+      // std::cerr<<"link_name_: "<<link_name_<<std::endl;
+      // std::cerr<<"joint_q_nr_: "<<joint_q_nr_<<std::endl;
+      //       std::cerr<<"e_: "<<e_.transpose()<<std::endl;
+      // std::cerr<<"e_dot_: "<<e_dot_.transpose()<<std::endl;
+      //       }
+      //DEBUG END===============================
+
   
   return 0;
 }

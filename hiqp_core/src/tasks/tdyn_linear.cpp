@@ -89,6 +89,10 @@ namespace hiqp {
     int TDynLinear::update(RobotStatePtr robot_state, const Eigen::VectorXd& e, const Eigen::VectorXd& e_dot, const Eigen::MatrixXd& J, const Eigen::MatrixXd& J_dot) {
       //PD control law
       e_ddot_star_= -Kp_*e-Kd_*e_dot;
+          //DEBUG===================================
+      // std::cerr<<"e_ddot_star_: "<<e_ddot_star_.transpose()<<std::endl;
+      // std::cerr<<".........................................."<<std::endl;
+            //DEBUG END===============================
       return 0;
     }
 
