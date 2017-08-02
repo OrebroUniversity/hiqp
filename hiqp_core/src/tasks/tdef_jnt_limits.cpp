@@ -25,8 +25,8 @@ namespace hiqp {
     int TDefJntLimits::init(const std::vector<std::string>& parameters,
 			    RobotStatePtr robot_state) {
       int size = parameters.size();
-      if (size != 6) {
-	printHiqpWarning("TDefJntLimits requires 6 parameter, got " +
+      if (size != 5) {
+	printHiqpWarning("TDefJntLimits requires 5 parameter, got " +
 			 std::to_string(size) + "! Initialization failed!");
 	return -1;
       }
@@ -53,10 +53,9 @@ namespace hiqp {
       q_lb_= std::stod(parameters.at(2));
       q_ub_= std::stod(parameters.at(3));
       dq_max_= std::stod(parameters.at(4));
-      inf_zone_= std::stod(parameters.at(5));
+
       assert(q_ub_ > q_lb_);
       assert(dq_max_ > 0.0);
-      assert((inf_zone_ > 0) && (inf_zone_ <= (q_ub_ - q_lb_)));
       
       e_.resize(4);
       e_dot_.resize(4);
@@ -65,43 +64,28 @@ namespace hiqp {
       performance_measures_.resize(0);
 
       task_types_.resize(4);
-      task_types_.at(0) = -1;   // < upper joint limit 
-      task_types_.at(1) = 1;  // > lower joint limit
+      task_types_.at(0) = 1;   // > upper joint limit 
+      task_types_.at(1) = -1;  // < lower joint limit
       task_types_.at(2) = -1;   // < upper joint velocity limit
       task_types_.at(3) = 1;  // > lower joint velocity limit
 
       J_dot_.setZero();
       J_.setZero();
+      J_(0,link_frame_q_nr_)=-1.0;      
+      J_(1,link_frame_q_nr_)=-1.0;
       J_(2,link_frame_q_nr_)=1.0;
       J_(3,link_frame_q_nr_)=1.0;      
-      
-      //Initialize e, e_dot
-      if((q_ub_ - q) > inf_zone_){
-        J_(0,link_frame_q_nr_)=0.0;
-	e_(0)=0.0;
-	e_dot_(0)=0.0;
-      }
-      else{
-	J_(0,link_frame_q_nr_)=1.0;
-	e_(0)=q_ub_-q; //upper joint limit
-	e_dot_(0)=-q_dot;
-      }
-      if((q_lb_ - q) < -inf_zone_){
-	J_(1,link_frame_q_nr_)=0.0;
-	e_(1)=0.0;
-	e_dot_(1)=0.0;
-      }
-      else{
-	J_(1,link_frame_q_nr_)=1.0;
-	e_(1)=q_lb_-q; //lower joint limit
-	e_dot_(1)=-q_dot;
-      }
 
-      e_(2)=dq_max_-q_dot; //upper joint velocity limit
-      e_(3)=-dq_max_-q_dot; //lower joint velocity limit      
+      e_(0)=q_ub_-q;
+      e_dot_(0)=-q_dot;
 
-          //the error derivatives for joint velocity limits are actually not defined as we are controlling in acceleration
+      e_(1)=q_lb_-q;
+      e_dot_(1)=-q_dot;
+
+      e_(2)=dq_max_-q_dot;
       e_dot_(2)=0.0;
+
+      e_(3)=-dq_max_-q_dot;
       e_dot_(3)=0.0;
  
       //DEBUG===================================
@@ -109,7 +93,6 @@ namespace hiqp {
       // std::cerr<<"q_lb_: "<<q_lb_<<std::endl;
       // std::cerr<<"q_ub_: "<<q_ub_<<std::endl;
       // std::cerr<<"dq_max_: "<<dq_max_<<std::endl;
-      // std::cerr<<"inf_zone_: "<<inf_zone_<<std::endl;
       // std::cerr<<"q: "<<q<<std::endl;
       // std::cerr<<"q_dot: "<<q_dot<<std::endl;
       // std::cerr<<"e_: "<<e_.transpose()<<std::endl;
@@ -124,41 +107,23 @@ namespace hiqp {
       double q = robot_state->kdl_jnt_array_vel_.q(link_frame_q_nr_);
       double q_dot = robot_state->kdl_jnt_array_vel_.qdot(link_frame_q_nr_);
 
-      if((q_ub_ - q) > inf_zone_){
-        J_(0,link_frame_q_nr_)=0.0;
-	e_(0)=0.0;
-	e_dot_(0)=0.0;
-      }
-      else{
-	J_(0,link_frame_q_nr_)=1.0;
-	e_(0)=q_ub_-q; //upper joint limit
-	e_dot_(0)=-q_dot;
-      }
-      if((q_lb_ - q) < -inf_zone_){
-	J_(1,link_frame_q_nr_)=0.0;
-	e_(1)=0.0;
-	e_dot_(1)=0.0;
-      }
-      else{
-	J_(1,link_frame_q_nr_)=1.0;
-	e_(1)=q_lb_-q; //lower joint limit
-	e_dot_(1)=-q_dot;
-      }
-
-      e_(2)=dq_max_-q_dot; //upper joint velocity limit
-      e_(3)=-dq_max_-q_dot; //lower joint velocity limit      
-
-          //the error derivatives for joint velocity limits are actually not defined as we are controlling in acceleration
+      e_(0)=q_ub_-q;
+      e_dot_(0)=-q_dot;
+      
+      e_(1)=q_lb_-q;
+      e_dot_(1)=-q_dot;
+ 
+      e_(2)=dq_max_-q_dot;
       e_dot_(2)=0.0;
-      e_dot_(3)=0.0;     
+
+      e_(3)=-dq_max_-q_dot;
+      e_dot_(3)=0.0;
 
       //DEBUG===================================
-      // if(link_frame_q_nr_ == 0){
       // std::cerr<<"link_frame_name_: "<<link_frame_name_<<std::endl;
       // std::cerr<<"link_frame_q_nr_: "<<link_frame_q_nr_<<std::endl;          std::cerr<<"q_lb_: "<<q_lb_<<std::endl;
       // std::cerr<<"q_ub_: "<<q_ub_<<std::endl;
       // std::cerr<<"dq_max_: "<<dq_max_<<std::endl;
-      // std::cerr<<"inf_zone_: "<<inf_zone_<<std::endl;
       // std::cerr<<"q: "<<q<<std::endl;
       // std::cerr<<"q_dot: "<<q_dot<<std::endl;
       // std::cerr<<"e_: "<<e_.transpose()<<std::endl;
@@ -166,7 +131,6 @@ namespace hiqp {
       // std::cerr<<"J_: "<<std::endl<<J_<<std::endl;
       // std::cerr<<"(q_lb_ - q): "<<(q_lb_ - q)<<std::endl;
       // std::cerr<<"(q_ub_ - q): "<<(q_ub_ - q)<<std::endl;
-      // }
       //DEBUG END===============================
       return 0;
     }

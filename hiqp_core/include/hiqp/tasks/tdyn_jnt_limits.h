@@ -46,7 +46,7 @@ class TDynJntLimits : public TaskDynamics {
   TDynJntLimits& operator=(const TDynJntLimits& other) = delete;
   TDynJntLimits& operator=(TDynJntLimits&& other) noexcept = delete;
 
-  double Kp_;
+  double Kp_, Kd_;
 };
 
 }  // namespace tasks

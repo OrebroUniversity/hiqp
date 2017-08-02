@@ -105,12 +105,12 @@ void HiQPJointVelocityController::computeControls(Eigen::VectorXd& u) {
     u(i++) = oc;
   }
   //OPTION 1: store prev. control velocities for integration
-  std::cerr<<"acc_controls: "<<u(0)<<std::endl;
-  std::cerr<<"old vel controls: "<<u_vel_(0)<<std::endl;
+  // std::cerr<<"acc_controls: "<<u(0)<<std::endl;
+  // std::cerr<<"old vel controls: "<<u_vel_(0)<<std::endl;
   //integrate the acceleration controls once to obtain corresponding velocity controls
   u=u_vel_+u*period_.toSec();
   u_vel_=u; //store the computed velocity controls for the next integration step
-  std::cerr<<"new vel controls: "<<u(0)<<std::endl;
+  // std::cerr<<"new vel controls: "<<u(0)<<std::endl;
 
   //OPTION 2: integrate the measured joint velocity values
   // Eigen::VectorXd qdot=this->getRobotState()->kdl_jnt_array_vel_.qdot.data;
@@ -262,11 +262,11 @@ void HiQPJointVelocityController::loadJointLimitsFromParamServer() {
             std::to_string(static_cast<double>(limitations[2])));
  def_params.push_back(
             std::to_string(static_cast<double>(limitations[0])));
- def_params.push_back(
-            std::to_string(static_cast<double>(limitations[3])));
 
         std::vector<std::string> dyn_params;
         dyn_params.push_back("TDynJntLimits");
+	 dyn_params.push_back(
+            std::to_string(static_cast<double>(limitations[3])));
         dyn_params.push_back(
             std::to_string(static_cast<double>(limitations[4])));
 
