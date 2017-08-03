@@ -23,7 +23,7 @@
 namespace hiqp {
 namespace tasks {
 
-/*! \brief A general second-order task dynamics implementation of the form e_ddot= -Kp*e-Kd*e_dot, where e, e_dot, e_ddot are in R^m, and Kp, Kd are in R^{m x m}. The controller needs to be stable, i. e., [0 I, -Kp_ -Kd_] needs to be negative definite
+/*! \brief A general second-order task dynamics implementation of the form e_ddot= -Kp*e-Kd*e_dot, where e, e_dot, e_ddot are in R^m, and Kp, Kd are in R^{m x m}. The controller needs to be stable, i. e., [0 I, -Kp_ -Kd_] needs to be negative definite. Note that in order to avoid overshooting, the resulting system needs to be overdamped, i. e., K_d >= 2*sqrt(K_p)
  *  \author Marcus A Johansson */
 class TDynLinear : public TaskDynamics {
  public:
