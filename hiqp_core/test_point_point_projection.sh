@@ -1,32 +1,27 @@
-rosservice call /yumi/hiqp_joint_velocity_controller/set_tasks \
+rosservice call /amici/hiqp_joint_velocity_controller/set_primitives \
+"primitives:
+- name: 'ee_point'
+  type: 'point'
+  frame_id: 'wrist_3_link'
+  visible: true
+  color: [1.0, 0.0, 0.0, 0.0]   
+  parameters: [0.0, 0.0, 0.4]
+- name: 'target_point'
+  type: 'point'
+  frame_id: 'world'
+  visible: true
+  color: [0.0, 0.0, 1.0, 1.0]   
+  parameters: [0.0, 1.0, 1.0]" 
+
+rosservice call /amici/hiqp_joint_velocity_controller/set_tasks \
 "tasks:  
-- name: 'task_jntconfig'
-  priority: 2
-  visible: 1
-  active: 1
-  monitored: 1
-  def_params: ['TDefJntConfig', 'yumi_link_1_r', '2.5']
-  dyn_params: ['TDynLinear', '2.0', '1.0'] 
-- name: 'task_jnt_limit'
+- name: 'point_point_projection'
   priority: 1
   visible: 1
   active: 1
   monitored: 1
-  #def_params: ['TDefJntLimits', 'yumi_link_1_r', '-2.94', '2.94', '1.4835', '0.1'] #lower/upper joint limit, max joint vel, influence zone
-  def_params: ['TDefJntLimits', 'yumi_link_1_r', '-2.0', '2.0', '1.4835', '0.2']
-  dyn_params: ['TDynJntLimits', '10'] 
-#- name: 'full_pose'
-#  priority: 3
-#  visible: 1
-#  active: 1
-#  monitored: 1
-#  def_params: ['TDefFullPose', '0.0', '0.0', '0.0', '0.0', '0.0', '0.0', '0.0', '0.0', '0.0', '0.0', '0.0', '0.0', '0.0', '0.0']
-#  dyn_params: ['TDynLinear', '1.0', '2.0'] "
-#- name: 'task_jntconfig2'
-#  priority: 1
-#  visible: 1
-#  active: 1
-#  monitored: 1
-#  def_params: ['TDefJntConfig', 'yumi_link_4_l', '1.0']
-#  dyn_params: ['TDynLinear', '1.0', '2.0'] "
+  def_params: ['TDefGeomProj', 'point', 'point', 'ee_point = target_point']
+  dyn_params: ['TDynLinear', '1.0', '2.0'] "
+
+
 

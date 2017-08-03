@@ -19,7 +19,7 @@
 
 #include <hiqp/tasks/tdef_full_pose.h>
 // #include <hiqp/tasks/tdef_geometric_alignment.h>
-// #include <hiqp/tasks/tdef_geometric_projection.h>
+#include <hiqp/tasks/tdef_geometric_projection.h>
 #include <hiqp/tasks/tdef_jnt_config.h>
 #include <hiqp/tasks/tdef_jnt_limits.h>
 // #include <hiqp/tasks/tdef_meta_task.h>
@@ -41,7 +41,7 @@ namespace hiqp {
 
    using tasks::TDefFullPose;
 // using tasks::TDefGeometricAlignment;
-// using tasks::TDefGeometricProjection;
+ using tasks::TDefGeometricProjection;
    using tasks::TDefJntConfig;
    using tasks::TDefJntLimits;
 // using tasks::TDefMetaTask;
@@ -136,65 +136,67 @@ int Task::constructDefinition(const std::vector<std::string>& def_params) {
    else if (type.compare("TDefJntLimits") == 0) {
      def_ = std::make_shared<TDefJntLimits>(geom_prim_map_, visualizer_);
    }
-  //else if (type.compare("TDefGeomProj") == 0) {
-  //   std::string prim_type1 = def_params.at(1);
-  //   std::string prim_type2 = def_params.at(2);
-  //   if (prim_type1.compare("point") == 0 && prim_type2.compare("point") == 0) {
-  //     def_ = std::make_shared<
-  //         TDefGeometricProjection<GeometricPoint, GeometricPoint> >(
-  //         geom_prim_map_, visualizer_);
-  //   } else if (prim_type1.compare("point") == 0 &&
-  //              prim_type2.compare("line") == 0) {
-  //     def_ = std::make_shared<
-  //         TDefGeometricProjection<GeometricPoint, GeometricLine> >(
-  //         geom_prim_map_, visualizer_);
-  //   } else if (prim_type1.compare("point") == 0 &&
-  //              prim_type2.compare("plane") == 0) {
-  //     def_ = std::make_shared<
-  //         TDefGeometricProjection<GeometricPoint, GeometricPlane> >(
-  //         geom_prim_map_, visualizer_);
-  //   } else if (prim_type1.compare("point") == 0 &&
-  //              prim_type2.compare("box") == 0) {
-  //     def_ = std::make_shared<
-  //         TDefGeometricProjection<GeometricPoint, GeometricBox> >(
-  //         geom_prim_map_, visualizer_);
-  //   } else if (prim_type1.compare("point") == 0 &&
-  //              prim_type2.compare("cylinder") == 0) {
-  //     def_ = std::make_shared<
-  //         TDefGeometricProjection<GeometricPoint, GeometricCylinder> >(
-  //         geom_prim_map_, visualizer_);
-  //   } else if (prim_type1.compare("point") == 0 &&
-  //              prim_type2.compare("sphere") == 0) {
-  //     def_ = std::make_shared<
-  //         TDefGeometricProjection<GeometricPoint, GeometricSphere> >(
-  //         geom_prim_map_, visualizer_);
-  //   } else if (prim_type1.compare("line") == 0 &&
-  //              prim_type2.compare("line") == 0) {
-  //     def_ = std::make_shared<
-  //         TDefGeometricProjection<GeometricLine, GeometricLine> >(
-  //         geom_prim_map_, visualizer_);
-  //   } else if (prim_type1.compare("sphere") == 0 &&
-  //              prim_type2.compare("plane") == 0) {
-  //     def_ = std::make_shared<
-  //         TDefGeometricProjection<GeometricSphere, GeometricPlane> >(
-  //         geom_prim_map_, visualizer_);
-  //   } else if (prim_type1.compare("sphere") == 0 &&
-  //              prim_type2.compare("sphere") == 0) {
-  //     def_ = std::make_shared<
-  //         TDefGeometricProjection<GeometricSphere, GeometricSphere> >(
-  //         geom_prim_map_, visualizer_);
-  //   } else if (prim_type1.compare("frame") == 0 &&
-  //              prim_type2.compare("frame") == 0) {
-  //     def_ = std::make_shared<
-  //         TDefGeometricProjection<GeometricFrame, GeometricFrame> >(
-  //         geom_prim_map_, visualizer_);
-  //   } else {
-  //     printHiqpWarning(
-  //         "TDefGeomProj does not support primitive combination of types '" +
-  //         prim_type1 + "' and '" + prim_type2 + "'!");
-  //     return -1;
-  //   }
-  // } else if (type.compare("TDefGeomAlign") == 0) {
+  else if (type.compare("TDefGeomProj") == 0) {
+    std::string prim_type1 = def_params.at(1);
+    std::string prim_type2 = def_params.at(2);
+    if (prim_type1.compare("point") == 0 && prim_type2.compare("point") == 0) {
+      def_ = std::make_shared<
+          TDefGeometricProjection<GeometricPoint, GeometricPoint> >(
+          geom_prim_map_, visualizer_);
+    } // else if (prim_type1.compare("point") == 0 &&
+    //            prim_type2.compare("line") == 0) {
+    //   def_ = std::make_shared<
+    //       TDefGeometricProjection<GeometricPoint, GeometricLine> >(
+    //       geom_prim_map_, visualizer_);
+    // } else if (prim_type1.compare("point") == 0 &&
+    //            prim_type2.compare("plane") == 0) {
+    //   def_ = std::make_shared<
+    //       TDefGeometricProjection<GeometricPoint, GeometricPlane> >(
+    //       geom_prim_map_, visualizer_);
+    // } else if (prim_type1.compare("point") == 0 &&
+    //            prim_type2.compare("box") == 0) {
+    //   def_ = std::make_shared<
+    //       TDefGeometricProjection<GeometricPoint, GeometricBox> >(
+    //       geom_prim_map_, visualizer_);
+    // } else if (prim_type1.compare("point") == 0 &&
+    //            prim_type2.compare("cylinder") == 0) {
+    //   def_ = std::make_shared<
+    //       TDefGeometricProjection<GeometricPoint, GeometricCylinder> >(
+    //       geom_prim_map_, visualizer_);
+    // } else if (prim_type1.compare("point") == 0 &&
+    //            prim_type2.compare("sphere") == 0) {
+    //   def_ = std::make_shared<
+    //       TDefGeometricProjection<GeometricPoint, GeometricSphere> >(
+    //       geom_prim_map_, visualizer_);
+    // } else if (prim_type1.compare("line") == 0 &&
+    //            prim_type2.compare("line") == 0) {
+    //   def_ = std::make_shared<
+    //       TDefGeometricProjection<GeometricLine, GeometricLine> >(
+    //       geom_prim_map_, visualizer_);
+    // } else if (prim_type1.compare("sphere") == 0 &&
+    //            prim_type2.compare("plane") == 0) {
+    //   def_ = std::make_shared<
+    //       TDefGeometricProjection<GeometricSphere, GeometricPlane> >(
+    //       geom_prim_map_, visualizer_);
+    // } else if (prim_type1.compare("sphere") == 0 &&
+    //            prim_type2.compare("sphere") == 0) {
+    //   def_ = std::make_shared<
+    //       TDefGeometricProjection<GeometricSphere, GeometricSphere> >(
+    //       geom_prim_map_, visualizer_);
+    // } else if (prim_type1.compare("frame") == 0 &&
+    //            prim_type2.compare("frame") == 0) {
+    //   def_ = std::make_shared<
+    //       TDefGeometricProjection<GeometricFrame, GeometricFrame> >(
+    //       geom_prim_map_, visualizer_);
+    // }
+    else {
+      printHiqpWarning(
+          "TDefGeomProj does not support primitive combination of types '" +
+          prim_type1 + "' and '" + prim_type2 + "'!");
+      return -1;
+    }
+   }
+  //else if (type.compare("TDefGeomAlign") == 0) {
   //   std::string prim_type1 = def_params.at(1);
   //   std::string prim_type2 = def_params.at(2);
   //   if (prim_type1.compare("line") == 0 && prim_type2.compare("line") == 0) {

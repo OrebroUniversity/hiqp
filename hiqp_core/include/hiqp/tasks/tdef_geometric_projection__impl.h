@@ -66,6 +66,9 @@ int TDefGeometricProjection<PrimitiveA, PrimitiveB>::init(
   unsigned int n_joints = robot_state->getNumJoints();
   e_.resize(1);
   J_.resize(1, n_joints);
+  e_dot_.resize(1);
+  J_dot_.resize(1, n_joints);
+
   performance_measures_.resize(0);
 
   fk_solver_pos_ =

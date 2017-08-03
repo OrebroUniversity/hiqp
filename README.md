@@ -43,3 +43,4 @@ A publication presenting HiQP is in preparation. In the meantime, please refer t
 * Should rename e_ddot to dde and e_dot to de everywhere for consistency
 * Remove ROS-specific stuff from hiqp_core (error printouts ...)
 * Disabled measured sampling time update in the controler base class as it proved to be fragile (could yield 0.0)
+* kNamespace in the ROS visualizer is hardcoded to "/yumi" - should be loaded from config/launch file
