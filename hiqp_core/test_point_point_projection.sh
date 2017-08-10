@@ -5,7 +5,7 @@ rosservice call /amici/hiqp_joint_velocity_controller/set_primitives \
   frame_id: 'wrist_3_link'
   visible: true
   color: [1.0, 0.0, 0.0, 0.0]   
-  parameters: [0.0, 0.0, 0.4]
+  parameters: [0.0, 0.4, 0.0]
 - name: 'target_point'
   type: 'point'
   frame_id: 'world'

@@ -44,3 +44,4 @@ A publication presenting HiQP is in preparation. In the meantime, please refer t
 * Remove ROS-specific stuff from hiqp_core (error printouts ...)
 * Disabled measured sampling time update in the controler base class as it proved to be fragile (could yield 0.0)
 * kNamespace in the ROS visualizer is hardcoded to "/yumi" - should be loaded from config/launch file
+* renamed getVelocityJacobianForTwoPoints(...) to getRelativeVelocityJacobian() and modified it to return the full matrix instead of a single columnt to avoid the need of a for loop 

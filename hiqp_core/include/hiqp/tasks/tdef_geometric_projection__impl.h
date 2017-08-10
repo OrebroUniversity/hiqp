@@ -125,7 +125,7 @@ int TDefGeometricProjection<PrimitiveA, PrimitiveB>::update(
   retval = fk_solver_pos_->JntToCart(robot_state->kdl_jnt_array_vel_.q, pose_a_,
                                      primitive_a_->getFrameId());
   if (retval != 0) {
-    std::cerr << "In TDefGeometricProjection::apply : Can't solve position "
+    std::cerr << "In TDefGeometricProjection::update : Can't solve position "
               << "of link '" << primitive_a_->getFrameId() << "'"
               << " in the "
               << "KDL tree! KDL::TreeFkSolverPos_recursive::JntToCart return "
@@ -136,7 +136,7 @@ int TDefGeometricProjection<PrimitiveA, PrimitiveB>::update(
   retval = fk_solver_pos_->JntToCart(robot_state->kdl_jnt_array_vel_.q, pose_b_,
                                      primitive_b_->getFrameId());
   if (retval != 0) {
-    std::cerr << "In TDefGeometricProjection::apply : Can't solve position "
+    std::cerr << "In TDefGeometricProjection::update : Can't solve position "
               << "of link '" << primitive_b_->getFrameId() << "'"
               << " in the "
               << "KDL tree! KDL::TreeFkSolverPos_recursive::JntToCart return "
@@ -148,7 +148,7 @@ int TDefGeometricProjection<PrimitiveA, PrimitiveB>::update(
   retval = fk_solver_jac_->JntToJac(robot_state->kdl_jnt_array_vel_.q,
                                     jacobian_a_, primitive_a_->getFrameId());
   if (retval != 0) {
-    std::cerr << "In TDefGeometricProjection::apply : Can't solve jacobian "
+    std::cerr << "In TDefGeometricProjection::update : Can't solve jacobian "
               << "of link '" << primitive_a_->getFrameId() << "'"
               << " in the "
               << "KDL tree! KDL::TreeJntToJacSolver return error code "
@@ -160,7 +160,7 @@ int TDefGeometricProjection<PrimitiveA, PrimitiveB>::update(
   retval = fk_solver_jac_->JntToJac(robot_state->kdl_jnt_array_vel_.q,
                                     jacobian_b_, primitive_b_->getFrameId());
   if (retval != 0) {
-    std::cerr << "In TDefGeometricProjection::apply : Can't solve jacobian "
+    std::cerr << "In TDefGeometricProjection::update : Can't solve jacobian "
               << "of link '" << primitive_b_->getFrameId() << "'"
               << " in the "
               << "KDL tree! KDL::TreeJntToJacSolver return error code "
@@ -168,8 +168,34 @@ int TDefGeometricProjection<PrimitiveA, PrimitiveB>::update(
     return -4;
   }
 
+
+  jacobian_dot_a_.resize(robot_state->kdl_jnt_array_vel_.q.rows());
+  retval = treeJntToJacDot(robot_state->kdl_tree_, jacobian_a_, robot_state->kdl_jnt_array_vel_,
+  			   jacobian_dot_a_, primitive_a_->getFrameId());
+  if (retval != 0) {
+    std::cerr << "In TDefGeometricProjection::update : Can't solve jacobian derivative "
+              << "of link '" << primitive_a_->getFrameId() << "'"
+              << " in the "
+              << "KDL tree! treeJntToJacDot return error code "
+              << "'" << retval << "'\n";
+    return -5;
+  }
+
+    jacobian_dot_b_.resize(robot_state->kdl_jnt_array_vel_.q.rows());
+  retval = treeJntToJacDot(robot_state->kdl_tree_, jacobian_b_, robot_state->kdl_jnt_array_vel_,
+  			   jacobian_dot_b_, primitive_b_->getFrameId());
+  if (retval != 0) {
+    std::cerr << "In TDefGeometricProjection::update : Can't solve jacobian derivative "
+              << "of link '" << primitive_b_->getFrameId() << "'"
+              << " in the "
+              << "KDL tree! treeJntToJacDot return error code "
+              << "'" << retval << "'\n";
+    return -6;
+  }
+  
   project(primitive_a_, primitive_b_);
   maskJacobian(robot_state);
+  maskJacobianDerivative(robot_state);  
   return 0;
 }
 
@@ -180,7 +206,7 @@ int TDefGeometricProjection<PrimitiveA, PrimitiveB>::monitor() {
 
 template <typename PrimitiveA, typename PrimitiveB>
 KDL::Vector TDefGeometricProjection<PrimitiveA, PrimitiveB>::
-    getVelocityJacobianForTwoPoints(const KDL::Vector& p1,
+    getRelativeVelocityJacobian(const KDL::Vector& p1,
                                     const KDL::Vector& p2, int q_nr) {
   KDL::Twist Ja = jacobian_a_.getColumn(q_nr);
   KDL::Twist Jb = jacobian_b_.getColumn(q_nr);
@@ -194,9 +220,21 @@ template <typename PrimitiveA, typename PrimitiveB>
 void TDefGeometricProjection<PrimitiveA, PrimitiveB>::maskJacobian(
     RobotStatePtr robot_state) {
   for (unsigned int c = 0; c < robot_state->getNumJoints(); ++c) {
-    if (!robot_state->isQNrWritable(c)) J_.col(c).setZero();
+    if (!robot_state->isQNrWritable(c)){
+      J_.col(c).setZero();
+    }
   }
-}
+ }
+  
+template <typename PrimitiveA, typename PrimitiveB>
+void TDefGeometricProjection<PrimitiveA, PrimitiveB>::maskJacobianDerivative(
+    RobotStatePtr robot_state) {
+  for (unsigned int c = 0; c < robot_state->getNumJoints(); ++c) {
+    if (!robot_state->isQNrWritable(c)){
+            J_dot_.col(c).setZero();
+    }
+  }
+ }
 
 }  // namespace tasks
 

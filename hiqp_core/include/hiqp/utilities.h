@@ -52,6 +52,20 @@ int kdl_getQNrFromLinkName(const KDL::Tree& kdl_tree,
 int kdl_JntToJac(const KDL::Tree& tree, const KDL::JntArrayVel& qqdot,
                  KDL::Jacobian& jac, const std::string& segmentname);
 
+ /*! \brief computes the Jacobian time derivative for a tree with respect to the link given in segmentname
+ *
+ *Here, the i-th column of the velocity jacobian (the upper half) is given as
+   \f{eqnarray*}{
+      \dot{\mathbf{J}}^v_i &=& (\mathbf{\omega}_i \times \mathbf{k}_i) \times \mathbf{r}_i + \mathbf{k}_i \times (\mathbf{v}_n - \mathbf{v}_i), 
+   \f}
+   *
+   * where \f$\mathbf{\omega}}_i\f$ denotes the angular velocity of link \f$i\f$ and \f$\mathbf{k}_i\f$ and \f$\mathbf{r}_i\f$ respectively are the corresponding joint axis unit vector and the vector from joint center \f$ i\f$ to the reference point. Additionally, \f$ \mathbf{v}_n\f$ and $\f\mathbf{v}_i \f$ indicate the reference point velocity and the velocity of joint center \f$i\f$.
+
+   *
+ */
+ int treeJntToJacDot(const KDL::Tree& tree, const KDL::Jacobian& jac, const KDL::JntArrayVel& qqdot,
+                 KDL::Jacobian& jac_dot, const std::string& segmentname);
+
 void printHiqpInfo(const std::string& msg);
 void printHiqpWarning(const std::string& msg);
 

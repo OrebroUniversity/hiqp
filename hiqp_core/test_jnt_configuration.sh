@@ -12,42 +12,42 @@ rosservice call /amici/hiqp_joint_velocity_controller/set_tasks \
   visible: 1
   active: 1
   monitored: 1
-  def_params: ['TDefJntConfig', 'shoulder_link', '0.5']
+  def_params: ['TDefJntConfig', 'shoulder_link', '0.0']
   dyn_params: ['TDynLinear', '2.0', '3.0'] 
 - name: 'upper_arm_link_jntconfig'
   priority: 2
   visible: 1
   active: 1
   monitored: 1
-  def_params: ['TDefJntConfig', 'upper_arm_link', '0.5']
+  def_params: ['TDefJntConfig', 'upper_arm_link', '0.0']
   dyn_params: ['TDynLinear', '2.0', '3.0'] 
 - name: 'forearm_link_jntconfig'
   priority: 2
   visible: 1
   active: 1
   monitored: 1
-  def_params: ['TDefJntConfig', 'forearm_link', '0.5']
+  def_params: ['TDefJntConfig', 'forearm_link', '0.0']
   dyn_params: ['TDynLinear', '2.0', '3.0'] 
 - name: 'wrist_1_link_jntconfig'
   priority: 2
   visible: 1
   active: 1
   monitored: 1
-  def_params: ['TDefJntConfig', 'wrist_1_link', '0.5']
+  def_params: ['TDefJntConfig', 'wrist_1_link', '0.0']
   dyn_params: ['TDynLinear', '2.0', '3.0'] 
 - name: 'wrist_2_link_jntconfig'
   priority: 2
   visible: 1
   active: 1
   monitored: 1
-  def_params: ['TDefJntConfig', 'wrist_2_link', '0.5']
+  def_params: ['TDefJntConfig', 'wrist_2_link', '0.0']
   dyn_params: ['TDynLinear', '2.0', '1.0'] 
 - name: 'wrist_3_link_jntconfig'
   priority: 2
   visible: 1
   active: 1
   monitored: 1
-  def_params: ['TDefJntConfig', 'wrist_3_link', '0.5']
+  def_params: ['TDefJntConfig', 'wrist_3_link', '0.0']
   dyn_params: ['TDynLinear', '2.0', '3.0'] 
 #- name: 'full_pose'
 #  priority: 3

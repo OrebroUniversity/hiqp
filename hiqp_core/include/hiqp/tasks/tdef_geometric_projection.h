@@ -60,24 +60,27 @@ class TDefGeometricProjection : public TaskDefinition {
   /// \brief This sets jacobian columns corresponding to non-writable joints to
   /// 0
   void maskJacobian(RobotStatePtr robot_state);
+  void maskJacobianDerivative(RobotStatePtr robot_state);  
 
-  /*! \brief Computes column number q_nr of the resulting jacobian for the
-   *         vector (p2-p1), NOTE! p1 must be related to pose_a_ and p2 to
+  /*! \brief Computes column q_nr of the resulting relative jacobian  between two points p1 and p2, NOTE! p1 must be relative to the frame in pose_a_ and p2 to
    *         pose_b_ !
    */
-  KDL::Vector getVelocityJacobianForTwoPoints(const KDL::Vector& p1,
-                                              const KDL::Vector& p2, int q_nr);
+  KDL::Vector getRelativeVelocityJacobian(const KDL::Vector& p1,
+					  const KDL::Vector& p2, int q_nr);
 
   std::shared_ptr<KDL::TreeFkSolverPos_recursive> fk_solver_pos_;
   std::shared_ptr<KDL::TreeJntToJacSolver> fk_solver_jac_;
 
   std::shared_ptr<PrimitiveA> primitive_a_;
   KDL::Frame pose_a_;
-  KDL::Jacobian jacobian_a_;
-
+  KDL::Jacobian jacobian_a_; ///< tree jacobian w.r.t. the center of the frame TDefGeometricProjection::pose_a_ 
+  KDL::Jacobian jacobian_dot_a_;
+  
   std::shared_ptr<PrimitiveB> primitive_b_;
-  KDL::Frame pose_b_;
-  KDL::Jacobian jacobian_b_;
+  KDL::Frame pose_b_; 
+  KDL::Jacobian jacobian_b_; ///< tree jacobian w.r.t. the center of the frame TDefGeometricProjection::pose_b_
+  KDL::Jacobian jacobian_dot_b_;
+  
 };
 
 }  // namespace tasks
