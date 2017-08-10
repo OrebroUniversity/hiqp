@@ -55,7 +55,8 @@ class TDefGeometricProjection : public TaskDefinition {
       delete;
 
   int project(std::shared_ptr<PrimitiveA> first,
-              std::shared_ptr<PrimitiveB> second);
+              std::shared_ptr<PrimitiveB> second,
+	      const KDL::JntArrayVel& qqdot);
 
   /// \brief This sets jacobian columns corresponding to non-writable joints to
   /// 0
@@ -67,6 +68,10 @@ class TDefGeometricProjection : public TaskDefinition {
    */
   KDL::Vector getRelativeVelocityJacobian(const KDL::Vector& p1,
 					  const KDL::Vector& p2, int q_nr);
+
+    KDL::Jacobian getRelativeVelocityJacobianDerivative(const KDL::Vector& p1,
+							const KDL::Vector& p2,
+							 const KDL::JntArrayVel& qqdot);
 
   std::shared_ptr<KDL::TreeFkSolverPos_recursive> fk_solver_pos_;
   std::shared_ptr<KDL::TreeJntToJacSolver> fk_solver_jac_;

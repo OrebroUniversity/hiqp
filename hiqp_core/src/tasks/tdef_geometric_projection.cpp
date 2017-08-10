@@ -54,11 +54,12 @@ namespace tasks {
 template <>
 int TDefGeometricProjection<GeometricPoint, GeometricPoint>::project(
     std::shared_ptr<GeometricPoint> point1,
-    std::shared_ptr<GeometricPoint> point2) {
-  KDL::Vector p1__ = pose_a_.M * point1->getPointKDL();
+    std::shared_ptr<GeometricPoint> point2,
+    const KDL::JntArrayVel& qqdot) {
+  KDL::Vector p1__ = pose_a_.M * point1->getPointKDL(); //point 1 expressed in the world frame
   KDL::Vector p1 = pose_a_.p + p1__;
   
-  KDL::Vector p2__ = pose_b_.M * point2->getPointKDL();
+  KDL::Vector p2__ = pose_b_.M * point2->getPointKDL(); //point 2 expressed in the world frame
   KDL::Vector p2 = pose_b_.p + p2__;
 
   KDL::Vector d = p2 - p1;
@@ -70,7 +71,8 @@ int TDefGeometricProjection<GeometricPoint, GeometricPoint>::project(
     KDL::Vector Jp2p1 = getRelativeVelocityJacobian(p1__, p2__, q_nr);
     J_(0, q_nr) = 2 * dot(d, Jp2p1);
   }
-
+    KDL::Jacobian Jdp2p1 = getRelativeVelocityJacobianDerivative(p1__, p2__,qqdot);
+    
   // DEBUG =========================================================
   // std::cerr<<"p1: "<<p1.x()<<" "<<p1.y()<<" "<<p1.z()<<std::endl;
   // std::cerr<<"p2: "<<p2.x()<<" "<<p2.y()<<" "<<p2.z()<<std::endl;

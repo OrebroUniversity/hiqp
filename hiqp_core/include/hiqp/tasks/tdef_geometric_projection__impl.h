@@ -193,7 +193,7 @@ int TDefGeometricProjection<PrimitiveA, PrimitiveB>::update(
     return -6;
   }
   
-  project(primitive_a_, primitive_b_);
+  project(primitive_a_, primitive_b_,robot_state->kdl_jnt_array_vel_);
   maskJacobian(robot_state);
   maskJacobianDerivative(robot_state);  
   return 0;
@@ -216,6 +216,58 @@ KDL::Vector TDefGeometricProjection<PrimitiveA, PrimitiveB>::
   return (Jb.vel + Jp2 - (Ja.vel + Jp1));
 }
 
+ template <typename PrimitiveA, typename PrimitiveB>
+   KDL::Jacobian TDefGeometricProjection<PrimitiveA, PrimitiveB>::
+   getRelativeVelocityJacobianDerivative(const KDL::Vector& p1,
+					 const KDL::Vector& p2,
+					 const KDL::JntArrayVel& qqdot) {
+   const KDL::JntArray& qdot_in = qqdot.qdot;
+   unsigned int n=jacobian_dot_a_.columns();
+   assert(qdot_in.rows() == n);
+   
+   KDL::Jacobian jac_dot_rel(n);
+   KDL::Jacobian jac_dot_a(n);
+   KDL::Jacobian jac_dot_b(n);
+   KDL::Vector dv_a;
+   KDL::Vector dv_b;
+   SetToZero(dv_a);
+   SetToZero(dv_b);
+   //compute relative velocities between end-effectors and link origins - should do this via jacobians rather than a separate loop ...
+   for (unsigned int i=0; i<n;i++){
+     dv_a+=(qdot_in(i) * jacobian_a_.getColumn(i).rot) * p1;
+     dv_b+=(qdot_in(i) * jacobian_b_.getColumn(i).rot) * p2;
+   }
+
+   
+   for (unsigned int i=0; i<n;i++){
+     KDL::Twist col_a=jacobian_dot_a_.getColumn(i);
+     KDL::Twist col_b=jacobian_dot_b_.getColumn(i);
+
+     col_a.vel+=col_a.rot * p1 + jacobian_a_.getColumn(i).rot * dv_a;
+     col_b.vel+=col_b.rot * p2 + jacobian_b_.getColumn(i).rot * dv_b;
+
+     jac_dot_a.setColumn(i,col_a);
+     jac_dot_b.setColumn(i,col_b);
+     jac_dot_rel.setColumn(i,col_b - col_a);
+   }
+   //DEBUG ========================================================
+   /* std::cerr<<"q_in: "<<qqdot.q.data.transpose()<<std::endl; */
+   /* std::cerr<<"dq_in: "<<qdot_in.data.transpose()<<std::endl<<std::endl; */
+
+   /* std::cerr<<"p1 "<<p1.x()<<" "<<p1.y()<<" "<<p1.z()<<std::endl; */
+   /* std::cerr<<"p2 "<<p2.x()<<" "<<p2.y()<<" "<<p2.z()<<std::endl<<std::endl;    */
+
+   /* std::cerr<<"jacobian_dot_a_: "<<std::endl<<jacobian_dot_a_.data<<std::endl; */
+   /* std::cerr<<"jacobian_dot_b_: "<<std::endl<<jacobian_dot_b_.data<<std::endl<<std::endl; */
+
+   /* std::cerr<<"jac_dot_a: "<<std::endl<<jac_dot_a.data<<std::endl; */
+   /* std::cerr<<"jac_dot_b: "<<std::endl<<jac_dot_b.data<<std::endl;  */     
+   //DEBUG END ====================================================
+   
+   return jac_dot_rel;
+ }
+
+ 
 template <typename PrimitiveA, typename PrimitiveB>
 void TDefGeometricProjection<PrimitiveA, PrimitiveB>::maskJacobian(
     RobotStatePtr robot_state) {

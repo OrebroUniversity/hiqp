@@ -155,7 +155,7 @@ namespace hiqp {
 		      KDL::Jacobian& jac_dot, const std::string& segmentname){
     const KDL::JntArray& q_in = qqdot.q;
     const KDL::JntArray& qdot_in = qqdot.qdot;
-
+    
     //First we check all the sizes:
     if (q_in.rows() != tree.getNrOfJoints() || jac_dot.columns() != tree.getNrOfJoints() || jac.columns() != jac_dot.columns())
       return -1;
