@@ -66,13 +66,18 @@ class TDefGeometricProjection : public TaskDefinition {
   /*! \brief Computes column q_nr of the resulting relative jacobian  between two points p1 and p2, NOTE! p1 must be relative to the frame in pose_a_ and p2 to
    *         pose_b_ !
    */
-  KDL::Vector getRelativeVelocityJacobian(const KDL::Vector& p1,
-					  const KDL::Vector& p2, int q_nr);
+  KDL::Jacobian getRelativeJacobian(const KDL::Vector& p1, const KDL::Vector& p2);
 
-    KDL::Jacobian getRelativeVelocityJacobianDerivative(const KDL::Vector& p1,
+    KDL::Jacobian getRelativeJacobianDerivative(const KDL::Vector& p1,
 							const KDL::Vector& p2,
 							 const KDL::JntArrayVel& qqdot);
-
+    /*! \brief computes the time derivative of the unit normal projection vector given by the (non-unit) vector \f$ d=p_2-p_1\f$. The derivative is computed as
+   \f{eqnarray*}{
+      \dot{\mathbf{n}} &=& \frac{\dot{\mathbf{d}}}{||\mathbf{d}||_2}-\frac{\diag(\mathbf{d}^T\dot{\mathbf{d}})\mathbf{d}}{(\mathbf{d}^T\mathbf{d})^{3/2}}.
+   \f}
+     */
+    KDL::Vector getProjectionVectorDerivative(const KDL::Vector& d, const KDL::Vector& d_dot);
+    
   std::shared_ptr<KDL::TreeFkSolverPos_recursive> fk_solver_pos_;
   std::shared_ptr<KDL::TreeJntToJacSolver> fk_solver_jac_;
 

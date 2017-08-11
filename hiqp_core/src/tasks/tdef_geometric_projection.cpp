@@ -56,30 +56,39 @@ int TDefGeometricProjection<GeometricPoint, GeometricPoint>::project(
     std::shared_ptr<GeometricPoint> point1,
     std::shared_ptr<GeometricPoint> point2,
     const KDL::JntArrayVel& qqdot) {
+
+  
   KDL::Vector p1__ = pose_a_.M * point1->getPointKDL(); //point 1 expressed in the world frame
   KDL::Vector p1 = pose_a_.p + p1__;
   
   KDL::Vector p2__ = pose_b_.M * point2->getPointKDL(); //point 2 expressed in the world frame
   KDL::Vector p2 = pose_b_.p + p2__;
 
-  KDL::Vector d = p2 - p1;
+  KDL::Jacobian Jp2p1 = getRelativeJacobian(p1__, p2__);
+  KDL::Jacobian Jdp2p1 = getRelativeJacobianDerivative(p1__, p2__,qqdot);
+  
+  KDL::Vector d = p2 - p1; //distance vector expressed in the world frame
+  Eigen::VectorXd d_dot__ = Jp2p1.data * qqdot.qdot.data;
+  KDL::Vector d_dot(d_dot__(0),d_dot__(1),d_dot__(2));
+  
+  KDL::Vector n=d/d.Norm();
+  KDL::Vector n_dot = getProjectionVectorDerivative(d,d_dot);
 
-  e_(0) = KDL::dot(d, d);
+   e_(0)=d.Norm();
+   e_dot_(0)=dot(d,d_dot)/e_(0);
 
-  // The task jacobian is J = 2 (p2-p1)^T (Jp2 - Jp1)
-  for (int q_nr = 0; q_nr < jacobian_a_.columns(); ++q_nr) {
-    KDL::Vector Jp2p1 = getRelativeVelocityJacobian(p1__, p2__, q_nr);
-    J_(0, q_nr) = 2 * dot(d, Jp2p1);
-  }
-    KDL::Jacobian Jdp2p1 = getRelativeVelocityJacobianDerivative(p1__, p2__,qqdot);
-    
+  //  J_=-n.data.transpose()*Jp2p1.data.topRows(3);
+  // J_dot_=-n_dot.data.transpose()*Jp2p1.data.topRows(3)-n.data.transpose()*Jdp2p1.data.topRows(3);
+  
   // DEBUG =========================================================
-  // std::cerr<<"p1: "<<p1.x()<<" "<<p1.y()<<" "<<p1.z()<<std::endl;
-  // std::cerr<<"p2: "<<p2.x()<<" "<<p2.y()<<" "<<p2.z()<<std::endl;
-  // std::cerr<<"jacobian_a_:"<<std::endl<<jacobian_a_.data<<std::endl;
-  // std::cerr<<"jacobian_b_:"<<std::endl<<jacobian_b_.data<<std::endl;
+  std::cerr<<"p1: "<<p1.x()<<" "<<p1.y()<<" "<<p1.z()<<std::endl;
+  std::cerr<<"p2: "<<p2.x()<<" "<<p2.y()<<" "<<p2.z()<<std::endl;
+  std::cerr<<"jacobian_a_:"<<std::endl<<jacobian_a_.data<<std::endl;
+  std::cerr<<"jacobian_b_:"<<std::endl<<jacobian_b_.data<<std::endl;
+  std::cerr<<"n_dot: "<<n_dot.x()<<" "<<n_dot.y()<<" "<<n_dot.z()<<std::endl;
   // DEBUG END =====================================================
-	
+  exit(0);
+  
   return 0;
 }
 

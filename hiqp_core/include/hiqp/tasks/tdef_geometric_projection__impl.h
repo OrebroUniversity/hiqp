@@ -204,21 +204,50 @@ int TDefGeometricProjection<PrimitiveA, PrimitiveB>::monitor() {
   return 0;
 }
 
-template <typename PrimitiveA, typename PrimitiveB>
-KDL::Vector TDefGeometricProjection<PrimitiveA, PrimitiveB>::
-    getRelativeVelocityJacobian(const KDL::Vector& p1,
-                                    const KDL::Vector& p2, int q_nr) {
-  KDL::Twist Ja = jacobian_a_.getColumn(q_nr);
-  KDL::Twist Jb = jacobian_b_.getColumn(q_nr);
-  KDL::Vector Jp1 = Ja.rot * p1;
-  KDL::Vector Jp2 = Jb.rot * p2;
+ template <typename PrimitiveA, typename PrimitiveB>
+   KDL::Vector TDefGeometricProjection<PrimitiveA, PrimitiveB>::
+   getProjectionVectorDerivative(const KDL::Vector& d,
+		       const KDL::Vector& d_dot) {
 
-  return (Jb.vel + Jp2 - (Ja.vel + Jp1));
-}
+   KDL::Vector t;
+   t.data[0]=dot(d,d_dot)*d(0);
+   t.data[1]=dot(d,d_dot)*d(1);
+   t.data[2]=dot(d,d_dot)*d(2);   
+
+
+   // DEBUG ==============================================================
+   KDL::Vector n_dot=d_dot/d.Norm()-t/pow(dot(d,d),3/2);
+   std::cerr<<"d: "<<d.x()<<" "<<d.y()<<" "<<d.z()<<std::endl;
+   std::cerr<<"d_dot: "<<d_dot.x()<<" "<<d_dot.y()<<" "<<d_dot.z()<<std::endl;   
+   std::cerr<<"n_dot: "<<n_dot.x()<<" "<<n_dot.y()<<" "<<n_dot.z()<<std::endl;
+   exit(0);
+   // DEBUG END ==========================================================  
+   
+   return d_dot/d.Norm()-t/pow(dot(d,d),3/2);
+ }
+ 
+ template <typename PrimitiveA, typename PrimitiveB>
+   KDL::Jacobian TDefGeometricProjection<PrimitiveA, PrimitiveB>::
+   getRelativeJacobian(const KDL::Vector& p1,
+		       const KDL::Vector& p2) {
+
+   unsigned int n=jacobian_dot_a_.columns();
+   KDL::Jacobian jac_rel(n);
+   
+   for(unsigned int i=0; i<n; i++) {
+     KDL::Twist Ja = jacobian_a_.getColumn(i);
+     KDL::Twist Jb = jacobian_b_.getColumn(i);
+     Ja.vel+=Ja.rot * p1;
+     Jb.vel+=Jb.rot * p2;
+     jac_rel.setColumn(i, Jb - Ja);
+   }
+
+   return jac_rel;
+ }
 
  template <typename PrimitiveA, typename PrimitiveB>
    KDL::Jacobian TDefGeometricProjection<PrimitiveA, PrimitiveB>::
-   getRelativeVelocityJacobianDerivative(const KDL::Vector& p1,
+   getRelativeJacobianDerivative(const KDL::Vector& p1,
 					 const KDL::Vector& p2,
 					 const KDL::JntArrayVel& qqdot) {
    const KDL::JntArray& qdot_in = qqdot.qdot;
@@ -226,8 +255,8 @@ KDL::Vector TDefGeometricProjection<PrimitiveA, PrimitiveB>::
    assert(qdot_in.rows() == n);
    
    KDL::Jacobian jac_dot_rel(n);
-   KDL::Jacobian jac_dot_a(n);
-   KDL::Jacobian jac_dot_b(n);
+   /* KDL::Jacobian jac_dot_a(n); */
+   /* KDL::Jacobian jac_dot_b(n); */
    KDL::Vector dv_a;
    KDL::Vector dv_b;
    SetToZero(dv_a);
@@ -246,8 +275,8 @@ KDL::Vector TDefGeometricProjection<PrimitiveA, PrimitiveB>::
      col_a.vel+=col_a.rot * p1 + jacobian_a_.getColumn(i).rot * dv_a;
      col_b.vel+=col_b.rot * p2 + jacobian_b_.getColumn(i).rot * dv_b;
 
-     jac_dot_a.setColumn(i,col_a);
-     jac_dot_b.setColumn(i,col_b);
+     /* jac_dot_a.setColumn(i,col_a); */
+     /* jac_dot_b.setColumn(i,col_b); */
      jac_dot_rel.setColumn(i,col_b - col_a);
    }
    //DEBUG ========================================================
