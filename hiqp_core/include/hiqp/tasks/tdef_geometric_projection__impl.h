@@ -209,21 +209,15 @@ int TDefGeometricProjection<PrimitiveA, PrimitiveB>::monitor() {
    getProjectionVectorDerivative(const KDL::Vector& d,
 		       const KDL::Vector& d_dot) {
 
-   KDL::Vector t;
-   t.data[0]=dot(d,d_dot)*d(0);
-   t.data[1]=dot(d,d_dot)*d(1);
-   t.data[2]=dot(d,d_dot)*d(2);   
-
 
    // DEBUG ==============================================================
-   KDL::Vector n_dot=d_dot/d.Norm()-t/pow(dot(d,d),3/2);
-   std::cerr<<"d: "<<d.x()<<" "<<d.y()<<" "<<d.z()<<std::endl;
-   std::cerr<<"d_dot: "<<d_dot.x()<<" "<<d_dot.y()<<" "<<d_dot.z()<<std::endl;   
-   std::cerr<<"n_dot: "<<n_dot.x()<<" "<<n_dot.y()<<" "<<n_dot.z()<<std::endl;
-   exit(0);
+   /* KDL::Vector n_dot=d_dot/d.Norm()-t/pow(dot(d,d),3/2); */
+   /* std::cerr<<"d: "<<d.x()<<" "<<d.y()<<" "<<d.z()<<std::endl; */
+   /* std::cerr<<"d_dot: "<<d_dot.x()<<" "<<d_dot.y()<<" "<<d_dot.z()<<std::endl;    */
+   /* std::cerr<<"n_dot: "<<n_dot.x()<<" "<<n_dot.y()<<" "<<n_dot.z()<<std::endl; */
    // DEBUG END ==========================================================  
    
-   return d_dot/d.Norm()-t/pow(dot(d,d),3/2);
+   return d_dot/d.Norm()-dot(d,d_dot)*d/pow(dot(d,d),1.5);
  }
  
  template <typename PrimitiveA, typename PrimitiveB>
