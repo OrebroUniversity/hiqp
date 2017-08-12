@@ -148,12 +148,13 @@ int Task::constructDefinition(const std::vector<std::string>& def_params) {
     //   def_ = std::make_shared<
     //       TDefGeometricProjection<GeometricPoint, GeometricLine> >(
     //       geom_prim_map_, visualizer_);
-    // } else if (prim_type1.compare("point") == 0 &&
-    //            prim_type2.compare("plane") == 0) {
-    //   def_ = std::make_shared<
-    //       TDefGeometricProjection<GeometricPoint, GeometricPlane> >(
-    //       geom_prim_map_, visualizer_);
-    // } else if (prim_type1.compare("point") == 0 &&
+    // }
+    else if (prim_type1.compare("point") == 0 &&
+               prim_type2.compare("plane") == 0) {
+      def_ = std::make_shared<
+          TDefGeometricProjection<GeometricPoint, GeometricPlane> >(
+          geom_prim_map_, visualizer_);
+    } //else if (prim_type1.compare("point") == 0 &&
     //            prim_type2.compare("box") == 0) {
     //   def_ = std::make_shared<
     //       TDefGeometricProjection<GeometricPoint, GeometricBox> >(

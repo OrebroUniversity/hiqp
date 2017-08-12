@@ -64,22 +64,31 @@ int TDefGeometricProjection<GeometricPoint, GeometricPoint>::project(
   KDL::Vector p2__ = pose_b_.M * point2->getPointKDL(); //point 2 from link origin to ee expressed in the world frame
   KDL::Vector p2 = pose_b_.p + p2__; //absolute ee point 2 expressed in the world frame
 
-  KDL::Jacobian Jp2p1 = getRelativeJacobian(p1__, p2__);
-  KDL::Jacobian Jdp2p1 = getRelativeJacobianDerivative(p1__, p2__,qqdot);
-  
-  KDL::Vector d = p2 - p1; //distance vector expressed in the world frame
-  Eigen::VectorXd d_dot__ = Jp2p1.data * qqdot.qdot.data;
-  KDL::Vector d_dot(d_dot__(0),d_dot__(1),d_dot__(2));
-  
-  KDL::Vector n=d/d.Norm();
-  KDL::Vector n_dot = getProjectionVectorDerivative(d,d_dot);
+  KDL::Vector d = p1 - p2; //distance vector expressed in the world frame  
 
-   e_(0)=d.Norm();
-   e_dot_(0)=dot(d,d_dot)/d.Norm();
+  double q_nr=jacobian_a_.columns();
+  KDL::Jacobian J_p2, J_p1p2, J_dot_p2, J_dot_p1p2;
+  J_p2.resize(q_nr);
+  J_p1p2.resize(q_nr);
+  J_dot_p2.resize(q_nr);
+  J_dot_p1p2.resize(q_nr);      
+
+  changeJacRefPoint(jacobian_a_, p1__, J_p1p2);
+  changeJacRefPoint(jacobian_b_, p2__, J_p2);
+  J_p1p2.data = J_p1p2.data - J_p2.data;
+
+  changeJacDotRefPoint(jacobian_a_,jacobian_dot_a_,qqdot, p1__, J_dot_p1p2);
+  changeJacDotRefPoint(jacobian_b_,jacobian_dot_b_,qqdot, p2__, J_dot_p2);
+  J_dot_p1p2.data = J_dot_p1p2.data - J_dot_p2.data;
+  Eigen::Vector3d d_dot=J_p1p2.data.topRows<3>()*qqdot.qdot.data;
+    
+  e_(0)=d.Norm();
+  J_=J_=Eigen::Map<Eigen::Matrix<double,1,3> >(d.data)/e_(0)*J_p1p2.data.topRows<3>();
+
+  e_dot_=J_*qqdot.qdot.data;
+  J_dot_=Eigen::Map<Eigen::Matrix<double,1,3> >(d.data)/e_(0)*J_dot_p1p2.data.topRows<3>()+(d_dot.transpose()/e_(0) - (Eigen::Map<Eigen::Matrix<double,1,3> >(d.data)*d_dot)*Eigen::Map<Eigen::Matrix<double,1,3> >(d.data)/pow(e_(0)*e_(0),1.5))*J_p1p2.data.topRows<3>();
    
-   J_=Eigen::Map<Eigen::Matrix<double,1,3> >(n.data)*Jp2p1.data.topRows(3);
-   J_dot_=Eigen::Map<Eigen::Matrix<double,1,3> >(n_dot.data)*Jp2p1.data.topRows(3)+Eigen::Map<Eigen::Matrix<double,1,3> >(n.data)*Jdp2p1.data.topRows(3);
-   // J_dot_=J_dot_*0.0;
+
   // DEBUG =========================================================
   // std::cerr<<"q_in: "<<qqdot.q.data.transpose()<<std::endl;
   // std::cerr<<"dq_in: "<<qqdot.qdot.data.transpose()<<std::endl;   
@@ -97,7 +106,6 @@ int TDefGeometricProjection<GeometricPoint, GeometricPoint>::project(
   // std::cerr<<"e_dot_: "<<e_dot_.transpose()<<std::endl;
   // std::cerr<<"J_: "<<std::endl<<J_<<std::endl;
   // std::cerr<<"J_dot_: "<<std::endl<<J_dot_<<std::endl; 
-  
   // DEBUG END =====================================================
   
   return 0;
@@ -137,26 +145,67 @@ int TDefGeometricProjection<GeometricPoint, GeometricPoint>::project(
 //   return 0;
 // }
 
-// template <>
-// int TDefGeometricProjection<GeometricPoint, GeometricPlane>::project(
-//     std::shared_ptr<GeometricPoint> point,
-//     std::shared_ptr<GeometricPlane> plane) {
-//   KDL::Vector p__ = pose_a_.M * point->getPointKDL();
-//   KDL::Vector p = pose_a_.p + p__;
+  template <>
+  int TDefGeometricProjection<GeometricPoint, GeometricPlane>::project(
+								       std::shared_ptr<GeometricPoint> point,
+								       std::shared_ptr<GeometricPlane> plane,
+								       const KDL::JntArrayVel& qqdot) {
+  
+    KDL::Vector p1__ = pose_a_.M * point->getPointKDL(); //point 1 from link origin to ee expressed in the world frame
+    KDL::Vector p1 = pose_a_.p + p1__; //absolute ee point 1 expressed in the world frame
 
-//   KDL::Vector n = pose_b_.M * plane->getNormalKDL();
+    KDL::Vector n = pose_b_.M * plane->getNormalKDL();  //plane normal expressed in the world frame
+    KDL::Vector k__ = plane->getOffset() * n; //point on the plane expressed in the world frame
+    KDL::Vector v__ = k__ + n; //normal tip expressed in the world frame
+    KDL::Vector k = k__ + pose_b_.p; // absolute point on the plane expressed in the world frame    
+    double b = dot(n,k); //plane offset in the world frame
 
-//   KDL::Vector d__ = n * plane->getOffset();
-//   KDL::Vector d = d__ + n * KDL::dot(n, pose_b_.p);
+    double q_nr=jacobian_a_.columns();
+    KDL::Jacobian J_vk, J_p1k, J_dot_vk, J_dot_p1k, J_k, J_dot_k;
+    J_k.resize(q_nr);
+    J_dot_k.resize(q_nr);    
+    J_vk.resize(q_nr);
+    J_p1k.resize(q_nr);
+    J_dot_vk.resize(q_nr);
+    J_dot_p1k.resize(q_nr);
 
-//   e_(0) = KDL::dot(n, (p - d));
+    changeJacRefPoint(jacobian_b_, v__, J_vk);
+    changeJacRefPoint(jacobian_b_, k__, J_k);
+    J_vk.data=J_vk.data - J_k.data;
 
-//   for (int q_nr = 0; q_nr < jacobian_a_.columns(); ++q_nr) {
-//     KDL::Vector Jpd = -getRelativeVelocityJacobian(p__, d__, q_nr);
-//     J_(0, q_nr) = KDL::dot(n, Jpd);
-//   }
-//   return 0;
-// }
+    changeJacRefPoint(jacobian_a_, p1__, J_p1k);
+    J_p1k.data=J_p1k.data - J_k.data;
+
+    changeJacDotRefPoint(jacobian_b_, jacobian_dot_b_, qqdot, v__, J_dot_vk);
+    changeJacDotRefPoint(jacobian_b_, jacobian_dot_b_, qqdot, k__, J_dot_k);    
+    J_dot_vk.data = J_dot_vk.data - J_dot_k.data;
+
+    changeJacDotRefPoint(jacobian_a_, jacobian_dot_a_, qqdot, p1__, J_dot_p1k);
+    J_dot_p1k.data = J_dot_p1k.data - J_dot_k.data;	
+	
+    e_(0)=dot(n,p1)-b;
+    J_=Eigen::Map<Eigen::Matrix<double,1,3> >((p1-k).data)*J_vk.data.topRows<3>()+Eigen::Map<Eigen::Matrix<double,1,3> >(n.data)*J_p1k.data.topRows<3>();
+
+    e_dot_=J_*qqdot.qdot.data;
+    J_dot_=Eigen::Map<Eigen::Matrix<double,1,3> >((p1-k).data)*J_dot_vk.data.topRows<3>()+Eigen::Map<Eigen::Matrix<double,1,3> >(n.data)*J_dot_p1k.data.topRows<3>()+(J_p1k.data.topRows<3>()*qqdot.qdot.data).transpose()*J_vk.data.topRows<3>()+(J_vk.data.topRows<3>()*qqdot.qdot.data).transpose()*J_p1k.data.topRows<3>();
+
+    // DEBUG =========================================================
+    // std::cerr<<"q_in: "<<qqdot.q.data.transpose()<<std::endl;
+    // std::cerr<<"dq_in: "<<qqdot.qdot.data.transpose()<<std::endl;   
+    // std::cerr<<"p1: "<<p1.x()<<" "<<p1.y()<<" "<<p1.z()<<std::endl;
+    // std::cerr<<"jacobian_a_:"<<std::endl<<jacobian_a_.data<<std::endl;
+    // std::cerr<<"jacobian_b_:"<<std::endl<<jacobian_b_.data<<std::endl;
+    // std::cerr<<"b: "<<b<<std::endl;
+    // std::cerr<<"n: "<<n(0)<<" "<<n(1)<<" "<<n(2)<<std::endl;
+    // std::cerr<<"n_dot: "<<J_vk.data.topRows<3>()*qqdot.qdot.data<<std::endl;
+    // std::cerr<<"e_: "<<e_.transpose()<<std::endl;
+    // std::cerr<<"e_dot_: "<<e_dot_.transpose()<<std::endl;
+    // std::cerr<<"J_: "<<std::endl<<J_<<std::endl;
+    // std::cerr<<"J_dot_: "<<std::endl<<J_dot_<<std::endl<<std::endl; 
+    // // // DEBUG END =====================================================
+
+    return 0;
+  }
 
 // template <>
 // int TDefGeometricProjection<GeometricPoint, GeometricBox>::project(

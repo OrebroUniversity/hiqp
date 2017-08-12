@@ -203,75 +203,46 @@ template <typename PrimitiveA, typename PrimitiveB>
 int TDefGeometricProjection<PrimitiveA, PrimitiveB>::monitor() {
   return 0;
 }
-
- template <typename PrimitiveA, typename PrimitiveB>
-   KDL::Vector TDefGeometricProjection<PrimitiveA, PrimitiveB>::
-   getProjectionVectorDerivative(const KDL::Vector& d,
-		       const KDL::Vector& d_dot) {
-
-
-   // DEBUG ==============================================================
-   /* KDL::Vector n_dot=d_dot/d.Norm()-t/pow(dot(d,d),3/2); */
-   /* std::cerr<<"d: "<<d.x()<<" "<<d.y()<<" "<<d.z()<<std::endl; */
-   /* std::cerr<<"d_dot: "<<d_dot.x()<<" "<<d_dot.y()<<" "<<d_dot.z()<<std::endl;    */
-   /* std::cerr<<"n_dot: "<<n_dot.x()<<" "<<n_dot.y()<<" "<<n_dot.z()<<std::endl; */
-   // DEBUG END ==========================================================  
-   
-   return d_dot/d.Norm()-dot(d,d_dot)*d/pow(dot(d,d),1.5);
- }
  
  template <typename PrimitiveA, typename PrimitiveB>
-   KDL::Jacobian TDefGeometricProjection<PrimitiveA, PrimitiveB>::
-   getRelativeJacobian(const KDL::Vector& p1,
-		       const KDL::Vector& p2) {
+   void TDefGeometricProjection<PrimitiveA, PrimitiveB>::changeJacRefPoint(
+		       const KDL::Jacobian& jac,
+		       const KDL::Vector& p,
+		       KDL::Jacobian& jac_new) {
+   unsigned int n=jac.columns();
+   assert(jac_new.columns() == n);
 
-   unsigned int n=jacobian_dot_a_.columns();
-   KDL::Jacobian jac_rel(n);
-   
    for(unsigned int i=0; i<n; i++) {
-     KDL::Twist Ja = jacobian_a_.getColumn(i);
-     KDL::Twist Jb = jacobian_b_.getColumn(i);
-     Ja.vel+=Ja.rot * p1;
-     Jb.vel+=Jb.rot * p2;
-     jac_rel.setColumn(i, Jb - Ja);
+     KDL::Twist col_i = jac.getColumn(i);
+     col_i.vel+=col_i.rot * p;
+     jac_new.setColumn(i, col_i);
    }
-
-   return jac_rel;
  }
 
  template <typename PrimitiveA, typename PrimitiveB>
-   KDL::Jacobian TDefGeometricProjection<PrimitiveA, PrimitiveB>::
-   getRelativeJacobianDerivative(const KDL::Vector& p1,
-					 const KDL::Vector& p2,
-					 const KDL::JntArrayVel& qqdot) {
+  void TDefGeometricProjection<PrimitiveA, PrimitiveB>::changeJacDotRefPoint(
+				       const KDL::Jacobian& jac,
+				       const KDL::Jacobian& jac_dot,
+				       const KDL::JntArrayVel& qqdot,
+				       const KDL::Vector& p,
+				       KDL::Jacobian& jac_dot_new) {
    const KDL::JntArray& qdot_in = qqdot.qdot;
-   unsigned int n=jacobian_dot_a_.columns();
-   assert(qdot_in.rows() == n);
+   unsigned int n=jac.columns();
+   assert(qdot_in.rows() == n && jac_dot.columns() == n && jac_dot_new.columns() == n);
    
-   KDL::Jacobian jac_dot_rel(n);
-   /* KDL::Jacobian jac_dot_a(n); */
-   /* KDL::Jacobian jac_dot_b(n); */
-   KDL::Vector dv_a;
-   KDL::Vector dv_b;
-   SetToZero(dv_a);
-   SetToZero(dv_b);
-   //compute relative velocities between end-effectors and link origins - should do this via jacobians rather than a separate loop ...
+   KDL::Vector dv;
+   SetToZero(dv);
+   //compute relative velocity between previous and new reference point - should do this via jacobians rather than a separate loop ...
    for (unsigned int i=0; i<n;i++){
-     dv_a+=(qdot_in(i) * jacobian_a_.getColumn(i).rot) * p1;
-     dv_b+=(qdot_in(i) * jacobian_b_.getColumn(i).rot) * p2;
+     dv+=(qdot_in(i) * jac.getColumn(i).rot) * p;
    }
 
    
    for (unsigned int i=0; i<n;i++){
-     KDL::Twist col_a=jacobian_dot_a_.getColumn(i);
-     KDL::Twist col_b=jacobian_dot_b_.getColumn(i);
+     KDL::Twist col_i=jac_dot.getColumn(i);
 
-     col_a.vel+=col_a.rot * p1 + jacobian_a_.getColumn(i).rot * dv_a;
-     col_b.vel+=col_b.rot * p2 + jacobian_b_.getColumn(i).rot * dv_b;
-
-     /* jac_dot_a.setColumn(i,col_a); */
-     /* jac_dot_b.setColumn(i,col_b); */
-     jac_dot_rel.setColumn(i,col_b - col_a);
+     col_i.vel+=col_i.rot * p + jac.getColumn(i).rot * dv;
+     jac_dot_new.setColumn(i,col_i);
    }
    //DEBUG ========================================================
    /* std::cerr<<"q_in: "<<qqdot.q.data.transpose()<<std::endl; */
@@ -286,8 +257,6 @@ int TDefGeometricProjection<PrimitiveA, PrimitiveB>::monitor() {
    /* std::cerr<<"jac_dot_a: "<<std::endl<<jac_dot_a.data<<std::endl; */
    /* std::cerr<<"jac_dot_b: "<<std::endl<<jac_dot_b.data<<std::endl;  */     
    //DEBUG END ====================================================
-   
-   return jac_dot_rel;
  }
 
  

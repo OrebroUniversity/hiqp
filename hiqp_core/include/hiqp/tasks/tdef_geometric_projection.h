@@ -63,20 +63,16 @@ class TDefGeometricProjection : public TaskDefinition {
   void maskJacobian(RobotStatePtr robot_state);
   void maskJacobianDerivative(RobotStatePtr robot_state);  
 
-  /*! \brief Computes column q_nr of the resulting relative jacobian  between two points p1 and p2, NOTE! p1 must be relative to the frame in pose_a_ and p2 to
-   *         pose_b_ !
+  /*! \brief changes the reference point of the jacobian jac. the new reference point p is relative to the reference point of jac and expressed in the world frame.
    */
-  KDL::Jacobian getRelativeJacobian(const KDL::Vector& p1, const KDL::Vector& p2);
-
-    KDL::Jacobian getRelativeJacobianDerivative(const KDL::Vector& p1,
-							const KDL::Vector& p2,
-							 const KDL::JntArrayVel& qqdot);
-    /*! \brief computes the time derivative of the unit normal projection vector given by the (non-unit) vector \f$ d=p_2-p_1\f$. The derivative is computed as
-   \f{eqnarray*}{
-      \dot{\mathbf{n}} &=& \frac{\dot{\mathbf{d}}}{||\mathbf{d}||_2}-\frac{\diag(\mathbf{d}^T\dot{\mathbf{d}})\mathbf{d}}{(\mathbf{d}^T\mathbf{d})^{3/2}}.
-   \f}
-     */
-    KDL::Vector getProjectionVectorDerivative(const KDL::Vector& d, const KDL::Vector& d_dot);
+  void changeJacRefPoint(const KDL::Jacobian& jac, const KDL::Vector& p, KDL::Jacobian& jac_new);
+  /*! \brief changes the reference point of the jacobian derivative jac_dot of the jacobian jac. the new reference point p is relative to the reference point of jac and expressed in the world frame.
+   */
+  void changeJacDotRefPoint(const KDL::Jacobian& jac,
+			    const KDL::Jacobian& jac_dot,
+			    const KDL::JntArrayVel& qqdot,
+                	    const KDL::Vector& p,
+			    KDL::Jacobian& jac_dot_new);
     
   std::shared_ptr<KDL::TreeFkSolverPos_recursive> fk_solver_pos_;
   std::shared_ptr<KDL::TreeJntToJacSolver> fk_solver_jac_;

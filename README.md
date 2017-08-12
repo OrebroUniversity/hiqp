@@ -44,6 +44,7 @@ A publication presenting HiQP is in preparation. In the meantime, please refer t
 * Remove ROS-specific stuff from hiqp_core (error printouts ...)
 * Disabled measured sampling time update in the controler base class as it proved to be fragile (could yield 0.0)
 * kNamespace in the ROS visualizer is hardcoded to "/yumi" - should be loaded from config/launch file
-* renamed getVelocityJacobianForTwoPoints(...) to getRelativeJacobian() and modified it to return the full matrix instead of a single column 
+* changed getVelocityJacobianForTwoPoints(...) to changeJacReferencePoint(...) and modified it to return the full matrix 
 * Should implement Jacobian derivative computation with the official KDL implementation once its added to the ROS package in order to increase efficiency opposed to the current naive impementation which necessiates to compute n_Joints Jacobians at each time step
 * Should implement relativeJacobianDerivative computation using the previously calculated Jacobians rather than in a separate loop
+* Implement proper filtering in base_controller.h - now, there's just a hardcoded exponential velocity filter
