@@ -35,6 +35,8 @@
 #include <hiqp/robot_state.h>
 #include <hiqp_ros/utilities.h>
 
+#define ALPHA_VEL_FILTER 0.8
+
 namespace hiqp_ros {
 
 using hiqp::HiQPTimePoint;
@@ -250,12 +252,16 @@ void BaseController<HardwareInterfaceT>::sampleJointValues() {
   KDL::JntArray& q = robot_state_data_.kdl_jnt_array_vel_.q;
   KDL::JntArray& qdot = robot_state_data_.kdl_jnt_array_vel_.qdot;
   KDL::JntArray& effort = robot_state_data_.kdl_effort_;
+
   handles_mutex_.lock();
+  //   Eigen::VectorXd qdot_prev=qdot.data;
   for (auto&& handle : joint_handles_map_) {
     q(handle.first) = handle.second.getPosition();
     qdot(handle.first) = handle.second.getVelocity();
     effort(handle.first) = handle.second.getEffort();
   }
+  //   qdot.data=ALPHA_VEL_FILTER * qdot.data + (1 - ALPHA_VEL_FILTER) * qdot_prev;
+
   /* std::cerr<<"sampled joint positions: "<<q.data.transpose()<<std::endl; */
    // std::cerr<<"sampled joint velocities: "<<qdot.data.transpose()<<std::endl;
    
