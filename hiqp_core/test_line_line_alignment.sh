@@ -1,29 +1,24 @@
 rosservice call /amici/hiqp_joint_velocity_controller/set_primitives \
 "primitives:
-- name: 'ee_point'
-  type: 'point'
+- name: 'ee_line'
+  type: 'line'
   frame_id: 'wrist_3_link'
   visible: true
   color: [1.0, 0.0, 0.0, 1.0]   
-  parameters: [0.0, 0.4, 0.0]
-- name: 'target_plane'
-  type: 'plane'
+  parameters: [0.0, 1.0, 0.0, 0.0, 0.0, 0.0]
+- name: 'target_line'
+  type: 'line'
   frame_id: 'world'
   visible: true
-  color: [1.0, 0.0, 1.0, 0.5]   
-  parameters: [0.0, 0.0, 1.0, 2.5]" 
+  color: [1.0, 0.0, 1.0, 1.0]   
+  parameters: [0.0, 0.0, 1.0, 0.5, 0.5, 0.0]" 
 
 rosservice call /amici/hiqp_joint_velocity_controller/set_tasks \
 "tasks:  
-- name: 'point_plane_projection'
+- name: 'line_line_alignment'
   priority: 2
   visible: 1
   active: 1
   monitored: 1
-  def_params: ['TDefGeomProj', 'point', 'plane', 'ee_point = target_plane']
+  def_params: ['TDefGeomAlign', 'line', 'line', 'ee_line = target_line', '0.2']
   dyn_params: ['TDynLinear', '1.0', '3.0']"
-
-
-
-
-

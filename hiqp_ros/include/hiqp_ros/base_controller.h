@@ -260,7 +260,7 @@ void BaseController<HardwareInterfaceT>::sampleJointValues() {
     qdot(handle.first) = handle.second.getVelocity();
     effort(handle.first) = handle.second.getEffort();
   }
-     qdot.data=ALPHA_VEL_FILTER * qdot.data + (1 - ALPHA_VEL_FILTER) * qdot_prev;
+   qdot.data=ALPHA_VEL_FILTER * qdot.data + (1 - ALPHA_VEL_FILTER) * qdot_prev;
 
   /* std::cerr<<"sampled joint positions: "<<q.data.transpose()<<std::endl; */
    // std::cerr<<"sampled joint velocities: "<<qdot.data.transpose()<<std::endl;

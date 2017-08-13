@@ -81,14 +81,14 @@ int TDefGeometricProjection<GeometricPoint, GeometricPoint>::project(
   changeJacDotRefPoint(jacobian_b_,jacobian_dot_b_,qqdot, p2__, J_dot_p2);
   J_dot_p1p2.data = J_dot_p1p2.data - J_dot_p2.data;
   Eigen::Vector3d d_dot=J_p1p2.data.topRows<3>()*qqdot.qdot.data;
-    
+
   e_(0)=d.Norm();
-  J_=J_=Eigen::Map<Eigen::Matrix<double,1,3> >(d.data)/e_(0)*J_p1p2.data.topRows<3>();
-
+  //regularize to avoid division-by-zero problems
+  double eps=1e-5;
+  J_=J_=Eigen::Map<Eigen::Matrix<double,1,3> >(d.data)/(e_(0)+eps)*J_p1p2.data.topRows<3>();
+  J_dot_=Eigen::Map<Eigen::Matrix<double,1,3> >(d.data)/(e_(0)+eps)*J_dot_p1p2.data.topRows<3>()+(d_dot.transpose()/(e_(0)+eps) - (Eigen::Map<Eigen::Matrix<double,1,3> >(d.data)*d_dot)*Eigen::Map<Eigen::Matrix<double,1,3> >(d.data)/pow(pow(e_(0)+eps,2),1.5))*J_p1p2.data.topRows<3>();
   e_dot_=J_*qqdot.qdot.data;
-  J_dot_=Eigen::Map<Eigen::Matrix<double,1,3> >(d.data)/e_(0)*J_dot_p1p2.data.topRows<3>()+(d_dot.transpose()/e_(0) - (Eigen::Map<Eigen::Matrix<double,1,3> >(d.data)*d_dot)*Eigen::Map<Eigen::Matrix<double,1,3> >(d.data)/pow(e_(0)*e_(0),1.5))*J_p1p2.data.topRows<3>();
-   
-
+    
   // DEBUG =========================================================
   // std::cerr<<"q_in: "<<qqdot.q.data.transpose()<<std::endl;
   // std::cerr<<"dq_in: "<<qqdot.qdot.data.transpose()<<std::endl;   
@@ -98,11 +98,11 @@ int TDefGeometricProjection<GeometricPoint, GeometricPoint>::project(
   // std::cerr<<"jacobian_b_:"<<std::endl<<jacobian_b_.data<<std::endl;
   // std::cerr<<"Jp2p1"<<std::endl<<Jp2p1.data<<std::endl;
   // std::cerr<<"Jdp2p1"<<std::endl<<Jdp2p1.data<<std::endl;  
-  // std::cerr<<"d: "<<d(0)<<" "<<d(1)<<" "<<d(2)<<std::endl;    
-  // std::cerr<<"d_dot: "<<d_dot.x()<<" "<<d_dot.y()<<" "<<d_dot.z()<<std::endl;
+  //std::cerr<<"d: "<<d(0)<<" "<<d(1)<<" "<<d(2)<<std::endl;    
+  //std::cerr<<"d_dot: "<<d_dot.x()<<" "<<d_dot.y()<<" "<<d_dot.z()<<std::endl;
   // std::cerr<<"n: "<<n(0)<<" "<<n(1)<<" "<<n(2)<<std::endl;      
   // std::cerr<<"n_dot: "<<n_dot.x()<<" "<<n_dot.y()<<" "<<n_dot.z()<<std::endl;
-  // std::cerr<<"e_: "<<e_.transpose()<<std::endl;
+  //std::cerr<<"e_: "<<e_.transpose()<<std::endl;
   // std::cerr<<"e_dot_: "<<e_dot_.transpose()<<std::endl;
   // std::cerr<<"J_: "<<std::endl<<J_<<std::endl;
   // std::cerr<<"J_dot_: "<<std::endl<<J_dot_<<std::endl; 

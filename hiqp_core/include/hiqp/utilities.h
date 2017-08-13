@@ -77,6 +77,19 @@ void printHiqpWarning(const std::string& msg);
 /// \brief Returns the largest absolute value of all entries in v
 double absMax(std::vector<double> v);
 
+   /*! \brief changes the reference point of the jacobian jac. the new reference point p is relative to the reference point of jac and expressed in the world frame.
+   */
+  void changeJacRefPoint(const KDL::Jacobian& jac, const KDL::Vector& p, KDL::Jacobian& jac_new);
+  /*! \brief changes the reference point of the jacobian derivative jac_dot of the jacobian jac. the new reference point p is relative to the reference point of jac and expressed in the world frame.
+   */
+  void changeJacDotRefPoint(const KDL::Jacobian& jac,
+			    const KDL::Jacobian& jac_dot,
+			    const KDL::JntArrayVel& qqdot,
+                	    const KDL::Vector& p,
+			    KDL::Jacobian& jac_dot_new);
+
+  Eigen::Matrix3d skewSymmetricMatrix(const Eigen::Vector3d& vec);
+
 /*! \brief Calculates the Moore-Penrose Pseudoinverse for any sized matrices.
  * The original source code is got from http://eigendobetter.com/, I edited it
  * to be compilable in this form.

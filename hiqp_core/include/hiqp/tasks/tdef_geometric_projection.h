@@ -62,17 +62,6 @@ class TDefGeometricProjection : public TaskDefinition {
   /// 0
   void maskJacobian(RobotStatePtr robot_state);
   void maskJacobianDerivative(RobotStatePtr robot_state);  
-
-  /*! \brief changes the reference point of the jacobian jac. the new reference point p is relative to the reference point of jac and expressed in the world frame.
-   */
-  void changeJacRefPoint(const KDL::Jacobian& jac, const KDL::Vector& p, KDL::Jacobian& jac_new);
-  /*! \brief changes the reference point of the jacobian derivative jac_dot of the jacobian jac. the new reference point p is relative to the reference point of jac and expressed in the world frame.
-   */
-  void changeJacDotRefPoint(const KDL::Jacobian& jac,
-			    const KDL::Jacobian& jac_dot,
-			    const KDL::JntArrayVel& qqdot,
-                	    const KDL::Vector& p,
-			    KDL::Jacobian& jac_dot_new);
     
   std::shared_ptr<KDL::TreeFkSolverPos_recursive> fk_solver_pos_;
   std::shared_ptr<KDL::TreeJntToJacSolver> fk_solver_jac_;

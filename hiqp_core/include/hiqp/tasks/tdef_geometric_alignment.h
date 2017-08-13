@@ -60,18 +60,21 @@ class TDefGeometricAlignment : public TaskDefinition {
   /// \brief This sets jacobian columns corresponding to non-writable joints to
   /// 0
   void maskJacobian(RobotStatePtr robot_state);
-
+  void maskJacobianDerivative(RobotStatePtr robot_state);
+  
   std::shared_ptr<KDL::TreeFkSolverPos_recursive> fk_solver_pos_;
   std::shared_ptr<KDL::TreeJntToJacSolver> fk_solver_jac_;
 
   std::shared_ptr<PrimitiveA> primitive_a_;
   KDL::Frame pose_a_;
   KDL::Jacobian jacobian_a_;
-
+  KDL::Jacobian jacobian_dot_a_;
+  
   std::shared_ptr<PrimitiveB> primitive_b_;
   KDL::Frame pose_b_;
   KDL::Jacobian jacobian_b_;
-
+  KDL::Jacobian jacobian_dot_b_;
+  
   double delta_;  // the angular error margin
 };
 

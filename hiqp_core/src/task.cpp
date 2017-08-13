@@ -18,7 +18,7 @@
 #include <hiqp/task.h>
 
 #include <hiqp/tasks/tdef_full_pose.h>
-// #include <hiqp/tasks/tdef_geometric_alignment.h>
+#include <hiqp/tasks/tdef_geometric_alignment.h>
 #include <hiqp/tasks/tdef_geometric_projection.h>
 #include <hiqp/tasks/tdef_jnt_config.h>
 #include <hiqp/tasks/tdef_jnt_limits.h>
@@ -39,11 +39,11 @@
 
 namespace hiqp {
 
-   using tasks::TDefFullPose;
-// using tasks::TDefGeometricAlignment;
+ using tasks::TDefFullPose;
+ using tasks::TDefGeometricAlignment;
  using tasks::TDefGeometricProjection;
-   using tasks::TDefJntConfig;
-   using tasks::TDefJntLimits;
+ using tasks::TDefJntConfig;
+ using tasks::TDefJntLimits;
 // using tasks::TDefMetaTask;
 
 using tasks::TDynLinear;
@@ -197,14 +197,14 @@ int Task::constructDefinition(const std::vector<std::string>& def_params) {
       return -1;
     }
    }
-  //else if (type.compare("TDefGeomAlign") == 0) {
-  //   std::string prim_type1 = def_params.at(1);
-  //   std::string prim_type2 = def_params.at(2);
-  //   if (prim_type1.compare("line") == 0 && prim_type2.compare("line") == 0) {
-  //     def_ = std::make_shared<
-  //         TDefGeometricAlignment<GeometricLine, GeometricLine> >(geom_prim_map_,
-  //                                                                visualizer_);
-  //   } else if (prim_type1.compare("line") == 0 &&
+  else if (type.compare("TDefGeomAlign") == 0) {
+    std::string prim_type1 = def_params.at(1);
+    std::string prim_type2 = def_params.at(2);
+    if (prim_type1.compare("line") == 0 && prim_type2.compare("line") == 0) {
+      def_ = std::make_shared<
+          TDefGeometricAlignment<GeometricLine, GeometricLine> >(geom_prim_map_,
+                                                                 visualizer_);
+    }// else if (prim_type1.compare("line") == 0 &&
   //              prim_type2.compare("plane") == 0) {
   //     def_ = std::make_shared<
   //         TDefGeometricAlignment<GeometricLine, GeometricPlane> >(
@@ -232,7 +232,7 @@ int Task::constructDefinition(const std::vector<std::string>& def_params) {
   //   }
   // } else if (type.compare("TDefMetaTask") == 0) {
   //   def_ = std::make_shared<TDefMetaTask>(geom_prim_map_, visualizer_);
-  // }
+   }
   else {
     try {
       def_ = std::shared_ptr<hiqp::TaskDefinition>(
