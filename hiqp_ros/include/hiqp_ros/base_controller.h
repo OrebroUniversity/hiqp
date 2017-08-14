@@ -31,18 +31,14 @@
 #include <kdl/jntarrayvel.hpp>
 #include <kdl/tree.hpp>
 #include <kdl_parser/kdl_parser.hpp>
-/* #include <filters/median.h> */
-/* #include <filters/mean.h> */
-/* #include <filters/filter_base.h> */
+#include <filters/transfer_function.h> 
+
 
 #include <hiqp/robot_state.h>
 #include <hiqp_ros/utilities.h>
 
 namespace hiqp_ros {
 
-  //#define VEL_FILTER "/MeanFilter" //"/MedianFilter"
-#define ALPHA_VEL 0.005
-  
 using hiqp::HiQPTimePoint;
 using hiqp::RobotState;
 using hiqp::RobotStatePtr;
@@ -86,8 +82,8 @@ class BaseController
   }
   
   ros::Duration period_;
-  /* filters::MultiChannelMedianFilter<double> median_filter_; */
-  /*   filters::MultiChannelMeanFilter<double> mean_filter_; */
+  filters::MultiChannelTransferFunctionFilter<double> vel_filter_; 
+  
     
  private:
   BaseController(const BaseController& other) = delete;
@@ -138,21 +134,13 @@ class BaseController
    loadUrdfToKdlTree();
    loadJointsAndSetJointHandlesMap();
 
-   /* // initialize velocity filter */
-   /* if(strcmp(VEL_FILTER,"/MedianFilter")==0){ */
-   /*   if(median_filter_.filters::MultiChannelFilterBase<double>::configure(robot_state_ptr_->kdl_jnt_array_vel_.q.rows(),VEL_FILTER, controller_nh_)){ */
-   /*     ROS_INFO_STREAM("Configured filter name: "<<median_filter_.getName()<<", type: "<<mean_filter_.getType()<<", nr. of channels: "<<robot_state_ptr_->kdl_jnt_array_vel_.q.rows());    */
-   /*   } */
-   /* } */
-   /* else if(strcmp(VEL_FILTER,"/MeanFilter")==0){ */
-   /*   if(mean_filter_.filters::MultiChannelFilterBase<double>::configure(robot_state_ptr_->kdl_jnt_array_vel_.q.rows(),VEL_FILTER, controller_nh_)){ */
-   /*     ROS_INFO_STREAM("Configured filter name: "<<mean_filter_.getName()<<", type: "<<mean_filter_.getType()<<", nr. of channels: "<<robot_state_ptr_->kdl_jnt_array_vel_.q.rows()); */
-   /*   } */
-   /* } */
-   /* else{ */
-   /*   ROS_WARN("Error in BaseController<HardwareInterfaceT>::init(...): Could not configure velocity filter - no filtering will be applied!"); */
-   /* } */
-  
+   // initialize velocity filter 
+   if(vel_filter_.filters::MultiChannelFilterBase<double>::configure(robot_state_ptr_->kdl_jnt_array_vel_.q.rows(),"/LowPassFilter", controller_nh_)){ 
+     ROS_INFO_STREAM("Configured filter name: "<<vel_filter_.getName()<<", type: "<<vel_filter_.getType()<<", nr. of channels: "<<robot_state_ptr_->kdl_jnt_array_vel_.q.rows());
+   }
+   else{
+     ROS_WARN("Error in BaseController<HardwareInterfaceT>::init(...): Could not configure velocity filter - no filtering will be applied!");
+   }
    sampleJointValues();
 
    initialize();
@@ -276,7 +264,6 @@ void BaseController<HardwareInterfaceT>::sampleJointValues() {
   KDL::JntArray& effort = robot_state_data_.kdl_effort_;
 
   handles_mutex_.lock();
-       Eigen::VectorXd qdot_prev=qdot.data;
   for (auto&& handle : joint_handles_map_) {
     q(handle.first) = handle.second.getPosition();
     qdot(handle.first) = handle.second.getVelocity();
@@ -284,26 +271,15 @@ void BaseController<HardwareInterfaceT>::sampleJointValues() {
   }
 
   //apply velocity filtering
-  /* unsigned int q_nr=qdot.rows(); */
-  /* std::vector<double> qdot_in(q_nr), qdot_out(q_nr); */
-  /* for(unsigned int i=0; i<q_nr; i++)  qdot_in[i]=qdot.data(i); */
-  
-  /* if(strcmp(VEL_FILTER,"/MedianFilter")==0){ */
-  /*   if(median_filter_.update(qdot_in,qdot_out)){ */
-  /*     for(unsigned int i=0; i<q_nr; i++)  qdot.data(i)=qdot_out[i]; */
-  /*   } */
-  /* } */
-  /* else if(strcmp(VEL_FILTER,"/MeanFilter")==0){ */
-  /*   if(mean_filter_.update(qdot_in,qdot_out)){ */
-  /*     for(unsigned int i=0; i<q_nr; i++)  qdot.data(i)=qdot_out[i]; */
-  /*   } */
-  /* } */
-  /* else{ */
-  /*   ROS_WARN("BaseController<HardwareInterfaceT>::sampleJointValues(): could not update velocity filter!"); */
-  /* } */
-    
-
-  qdot.data=ALPHA_VEL * qdot.data + (1 - ALPHA_VEL) * qdot_prev;
+  unsigned int q_nr=qdot.rows();
+  std::vector<double> qdot_in(q_nr), qdot_out(q_nr);
+  for(unsigned int i=0; i<q_nr; i++)  qdot_in[i]=qdot.data(i);
+  if(vel_filter_.update(qdot_in,qdot_out)){
+    for(unsigned int i=0; i<q_nr; i++)  qdot.data(i)=qdot_out[i];
+  }
+  else{
+    ROS_WARN("BaseController<HardwareInterfaceT>::sampleJointValues(): could not update velocity filter!");
+  }
 
   /* std::cerr<<"sampled joint positions: "<<q.data.transpose()<<std::endl; */
   // std::cerr<<"sampled joint velocities: "<<qdot.data.transpose()<<std::endl;

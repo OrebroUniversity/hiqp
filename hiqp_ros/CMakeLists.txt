@@ -29,13 +29,14 @@ find_package(catkin REQUIRED COMPONENTS roscpp
                                         visualization_msgs
                                         kdl_parser
                                         hiqp_core
+					filters
                                         hiqp_msgs
                                         control_msgs
                                         actionlib)
 
 find_package(orocos_kdl REQUIRED)
 
-catkin_package(CATKIN_DEPENDS roscpp controller_interface visualization_msgs hiqp_core hiqp_msgs kdl_parser control_msgs actionlib
+catkin_package(CATKIN_DEPENDS roscpp controller_interface visualization_msgs filters hiqp_core hiqp_msgs kdl_parser control_msgs actionlib
                INCLUDE_DIRS include
                LIBRARIES ${PROJECT_NAME} hiqp_client
                DEPENDS orocos_kdl)
