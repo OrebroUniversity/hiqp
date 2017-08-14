@@ -31,14 +31,18 @@
 #include <kdl/jntarrayvel.hpp>
 #include <kdl/tree.hpp>
 #include <kdl_parser/kdl_parser.hpp>
+/* #include <filters/median.h> */
+/* #include <filters/mean.h> */
+/* #include <filters/filter_base.h> */
 
 #include <hiqp/robot_state.h>
 #include <hiqp_ros/utilities.h>
 
-#define ALPHA_VEL_FILTER 0.8
-
 namespace hiqp_ros {
 
+  //#define VEL_FILTER "/MeanFilter" //"/MedianFilter"
+#define ALPHA_VEL 0.005
+  
 using hiqp::HiQPTimePoint;
 using hiqp::RobotState;
 using hiqp::RobotStatePtr;
@@ -82,7 +86,9 @@ class BaseController
   }
   
   ros::Duration period_;
-  
+  /* filters::MultiChannelMedianFilter<double> median_filter_; */
+  /*   filters::MultiChannelMeanFilter<double> mean_filter_; */
+    
  private:
   BaseController(const BaseController& other) = delete;
   BaseController(BaseController&& other) = delete;
@@ -118,25 +124,41 @@ class BaseController
 //
 //////////////////////////////////////////////////////////////////////////////
 
-template <typename HardwareInterfaceT>
-bool BaseController<HardwareInterfaceT>::init(HardwareInterfaceT* hw,
-                                              ros::NodeHandle& controller_nh) {
-  hardware_interface_ = hw;
-  controller_nh_ = controller_nh;
-  controller_nh_ptr_.reset(&controller_nh_);
-  robot_state_ptr_.reset(&robot_state_data_);
+ template <typename HardwareInterfaceT>
+   bool BaseController<HardwareInterfaceT>::init(HardwareInterfaceT* hw,
+						 ros::NodeHandle& controller_nh) {
+   hardware_interface_ = hw;
+   controller_nh_ = controller_nh;
+   controller_nh_ptr_.reset(&controller_nh_);
+   robot_state_ptr_.reset(&robot_state_data_);
 
-  // loadDesiredSamplingTime();
-  ros::Time t = ros::Time::now();
-  last_sampling_time_point_.setTimePoint(t.sec, t.nsec);
+   ros::Time t = ros::Time::now();
+   last_sampling_time_point_.setTimePoint(t.sec, t.nsec);
 
-  loadUrdfToKdlTree();
-  loadJointsAndSetJointHandlesMap();
-  sampleJointValues();
+   loadUrdfToKdlTree();
+   loadJointsAndSetJointHandlesMap();
 
-  initialize();
-  return true;
-}
+   /* // initialize velocity filter */
+   /* if(strcmp(VEL_FILTER,"/MedianFilter")==0){ */
+   /*   if(median_filter_.filters::MultiChannelFilterBase<double>::configure(robot_state_ptr_->kdl_jnt_array_vel_.q.rows(),VEL_FILTER, controller_nh_)){ */
+   /*     ROS_INFO_STREAM("Configured filter name: "<<median_filter_.getName()<<", type: "<<mean_filter_.getType()<<", nr. of channels: "<<robot_state_ptr_->kdl_jnt_array_vel_.q.rows());    */
+   /*   } */
+   /* } */
+   /* else if(strcmp(VEL_FILTER,"/MeanFilter")==0){ */
+   /*   if(mean_filter_.filters::MultiChannelFilterBase<double>::configure(robot_state_ptr_->kdl_jnt_array_vel_.q.rows(),VEL_FILTER, controller_nh_)){ */
+   /*     ROS_INFO_STREAM("Configured filter name: "<<mean_filter_.getName()<<", type: "<<mean_filter_.getType()<<", nr. of channels: "<<robot_state_ptr_->kdl_jnt_array_vel_.q.rows()); */
+   /*   } */
+   /* } */
+   /* else{ */
+   /*   ROS_WARN("Error in BaseController<HardwareInterfaceT>::init(...): Could not configure velocity filter - no filtering will be applied!"); */
+   /* } */
+  
+   sampleJointValues();
+
+   initialize();
+   return true;
+
+ }
 
 template <typename HardwareInterfaceT>
 void BaseController<HardwareInterfaceT>::update(const ros::Time& time,
@@ -254,22 +276,43 @@ void BaseController<HardwareInterfaceT>::sampleJointValues() {
   KDL::JntArray& effort = robot_state_data_.kdl_effort_;
 
   handles_mutex_.lock();
-     Eigen::VectorXd qdot_prev=qdot.data;
+       Eigen::VectorXd qdot_prev=qdot.data;
   for (auto&& handle : joint_handles_map_) {
     q(handle.first) = handle.second.getPosition();
     qdot(handle.first) = handle.second.getVelocity();
     effort(handle.first) = handle.second.getEffort();
   }
-   qdot.data=ALPHA_VEL_FILTER * qdot.data + (1 - ALPHA_VEL_FILTER) * qdot_prev;
+
+  //apply velocity filtering
+  /* unsigned int q_nr=qdot.rows(); */
+  /* std::vector<double> qdot_in(q_nr), qdot_out(q_nr); */
+  /* for(unsigned int i=0; i<q_nr; i++)  qdot_in[i]=qdot.data(i); */
+  
+  /* if(strcmp(VEL_FILTER,"/MedianFilter")==0){ */
+  /*   if(median_filter_.update(qdot_in,qdot_out)){ */
+  /*     for(unsigned int i=0; i<q_nr; i++)  qdot.data(i)=qdot_out[i]; */
+  /*   } */
+  /* } */
+  /* else if(strcmp(VEL_FILTER,"/MeanFilter")==0){ */
+  /*   if(mean_filter_.update(qdot_in,qdot_out)){ */
+  /*     for(unsigned int i=0; i<q_nr; i++)  qdot.data(i)=qdot_out[i]; */
+  /*   } */
+  /* } */
+  /* else{ */
+  /*   ROS_WARN("BaseController<HardwareInterfaceT>::sampleJointValues(): could not update velocity filter!"); */
+  /* } */
+    
+
+  qdot.data=ALPHA_VEL * qdot.data + (1 - ALPHA_VEL) * qdot_prev;
 
   /* std::cerr<<"sampled joint positions: "<<q.data.transpose()<<std::endl; */
-   // std::cerr<<"sampled joint velocities: "<<qdot.data.transpose()<<std::endl;
+  // std::cerr<<"sampled joint velocities: "<<qdot.data.transpose()<<std::endl;
    
   /* std::cerr<<"sampled joint efforts: "<<effort.data.transpose()<<std::endl;
    */
 
   robot_state_data_.sampling_time_ = period_.toSec();
-//rtkg: disabled measured sampling time update as it proved to be fragile (could yield 0.0)
+  //rtkg: disabled measured sampling time update as it proved to be fragile (could yield 0.0)
   //ros::Time t = ros::Time::now();
   //robot_state_data_.sampling_time_point_.setTimePoint(t.sec, t.nsec);
   //robot_state_data_.sampling_time_ =
@@ -277,10 +320,10 @@ void BaseController<HardwareInterfaceT>::sampleJointValues() {
   //        .toSec();
   //last_sampling_time_point_.setTimePoint(t.sec, t.nsec);
   handles_mutex_.unlock();
-}
+ }
 
-template <typename HardwareInterfaceT>
-void BaseController<HardwareInterfaceT>::setControls() {
+ template <typename HardwareInterfaceT>
+   void BaseController<HardwareInterfaceT>::setControls() {
   handles_mutex_.lock();
   for (auto&& handle : joint_handles_map_) {
     handle.second.setCommand(u_(handle.first));

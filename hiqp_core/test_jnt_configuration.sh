@@ -12,7 +12,7 @@ rosservice call /amici/hiqp_joint_velocity_controller/set_tasks \
   visible: 1
   active: 1
   monitored: 1
-  def_params: ['TDefJntConfig', 'shoulder_link', '0.0']
+  def_params: ['TDefJntConfig', 'shoulder_link', '0.5']
   dyn_params: ['TDynLinear', '2.0', '3.0'] 
 - name: 'upper_arm_link_jntconfig'
   priority: 2
