@@ -85,10 +85,10 @@ int TDefGeometricProjection<GeometricPoint, GeometricPoint>::project(
   e_(0)=d.Norm();
   //regularize to avoid division-by-zero problems
   double eps=1e-5;
-  J_=J_=Eigen::Map<Eigen::Matrix<double,1,3> >(d.data)/(e_(0)+eps)*J_p1p2.data.topRows<3>();
+  J_=Eigen::Map<Eigen::Matrix<double,1,3> >(d.data)/(e_(0)+eps)*J_p1p2.data.topRows<3>();
   J_dot_=Eigen::Map<Eigen::Matrix<double,1,3> >(d.data)/(e_(0)+eps)*J_dot_p1p2.data.topRows<3>()+(d_dot.transpose()/(e_(0)+eps) - (Eigen::Map<Eigen::Matrix<double,1,3> >(d.data)*d_dot)*Eigen::Map<Eigen::Matrix<double,1,3> >(d.data)/pow(pow(e_(0)+eps,2),1.5))*J_p1p2.data.topRows<3>();
   e_dot_=J_*qqdot.qdot.data;
-    
+  // J_dot_=J_dot_*0;
   // DEBUG =========================================================
   // std::cerr<<"q_in: "<<qqdot.q.data.transpose()<<std::endl;
   // std::cerr<<"dq_in: "<<qqdot.qdot.data.transpose()<<std::endl;   

@@ -21,7 +21,14 @@ rosservice call /amici/hiqp_joint_velocity_controller/set_tasks \
   active: 1
   monitored: 1
   def_params: ['TDefGeomProj', 'point', 'plane', 'ee_point = target_plane']
-  dyn_params: ['TDynLinear', '1.0', '3.0']"
+  dyn_params: ['TDynLinear', '5.0', '6.0']
+- name: 'neutral_pose'
+  priority: 3
+  visible: 1
+  active: 1
+  monitored: 1
+  def_params: ['TDefFullPose', '0.0', '0.0', '0.0', '0.0', '0.0', '0.0']
+  dyn_params: ['TDynLinear', '1.0', '3.0'] "
 
 
 

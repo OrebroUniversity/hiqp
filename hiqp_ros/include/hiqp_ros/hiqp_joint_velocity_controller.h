@@ -35,6 +35,7 @@
 #include <hiqp_ros/hiqp_service_handler.h>
 #include <hiqp_ros/ros_topic_subscriber.h>
 #include <hiqp_ros/ros_visualizer.h>
+#include <filters/transfer_function.h>
 
 #include <fstream>
 
@@ -73,7 +74,7 @@ class HiQPJointVelocityController
   void loadTasksFromParamServer();
 
   bool is_active_;
-
+  filters::MultiChannelTransferFunctionFilter<double> output_ctrl_filter_;
   bool monitoring_active_;
   double monitoring_publish_rate_;
   ros::Time last_monitoring_update_;

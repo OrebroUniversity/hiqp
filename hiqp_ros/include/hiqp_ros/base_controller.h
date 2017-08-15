@@ -82,7 +82,8 @@ class BaseController
   }
   
   ros::Duration period_;
-  filters::MultiChannelTransferFunctionFilter<double> vel_filter_; 
+  filters::MultiChannelTransferFunctionFilter<double> input_vel_filter_;
+  filters::MultiChannelTransferFunctionFilter<double> input_pos_filter_;   
   
     
  private:
@@ -134,18 +135,24 @@ class BaseController
    loadUrdfToKdlTree();
    loadJointsAndSetJointHandlesMap();
 
-   // initialize velocity filter 
-   if(vel_filter_.filters::MultiChannelFilterBase<double>::configure(robot_state_ptr_->kdl_jnt_array_vel_.q.rows(),"/LowPassFilter", controller_nh_)){ 
-     ROS_INFO_STREAM("Configured filter name: "<<vel_filter_.getName()<<", type: "<<vel_filter_.getType()<<", nr. of channels: "<<robot_state_ptr_->kdl_jnt_array_vel_.q.rows());
+   // initialize input velocity filter 
+   if(input_vel_filter_.filters::MultiChannelFilterBase<double>::configure(robot_state_ptr_->kdl_jnt_array_vel_.q.rows(),"input_vel_filter", controller_nh_)){ 
+     ROS_INFO_STREAM("Configured input velocity filter with name: "<<input_vel_filter_.getName()<<", type: "<<input_vel_filter_.getType()<<", nr. of channels: "<<robot_state_ptr_->kdl_jnt_array_vel_.q.rows()<<".");
    }
    else{
-     ROS_WARN("Error in BaseController<HardwareInterfaceT>::init(...): Could not configure velocity filter - no filtering will be applied!");
+     ROS_WARN("Error in BaseController<HardwareInterfaceT>::init(...): Could not configure input velocity filter - no filtering will be applied!");
    }
+   // initialize input position filter 
+      if(input_pos_filter_.filters::MultiChannelFilterBase<double>::configure(robot_state_ptr_->kdl_jnt_array_vel_.q.rows(),"input_pos_filter", controller_nh_)){ 
+	ROS_INFO_STREAM("Configured input position filter with name: "<<input_pos_filter_.getName()<<", type: "<<input_pos_filter_.getType()<<", nr. of channels: "<<robot_state_ptr_->kdl_jnt_array_vel_.q.rows()<<".");
+   }
+   else{
+     ROS_WARN("Error in BaseController<HardwareInterfaceT>::init(...): Could not configure input position filter - no filtering will be applied!");
+   }
+      
    sampleJointValues();
-
    initialize();
    return true;
-
  }
 
 template <typename HardwareInterfaceT>
@@ -270,15 +277,25 @@ void BaseController<HardwareInterfaceT>::sampleJointValues() {
     effort(handle.first) = handle.second.getEffort();
   }
 
-  //apply velocity filtering
+
+  //apply filtering
   unsigned int q_nr=qdot.rows();
-  std::vector<double> qdot_in(q_nr), qdot_out(q_nr);
-  for(unsigned int i=0; i<q_nr; i++)  qdot_in[i]=qdot.data(i);
-  if(vel_filter_.update(qdot_in,qdot_out)){
+  std::vector<double> q_in(q_nr), qdot_in(q_nr), q_out(q_nr), qdot_out(q_nr);
+  for(unsigned int i=0; i<q_nr; i++){
+    q_in[i]=q.data(i);    
+    qdot_in[i]=qdot.data(i);
+  }
+  if(input_pos_filter_.update(q_in,q_out)){
+    for(unsigned int i=0; i<q_nr; i++)  q.data(i)=q_out[i];
+  }
+  else{
+    ROS_WARN("BaseController<HardwareInterfaceT>::sampleJointValues(): could not update input position filter!");
+  }
+  if(input_vel_filter_.update(qdot_in,qdot_out)){
     for(unsigned int i=0; i<q_nr; i++)  qdot.data(i)=qdot_out[i];
   }
   else{
-    ROS_WARN("BaseController<HardwareInterfaceT>::sampleJointValues(): could not update velocity filter!");
+    ROS_WARN("BaseController<HardwareInterfaceT>::sampleJointValues(): could not update input velocity filter!");
   }
 
   /* std::cerr<<"sampled joint positions: "<<q.data.transpose()<<std::endl; */

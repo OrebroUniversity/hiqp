@@ -178,7 +178,7 @@ int TDefGeometricAlignment<PrimitiveA, PrimitiveB>::update(
     return -6;
   }
 
-  align(primitive_a_, primitive_b_);
+  align(primitive_a_, primitive_b_, robot_state->kdl_jnt_array_vel_);
   maskJacobian(robot_state);
   maskJacobianDerivative(robot_state);    
   return 0;
@@ -206,23 +206,43 @@ void TDefGeometricAlignment<PrimitiveA, PrimitiveB>::maskJacobianDerivative(
  }
 
 template <typename PrimitiveA, typename PrimitiveB>
-int TDefGeometricAlignment<PrimitiveA, PrimitiveB>::alignVectors(
-    const KDL::Vector& v1, const KDL::Vector v2) {
-  // Eigen::Matrix3d skewSymmetricMatrix(const Eigen::Vector3d& vec)
-  /* double d = KDL::dot(v1, v2);   */
-  /* e_(0) = d - std::cos(delta_); */
+int TDefGeometricAlignment<PrimitiveA, PrimitiveB>::alignVectors(const KDL::Vector& v1, const KDL::Vector v2, const KDL::JntArrayVel& qqdot) {
 
-  KDL::Vector v = v1 * v2;  // v = v1 x v2
+  double q_nr=jacobian_a_.columns();
+  KDL::Jacobian J_v1, J_v2, J_v1_dot, J_v2_dot;
+  J_v1.resize(q_nr);
+  J_v2.resize(q_nr);
+  J_v1_dot.resize(q_nr);
+  J_v2_dot.resize(q_nr);
 
+  changeJacRefPoint(jacobian_a_, v1, J_v1);
+  J_v1.data=J_v1.data - jacobian_a_.data;
+  changeJacRefPoint(jacobian_b_, v2, J_v2);
+  J_v2.data=J_v2.data - jacobian_b_.data;
+
+  changeJacDotRefPoint(jacobian_a_,jacobian_dot_a_,qqdot, v1, J_v1_dot);
+  J_v1_dot.data = J_v1_dot.data - jacobian_dot_a_.data;
+  changeJacDotRefPoint(jacobian_b_,jacobian_dot_b_,qqdot, v2, J_v2_dot);
+  J_v2_dot.data = J_v2_dot.data - jacobian_dot_b_.data;
   
-
+  Eigen::Vector3d v1_dot = J_v1.data.topRows<3>()*qqdot.qdot.data;
+  Eigen::Vector3d v2_dot = J_v2.data.topRows<3>()*qqdot.qdot.data;  
+  Eigen::MatrixXd J__= Eigen::Map<const Eigen::Matrix<double,1,3> >(v2.data)*J_v1.data.topRows<3>()+Eigen::Map<const Eigen::Matrix<double,1,3> >(v1.data)*J_v2.data.topRows<3>();
+  Eigen::MatrixXd J_dot__=v2_dot.transpose()*J_v1.data.topRows<3>()+v1_dot.transpose()*J_v2.data.topRows<3>()+Eigen::Map<const Eigen::Matrix<double,1,3> >(v2.data) * J_v1_dot.data.topRows<3>() + Eigen::Map<const Eigen::Matrix<double,1,3> >(v1.data) * J_v2_dot.data.topRows<3>();
+  e_(0) = acos(dot(v1,v2)); //-delta
+  //regularize to avoid division-by-zero problems  
+  double eps=1e-5;
+  J_= -1/sqrt(1+eps-pow(dot(v1,v2),2))*J__;
+  e_dot_= J_*qqdot.qdot.data;
+  J_dot_=-1/sqrt(1+eps-pow(dot(v1,v2),2)) * J_dot__ - dot(v1,v2)/pow(sqrt(1-pow(dot(v1,v2),2)),1.5)*J__*qqdot.qdot.data*J__;
+  //J_dot_=J_dot_*0;
   //DEBUG ======================================
-  std::cerr<<"v1: "<<v1(0)<<" "<<v1(1)<<" "<<v1(2)<<std::endl;
-  std::cerr<<"v2: "<<v2(0)<<" "<<v2(1)<<" "<<v2(2)<<std::endl;
+  /* std::cerr<<"v1: "<<v1(0)<<" "<<v1(1)<<" "<<v1(2)<<std::endl; */
+  /* std::cerr<<"v2: "<<v2(0)<<" "<<v2(1)<<" "<<v2(2)<<std::endl; */
   //DEBUG END ==================================  
-  exit(0);
+
   return 0;
-}
+ }
 
 }  // namespace tasks
 

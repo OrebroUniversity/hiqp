@@ -10,6 +10,8 @@ load J.dat;
 load dq.dat;
 load q.dat;
 load u.dat;
+%load unfiltered.mat
+
 u=u(:,1:6);
 dJ=dJ(:,1:6);
 J=J(:,1:6);
@@ -28,52 +30,51 @@ SV = System_Variables(SP);
 %visualizer=MBSVisualizer(SP,SV); 
 % axis([-1.2 1.2 -1.2 1.2 -0.4 1.2]);
 % pbaspect([1 1 1]);
+subplot(1,3,1);
 plot(t,e,'b'); grid on; hold on;
-plot(t,de,'r');
-%plot(t,dde_star,'m');
-legend('e','de','dde^*');
-return
-ind_s=4925;
-ind_e=4935;
+subplot(1,3,2);
+plot(t,de,'r'); grid on; hold on;
+subplot(1,3,3);
+plot(t,dde_star,'m'); grid on; hold on;
 
-figure;
-t_=1:1:ind_e-ind_s+1';
-q_=q(ind_s:ind_e,1);
-dq_=dq(ind_s:ind_e,1);
+e_=e(1);
+de_=de(1);
+Kp=2;
+Kd=3;
 
+%comute ideal response
+for i=1:n
+   dde_star_(i)=-Kp*e_(i)-Kd*de_(i);
+   de_(i+1)=de_(i)+dt*dde_star_(i);
+   e_(i+1)=e_(i)+dt*de_(i);
+end    
+e_(end)=[];
+de_(end)=[];
 
-de_=de(ind_s:ind_e);
-dde_star_=dde_star(ind_s:ind_e);
+subplot(1,3,1);
+plot(t,e_,'k'); grid on; 
+subplot(1,3,2);
+plot(t,de_,'k'); grid on;
+subplot(1,3,3);
+plot(t,dde_star_,'k'); grid on;
 
-de_des=de_(1);
-for i=2:length(de_)
-       de_des(i)=de_(i-1)+dde_star_(i-1); 
-end
-
-
-
-plot(t_,e_,'b'); grid on; hold on;
-plot(t_,de_,'r');
-plot(t_,dde_star_,'m');
-plot(t_,de_des,'r*');
-legend('e','de','dde^*','de_des');
-xlim([1 ind_e-ind_s+1]);
-% for i=1:n
-% SV.q=q(i,:)';
-% SV.dq=dq(i,:)';
-% 
-% % updates positions & velocities of links
-% SV = calc_pos(SP,SV); 
-% SV = calc_vel(SP,SV); 
-% 
-% %forward kinematics & end-effector Jacobian
-% [pE,RE] = fk_e(SP,SV,SP.bN,SP.bP,SP.bR);
-% Je = calc_Je(SP,SV,SP.bN,SP.bP); 
-% 
-% [dJe,joints] = calc_dJe(SP,SV,SP.bN,SP.bP);
-% %Jacobian derivative
-% 
-%  i
+% ind_s=4925;
+% ind_e=4935;
+% figure;
+% t_=1:1:ind_e-ind_s+1';
+% q_=q(ind_s:ind_e,1);
+% dq_=dq(ind_s:ind_e,1);
+% de_=de(ind_s:ind_e);
+% dde_star_=dde_star(ind_s:ind_e);
+% de_des=de_(1);
+% for i=2:length(de_)
+%        de_des(i)=de_(i-1)+dde_star_(i-1); 
 % end
-% rotate3d on;
+% 
+% plot(t_,e_,'b'); grid on; hold on;
+% plot(t_,de_,'r');
+% plot(t_,dde_star_,'m');
+% plot(t_,de_des,'r*');
+% legend('e','de','dde^*','de_des');
+% xlim([1 ind_e-ind_s+1]);
 %%%EOF

@@ -35,11 +35,12 @@ namespace tasks {
 template <>
 int TDefGeometricAlignment<GeometricLine, GeometricLine>::align(
     std::shared_ptr<GeometricLine> line1,
-    std::shared_ptr<GeometricLine> line2) {
+    std::shared_ptr<GeometricLine> line2,
+    const KDL::JntArrayVel& qqdot) {
   KDL::Vector v1 = pose_a_.M * line1->getDirectionKDL();
   KDL::Vector v2 = pose_b_.M * line2->getDirectionKDL();
 
-  return alignVectors(v1, v2);
+  return alignVectors(v1, v2, qqdot);
 }
 
 // template <>
