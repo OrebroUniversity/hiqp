@@ -204,17 +204,17 @@ int Task::constructDefinition(const std::vector<std::string>& def_params) {
       def_ = std::make_shared<
           TDefGeometricAlignment<GeometricLine, GeometricLine> >(geom_prim_map_,
                                                                  visualizer_);
+    }else if (prim_type1.compare("line") == 0 &&
+               prim_type2.compare("plane") == 0) {
+      def_ = std::make_shared<
+          TDefGeometricAlignment<GeometricLine, GeometricPlane> >(
+          geom_prim_map_, visualizer_);
+    } else if (prim_type1.compare("line") == 0 &&
+               prim_type2.compare("cylinder") == 0) {
+      def_ = std::make_shared<
+          TDefGeometricAlignment<GeometricLine, GeometricCylinder> >(
+          geom_prim_map_, visualizer_);
     }// else if (prim_type1.compare("line") == 0 &&
-  //              prim_type2.compare("plane") == 0) {
-  //     def_ = std::make_shared<
-  //         TDefGeometricAlignment<GeometricLine, GeometricPlane> >(
-  //         geom_prim_map_, visualizer_);
-  //   } else if (prim_type1.compare("line") == 0 &&
-  //              prim_type2.compare("cylinder") == 0) {
-  //     def_ = std::make_shared<
-  //         TDefGeometricAlignment<GeometricLine, GeometricCylinder> >(
-  //         geom_prim_map_, visualizer_);
-  //   } else if (prim_type1.compare("line") == 0 &&
   //              prim_type2.compare("sphere") == 0) {
   //     def_ = std::make_shared<
   //         TDefGeometricAlignment<GeometricLine, GeometricSphere> >(

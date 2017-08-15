@@ -282,7 +282,7 @@ void BaseController<HardwareInterfaceT>::sampleJointValues() {
   unsigned int q_nr=qdot.rows();
   std::vector<double> q_in(q_nr), qdot_in(q_nr), q_out(q_nr), qdot_out(q_nr);
   for(unsigned int i=0; i<q_nr; i++){
-    q_in[i]=q.data(i);    
+    q_in[i]=q.data(i);
     qdot_in[i]=qdot.data(i);
   }
   if(input_pos_filter_.update(q_in,q_out)){
@@ -299,10 +299,9 @@ void BaseController<HardwareInterfaceT>::sampleJointValues() {
   }
 
   /* std::cerr<<"sampled joint positions: "<<q.data.transpose()<<std::endl; */
-  // std::cerr<<"sampled joint velocities: "<<qdot.data.transpose()<<std::endl;
+  /* std::cerr<<"sampled joint velocities: "<<qdot.data.transpose()<<std::endl; */
    
-  /* std::cerr<<"sampled joint efforts: "<<effort.data.transpose()<<std::endl;
-   */
+  /* std::cerr<<"sampled joint efforts: "<<effort.data.transpose()<<std::endl; */
 
   robot_state_data_.sampling_time_ = period_.toSec();
   //rtkg: disabled measured sampling time update as it proved to be fragile (could yield 0.0)

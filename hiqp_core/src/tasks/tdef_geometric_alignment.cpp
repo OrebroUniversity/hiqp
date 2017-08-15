@@ -43,39 +43,47 @@ int TDefGeometricAlignment<GeometricLine, GeometricLine>::align(
   return alignVectors(v1, v2, qqdot);
 }
 
-// template <>
-// int TDefGeometricAlignment<GeometricLine, GeometricPlane>::align(
-//     std::shared_ptr<GeometricLine> line,
-//     std::shared_ptr<GeometricPlane> plane) {
-//   KDL::Vector v1 = pose_a_.M * line->getDirectionKDL();
-//   KDL::Vector v2 = -(pose_b_.M * plane->getNormalKDL());
+template <>
+int TDefGeometricAlignment<GeometricLine, GeometricPlane>::align(
+    std::shared_ptr<GeometricLine> line,
+    std::shared_ptr<GeometricPlane> plane,
+    const KDL::JntArrayVel& qqdot) {
+  KDL::Vector v1 = pose_a_.M * line->getDirectionKDL();
+  KDL::Vector v2 = pose_b_.M * plane->getNormalKDL();
 
-//   return alignVectors(v1, v2);
-// }
+  return alignVectors(v1, v2, qqdot);
+}
 
-// template <>
-// int TDefGeometricAlignment<GeometricLine, GeometricCylinder>::align(
-//     std::shared_ptr<GeometricLine> line,
-//     std::shared_ptr<GeometricCylinder> cylinder) {
-//   KDL::Vector v1 = -(pose_a_.M * line->getDirectionKDL());
+template <>
+int TDefGeometricAlignment<GeometricLine, GeometricCylinder>::align(
+    std::shared_ptr<GeometricLine> line,
+    std::shared_ptr<GeometricCylinder> cylinder,
+    const KDL::JntArrayVel& qqdot) {
+  KDL::Vector v1 = pose_a_.M * line->getDirectionKDL();
 
-//   KDL::Vector p = pose_a_.p + pose_a_.M * line->getOffsetKDL();
-//   KDL::Vector d = pose_b_.p + pose_b_.M * cylinder->getOffsetKDL();
-//   KDL::Vector v = pose_b_.M * cylinder->getDirectionKDL();
+  KDL::Vector p = pose_a_.p + pose_a_.M * line->getOffsetKDL(); //a point on the line expressed in the world frame
+  KDL::Vector d = pose_b_.p + pose_b_.M * cylinder->getOffsetKDL();
+  KDL::Vector v = pose_b_.M * cylinder->getDirectionKDL();
 
-//   KDL::Vector x = KDL::dot((p - d), v) * v;
+  KDL::Vector x = KDL::dot((p - d), v) * v;
 
-//   KDL::Vector v2 = (p - d) - x;
+  KDL::Vector v2 = d + x -p;
 
-//   v2.Normalize();
+  v2.Normalize();
 
-//   return alignVectors(v1, v2);
-// }
+  // DEBUG ===================================
+  //std::cerr<<"v1: "<<v1(0)<<" "<<v1(1)<<" "<<v1(2)<<std::endl;
+  //std::cerr<<"v2: "<<v2(0)<<" "<<v2(1)<<" "<<v2(2)<<std::endl;  
+  // DEBUG END ===============================
+
+  return alignVectors(v1, v2, qqdot);
+}
 
 // template <>
 // int TDefGeometricAlignment<GeometricLine, GeometricSphere>::align(
 //     std::shared_ptr<GeometricLine> line,
-//     std::shared_ptr<GeometricSphere> sphere) {
+//     std::shared_ptr<GeometricSphere> sphere,
+//     const KDL::JntArrayVel& qqdot) {
 //   KDL::Vector v1 = pose_a_.M * line->getDirectionKDL();
 
 //   KDL::Vector p = pose_a_.p + pose_a_.M * line->getOffsetKDL();
@@ -85,7 +93,7 @@ int TDefGeometricAlignment<GeometricLine, GeometricLine>::align(
 
 //   v2.Normalize();
 
-//   return alignVectors(v1, v2);
+//   return alignVectors(v1, v2, qqdot);
 // }
 
 /// \bug Frame alignment seems not to consider the axis sense (e.g., alignment
@@ -93,7 +101,8 @@ int TDefGeometricAlignment<GeometricLine, GeometricLine>::align(
 // template <>
 // int TDefGeometricAlignment<GeometricFrame, GeometricFrame>::align(
 //     std::shared_ptr<GeometricFrame> frame1,
-//     std::shared_ptr<GeometricFrame> frame2) {
+//     std::shared_ptr<GeometricFrame> frame2,
+//     const KDL::JntArrayVel& qqdot) {
 //   KDL::Vector ax1 = pose_a_.M * frame1->getAxisXKDL();
 //   KDL::Vector ax2 = pose_b_.M * frame2->getAxisXKDL();
 //   KDL::Vector ay1 = pose_a_.M * frame1->getAxisYKDL();

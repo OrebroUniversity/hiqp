@@ -75,8 +75,6 @@ class TDefGeometricAlignment : public TaskDefinition {
   KDL::Frame pose_b_;
   KDL::Jacobian jacobian_b_;
   KDL::Jacobian jacobian_dot_b_;
-  
-  double delta_;  // the angular error margin
 };
 
 }  // namespace tasks
