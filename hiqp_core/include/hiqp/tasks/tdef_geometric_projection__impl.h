@@ -64,9 +64,9 @@ int TDefGeometricProjection<PrimitiveA, PrimitiveB>::init(
   }
 
   unsigned int n_joints = robot_state->getNumJoints();
-  e_ = Eigen::VectorXd::Zero(1, 1);
+  e_ = Eigen::VectorXd::Zero(1);
   J_ = Eigen::MatrixXd::Zero(1, n_joints);
-  e_dot_ = Eigen::VectorXd::Zero(1, 1);
+  e_dot_ = Eigen::VectorXd::Zero(1);
   J_dot_= Eigen::MatrixXd::Zero(1, n_joints);
 
   performance_measures_.resize(0);

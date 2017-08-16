@@ -22,6 +22,18 @@ dt=1e-3;
 n=size(u,1);
 t=linspace(0,n*dt,n)';
 
+% ind_s=6772;
+% ind_e=7000;
+% u=u(ind_s:ind_e,:);
+% dJ=dJ(ind_s:ind_e,:);
+% J=J(ind_s:ind_e,:);
+% q=q(ind_s:ind_e,:);
+% dq=dq(ind_s:ind_e,:);
+% e=e(ind_s:ind_e);
+% de=de(ind_s:ind_e);
+% dde_star=dde_star(ind_s:ind_e);
+% t=t(ind_s:ind_e);
+
 % system definition
 SP = model_UR10();
 SV = System_Variables(SP);
@@ -43,7 +55,7 @@ Kp=2;
 Kd=3;
 
 %comute ideal response
-for i=1:n
+for i=1:length(e)
    dde_star_(i)=-Kp*e_(i)-Kd*de_(i);
    de_(i+1)=de_(i)+dt*dde_star_(i);
    e_(i+1)=e_(i)+dt*de_(i);
