@@ -97,46 +97,40 @@ void HiQPJointVelocityController::initialize() {
   u_vel_ = Eigen::VectorXd::Zero(getNJoints());
 }
 
-  void HiQPJointVelocityController::computeControls(Eigen::VectorXd& u) {
+  void HiQPJointVelocityController::updateControls(Eigen::VectorXd& ddq, Eigen::VectorXd& u) {
     if (!is_active_) return;
 
-    std::vector<double> u_acc(u.size());
-
+    std::vector<double> _ddq(ddq.size());
+  
   // Time the acceleration control computation
   auto t_begin = std::chrono::high_resolution_clock::now();
-  task_manager_.getAccelerationControls(this->getRobotState(), u_acc);
+  task_manager_.getAccelerationControls(this->getRobotState(), _ddq);
   auto t_end = std::chrono::high_resolution_clock::now();
   std::chrono::duration<double, std::milli> opt_time = t_end - t_begin;
 
   int i = 0;
-  for (auto&& oc : u_acc) {
-    u(i++) = oc;
+  for (auto&& oc : _ddq) {
+    ddq(i++) = oc;
   }
   //OPTION 1: store prev. control velocities for integration
-  // u=u_vel_+u*period_.toSec();
-  //  u_vel_=u; //store the computed velocity controls for the next integration step
+  u=u_vel_+ddq*period_.toSec();
+   u_vel_=u; //store the computed velocity controls for the next integration step
 
 
-  //OPTION 2: integrate the measured joint velocity values
-   Eigen::VectorXd qdot=this->getRobotState()->kdl_jnt_array_vel_.qdot.data;
-   u=period_.toSec()*u; //delta dq
-  //filter the controls
-  unsigned int q_nr=u.rows();
-  std::vector<double> u_in(q_nr),  u_out(q_nr);
-  for(unsigned int i=0; i<q_nr; i++) u_in[i]=u(i);
+  //OPTION 2: filter the computed velocity differences 
+  //  Eigen::VectorXd qdot=this->getRobotState()->kdl_jnt_array_vel_.qdot.data;
+  //  u=period_.toSec()*ddq; //delta dq
+  // //filter the controls
+  // unsigned int q_nr=u.rows();
+  // std::vector<double> u_in(q_nr),  u_out(q_nr);
+  // for(unsigned int i=0; i<q_nr; i++) u_in[i]=u(i);
 
-  if(output_ctrl_filter_.update(u_in,u_out)){
-    for(unsigned int i=0; i<q_nr; i++)  u(i)=u_out[i];
-  }
-  else{
-    ROS_WARN("HiQPJointVelocityController::computeControls(...): could not update output control filter!");
-  }
-   
-  //    std::cerr<<"acc_controls: "<<u(0)<<std::endl;
-  //    std::cerr<<"measured vel: "<<qdot(0)<<std::endl;
-
-  //       std::cerr<<"vel_controls: "<<u(0)<<std::endl;
-  // 	  std::cerr<<"*****************************************"<<std::endl;
+  // if(output_ctrl_filter_.update(u_in,u_out)){
+  //   for(unsigned int i=0; i<q_nr; i++)  u(i)=u_out[i];
+  // }
+  // else{
+  //   ROS_WARN("HiQPJointVelocityController::computeControls(...): could not update output control filter!");
+  // }
 
 	  
   renderPrimitives();
@@ -145,7 +139,7 @@ void HiQPJointVelocityController::initialize() {
 
   // if (outcon.size() != 0) {
   //   if (total > 3000.0) {
-  //     std::cout << "Velocity Controls computation took " << total / n
+  //     std::cout << "Acceleration Controls computation took " << total / n
   //               << " milliseconds.\n";
 
   //     fflush(stdout);

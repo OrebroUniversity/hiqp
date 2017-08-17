@@ -52,8 +52,9 @@ class HiQPJointVelocityController
   ~HiQPJointVelocityController() noexcept;
 
   void initialize();
-  void computeControls(Eigen::VectorXd& u);
 
+  void updateControls(Eigen::VectorXd& ddq, Eigen::VectorXd& u);
+  
  private:
   HiQPJointVelocityController(const HiQPJointVelocityController& other) =
       delete;
