@@ -23,7 +23,6 @@
 #include <hiqp/geometric_primitives/geometric_plane.h>
 #include <hiqp/geometric_primitives/geometric_point.h>
 #include <hiqp/geometric_primitives/geometric_sphere.h>
-
 #include <hiqp/utilities.h>
 
 #include <iostream>

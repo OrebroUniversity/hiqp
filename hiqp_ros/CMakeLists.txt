@@ -54,7 +54,8 @@ add_library(${PROJECT_NAME} src/hiqp_joint_velocity_controller.cpp
                             src/hiqp_service_handler.cpp
                             src/ros_topic_subscriber.cpp
                             src/ros_visualizer.cpp
-                            src/utilities.cpp)
+                            src/utilities.cpp
+                            src/hiqp_kfilter.cpp)
 
 add_dependencies(${PROJECT_NAME} hiqp_msgs_generate_messages_cpp)
 
