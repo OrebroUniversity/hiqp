@@ -222,22 +222,26 @@ namespace hiqp {
       J_v2_dot.data = J_v2_dot.data - jacobian_dot_b_.data;
   
       Eigen::Vector3d v1_dot = J_v1.data.topRows<3>()*qqdot.qdot.data;
-      Eigen::Vector3d v2_dot = J_v2.data.topRows<3>()*qqdot.qdot.data;  
-      Eigen::MatrixXd J__= Eigen::Map<const Eigen::Matrix<double,1,3> >(v2.data)*J_v1.data.topRows<3>()+Eigen::Map<const Eigen::Matrix<double,1,3> >(v1.data)*J_v2.data.topRows<3>();
+      Eigen::Vector3d v2_dot = J_v2.data.topRows<3>()*qqdot.qdot.data;
 
-      e_(0) = acos(dot(v1,v2)); //-delta
-      //regularize to avoid division-by-zero problems  
-      double eps=1e-5;
-      J_= -1/sqrt(1+eps-pow(dot(v1,v2),2))*J__;
+      // VARIANT 1: e=acos(v1^T * v2) ==============================================
+      /* Eigen::MatrixXd J__= Eigen::Map<const Eigen::Matrix<double,1,3> >(v2.data)*J_v1.data.topRows<3>()+Eigen::Map<const Eigen::Matrix<double,1,3> >(v1.data)*J_v2.data.topRows<3>(); */
+
+      /* e_(0) = acos(dot(v1,v2)); //-delta */
+      /* //regularize to avoid division-by-zero problems   */
+      /* double eps=1e-5; */
+      /* J_= -1/sqrt(1+eps-pow(dot(v1,v2),2))*J__; */
+      /* e_dot_= J_*qqdot.qdot.data; */
+      /* J_dot_= -1/sqrt(1+eps-pow(dot(v1,v2),2))*(v2_dot.transpose()*J_v1.data.topRows<3>()+Eigen::Map<const Eigen::Matrix<double,1,3> >(v2.data)*J_v1_dot.data.topRows<3>()+v1_dot.transpose()*J_v2.data.topRows<3>()+Eigen::Map<const Eigen::Matrix<double,1,3> >(v1.data)*J_v2_dot.data.topRows<3>())-J__*dot(v1,v2)/pow(1+eps-pow(dot(v1,v2),2),1.5)*(dot(v1,KDL::Vector(v2_dot(0), v2_dot(1), v2_dot(2)))+dot(KDL::Vector(v1_dot(0),v1_dot(1),v1_dot(2)),v2)); */
+      // END VARIANT 1 ==============================================================
+
+      // VARIANT 2: e=v1^T * v2 -1 ==============================================
+      e_(0)=dot(v1,v2)-1.0;
+      J_=Eigen::Map<const Eigen::Matrix<double,1,3> >(v2.data)*J_v1.data.topRows<3>()+Eigen::Map<const Eigen::Matrix<double,1,3> >(v1.data)*J_v2.data.topRows<3>();
       e_dot_= J_*qqdot.qdot.data;
-      J_dot_= -1/sqrt(1+eps-pow(dot(v1,v2),2))*(v2_dot.transpose()*J_v1.data.topRows<3>()+Eigen::Map<const Eigen::Matrix<double,1,3> >(v2.data)*J_v1_dot.data.topRows<3>()+v1_dot.transpose()*J_v2.data.topRows<3>()+Eigen::Map<const Eigen::Matrix<double,1,3> >(v1.data)*J_v2_dot.data.topRows<3>())-J__*dot(v1,v2)/pow(1+eps-pow(dot(v1,v2),2),1.5)*(dot(v1,KDL::Vector(v2_dot(0), v2_dot(1), v2_dot(2)))+dot(KDL::Vector(v1_dot(0),v1_dot(1),v1_dot(2)),v2));
-
-      //J_dot_=J_dot_*0;
-      //DEBUG ======================================
-      /* std::cerr<<"v1: "<<v1(0)<<" "<<v1(1)<<" "<<v1(2)<<std::endl; */
-      /* std::cerr<<"v2: "<<v2(0)<<" "<<v2(1)<<" "<<v2(2)<<std::endl; */
-      //DEBUG END ==================================  
-
+      J_dot_=v2_dot.transpose()*J_v1.data.topRows<3>()+Eigen::Map<const Eigen::Matrix<double,1,3> >(v2.data)*J_v1_dot.data.topRows<3>()+Eigen::Map<const Eigen::Matrix<double,1,3> >(v1.data)*J_v2_dot.data.topRows<3>()+v1_dot.transpose()*J_v2.data.topRows<3>();
+      // END VARIANT 2 ==============================================================
+      
       return 0;
     }
 

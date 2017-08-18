@@ -1,5 +1,6 @@
 #include <hiqp_ros/kalman/hiqp_kfilter.hpp>
 #include <ros/console.h>
+#include <Eigen/Dense>
 
 namespace hiqp_ros {
   // //-----------------------------------------------------
@@ -12,65 +13,85 @@ namespace hiqp_ros {
     R=_R;
     Q=_Q;
     dt_=_dt;
+
     initialized_ = true;
   }
   // //-----------------------------------------------------
   bool HiQPKFilter::isInitialized(){
     return initialized_;
   }
-  // //-----------------------------------------------------  
-  // double HiQPKFilter::getSamplingTime(){
-  //   return dt_;
-  // }
+  //-----------------------------------------------------  
+  double HiQPKFilter::getSamplingTime(){
+    return dt_;
+  }
+  //-----------------------------------------------------  
+  void HiQPKFilter::setSamplingTime(double dt){
+    dt_=dt;
+  }
   //-----------------------------------------------------
   void HiQPKFilter::makeA(){
-    A(0,0) = 1.0;
-    A(0,1) = dt_;
-    A(1,0) = 0.0;
-    A(1,1) = 1.0;
+    Eigen::MatrixXd A_b(2,2);
+    A_b(0,0) = 1.0;
+    A_b(0,1) = dt_;
+    A_b(1,0) = 0.0;
+    A_b(1,1) = 1.0;
+
+    Eigen::MatrixXd _A = Eigen::MatrixXd::Zero(n,n);
+    for(unsigned int i=0; i<nu;i++)
+      _A.block<2,2>(2*i, 2*i)=A_b.transpose();
+
+    A.assign(n,n,_A.data());
   };
   //-----------------------------------------------------  
   void HiQPKFilter::makeH(){
-     H(0,0) = 1.0;
-    H(0,1) = 0.0;
-    H(1,0) = 0.0;
-    H(1,1) = 1.0;
+    Eigen::MatrixXd _H = Eigen::MatrixXd::Identity(n,n);
+    H.assign(n,n,_H.data());
   };
   //-----------------------------------------------------
   
   void HiQPKFilter::makeV(){
-     V(0,0) = 1.0;
-    V(0,1) = 0.0;
-    V(1,0) = 0.0;
-    V(1,1) = 1.0;
+    Eigen::MatrixXd _V = Eigen::MatrixXd::Identity(n,n);
+    V.assign(n,n,_V.data());
   };
   //-----------------------------------------------------
   void HiQPKFilter::makeW(){
-     W(0,0) = 1.0;
-    W(0,1) = 0.0;
-    W(1,0) = 0.0;
-    W(1,1) = 1.0;
+    Eigen::MatrixXd _W = Eigen::MatrixXd::Identity(n,n);
+    W.assign(n,n,_W.data());
   };
-    //-----------------------------------------------------
+  //-----------------------------------------------------
   void HiQPKFilter::makeR(){
-   ROS_ERROR("R SCHAS");
+    //            std::cerr<<"R: "<<std::endl;
+    // for(unsigned int i=0;i<n;i++){
+    //   for(unsigned int j=0;j<n;j++)
+    // 	std::cerr<<R(i,j)<<" ";
+
+    //   std::cerr<<std::endl;
+    // }
+    // std::cerr<<std::endl;
   };
   //-----------------------------------------------------
   void HiQPKFilter::makeQ(){
-   ROS_ERROR("Q SCHAS");
+    //            std::cerr<<"Q: "<<std::endl;
+    // for(unsigned int i=0;i<n;i++){
+    //   for(unsigned int j=0;j<n;j++)
+    // 	std::cerr<<Q(i,j)<<" ";
+
+    //   std::cerr<<std::endl;
+    // }
+    // std::cerr<<std::endl;
   };
   //-----------------------------------------------------
   void HiQPKFilter::makeBaseB(){
-    std::cerr<<"calling makeBaseb."<<std::endl;
-    ROS_ERROR("SCHAS");
-    //    NoModification();
+    Eigen::MatrixXd _B=Eigen::MatrixXd::Zero(n,nu);
+    for(unsigned int i=0; i<nu; i++)
+      B(2*i+1,i)=dt_;
   };
   //-----------------------------------------------------
   void HiQPKFilter::makeB(){
-    std::cerr<<"calling makeBase. "<<std::endl;
-    ROS_ERROR("VOISCHAS");
-    B(0,0) = 0.0;
-    B(1,0) = dt_;
+    Eigen::MatrixXd _B=Eigen::MatrixXd::Zero(n,nu);
+    for(unsigned int i=0; i<nu; i++)
+      B(2*i+1,i)=dt_;
+
   };
   //-----------------------------------------------------
   

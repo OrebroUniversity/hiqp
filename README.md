@@ -47,4 +47,4 @@ A publication presenting HiQP is in preparation. In the meantime, please refer t
 * changed getVelocityJacobianForTwoPoints(...) to changeJacReferencePoint(...) and modified it to return the full matrix 
 * Should implement Jacobian derivative computation with the official KDL implementation once its added to the ROS package in order to increase efficiency opposed to the current naive impementation which necessiates to compute n_Joints Jacobians at each time step
 * Should implement relativeJacobianDerivative computation using the previously calculated Jacobians rather than in a separate loop
-
+* Should reimplement the Kalman filter and derive it from the ROS filters base class to ease parametrization 

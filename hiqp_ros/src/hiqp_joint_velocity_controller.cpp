@@ -117,7 +117,7 @@ void HiQPJointVelocityController::initialize() {
    u_vel_=u; //store the computed velocity controls for the next integration step
 
 
-  //OPTION 2: filter the computed velocity differences 
+  //  OPTION 2: filter the computed velocity differences 
   //  Eigen::VectorXd qdot=this->getRobotState()->kdl_jnt_array_vel_.qdot.data;
   //  u=period_.toSec()*ddq; //delta dq
   // //filter the controls

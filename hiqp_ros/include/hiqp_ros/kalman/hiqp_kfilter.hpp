@@ -13,8 +13,8 @@ namespace hiqp_ros {
     HiQPKFilter();
     //HiQPKFilter(double dt);
 
-    // void setSamplingTime(double dt);
-    // double getSamplingTime();
+     void setSamplingTime(double dt);
+     double getSamplingTime();
     bool isInitialized();
     void init( KFVector& x0,  KFMatrix& P0, KFMatrix& R, KFMatrix& Q, double dt);
   protected:
