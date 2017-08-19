@@ -18,19 +18,18 @@
 
 #include <hiqp/utilities.h>
 
-#include <hiqp/tasks/tdyn_linear.h>
+#include <hiqp/tasks/tdyn_pd.h>
 
 namespace hiqp {
   namespace tasks {
 
-
-    int TDynLinear::init(const std::vector<std::string>& parameters, RobotStatePtr robot_state, const Eigen::VectorXd& e_initial, const Eigen::VectorXd& e_dot_initial, const Eigen::VectorXd& e_final, const Eigen::VectorXd& e_dot_final) {
+    int TDynPD::init(const std::vector<std::string>& parameters, RobotStatePtr robot_state, const Eigen::VectorXd& e_initial, const Eigen::VectorXd& e_dot_initial, const Eigen::VectorXd& e_final, const Eigen::VectorXd& e_dot_final) {
       int dim = e_initial.rows();
       int size = parameters.size();
       assert((e_dot_initial.rows()==dim) && (e_final.rows() == dim) && (e_dot_final.rows() == dim) );
   
       if ((size != 2*dim*dim+1) && (size != 3)) {
-	printHiqpWarning("TDynLinear for a " + std::to_string(dim) + "-dimensional task requires either " + std::to_string(2*dim*dim+1) +" or 3 parameters, got " + std::to_string(size) + "! Initialization failed!");
+	printHiqpWarning("TDynPD for a " + std::to_string(dim) + "-dimensional task requires either " + std::to_string(2*dim*dim+1) +" or 3 parameters, got " + std::to_string(size) + "! Initialization failed!");
 	return -1;
       }
   
@@ -85,18 +84,17 @@ namespace hiqp {
   
       return 0;
     }
-
-    int TDynLinear::update(RobotStatePtr robot_state, const Eigen::VectorXd& e, const Eigen::VectorXd& e_dot, const Eigen::MatrixXd& J, const Eigen::MatrixXd& J_dot) {
+    int TDynPD::update(const RobotStatePtr robot_state, const std::shared_ptr< TaskDefinition > def){
       //PD control law
-      e_ddot_star_= -Kp_*e-Kd_*e_dot;
-          //DEBUG===================================
+      e_ddot_star_= -Kp_*def->getTaskValue()-Kd_*def->getTaskDerivative();
+      //DEBUG===================================
       // std::cerr<<"e_ddot_star_: "<<e_ddot_star_.transpose()<<std::endl;
       // std::cerr<<".........................................."<<std::endl;
-            //DEBUG END===============================
+      //DEBUG END===============================
       return 0;
     }
 
-    int TDynLinear::monitor() { return 0; }
+    int TDynPD::monitor() { return 0; }
 
   }  // namespace tasks
 

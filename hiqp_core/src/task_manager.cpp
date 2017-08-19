@@ -61,7 +61,6 @@ bool TaskManager::getAccelerationControls(RobotStatePtr robot_state,
   }
 
   solver_->clearStages();
-
   resource_mutex_.lock();
   for (auto&& kv : task_map_) {
     if (kv.second->getActive()) {
@@ -73,43 +72,43 @@ bool TaskManager::getAccelerationControls(RobotStatePtr robot_state,
 			     robot_state->kdl_jnt_array_vel_.qdot,
                              kv.second->getTaskTypes());
 	//DEBUG ==================================================
-	// if(strcmp(kv.second->getTaskName().c_str(),"line_sphere_alignment") == 0){
-	//   KDL::JntArray qdot__ = robot_state->kdl_jnt_array_vel_.qdot;
-	//   KDL::JntArray q__ = robot_state->kdl_jnt_array_vel_.q;
-	//   unsigned int q_nr=qdot__.rows();
-	//   std::ofstream dq;
-	//   std::ofstream q;
-	//   std::ofstream de;
-	//   std::ofstream e;
-	//   std::ofstream dde_star;
-	//   std::ofstream J;
-	//   std::ofstream dJ;
-	//   dq.open ("/home/rkg/ros/amici_ws/src/hiqp/matlab/dq.dat", std::ios::out | std::ios::app );
-	//   q.open ("/home/rkg/ros/amici_ws/src/hiqp/matlab/q.dat", std::ios::out | std::ios::app );
-	//   de.open ("/home/rkg/ros/amici_ws/src/hiqp/matlab/de.dat", std::ios::out | std::ios::app );
-	//   e.open ("/home/rkg/ros/amici_ws/src/hiqp/matlab/e.dat", std::ios::out | std::ios::app );
-	//   dde_star.open ("/home/rkg/ros/amici_ws/src/hiqp/matlab/dde_star.dat", std::ios::out | std::ios::app );
-	//   J.open ("/home/rkg/ros/amici_ws/src/hiqp/matlab/J.dat", std::ios::out | std::ios::app );
-	//   dJ.open ("/home/rkg/ros/amici_ws/src/hiqp/matlab/dJ.dat", std::ios::out | std::ios::app );	  
-	//   for(unsigned int i=0; i<q_nr; i++){
-	//     dq<<qdot__(i)<<" ";
-        //     q<<q__(i)<<" ";	    
-	//   }
-	//   e<<kv.second->getValue().transpose()<<"\n";
-        //   de<<kv.second->getValueDerivative().transpose()<<"\n";
-        //   dde_star<<kv.second->getDynamics().transpose()<<"\n";
-	//   J<<kv.second->getJacobian()<<"\n"<<"\n";
-	//   dJ<<kv.second->getJacobianDerivative()<<"\n"<<"\n";	  
-	//   dq<<"\n";
-	//   q<<"\n";	  
-	//   dq.close();
-	//   q.close();
-	//   e.close();
-	//   de.close();
-	//   dde_star.close();
-	//   J.close();
-	//   dJ.close();
-	// }
+	if(strcmp(kv.second->getTaskName().c_str(),"point_point_projection") == 0){
+	  KDL::JntArray qdot__ = robot_state->kdl_jnt_array_vel_.qdot;
+	  KDL::JntArray q__ = robot_state->kdl_jnt_array_vel_.q;
+	  unsigned int q_nr=qdot__.rows();
+	  std::ofstream dq;
+	  std::ofstream q;
+	  std::ofstream de;
+	  std::ofstream e;
+	  std::ofstream dde_star;
+	  std::ofstream J;
+	  std::ofstream dJ;
+	  dq.open ("/home/rkg/ros/amici_ws/src/hiqp/matlab/dq.dat", std::ios::out | std::ios::app );
+	  q.open ("/home/rkg/ros/amici_ws/src/hiqp/matlab/q.dat", std::ios::out | std::ios::app );
+	  de.open ("/home/rkg/ros/amici_ws/src/hiqp/matlab/de.dat", std::ios::out | std::ios::app );
+	  e.open ("/home/rkg/ros/amici_ws/src/hiqp/matlab/e.dat", std::ios::out | std::ios::app );
+	  dde_star.open ("/home/rkg/ros/amici_ws/src/hiqp/matlab/dde_star.dat", std::ios::out | std::ios::app );
+	  J.open ("/home/rkg/ros/amici_ws/src/hiqp/matlab/J.dat", std::ios::out | std::ios::app );
+	  dJ.open ("/home/rkg/ros/amici_ws/src/hiqp/matlab/dJ.dat", std::ios::out | std::ios::app );	  
+	  for(unsigned int i=0; i<q_nr; i++){
+	    dq<<qdot__(i)<<" ";
+            q<<q__(i)<<" ";	    
+	  }
+	  e<<kv.second->getValue().transpose()<<"\n";
+          de<<kv.second->getValueDerivative().transpose()<<"\n";
+          dde_star<<kv.second->getDynamics().transpose()<<"\n";
+	  J<<kv.second->getJacobian()<<"\n"<<"\n";
+	  dJ<<kv.second->getJacobianDerivative()<<"\n"<<"\n";	  
+	  dq<<"\n";
+	  q<<"\n";	  
+	  dq.close();
+	  q.close();
+	  e.close();
+	  de.close();
+	  dde_star.close();
+	  J.close();
+	  dJ.close();
+	}
 	//DEBUG END ===============================================
       }
     }
@@ -127,17 +126,17 @@ bool TaskManager::getAccelerationControls(RobotStatePtr robot_state,
   }
   
   //  DEBUG ==================================================
-   // for (auto&& kv : task_map_) {
-   //   if (kv.second->getActive()) {
-   //     if(strcmp(kv.second->getTaskName().c_str(),"line_sphere_alignment") == 0){
-   // 	 std::ofstream u;
-   // 	 u.open ("/home/rkg/ros/amici_ws/src/hiqp/matlab/u.dat", std::ios::out | std::ios::app );
-   // 	 for (int i = 0; i < controls.size(); ++i) u<<controls.at(i)<<" ";
-   // 	 u<<"\n";	  
-   // 	 u.close();
-   //     }
-   //   }
-   // }
+   for (auto&& kv : task_map_) {
+     if (kv.second->getActive()) {
+       if(strcmp(kv.second->getTaskName().c_str(),"point_point_projection") == 0){
+   	 std::ofstream u;
+   	 u.open ("/home/rkg/ros/amici_ws/src/hiqp/matlab/u.dat", std::ios::out | std::ios::app );
+   	 for (int i = 0; i < controls.size(); ++i) u<<controls.at(i)<<" ";
+   	 u<<"\n";	  
+   	 u.close();
+       }
+     }
+   }
    // DEBUG END ===============================================
 
   return true;

@@ -56,7 +56,7 @@ class TDefGeometricProjection : public TaskDefinition {
 
   int project(std::shared_ptr<PrimitiveA> first,
               std::shared_ptr<PrimitiveB> second,
-	      const KDL::JntArrayVel& qqdot);
+	      const RobotStatePtr robot_state);
 
   /// \brief This sets jacobian columns corresponding to non-writable joints to
   /// 0

@@ -55,8 +55,8 @@ class TDefGeometricAlignment : public TaskDefinition {
 
   int align(std::shared_ptr<PrimitiveA> first,
             std::shared_ptr<PrimitiveB> second,
-	    const KDL::JntArrayVel& qqdot);
-  int alignVectors(const KDL::Vector& v1, const KDL::Vector v2, const KDL::JntArrayVel& qqdot);
+	    const RobotStatePtr robot_state);
+  int alignVectors(const KDL::Vector& v1, const KDL::Vector v2, const RobotStatePtr robot_state);
 
   /// \brief This sets jacobian columns corresponding to non-writable joints to
   /// 0

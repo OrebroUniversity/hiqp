@@ -61,10 +61,12 @@ int TDynJntLimits::init(const std::vector<std::string>& parameters, RobotStatePt
   return 0;
 }
 
-int TDynJntLimits::update(RobotStatePtr robot_state, const Eigen::VectorXd& e, const Eigen::VectorXd& e_dot, const Eigen::MatrixXd& J, const Eigen::MatrixXd& J_dot){
+int TDynJntLimits::update(const RobotStatePtr robot_state, const std::shared_ptr< TaskDefinition > def){
 
    double dt=robot_state->sampling_time_;
-
+   Eigen::VectorXd e=def->getTaskValue();
+   Eigen::VectorXd e_dot=def->getTaskDerivative();   
+   
   e_ddot_star_(0)=-Kp_*e(0)-Kd_*e_dot(0);
   e_ddot_star_(1)=-Kp_*e(1)-Kd_*e_dot(1);
   e_ddot_star_(2)=1/dt*e(2);

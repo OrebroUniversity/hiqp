@@ -28,11 +28,11 @@ A publication presenting HiQP is in preparation. In the meantime, please refer t
 ## TODO
 
 * Rename TaskDynamics to TaskControllers to better reflect their purpose
-   -> rename TDynLinear to PDController
    -> rename Task::getDynamics() to Task::getControls() or Task::getTaskSpaceControls()
    -> rename Task::getValue() to Task::getError()
    -> rename Task::getValueDerivative() to Task::getErrorDerivative()
 * Renamed TaskManager::getVelocityControls(...) to TaskManager::getAccelerationControls(...) 
+* Rename TDynLinear to TDynPD
 * Reworked the TaskMeasure class and corresponding message: contains now the task function value (de), task function derivative (dde) and the desired task acceleration dde as computed by the task space control law (TaskDynamics)
 * Need to rework Task::checkConsistency(RobotStatePtr robot_state)
 * To control in acceleration, the TaskDynamics have to be a function of e & de
@@ -48,3 +48,6 @@ A publication presenting HiQP is in preparation. In the meantime, please refer t
 * Should implement Jacobian derivative computation with the official KDL implementation once its added to the ROS package in order to increase efficiency opposed to the current naive impementation which necessiates to compute n_Joints Jacobians at each time step
 * Should implement relativeJacobianDerivative computation using the previously calculated Jacobians rather than in a separate loop
 * Should reimplement the Kalman filter and derive it from the ROS filters base class to ease parametrization 
+* line-cylinder and line-sphere alignment align(...) functions don't take the derivatives properly into account
+* check segfault.sh in /amici_launch/scripts folder
+

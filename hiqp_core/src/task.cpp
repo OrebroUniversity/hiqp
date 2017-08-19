@@ -27,7 +27,7 @@
 // #include <hiqp/tasks/tdyn_cubic.h>
 // #include <hiqp/tasks/tdyn_hyper_sin.h>
 #include <hiqp/tasks/tdyn_jnt_limits.h>
-#include <hiqp/tasks/tdyn_linear.h>
+#include <hiqp/tasks/tdyn_pd.h>
 // #include <hiqp/tasks/tdyn_minimal_jerk.h>
 
 #include <hiqp/utilities.h>
@@ -46,7 +46,7 @@ namespace hiqp {
   using tasks::TDefJntLimits;
   // using tasks::TDefMetaTask;
 
-  using tasks::TDynLinear;
+  using tasks::TDynPD;
   // using tasks::TDynCubic;
   // using tasks::TDynHyperSin;
   using tasks::TDynJntLimits;
@@ -110,7 +110,7 @@ namespace hiqp {
   int Task::update(RobotStatePtr robot_state) {
     if (!checkConsistency(robot_state)) return -1;
     if (def_->update(robot_state) != 0) return -2;
-    if (dyn_->update(robot_state, def_->e_, def_->e_dot_, def_->J_, def_->J_dot_) != 0) return -3;
+    if (dyn_->update(robot_state, def_) != 0) return -3;
     return 0;
 
     // DEBUG =============================================
@@ -118,8 +118,8 @@ namespace hiqp {
     // '"<<getTaskName()<<"'"<<std::endl;
     // std::cerr<<"J_t:"<<std::endl<<def_->J_<<std::endl;
     // std::cerr<<"signs: ";
-    // for(int i=0; i<def_->task_types_.size();i++)
-    //   std::cerr<<def_->task_types_[i]<<" ";
+    // for(int i=0; i<def_->task_signs_.size();i++)
+    //   std::cerr<<def_->task_signs_[i]<<" ";
 
     // std::cerr<<std::endl<<"de*: "<<dyn_->e_dot_star_.transpose()<<std::endl;
     // DEBUG END ==========================================
@@ -253,8 +253,8 @@ namespace hiqp {
   int Task::constructDynamics(const std::vector<std::string>& dyn_params) {
     std::string type = dyn_params.at(0);
 
-    if (type.compare("TDynLinear") == 0) {
-      dyn_ = std::make_shared<TDynLinear>(geom_prim_map_, visualizer_);
+    if (type.compare("TDynPD") == 0) {
+      dyn_ = std::make_shared<TDynPD>(geom_prim_map_, visualizer_);
     }
     else if (type.compare("TDynJntLimits") == 0) {
       dyn_ = std::make_shared<TDynJntLimits>(geom_prim_map_, visualizer_);
@@ -296,35 +296,70 @@ namespace hiqp {
       return false;
     }
 
-    if (def_->e_.size() != def_->J_.rows()) {
+    unsigned int t_dim=def_->e_.size();
+    if (t_dim != def_->J_.rows()) {
       printHiqpWarning(
 		       "The task '" + task_name_ +
 		       "' is inconsistent after initialization (dimension mismatch). " +
-		       "Size of task function (e_.size()) is " +
-		       std::to_string(def_->e_.size()) + ", " +
+		       "Size task dimension (e_.size()) is " +
+		       std::to_string(t_dim) + ", " +
 		       "number of rows of task jacobian (J_.rows()) is " +
 		       std::to_string(def_->J_.rows()));
       return false;
     }
 
-    if (def_->task_types_.size() != def_->J_.rows()) {
-      ROS_WARN_THROTTLE(
-			3,
-			"The task '%s' is inconsistent after initialization (dimension "
-			"mismatch). Size of task types array (task_types_.size()) is %ld, "
-			"number of rows of task jacobian (J_.rows()) is %ld.",
-			task_name_.c_str(), def_->task_types_.size(), def_->J_.rows());
+    if (t_dim != def_->f_.size()) {
+      printHiqpWarning(
+		       "The task '" + task_name_ +
+		       "' is inconsistent after initialization (dimension mismatch). " +
+		       "Size task dimension (e_.size()) is " +
+		       std::to_string(t_dim) + ", " +
+		       "Exogeneous task quantity siz (f_.size()) is " +
+		       std::to_string(def_->f_.size()));
       return false;
     }
 
-    if (dyn_->e_ddot_star_.size() != def_->J_.rows()) {
+    if (def_->e_dot_.size() != t_dim) {
+      printHiqpWarning(
+		       "The task '" + task_name_ +
+		       "' is inconsistent after initialization (dimension mismatch). " +
+		       "Task dimension (e_.size()) is " +
+		       std::to_string(t_dim) + ", " +
+		       "Task function derivative size (e_dot_.size()) is " +
+		       std::to_string(def_->e_dot_.size()));
+      return false;
+    }
+
+
+    if (t_dim != def_->J_dot_.rows()) {
+      printHiqpWarning(
+		       "The task '" + task_name_ +
+		       "' is inconsistent after initialization (dimension mismatch). " +
+		       "Size task dimension (e_.size()) is " +
+		       std::to_string(t_dim) + ", " +
+		       "number of rows of task jacobian derivative (J_dot_.rows()) is " +
+		       std::to_string(def_->J_dot_.rows()));
+      return false;
+    }
+	
+    if (def_->task_signs_.size() != t_dim) {
+      ROS_WARN_THROTTLE(
+			3,
+			"The task '%s' is inconsistent after initialization (dimension "
+			"mismatch). Size of task signs array (task_signs_.size()) is %ld, "
+			"task dimension (e_.size()) is %ld.",
+			task_name_.c_str(), def_->task_signs_.size(), t_dim);
+      return false;
+    }
+
+    if (dyn_->e_ddot_star_.size() != t_dim) {
       printHiqpWarning(
 		       "The task '" + task_name_ +
 		       "' is inconsistent after initialization (dimension mismatch). " +
 		       "Size of desired task dynamics (e_dot_star_.size()) is " +
 		       std::to_string(dyn_->e_ddot_star_.size()) + ", " +
-		       "number of rows of task jacobian (J_.rows()) is " +
-		       std::to_string(def_->J_.rows()));
+		       "task dimension (e_.size()) is " +
+		       std::to_string(t_dim));
       return false;
     }
 

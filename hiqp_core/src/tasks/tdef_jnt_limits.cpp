@@ -46,10 +46,7 @@ namespace hiqp {
 			 "' is not writable! Initialization failed.");
 	return -3;
       }
-
-      unsigned int n_joints = robot_state->getNumJoints();
-      double q = robot_state->kdl_jnt_array_vel_.q(link_frame_q_nr_);
-      double q_dot = robot_state->kdl_jnt_array_vel_.qdot(link_frame_q_nr_);
+     
       q_lb_= std::stod(parameters.at(2));
       q_ub_= std::stod(parameters.at(3));
       dq_max_= std::stod(parameters.at(4));
@@ -57,48 +54,24 @@ namespace hiqp {
       assert(q_ub_ > q_lb_);
       assert(dq_max_ > 0.0);
       
-      e_.resize(4);
-      e_dot_.resize(4);
-      J_.resize(4, n_joints);
-      J_dot_.resize(4, n_joints);
+      unsigned int n_joints = robot_state->getNumJoints(); 
+      e_=Eigen::VectorXd::Zero(4);
+      f_=Eigen::VectorXd::Zero(4);      
+      e_dot_=Eigen::VectorXd::Zero(4);
+      J_=Eigen::MatrixXd::Zero(4,n_joints);      
+      J_dot_=Eigen::MatrixXd::Zero(4,n_joints);
       performance_measures_.resize(0);
+      
+      task_signs_.resize(4);
+      task_signs_.at(0) = 1;   // > upper joint limit 
+      task_signs_.at(1) = -1;  // < lower joint limit
+      task_signs_.at(2) = -1;   // < upper joint velocity limit
+      task_signs_.at(3) = 1;  // > lower joint velocity limit
 
-      task_types_.resize(4);
-      task_types_.at(0) = 1;   // > upper joint limit 
-      task_types_.at(1) = -1;  // < lower joint limit
-      task_types_.at(2) = -1;   // < upper joint velocity limit
-      task_types_.at(3) = 1;  // > lower joint velocity limit
-
-      J_dot_.setZero();
-      J_.setZero();
       J_(0,link_frame_q_nr_)=-1.0;      
       J_(1,link_frame_q_nr_)=-1.0;
       J_(2,link_frame_q_nr_)=1.0;
       J_(3,link_frame_q_nr_)=1.0;      
-
-      e_(0)=q_ub_-q;
-      e_dot_(0)=-q_dot;
-
-      e_(1)=q_lb_-q;
-      e_dot_(1)=-q_dot;
-
-      e_(2)=dq_max_-q_dot;
-      e_dot_(2)=0.0;
-
-      e_(3)=-dq_max_-q_dot;
-      e_dot_(3)=0.0;
- 
-      //DEBUG===================================
-      // std::cerr<<"link_frame_name_: "<<link_frame_name_<<std::endl;
-      // std::cerr<<"q_lb_: "<<q_lb_<<std::endl;
-      // std::cerr<<"q_ub_: "<<q_ub_<<std::endl;
-      // std::cerr<<"dq_max_: "<<dq_max_<<std::endl;
-      // std::cerr<<"q: "<<q<<std::endl;
-      // std::cerr<<"q_dot: "<<q_dot<<std::endl;
-      // std::cerr<<"e_: "<<e_.transpose()<<std::endl;
-      // std::cerr<<"e_dot_: "<<e_dot_.transpose()<<std::endl;
-      // std::cerr<<"J_: "<<std::endl<<J_<<std::endl;
-      //DEBUG END===============================
       
       return 0;
     }

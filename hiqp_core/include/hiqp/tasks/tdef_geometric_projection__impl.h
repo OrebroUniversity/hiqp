@@ -65,6 +65,7 @@ int TDefGeometricProjection<PrimitiveA, PrimitiveB>::init(
 
   unsigned int n_joints = robot_state->getNumJoints();
   e_ = Eigen::VectorXd::Zero(1);
+  f_ = Eigen::VectorXd::Zero(1);  
   J_ = Eigen::MatrixXd::Zero(1, n_joints);
   e_dot_ = Eigen::VectorXd::Zero(1);
   J_dot_= Eigen::MatrixXd::Zero(1, n_joints);
@@ -111,8 +112,8 @@ int TDefGeometricProjection<PrimitiveA, PrimitiveB>::init(
     return -4;
   }
 
-  task_types_.clear();
-  task_types_.insert(task_types_.begin(), 1, sign);
+  task_signs_.clear();
+  task_signs_.insert(task_signs_.begin(), 1, sign);
 
   return 0;
 }
@@ -193,7 +194,7 @@ int TDefGeometricProjection<PrimitiveA, PrimitiveB>::update(
     return -6;
   }
   
-  project(primitive_a_, primitive_b_,robot_state->kdl_jnt_array_vel_);
+  project(primitive_a_, primitive_b_,robot_state);
   maskJacobian(robot_state);
   maskJacobianDerivative(robot_state);  
   return 0;

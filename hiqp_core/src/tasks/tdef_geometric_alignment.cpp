@@ -36,29 +36,29 @@ template <>
 int TDefGeometricAlignment<GeometricLine, GeometricLine>::align(
     std::shared_ptr<GeometricLine> line1,
     std::shared_ptr<GeometricLine> line2,
-    const KDL::JntArrayVel& qqdot) {
+    const RobotStatePtr robot_state) {
   KDL::Vector v1 = pose_a_.M * line1->getDirectionKDL();
   KDL::Vector v2 = pose_b_.M * line2->getDirectionKDL();
 
-  return alignVectors(v1, v2, qqdot);
+  return alignVectors(v1, v2, robot_state);
 }
 
 template <>
 int TDefGeometricAlignment<GeometricLine, GeometricPlane>::align(
     std::shared_ptr<GeometricLine> line,
     std::shared_ptr<GeometricPlane> plane,
-    const KDL::JntArrayVel& qqdot) {
+    const RobotStatePtr robot_state) {
   KDL::Vector v1 = pose_a_.M * line->getDirectionKDL();
   KDL::Vector v2 = pose_b_.M * plane->getNormalKDL();
 
-  return alignVectors(v1, v2, qqdot);
+  return alignVectors(v1, v2, robot_state);
 }
 
 template <>
 int TDefGeometricAlignment<GeometricLine, GeometricCylinder>::align(
     std::shared_ptr<GeometricLine> line,
     std::shared_ptr<GeometricCylinder> cylinder,
-    const KDL::JntArrayVel& qqdot) {
+    const RobotStatePtr robot_state) {
   KDL::Vector v1 = pose_a_.M * line->getDirectionKDL();
 
   KDL::Vector p = pose_a_.p + pose_a_.M * line->getOffsetKDL(); //a point on the line expressed in the world frame
@@ -76,14 +76,14 @@ int TDefGeometricAlignment<GeometricLine, GeometricCylinder>::align(
   //std::cerr<<"v2: "<<v2(0)<<" "<<v2(1)<<" "<<v2(2)<<std::endl;  
   // DEBUG END ===============================
 
-  return alignVectors(v1, v2, qqdot);
+  return alignVectors(v1, v2, robot_state);
 }
 
 template <>
 int TDefGeometricAlignment<GeometricLine, GeometricSphere>::align(
     std::shared_ptr<GeometricLine> line,
     std::shared_ptr<GeometricSphere> sphere,
-    const KDL::JntArrayVel& qqdot) {
+    const RobotStatePtr robot_state) {
   KDL::Vector v1 = pose_a_.M * line->getDirectionKDL();
 
   KDL::Vector p = pose_a_.p + pose_a_.M * line->getOffsetKDL();
@@ -92,21 +92,21 @@ int TDefGeometricAlignment<GeometricLine, GeometricSphere>::align(
   KDL::Vector v2 = d - p;
   v2.Normalize();
 
-  return alignVectors(v1, v2, qqdot);
+  return alignVectors(v1, v2, robot_state);
 }
 
   template <>
   int TDefGeometricAlignment<GeometricFrame, GeometricFrame>::align(
 								    std::shared_ptr<GeometricFrame> frame1,
 								    std::shared_ptr<GeometricFrame> frame2,
-								    const KDL::JntArrayVel& qqdot) {
+								    const RobotStatePtr robot_state) {
     KDL::Vector ax1 = pose_a_.M * frame1->getAxisXKDL();
     KDL::Vector ax2 = pose_b_.M * frame2->getAxisXKDL();
     KDL::Vector ay1 = pose_a_.M * frame1->getAxisYKDL();
     KDL::Vector ay2 = pose_b_.M * frame2->getAxisYKDL();
 
     //abuse the alignVectors function to compute the relevant quantities to align both axis
-    alignVectors(ay1, ay2, qqdot);
+    alignVectors(ay1, ay2, robot_state);
 
     //temporary save the task errors/jacobians
     Eigen::VectorXd ey=e_;
@@ -116,7 +116,7 @@ int TDefGeometricAlignment<GeometricLine, GeometricSphere>::align(
     double q_nr=J_.cols();
 
     //overwrite the class member errors/jacobians
-    alignVectors(ax1, ax2, qqdot);
+    alignVectors(ax1, ax2, robot_state);
 
     //append the previously computed quantities
     e_.conservativeResize(2);

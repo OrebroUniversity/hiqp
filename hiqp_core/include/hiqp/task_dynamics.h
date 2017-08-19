@@ -22,71 +22,72 @@
 
 #include <hiqp/geometric_primitives/geometric_primitive_map.h>
 #include <hiqp/robot_state.h>
+#include <hiqp/task_definition.h>
 #include <hiqp/visualizer.h>
 
 #include <Eigen/Dense>
 
 namespace hiqp {
 
-using geometric_primitives::GeometricPrimitiveMap;
+  using geometric_primitives::GeometricPrimitiveMap;
 
-class Task;
+  class Task;
 
-/*! \brief A task dynamics enforces the optimizer to produce controls that yield a desired task acceleration
- *  \author Marcus A Johansson */
-class TaskDynamics {
- public:
-  inline TaskDynamics() {}
+  /*! \brief A task dynamics is an operational space controller which produces desired operational space accelerations as a function of task quantities defined in a corresponding task definition object
+   *  \author Marcus A Johansson */
+  class TaskDynamics {
+  public:
+    inline TaskDynamics() {}
 
   TaskDynamics(std::shared_ptr<GeometricPrimitiveMap> geom_prim_map,
                std::shared_ptr<Visualizer> visualizer)
-      : geometric_primitive_map_(geom_prim_map), visualizer_(visualizer) {}
+    : geometric_primitive_map_(geom_prim_map), visualizer_(visualizer) {}
 
-  ~TaskDynamics() noexcept {}
+    ~TaskDynamics() noexcept {}
 
-  inline void initializeTaskDynamics(
-      std::shared_ptr<GeometricPrimitiveMap> geom_prim_map,
-               std::shared_ptr<Visualizer> visualizer) {
-    geometric_primitive_map_ = geom_prim_map;
-    visualizer_ = visualizer;
-  }
+    inline void initializeTaskDynamics(
+				       std::shared_ptr<GeometricPrimitiveMap> geom_prim_map,
+				       std::shared_ptr<Visualizer> visualizer) {
+      geometric_primitive_map_ = geom_prim_map;
+      visualizer_ = visualizer;
+    }
 
 
-  virtual int init(const std::vector<std::string>& parameters, RobotStatePtr robot_state, const Eigen::VectorXd& e_initial, const Eigen::VectorXd& e_dot_initial, const Eigen::VectorXd& e_final, const Eigen::VectorXd& e_dot_final) = 0;
+    virtual int init(const std::vector<std::string>& parameters, RobotStatePtr robot_state, const Eigen::VectorXd& e_initial, const Eigen::VectorXd& e_dot_initial, const Eigen::VectorXd& e_final, const Eigen::VectorXd& e_dot_final) = 0;
 
-  virtual int update(RobotStatePtr robot_state, const Eigen::VectorXd& e, const Eigen::VectorXd& e_dot, const Eigen::MatrixXd& J, const Eigen::MatrixXd& J_dot) = 0;
+    virtual int update(const RobotStatePtr robot_state, const std::shared_ptr< TaskDefinition > def) = 0;
 
-  virtual int monitor() = 0;
+    virtual int monitor() = 0;
 
- protected:
-  Eigen::VectorXd e_ddot_star_;
-  Eigen::VectorXd performance_measures_;
+  protected:
+    Eigen::VectorXd e_ddot_star_;
+    Eigen::VectorXd performance_measures_;
 
-  inline std::string getTaskName() { return task_name_; }
-  inline unsigned int getPriority() { return priority_; }
-  inline bool getActive() { return active_; }
-  inline bool getVisible() { return visible_; }
-  inline std::shared_ptr<Visualizer> getVisualizer() { return visualizer_; }
-  inline std::shared_ptr<GeometricPrimitiveMap> getGeometricPrimitiveMap() {
-    return geometric_primitive_map_;
-  }
+    inline std::string getTaskName() { return task_name_; }
+    inline unsigned int getPriority() { return priority_; }
+    inline bool getActive() { return active_; }
+    inline bool getVisible() { return visible_; }
+    inline std::shared_ptr<Visualizer> getVisualizer() { return visualizer_; }
+    inline std::shared_ptr<GeometricPrimitiveMap> getGeometricPrimitiveMap() {
+      return geometric_primitive_map_;
+    }
 
- private:
-  friend Task;
+  private:
+    friend Task;
 
-  std::shared_ptr<GeometricPrimitiveMap> geometric_primitive_map_;
-  std::shared_ptr<Visualizer> visualizer_;
+    std::shared_ptr<GeometricPrimitiveMap> geometric_primitive_map_;
+    std::shared_ptr<Visualizer> visualizer_;
 
-  std::string task_name_;
-  unsigned int priority_;
-  bool visible_;
-  bool active_;
+    std::string task_name_;
+    unsigned int priority_;
+    bool visible_;
+    bool active_;
 
-  TaskDynamics(const TaskDynamics& other) = delete;
-  TaskDynamics(TaskDynamics&& other) = delete;
-  TaskDynamics& operator=(const TaskDynamics& other) = delete;
-  TaskDynamics& operator=(TaskDynamics&& other) noexcept = delete;
-};
+    TaskDynamics(const TaskDynamics& other) = delete;
+    TaskDynamics(TaskDynamics&& other) = delete;
+    TaskDynamics& operator=(const TaskDynamics& other) = delete;
+    TaskDynamics& operator=(TaskDynamics&& other) noexcept = delete;
+  };
 
 }  // namespace hiqp
 
