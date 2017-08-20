@@ -19,7 +19,7 @@
 
 #include <iterator>
 #include <sstream>
-
+#include <Eigen/Geometry>
 #include <hiqp/utilities.h>
 
 namespace hiqp {
@@ -202,6 +202,29 @@ namespace hiqp {
       }
     }
 
+    template <typename PrimitiveA, typename PrimitiveB>
+      int TDefGeometricAlignment<PrimitiveA, PrimitiveB>::alignUnitVectorVector(const Eigen::Vector3d& v1, const Eigen::Vector3d& v2, const Eigen::Vector3d& v1_dot, const Eigen::Vector3d& v2_dot, const Eigen::Matrix3Xd& J_v1, const Eigen::Matrix3Xd& J_v2, const Eigen::Matrix3Xd& J_v1_dot, const Eigen::Matrix3Xd& J_v2_dot) {
+      double eps=1e-5;
+	e_(0)=v1.dot(v2)/(eps+v2.norm())-1;
+	J_=(v1.transpose()*J_v2+v2.transpose()*J_v1)/(eps+v2.norm())-(v1.dot(v2)*v2.transpose()*J_v2)/pow(v2.dot(v2)+eps,1.5);
+        e_dot_=(v1.transpose()*v2_dot+v2.transpose()*v1_dot)/(eps+v2.norm())-(v1.dot(v2)*v2.transpose()*v2_dot)/pow(v2.dot(v2)+eps,1.5);
+        J_dot_=(v1_dot.transpose()*J_v2+v1.transpose()*J_v2_dot+v2_dot.transpose()*J_v1+v2.transpose()*J_v1_dot)/(eps+v2.norm())-((v1.transpose()*J_v2+v2.transpose()*J_v1)*(v2.dot(v2_dot))+(v1_dot.dot(v2)+v2_dot.dot(v1))*v2.transpose()*J_v2+v1.dot(v2)*v2_dot.transpose()*J_v2+v1.dot(v2)*v2.transpose()*J_v2_dot)/pow(eps+v2.dot(v2),1.5)+3*v1.dot(v2)*v2.transpose()*J_v2*(v2.dot(v2_dot))/pow(eps+v2.dot(v2),2.5);
+    }
+
+    template <typename PrimitiveA, typename PrimitiveB>
+      int TDefGeometricAlignment<PrimitiveA, PrimitiveB>::rotateVectors(const Eigen::Vector3d& v1, const Eigen::Vector3d& v2, const Eigen::Vector3d& v1_dot, const Eigen::Vector3d& v2_dot, const Eigen::Matrix3Xd& J_v1, const Eigen::Matrix3Xd& J_v2, const Eigen::Matrix3Xd& J_v1_dot, const Eigen::Matrix3Xd& J_v2_dot) {
+      Eigen::Matrix3d S_v1=skewSymmetricMatrix(v1);
+      Eigen::Matrix3d S_v2=skewSymmetricMatrix(v2);
+      Eigen::Matrix3d S_v1_dot=skewSymmetricMatrix(v1_dot);
+      Eigen::Matrix3d S_v2_dot=skewSymmetricMatrix(v2_dot);      
+		  
+      e_(0)=(S_v1*v2).transpose()*S_v1*v2;
+      J_=(2*S_v1*v2).transpose()*(S_v1*J_v2-S_v2*J_v1);
+      e_dot_=(2*S_v1*v2).transpose()*(S_v1*v2_dot-S_v2*v1_dot);
+      J_dot_=2*(S_v1_dot*v2+S_v1*v2_dot).transpose()*(S_v1*J_v2-S_v2*J_v1)+(2*S_v1*v2).transpose()*(S_v1_dot*J_v2+S_v1*J_v2_dot-S_v2_dot*J_v1-S_v2*J_v1_dot);
+	  
+    }
+	
     template <typename PrimitiveA, typename PrimitiveB>
       int TDefGeometricAlignment<PrimitiveA, PrimitiveB>::alignUnitVectors(const KDL::Vector& v1, const KDL::Vector v2, const RobotStatePtr robot_state) {
 

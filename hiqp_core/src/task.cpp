@@ -92,7 +92,6 @@ namespace hiqp {
     dyn_->priority_ = priority_;
     dyn_->active_ = active_;
     dyn_->visible_ = visible_;
-
     if (def_->initialize(def_params, robot_state) != 0) {
       def_.reset();
       return -5;

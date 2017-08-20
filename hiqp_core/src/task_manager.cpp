@@ -72,7 +72,7 @@ bool TaskManager::getAccelerationControls(RobotStatePtr robot_state,
 			     robot_state->kdl_jnt_array_vel_.qdot,
                              kv.second->getTaskTypes());
 	//DEBUG ==================================================
-	if(strcmp(kv.second->getTaskName().c_str(),"point_point_projection") == 0){
+	if(strcmp(kv.second->getTaskName().c_str(),"line_sphere_alignment") == 0){
 	  KDL::JntArray qdot__ = robot_state->kdl_jnt_array_vel_.qdot;
 	  KDL::JntArray q__ = robot_state->kdl_jnt_array_vel_.q;
 	  unsigned int q_nr=qdot__.rows();
@@ -128,7 +128,7 @@ bool TaskManager::getAccelerationControls(RobotStatePtr robot_state,
   //  DEBUG ==================================================
    for (auto&& kv : task_map_) {
      if (kv.second->getActive()) {
-       if(strcmp(kv.second->getTaskName().c_str(),"point_point_projection") == 0){
+       if(strcmp(kv.second->getTaskName().c_str(),"line_sphere_alignment") == 0){
    	 std::ofstream u;
    	 u.open ("/home/rkg/ros/amici_ws/src/hiqp/matlab/u.dat", std::ios::out | std::ios::app );
    	 for (int i = 0; i < controls.size(); ++i) u<<controls.at(i)<<" ";

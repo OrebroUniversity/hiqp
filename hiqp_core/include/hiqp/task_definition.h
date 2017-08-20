@@ -127,6 +127,7 @@ namespace hiqp {
     int initialize(const std::vector<std::string>& parameters,
 		   RobotStatePtr robot_state) {
       if (init(parameters, robot_state) != 0) return -1;
+
       update(robot_state);
       e_initial_ = e_;
       J_initial_ = J_;
