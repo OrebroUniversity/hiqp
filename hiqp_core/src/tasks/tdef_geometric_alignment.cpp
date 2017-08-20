@@ -40,7 +40,7 @@ int TDefGeometricAlignment<GeometricLine, GeometricLine>::align(
   KDL::Vector v1 = pose_a_.M * line1->getDirectionKDL();
   KDL::Vector v2 = pose_b_.M * line2->getDirectionKDL();
 
-  return alignVectors(v1, v2, robot_state);
+  return alignUnitVectors(v1, v2, robot_state);
 }
 
 template <>
@@ -51,7 +51,7 @@ int TDefGeometricAlignment<GeometricLine, GeometricPlane>::align(
   KDL::Vector v1 = pose_a_.M * line->getDirectionKDL();
   KDL::Vector v2 = pose_b_.M * plane->getNormalKDL();
 
-  return alignVectors(v1, v2, robot_state);
+  return alignUnitVectors(v1, v2, robot_state);
 }
 
 template <>
@@ -76,7 +76,7 @@ int TDefGeometricAlignment<GeometricLine, GeometricCylinder>::align(
   //std::cerr<<"v2: "<<v2(0)<<" "<<v2(1)<<" "<<v2(2)<<std::endl;  
   // DEBUG END ===============================
 
-  return alignVectors(v1, v2, robot_state);
+  return alignUnitVectors(v1, v2, robot_state);
 }
 
 template <>
@@ -92,7 +92,7 @@ int TDefGeometricAlignment<GeometricLine, GeometricSphere>::align(
   KDL::Vector v2 = d - p;
   v2.Normalize();
 
-  return alignVectors(v1, v2, robot_state);
+  return alignUnitVectors(v1, v2, robot_state);
 }
 
   template <>
@@ -105,8 +105,8 @@ int TDefGeometricAlignment<GeometricLine, GeometricSphere>::align(
     KDL::Vector ay1 = pose_a_.M * frame1->getAxisYKDL();
     KDL::Vector ay2 = pose_b_.M * frame2->getAxisYKDL();
 
-    //abuse the alignVectors function to compute the relevant quantities to align both axis
-    alignVectors(ay1, ay2, robot_state);
+    //abuse the alignUnitVectors function to compute the relevant quantities to align both axis
+    alignUnitVectors(ay1, ay2, robot_state);
 
     //temporary save the task errors/jacobians
     Eigen::VectorXd ey=e_;
@@ -116,7 +116,7 @@ int TDefGeometricAlignment<GeometricLine, GeometricSphere>::align(
     double q_nr=J_.cols();
 
     //overwrite the class member errors/jacobians
-    alignVectors(ax1, ax2, robot_state);
+    alignUnitVectors(ax1, ax2, robot_state);
 
     //append the previously computed quantities
     e_.conservativeResize(2);

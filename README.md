@@ -50,4 +50,6 @@ A publication presenting HiQP is in preparation. In the meantime, please refer t
 * Should reimplement the Kalman filter and derive it from the ROS filters base class to ease parametrization 
 * line-cylinder and line-sphere alignment align(...) functions don't take the derivatives properly into account
 * check segfault.sh in /amici_launch/scripts folder
+* changed task_type to task_sign 
+* changed alignVectors(...) to alignUnitVectors(...) to emphasize that this function only works on vectors with unit length whose time derivative is zero in their corresponding link frames
 

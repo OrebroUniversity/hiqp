@@ -203,7 +203,7 @@ namespace hiqp {
     }
 
     template <typename PrimitiveA, typename PrimitiveB>
-      int TDefGeometricAlignment<PrimitiveA, PrimitiveB>::alignVectors(const KDL::Vector& v1, const KDL::Vector v2, const RobotStatePtr robot_state) {
+      int TDefGeometricAlignment<PrimitiveA, PrimitiveB>::alignUnitVectors(const KDL::Vector& v1, const KDL::Vector v2, const RobotStatePtr robot_state) {
 
       double q_nr=jacobian_a_.columns();
       KDL::Jacobian J_v1, J_v2, J_v1_dot, J_v2_dot;

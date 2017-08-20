@@ -58,7 +58,7 @@ namespace hiqp {
   
       KDL::Vector p1__ = pose_a_.M * point1->getPointKDL(); //point 1 from link origin to ee expressed in the world frame
       KDL::Vector p1 = pose_a_.p + p1__;  //absolute ee point 1 expressed in the world frame
-  
+
       KDL::Vector p2__ = pose_b_.M * point2->getPointKDL(); //point 2 from link origin to ee expressed in the world frame
       KDL::Vector p2 = pose_b_.p + p2__; //absolute ee point 2 expressed in the world frame
 

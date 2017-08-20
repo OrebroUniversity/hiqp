@@ -68,7 +68,7 @@ class HiQPClient {
   std::mutex resource_mutex_;
 
   std::map<std::string, double> task_name_sq_error_map_;
-  std::map<std::string, int8_t> task_name_task_type_map_;
+  std::map<std::string, int8_t> task_name_task_sign_map_;
 
   /**
    * A callback function for monitoring the task.

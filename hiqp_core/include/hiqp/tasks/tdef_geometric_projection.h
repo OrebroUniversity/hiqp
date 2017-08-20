@@ -27,58 +27,60 @@
 #include <kdl/treejnttojacsolver.hpp>
 
 namespace hiqp {
-namespace tasks {
+  namespace tasks {
 
-/*! \brief A task definition that positions geometric primitives relative to
- * each other through mutual geometric projection.
- *  \author Marcus A Johansson */
-template <typename PrimitiveA, typename PrimitiveB>
-class TDefGeometricProjection : public TaskDefinition {
- public:
-  TDefGeometricProjection(std::shared_ptr<GeometricPrimitiveMap> geom_prim_map,
-                          std::shared_ptr<Visualizer> visualizer);
-  ~TDefGeometricProjection() noexcept = default;
+    /*! \brief A task definition that positions geometric primitives relative to
+     * each other through mutual geometric projection.
+     *  \author Marcus A Johansson */
+    template <typename PrimitiveA, typename PrimitiveB>
+      class TDefGeometricProjection : public TaskDefinition {
+    public:
+      TDefGeometricProjection(std::shared_ptr<GeometricPrimitiveMap> geom_prim_map,
+			      std::shared_ptr<Visualizer> visualizer);
+      ~TDefGeometricProjection() noexcept = default;
 
-  int init(const std::vector<std::string>& parameters,
-           RobotStatePtr robot_state);
+      int init(const std::vector<std::string>& parameters,
+	       RobotStatePtr robot_state);
 
-  int update(RobotStatePtr robot_state);
+      int update(RobotStatePtr robot_state);
 
-  int monitor();
+      int monitor();
+      
+    protected:
+      std::shared_ptr<PrimitiveA> primitive_a_;
+      std::shared_ptr<PrimitiveB> primitive_b_;
+	   
+    private:
+      TDefGeometricProjection(const TDefGeometricProjection& other) = delete;
+      TDefGeometricProjection(TDefGeometricProjection&& other) = delete;
+      TDefGeometricProjection& operator=(const TDefGeometricProjection& other) =
+	delete;
+      TDefGeometricProjection& operator=(TDefGeometricProjection&& other) noexcept =
+	delete;
 
- private:
-  TDefGeometricProjection(const TDefGeometricProjection& other) = delete;
-  TDefGeometricProjection(TDefGeometricProjection&& other) = delete;
-  TDefGeometricProjection& operator=(const TDefGeometricProjection& other) =
-      delete;
-  TDefGeometricProjection& operator=(TDefGeometricProjection&& other) noexcept =
-      delete;
+      int project(std::shared_ptr<PrimitiveA> first,
+		  std::shared_ptr<PrimitiveB> second,
+		  const RobotStatePtr robot_state);
 
-  int project(std::shared_ptr<PrimitiveA> first,
-              std::shared_ptr<PrimitiveB> second,
-	      const RobotStatePtr robot_state);
-
-  /// \brief This sets jacobian columns corresponding to non-writable joints to
-  /// 0
-  void maskJacobian(RobotStatePtr robot_state);
-  void maskJacobianDerivative(RobotStatePtr robot_state);  
+      /// \brief This sets jacobian columns corresponding to non-writable joints to
+      /// 0
+      void maskJacobian(RobotStatePtr robot_state);
+      void maskJacobianDerivative(RobotStatePtr robot_state);  
     
-  std::shared_ptr<KDL::TreeFkSolverPos_recursive> fk_solver_pos_;
-  std::shared_ptr<KDL::TreeJntToJacSolver> fk_solver_jac_;
+      std::shared_ptr<KDL::TreeFkSolverPos_recursive> fk_solver_pos_;
+      std::shared_ptr<KDL::TreeJntToJacSolver> fk_solver_jac_;
 
-  std::shared_ptr<PrimitiveA> primitive_a_;
-  KDL::Frame pose_a_;
-  KDL::Jacobian jacobian_a_; ///< tree jacobian w.r.t. the center of the frame TDefGeometricProjection::pose_a_ 
-  KDL::Jacobian jacobian_dot_a_;
+      KDL::Frame pose_a_;
+      KDL::Jacobian jacobian_a_; ///< tree jacobian w.r.t. the center of the frame TDefGeometricProjection::pose_a_ 
+      KDL::Jacobian jacobian_dot_a_;  
+ 
+      KDL::Frame pose_b_; 
+      KDL::Jacobian jacobian_b_; ///< tree jacobian w.r.t. the center of the frame TDefGeometricProjection::pose_b_
+      KDL::Jacobian jacobian_dot_b_;
   
-  std::shared_ptr<PrimitiveB> primitive_b_;
-  KDL::Frame pose_b_; 
-  KDL::Jacobian jacobian_b_; ///< tree jacobian w.r.t. the center of the frame TDefGeometricProjection::pose_b_
-  KDL::Jacobian jacobian_dot_b_;
-  
-};
+    };
 
-}  // namespace tasks
+  }  // namespace tasks
 
 }  // namespace hiqp
 

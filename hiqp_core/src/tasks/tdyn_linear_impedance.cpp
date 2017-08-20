@@ -29,65 +29,53 @@ namespace hiqp {
     	printHiqpWarning("TDynLinearImpedance for a " + std::to_string(dim) + "-dimensional task requires either " + std::to_string(3*dim*dim+1) +" or 4 parameters, got " + std::to_string(size) + "! Initialization failed!");
     	return -1;
       }
-  
-    //read the gain matrices - if only one P and D parameter is given, the Kp/Kd matrices are assumed to be diagonal with common gain
-      //check positive definiteness of B
-   // Eigen::MatrixXd A(2, 2);
-   //  A << 1, 0 , 0, -1; // non semi-positive definitie matrix
-   //  std::cout << "The matrix A is" << std::endl << A << std::endl;
-   //  Eigen::LLT<Eigen::MatrixXd> lltOfA(A); // compute the Cholesky decomposition of A
-   //  if(lltOfA.info() == Eigen::NumericalIssue)
-   //  {
-   //      throw std::runtime_error("Possibly non semi-positive definitie matrix!");
-   //  }  
+      Eigen::MatrixXd B;
+      std::vector<std::string> tdyn_pd_parameters;      
+      if(size == 4){
+        B = Eigen::MatrixXd::Identity(dim,dim)*std::stod(parameters.at(3));
+
+	//extract the parameters for the base class 
+	for(unsigned int i=0; i<size-1; i++)
+	  tdyn_pd_parameters.push_back(parameters.at(i));
+      }
+      else{ //read the full B matrix
+	double* B_data = new double[dim*dim];
+	for (int i=0; i<dim*dim; i++)
+	  B_data[i]=std::stod(parameters.at(i+1+2*dim*dim));
+	
+	B = (Eigen::Map<Eigen::MatrixXd>(B_data,dim,dim)).transpose();
+	delete B_data;
+
+	//extract the parameters for the base class 
+	for(unsigned int i=0; i<2*dim*dim+1; i++)
+	  tdyn_pd_parameters.push_back(parameters.at(i));
+      }
+
+      //ensure that the desired inertia matrix is positive definite (should also check for symmetry actually)
+      Eigen::LLT<Eigen::MatrixXd> lltOfB(B); // compute the Cholesky decomposition of B
+      if(lltOfB.info() == Eigen::NumericalIssue){
+	printHiqpWarning("The given desired inertia matrix B is not positive definite! Initialization of TDynLinearImpedance object failed!");
+	return -1;
+      }
+       
+      B_inv_=pinv(B);
+	
+      // initialize the base class
+      if(TDynPD::init(tdyn_pd_parameters, robot_state, e_initial, e_dot_initial, e_final, e_dot_final) != 0)
+	return -1;
       
-    //   if(size==3){
-    // 	Kp_=Eigen::MatrixXd::Identity(dim,dim)*std::stod(parameters.at(1));
-    // 	Kd_=Eigen::MatrixXd::Identity(dim,dim)*std::stod(parameters.at(2));
-    //   }
-    //   else{ //read the full matrices
-    // 	double* Kp_data = new double[dim*dim];
-    // 	double* Kd_data = new double[dim*dim];
-    // 	for (int i=0; i<dim*dim; i++){
-    // 	  Kp_data[i]=std::stod(parameters.at(i+1));
-    // 	  Kd_data[i]=stod(parameters.at(dim*dim+1+i));
-    // 	}
-    // 	Kp_ = (Eigen::Map<Eigen::MatrixXd>(Kp_data,dim,dim)).transpose();
-    // 	Kd_ = (Eigen::Map<Eigen::MatrixXd>(Kd_data,dim,dim)).transpose();
-    // 	delete Kp_data;
-    // 	delete Kd_data;
-    //   }
-    //   //assemble the corresponding dynamics matrix [0 I, -Kp_ -Kd_]
-    //   Eigen::MatrixXd A(2*dim,2*dim);
-    //   A.setZero();
-    //   A.topRightCorner(dim,dim)=Eigen::MatrixXd::Identity(dim,dim);
-    //   A.bottomLeftCorner(dim,dim)= -Kp_;
-    //   A.bottomRightCorner(dim,dim)= -Kd_;
-  
-    //   //assert that the controller dynamics are stable
-    //   Eigen::EigenSolver<Eigen::MatrixXd> es(A, false);
-    //   if (es.eigenvalues().real().maxCoeff() >= 0.0) {
-    // 	printHiqpWarning("Unstable controller dynamics! Initialization failed!");
-    // 	return -1;
-    //   }
-
-    //   //initialize the controller
-    //   e_ddot_star_= -Kp_*e_initial-Kd_*e_dot_initial;
-    //   performance_measures_.resize(dim);
-
-    //   // //=============Debug======================
-    //   // std::cerr<<"e_initial: "<<e_initial.transpose()<<std::endl;
-    //   // std::cerr<<"e_dot_initial: "<<e_dot_initial.transpose()<<std::endl;
-    //   // std::cerr<<"e_final: "<<e_final.transpose()<<std::endl;
-    //   // std::cerr<<"e_dot_final: "<<e_dot_final.transpose()<<std::endl;
-    //   // std::cerr<<"dim: "<<dim<<std::endl;
-    //   // std::cerr<<"size: "<<size<<std::endl;
-    //   // std::cerr<<"Kp: "<<std::endl<<Kp_<<std::endl;
-    //   // std::cerr<<"Kd: "<<std::endl<<Kd_<<std::endl;
-    //   // std::cerr<<"A: "<<std::endl<<A<<std::endl;
-    //   // std::cerr<<"Eigenvalues: "<<es.eigenvalues().transpose()<<std::endl;
-    //   // std::cerr<<"e_ddot_star: "<<e_ddot_star_.transpose()<<std::endl;
-    //   // // //===========End Debug====================
+      //=============Debug======================
+      // std::cerr<<"e_initial: "<<e_initial.transpose()<<std::endl;
+      // std::cerr<<"e_dot_initial: "<<e_dot_initial.transpose()<<std::endl;
+      // std::cerr<<"e_final: "<<e_final.transpose()<<std::endl;
+      // std::cerr<<"e_dot_final: "<<e_dot_final.transpose()<<std::endl;
+      // std::cerr<<"dim: "<<dim<<std::endl;
+      // std::cerr<<"size: "<<size<<std::endl;
+      // std::cerr<<"Kp: "<<std::endl<<Kp_<<std::endl;
+      // std::cerr<<"Kd: "<<std::endl<<Kd_<<std::endl;
+      // std::cerr<<"B_inv: "<<std::endl<<B_inv_<<std::endl<<std::endl;
+      //===========End Debug====================
+   
   
       return 0;
     }
@@ -97,8 +85,11 @@ namespace hiqp {
       //linear impedance control law
       e_ddot_star_= B_inv_*(-Kp_*def->getTaskValue()-Kd_*def->getTaskDerivative()+def->getExogeneousTaskQuantities());
       //DEBUG===================================
-      // std::cerr<<"e_ddot_star_: "<<e_ddot_star_.transpose()<<std::endl;
-      // std::cerr<<".........................................."<<std::endl;
+      // std::cerr<<"e: "<<def->getTaskValue().transpose()<<std::endl;
+      // std::cerr<<"e_dot: "<<def->getTaskDerivative().transpose()<<std::endl;
+      // std::cerr<<"f: "<<def->getExogeneousTaskQuantities().transpose()<<std::endl;            
+      //  std::cerr<<"e_ddot_star_: "<<e_ddot_star_.transpose()<<std::endl;
+      //  std::cerr<<".........................................."<<std::endl;
       //DEBUG END===============================
       return 0;
     }

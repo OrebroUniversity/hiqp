@@ -20,6 +20,7 @@
 #include <hiqp/tasks/tdef_full_pose.h>
 #include <hiqp/tasks/tdef_geometric_alignment.h>
 #include <hiqp/tasks/tdef_geometric_projection.h>
+#include <hiqp/tasks/tdef_force_projection.h>
 #include <hiqp/tasks/tdef_jnt_config.h>
 #include <hiqp/tasks/tdef_jnt_limits.h>
 // #include <hiqp/tasks/tdef_meta_task.h>
@@ -28,6 +29,7 @@
 // #include <hiqp/tasks/tdyn_hyper_sin.h>
 #include <hiqp/tasks/tdyn_jnt_limits.h>
 #include <hiqp/tasks/tdyn_pd.h>
+#include <hiqp/tasks/tdyn_linear_impedance.h>
 // #include <hiqp/tasks/tdyn_minimal_jerk.h>
 
 #include <hiqp/utilities.h>
@@ -42,11 +44,13 @@ namespace hiqp {
   using tasks::TDefFullPose;
   using tasks::TDefGeometricAlignment;
   using tasks::TDefGeometricProjection;
+  using tasks::TDefForceProjection;  
   using tasks::TDefJntConfig;
   using tasks::TDefJntLimits;
   // using tasks::TDefMetaTask;
 
   using tasks::TDynPD;
+  using tasks::TDynLinearImpedance;  
   // using tasks::TDynCubic;
   // using tasks::TDynHyperSin;
   using tasks::TDynJntLimits;
@@ -141,8 +145,7 @@ namespace hiqp {
       std::string prim_type2 = def_params.at(2);
       if (prim_type1.compare("point") == 0 && prim_type2.compare("point") == 0) {
 	def_ = std::make_shared<
-          TDefGeometricProjection<GeometricPoint, GeometricPoint> >(
-								    geom_prim_map_, visualizer_);
+          TDefGeometricProjection<GeometricPoint, GeometricPoint> >(geom_prim_map_, visualizer_);
       } // else if (prim_type1.compare("point") == 0 &&
       //            prim_type2.compare("line") == 0) {
       //   def_ = std::make_shared<
@@ -152,8 +155,7 @@ namespace hiqp {
       else if (prim_type1.compare("point") == 0 &&
                prim_type2.compare("plane") == 0) {
 	def_ = std::make_shared<
-          TDefGeometricProjection<GeometricPoint, GeometricPlane> >(
-								    geom_prim_map_, visualizer_);
+          TDefGeometricProjection<GeometricPoint, GeometricPlane> >(geom_prim_map_, visualizer_);
       } //else if (prim_type1.compare("point") == 0 &&
       //            prim_type2.compare("box") == 0) {
       //   def_ = std::make_shared<
@@ -163,13 +165,11 @@ namespace hiqp {
       else if (prim_type1.compare("point") == 0 &&
                prim_type2.compare("cylinder") == 0) {
 	def_ = std::make_shared<
-          TDefGeometricProjection<GeometricPoint, GeometricCylinder> >(
-								       geom_prim_map_, visualizer_);
+          TDefGeometricProjection<GeometricPoint, GeometricCylinder> >(geom_prim_map_, visualizer_);
       }else if (prim_type1.compare("point") == 0 &&
 		prim_type2.compare("sphere") == 0) {
 	def_ = std::make_shared<
-          TDefGeometricProjection<GeometricPoint, GeometricSphere> >(
-								     geom_prim_map_, visualizer_);
+          TDefGeometricProjection<GeometricPoint, GeometricSphere> >(geom_prim_map_, visualizer_);
       }// else if (prim_type1.compare("line") == 0 &&
       //            prim_type2.compare("line") == 0) {
       //   def_ = std::make_shared<
@@ -179,26 +179,35 @@ namespace hiqp {
       else if (prim_type1.compare("sphere") == 0 &&
                prim_type2.compare("plane") == 0) {
 	def_ = std::make_shared<
-          TDefGeometricProjection<GeometricSphere, GeometricPlane> >(
-								     geom_prim_map_, visualizer_);
+          TDefGeometricProjection<GeometricSphere, GeometricPlane> >(geom_prim_map_, visualizer_);
       }else if (prim_type1.compare("sphere") == 0 &&
 		prim_type2.compare("sphere") == 0) {
 	def_ = std::make_shared<
-          TDefGeometricProjection<GeometricSphere, GeometricSphere> >(
-								      geom_prim_map_, visualizer_);
+          TDefGeometricProjection<GeometricSphere, GeometricSphere> >(geom_prim_map_, visualizer_);
       }else if (prim_type1.compare("frame") == 0 &&
 		prim_type2.compare("frame") == 0) {
 	def_ = std::make_shared<
-          TDefGeometricProjection<GeometricFrame, GeometricFrame> >(
-								    geom_prim_map_, visualizer_);
+          TDefGeometricProjection<GeometricFrame, GeometricFrame> >(geom_prim_map_, visualizer_);
       }
       else {
-	printHiqpWarning(
-			 "TDefGeomProj does not support primitive combination of types '" +
+	printHiqpWarning("TDefGeomProj does not support primitive combination of types '" +
 			 prim_type1 + "' and '" + prim_type2 + "'!");
 	return -1;
       }
     }
+    else if (type.compare("TDefForceProj") == 0) {
+      std::string prim_type1 = def_params.at(1);
+      std::string prim_type2 = def_params.at(2);
+      if (prim_type1.compare("point") == 0 && prim_type2.compare("point") == 0) {
+	def_ = std::make_shared<
+          TDefForceProjection<GeometricPoint, GeometricPoint> >(geom_prim_map_, visualizer_);
+      } 
+      else {
+	printHiqpWarning("TDefForceProj does not support primitive combination of types '" +
+			 prim_type1 + "' and '" + prim_type2 + "'!");
+	return -1;
+      }
+    }    
     else if (type.compare("TDefGeomAlign") == 0) {
       std::string prim_type1 = def_params.at(1);
       std::string prim_type2 = def_params.at(2);
@@ -264,6 +273,8 @@ namespace hiqp {
       //   dyn_ = std::make_shared<TDynMinimalJerk>(geom_prim_map_, visualizer_);
       // } else if (type.compare("TDynHyperSin") == 0) {
       //   dyn_ = std::make_shared<TDynHyperSin>(geom_prim_map_, visualizer_);
+    } else if (type.compare("TDynLinearImpedance") == 0) {
+      dyn_ = std::make_shared<TDynLinearImpedance>(geom_prim_map_, visualizer_);      
     } else {
       try {
 	dyn_ = std::shared_ptr<hiqp::TaskDynamics>(
@@ -296,7 +307,7 @@ namespace hiqp {
       return false;
     }
 
-    unsigned int t_dim=def_->e_.size();
+   long int t_dim=def_->e_.size();
     if (t_dim != def_->J_.rows()) {
       printHiqpWarning(
 		       "The task '" + task_name_ +
@@ -356,7 +367,7 @@ namespace hiqp {
       printHiqpWarning(
 		       "The task '" + task_name_ +
 		       "' is inconsistent after initialization (dimension mismatch). " +
-		       "Size of desired task dynamics (e_dot_star_.size()) is " +
+		       "Size of desired task dynamics (e_ddot_star_.size()) is " +
 		       std::to_string(dyn_->e_ddot_star_.size()) + ", " +
 		       "task dimension (e_.size()) is " +
 		       std::to_string(t_dim));
