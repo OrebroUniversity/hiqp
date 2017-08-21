@@ -203,12 +203,33 @@ namespace hiqp {
     }
 
     template <typename PrimitiveA, typename PrimitiveB>
-      int TDefGeometricAlignment<PrimitiveA, PrimitiveB>::alignUnitVectorVector(const Eigen::Vector3d& v1, const Eigen::Vector3d& v2, const Eigen::Vector3d& v1_dot, const Eigen::Vector3d& v2_dot, const Eigen::Matrix3Xd& J_v1, const Eigen::Matrix3Xd& J_v2, const Eigen::Matrix3Xd& J_v1_dot, const Eigen::Matrix3Xd& J_v2_dot) {
+      int TDefGeometricAlignment<PrimitiveA, PrimitiveB>::alignUnitVectorVector(const Eigen::VectorXd& qdot, const Eigen::Vector3d& v1, const Eigen::Vector3d& v2, const Eigen::Vector3d& v1_dot, const Eigen::Vector3d& v2_dot, const Eigen::Matrix3Xd& J_v1, const Eigen::Matrix3Xd& J_v2, const Eigen::Matrix3Xd& J_v1_dot, const Eigen::Matrix3Xd& J_v2_dot) {
       double eps=1e-5;
 	e_(0)=v1.dot(v2)/(eps+v2.norm())-1;
 	J_=(v1.transpose()*J_v2+v2.transpose()*J_v1)/(eps+v2.norm())-(v1.dot(v2)*v2.transpose()*J_v2)/pow(v2.dot(v2)+eps,1.5);
-        e_dot_=(v1.transpose()*v2_dot+v2.transpose()*v1_dot)/(eps+v2.norm())-(v1.dot(v2)*v2.transpose()*v2_dot)/pow(v2.dot(v2)+eps,1.5);
+        e_dot_=J_*qdot;
         J_dot_=(v1_dot.transpose()*J_v2+v1.transpose()*J_v2_dot+v2_dot.transpose()*J_v1+v2.transpose()*J_v1_dot)/(eps+v2.norm())-((v1.transpose()*J_v2+v2.transpose()*J_v1)*(v2.dot(v2_dot))+(v1_dot.dot(v2)+v2_dot.dot(v1))*v2.transpose()*J_v2+v1.dot(v2)*v2_dot.transpose()*J_v2+v1.dot(v2)*v2.transpose()*J_v2_dot)/pow(eps+v2.dot(v2),1.5)+3*v1.dot(v2)*v2.transpose()*J_v2*(v2.dot(v2_dot))/pow(eps+v2.dot(v2),2.5);
+
+	//awkward fix to not let the contribution of J_dot get out of hand due to numerical issues with large joint velocities induced by singularities
+	double tol=1e5;
+	if(fabs((J_dot_*qdot)(0)) > tol)
+	  J_dot_.setZero();
+
+	//DEBUG =============================================
+      	/* std::cerr<<"qdot: "<<qdot.transpose()<<std::endl;	 */
+      	/* std::cerr<<"v1: "<<v1.transpose()<<std::endl; */
+	/* std::cerr<<"v2: "<<v2.transpose()<<std::endl; */
+	/* std::cerr<<"J_v1: "<<J_v1<<std::endl; */
+	/* std::cerr<<"J_v2: "<<J_v2<<std::endl; */
+      	/* std::cerr<<"v1_dot: "<<v1_dot.transpose()<<std::endl; */
+	/* std::cerr<<"v2_dot: "<<v2_dot.transpose()<<std::endl; */
+	/* std::cerr<<"J_v1_dot: "<<J_v1_dot<<std::endl; */
+	/* std::cerr<<"J_v2_dot: "<<J_v2_dot<<std::endl; */
+	/* std::cerr<<"e_: "<<e_.transpose()<<std::endl; */
+	/* std::cerr<<"e_dot_: "<<e_dot_.transpose()<<std::endl; */
+	/* std::cerr<<"J_dot_: "<<J_dot_<<std::endl<<std::endl; */
+	/* std::cerr<<"J_dot_*qdot: "<<J_dot_*qdot<<std::endl<<std::endl; */		
+	//DEBUG END =========================================
     }
 
     template <typename PrimitiveA, typename PrimitiveB>
@@ -228,7 +249,8 @@ namespace hiqp {
 	/* std::cerr<<"v2: "<<v2.transpose()<<std::endl; */
 	/* std::cerr<<"n: "<<(S_v1*v2).transpose()<<std::endl; */
 	/* std::cerr<<"e_: "<<e_.transpose()<<std::endl; */
-	/* std::cerr<<"e_dot_: "<<e_dot_.transpose()<<std::endl; */	
+	/* std::cerr<<"e_dot_: "<<e_dot_.transpose()<<std::endl; */
+	/* std::cerr<<"J_dot_: "<<J_dot_<<std::endl<<std::endl;	 */	
       //DEBUG END =========================================
     }
 	

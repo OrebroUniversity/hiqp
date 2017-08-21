@@ -243,7 +243,7 @@ void GurobiSolver::QPProblem::solve() {
     
     //DEBUG =======================================
      model_.write("/home/rkg/Desktop/model.lp");
-     exit(0);
+          exit(0);
     //DEBUG END ====================================
   }
 }

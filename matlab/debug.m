@@ -51,8 +51,8 @@ plot(t,dde_star,'m'); grid on; hold on;
 
 e_=e(1);
 de_=de(1);
-Kp=6;
-Kd=9;
+Kp=9;
+Kd=6;
 
 %comute ideal response
 for i=1:length(e)
