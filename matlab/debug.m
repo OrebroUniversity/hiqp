@@ -70,7 +70,9 @@ plot(t,de_,'k'); grid on;
 subplot(1,3,3);
 plot(t,dde_star_,'k'); grid on;
 
-%compute ideal response full
+
+
+
 
 
 % ind_s=4925;

@@ -221,6 +221,7 @@ namespace hiqp {
       //DOT PRODUCT ================================================
       return alignUnitVectorVector(qdot, Eigen::Vector3d(v1(0),v1(1),v1(2)), Eigen::Vector3d(v2(0),v2(1),v2(2)), v1_dot, v2_dot, J_v1.data.topRows<3>(), J_v2.data.topRows<3>(), J_v1_dot.data.topRows<3>(), J_v2_dot.data.topRows<3>());
       //DOT PRODUCT END ============================================
+ 
     }
 
     template <>
