@@ -216,13 +216,20 @@ namespace hiqp {
       Eigen::Matrix3d S_v1=skewSymmetricMatrix(v1);
       Eigen::Matrix3d S_v2=skewSymmetricMatrix(v2);
       Eigen::Matrix3d S_v1_dot=skewSymmetricMatrix(v1_dot);
-      Eigen::Matrix3d S_v2_dot=skewSymmetricMatrix(v2_dot);      
+      Eigen::Matrix3d S_v2_dot=skewSymmetricMatrix(v2_dot);
 		  
       e_(0)=(S_v1*v2).transpose()*S_v1*v2;
       J_=(2*S_v1*v2).transpose()*(S_v1*J_v2-S_v2*J_v1);
       e_dot_=(2*S_v1*v2).transpose()*(S_v1*v2_dot-S_v2*v1_dot);
       J_dot_=2*(S_v1_dot*v2+S_v1*v2_dot).transpose()*(S_v1*J_v2-S_v2*J_v1)+(2*S_v1*v2).transpose()*(S_v1_dot*J_v2+S_v1*J_v2_dot-S_v2_dot*J_v1-S_v2*J_v1_dot);
-	  
+
+      //DEBUG =============================================
+      	/* std::cerr<<"v1: "<<v1.transpose()<<std::endl; */
+	/* std::cerr<<"v2: "<<v2.transpose()<<std::endl; */
+	/* std::cerr<<"n: "<<(S_v1*v2).transpose()<<std::endl; */
+	/* std::cerr<<"e_: "<<e_.transpose()<<std::endl; */
+	/* std::cerr<<"e_dot_: "<<e_dot_.transpose()<<std::endl; */	
+      //DEBUG END =========================================
     }
 	
     template <typename PrimitiveA, typename PrimitiveB>
