@@ -58,7 +58,7 @@ class GurobiSolver : public HiQPSolver {
     ~QPProblem();
 
     void setup();
-    void solve();
+    bool solve();
     void getSolution(std::vector<double>& solution);
 
     GRBModel model_;  // Gurobi model (one per each QP problem is used)

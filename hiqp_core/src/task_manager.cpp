@@ -126,11 +126,12 @@ bool TaskManager::getAccelerationControls(RobotStatePtr robot_state,
   resource_mutex_.unlock();
 
   if (!solver_->solve(controls)) {
-    ROS_WARN_THROTTLE(
-        10,
-        "Unable to solve the hierarchical QP, setting the velocity controls to "
-        "zero!");
-    for (int i = 0; i < controls.size(); ++i) controls.at(i) = 0;
+    ROS_WARN_THROTTLE(10, "Unable to solve the hierarchical QP, setting accelerations to zero ");
+
+    double dt=robot_state->sampling_time_;
+    for (int i = 0; i < controls.size(); ++i){
+      controls.at(i) = 0.0;
+    }
 
     return false;
   }
