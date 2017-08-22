@@ -72,43 +72,53 @@ bool TaskManager::getAccelerationControls(RobotStatePtr robot_state,
 			     robot_state->kdl_jnt_array_vel_.qdot,
                              kv.second->getTaskTypes());
 	//DEBUG ==================================================
-	if(strcmp(kv.second->getTaskName().c_str(),"line_sphere_alignment") == 0){
-	  KDL::JntArray qdot__ = robot_state->kdl_jnt_array_vel_.qdot;
-	  KDL::JntArray q__ = robot_state->kdl_jnt_array_vel_.q;
-	  unsigned int q_nr=qdot__.rows();
-	  std::ofstream dq;
-	  std::ofstream q;
-	  std::ofstream de;
-	  std::ofstream e;
-	  std::ofstream dde_star;
-	  std::ofstream J;
-	  std::ofstream dJ;
-	  dq.open ("/home/rkg/ros/amici_ws/src/hiqp/matlab/dq.dat", std::ios::out | std::ios::app );
-	  q.open ("/home/rkg/ros/amici_ws/src/hiqp/matlab/q.dat", std::ios::out | std::ios::app );
-	  de.open ("/home/rkg/ros/amici_ws/src/hiqp/matlab/de.dat", std::ios::out | std::ios::app );
-	  e.open ("/home/rkg/ros/amici_ws/src/hiqp/matlab/e.dat", std::ios::out | std::ios::app );
-	  dde_star.open ("/home/rkg/ros/amici_ws/src/hiqp/matlab/dde_star.dat", std::ios::out | std::ios::app );
-	  J.open ("/home/rkg/ros/amici_ws/src/hiqp/matlab/J.dat", std::ios::out | std::ios::app );
-	  dJ.open ("/home/rkg/ros/amici_ws/src/hiqp/matlab/dJ.dat", std::ios::out | std::ios::app );	  
-	  for(unsigned int i=0; i<q_nr; i++){
-	    dq<<qdot__(i)<<" ";
-            q<<q__(i)<<" ";	    
-	  }
-	  e<<kv.second->getValue().transpose()<<"\n";
-          de<<kv.second->getValueDerivative().transpose()<<"\n";
-          dde_star<<kv.second->getDynamics().transpose()<<"\n";
-	  J<<kv.second->getJacobian()<<"\n"<<"\n";
-	  dJ<<kv.second->getJacobianDerivative()<<"\n"<<"\n";	  
-	  dq<<"\n";
-	  q<<"\n";	  
-	  dq.close();
-	  q.close();
-	  e.close();
-	  de.close();
-	  dde_star.close();
-	  J.close();
-	  dJ.close();
-	}
+	// std::cerr<<"Task: "<<kv.second->getTaskName()<<std::endl;
+	// std::cerr<<"J_: "<<std::endl<<kv.second->getJacobian()<<std::endl;
+	// std::cerr<<"J_dot_: "<<std::endl<< kv.second->getJacobianDerivative()<<std::endl;
+	// std::cerr<<"e_: "<<kv.second->getValue().transpose()<<std::endl;
+	// std::cerr<<"e_dot_: "<<kv.second->getValueDerivative().transpose()<<std::endl;
+	// std::cerr<<"dde_star: "<<kv.second->getDynamics().transpose()<<std::endl;
+	// std::cerr<<"dq: "<<robot_state->kdl_jnt_array_vel_.qdot.data.transpose()<<std::endl;
+        // std::cerr<<"q: "<<robot_state->kdl_jnt_array_vel_.q.data.transpose()<<std::endl;
+	// std::cerr<<"__________________________________________________________"<<std::endl<<std::endl;
+	
+	// if(strcmp(kv.second->getTaskName().c_str(),"line_sphere_alignment") == 0){
+	//   KDL::JntArray qdot__ = robot_state->kdl_jnt_array_vel_.qdot;
+	//   KDL::JntArray q__ = robot_state->kdl_jnt_array_vel_.q;
+	//   unsigned int q_nr=qdot__.rows();
+	//   std::ofstream dq;
+	//   std::ofstream q;
+	//   std::ofstream de;
+	//   std::ofstream e;
+	//   std::ofstream dde_star;
+	//   std::ofstream J;
+	//   std::ofstream dJ;
+	//   dq.open ("/home/rkg/ros/amici_ws/src/hiqp/matlab/dq.dat", std::ios::out | std::ios::app );
+	//   q.open ("/home/rkg/ros/amici_ws/src/hiqp/matlab/q.dat", std::ios::out | std::ios::app );
+	//   de.open ("/home/rkg/ros/amici_ws/src/hiqp/matlab/de.dat", std::ios::out | std::ios::app );
+	//   e.open ("/home/rkg/ros/amici_ws/src/hiqp/matlab/e.dat", std::ios::out | std::ios::app );
+	//   dde_star.open ("/home/rkg/ros/amici_ws/src/hiqp/matlab/dde_star.dat", std::ios::out | std::ios::app );
+	//   J.open ("/home/rkg/ros/amici_ws/src/hiqp/matlab/J.dat", std::ios::out | std::ios::app );
+	//   dJ.open ("/home/rkg/ros/amici_ws/src/hiqp/matlab/dJ.dat", std::ios::out | std::ios::app );	  
+	//   for(unsigned int i=0; i<q_nr; i++){
+	//     dq<<qdot__(i)<<" ";
+        //     q<<q__(i)<<" ";	    
+	//   }
+	//   e<<kv.second->getValue().transpose()<<"\n";
+        //   de<<kv.second->getValueDerivative().transpose()<<"\n";
+        //   dde_star<<kv.second->getDynamics().transpose()<<"\n";
+	//   J<<kv.second->getJacobian()<<"\n"<<"\n";
+	//   dJ<<kv.second->getJacobianDerivative()<<"\n"<<"\n";	  
+	//   dq<<"\n";
+	//   q<<"\n";	  
+	//   dq.close();
+	//   q.close();
+	//   e.close();
+	//   de.close();
+	//   dde_star.close();
+	//   J.close();
+	//   dJ.close();
+	// }
 	//DEBUG END ===============================================
       }
     }

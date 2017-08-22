@@ -101,8 +101,7 @@ namespace hiqp {
     }
 
     template <typename PrimitiveA, typename PrimitiveB>
-      int TDefGeometricAlignment<PrimitiveA, PrimitiveB>::update(
-								 RobotStatePtr robot_state) {
+      int TDefGeometricAlignment<PrimitiveA, PrimitiveB>::update(RobotStatePtr robot_state) {
       int retval = 0;
 
       retval = fk_solver_pos_->JntToCart(robot_state->kdl_jnt_array_vel_.q, pose_a_,
@@ -177,7 +176,15 @@ namespace hiqp {
 
       align(primitive_a_, primitive_b_, robot_state);
       maskJacobian(robot_state);
-      maskJacobianDerivative(robot_state);    
+      maskJacobianDerivative(robot_state);
+
+      //awkward fix to not let the contribution of J_dot get out of hand due to numerical issues with large joint velocities induced by singularities
+      double tol=1e5;
+      if(fabs((J_dot_*robot_state->kdl_jnt_array_vel_.qdot.data)(0)) > tol){
+	J_dot_.setZero();
+	e_dot_.setZero();
+      }
+      
       return 0;
     }
 
@@ -217,13 +224,6 @@ namespace hiqp {
       J_=v2.transpose()*J_v1+v1.transpose()*J_v2-v2.transpose()/(eps+v2.norm())*J_v2;
       e_dot_=J_*qdot;
       J_dot_=v2_dot.transpose()*J_v1+v2.transpose()*J_v1_dot+v1_dot.transpose()*J_v2+v1.transpose()*J_v2_dot-v2.transpose()/(eps+v2.norm())*J_v2_dot-(v2_dot.transpose()/(eps+v2.norm())-v2.dot(v2)*v2_dot.transpose()/pow(v2.dot(v2),1.5))*J_v2;
-
-      //awkward fix to not let the contribution of J_dot get out of hand due to numerical issues with large joint velocities induced by singularities
-      double tol=1e5;
-      if(fabs((J_dot_*qdot)(0)) > tol){
-	J_dot_.setZero();
-	e_dot_.setZero();
-      }
 
       //DEBUG =============================================
       /* std::cerr<<"qdot: "<<qdot.transpose()<<std::endl;	 */
