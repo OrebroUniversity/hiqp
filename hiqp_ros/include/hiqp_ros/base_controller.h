@@ -387,24 +387,25 @@ namespace hiqp_ros {
     unsigned int q_nr=q.rows();
     
     //KALMAN FILTER UPDATE
-    k_filter_.setSamplingTime(period_.toSec());
+    if(k_filter_.isInitialized()){    
+      k_filter_.setSamplingTime(period_.toSec());
 
-    Eigen::VectorXd _z(2*q_nr);
-    for(unsigned int i=0; i<q_nr;i++){
-      _z(2*i)=q.data(i);
-      _z(2*i+1)=qdot.data(i);
-    }
-    KFVector z(2*q_nr,_z.data());
-    KFVector ddq(q_nr, ddq_.data());
-    k_filter_.step(ddq,z);
+      Eigen::VectorXd _z(2*q_nr);
+      for(unsigned int i=0; i<q_nr;i++){
+	_z(2*i)=q.data(i);
+	_z(2*i+1)=qdot.data(i);
+      }
     
-    KFVector x=k_filter_.getX();
-    for(unsigned int i=0; i<q_nr;i++){
-      q.data(i)=x(2*i);
-      qdot.data(i)=x(2*i+1);
+      KFVector z(2*q_nr,_z.data());
+      KFVector ddq(q_nr, ddq_.data());
 
+      k_filter_.step(ddq,z);
+      KFVector x=k_filter_.getX();
+      for(unsigned int i=0; i<q_nr;i++){
+	q.data(i)=x(2*i);
+	qdot.data(i)=x(2*i+1);
+      }
     }
-
     /* //TRANSFER FUNCTION FILTER UPDATE */
     // std::vector<double> q_in(q_nr), qdot_in(q_nr), q_out(q_nr), qdot_out(q_nr);
     /* for(unsigned int i=0; i<q_nr; i++){ */

@@ -81,6 +81,7 @@ add_library(${PROJECT_NAME} src/utilities.cpp
                             # src/tasks/tdyn_minimal_jerk.cpp
                             src/tasks/tdyn_linear_impedance.cpp
 #                            src/tasks/tdef_meta_task.cpp
+                            src/tasks/tdef_tracking.cpp
                             src/tasks/tdef_full_pose.cpp
                             src/tasks/tdef_geometric_alignment.cpp
                             src/tasks/tdef_geometric_projection.cpp
