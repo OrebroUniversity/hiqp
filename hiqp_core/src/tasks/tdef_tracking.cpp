@@ -130,17 +130,16 @@ namespace hiqp {
       J_.row(3)=J;
       J_dot_.row(3)=J_dot;
       alignUnitVectors(ay1, ay2, robot_state, e, e_dot, J, J_dot);
-      e_(3)=e(0);
-      e_dot_(3)=e_dot(0);
-      J_.row(3)=J;
-      J_dot_.row(3)=J_dot;
+      e_(4)=e(0);
+      e_dot_(4)=e_dot(0);
+      J_.row(4)=J;
+      J_dot_.row(4)=J_dot;
       alignUnitVectors(az1, az2, robot_state, e, e_dot, J, J_dot);      
-      e_(3)=e(0);
-      e_dot_(3)=e_dot(0);
-      J_.row(3)=J;
-      J_dot_.row(3)=J_dot;
+      e_(5)=e(0);
+      e_dot_(5)=e_dot(0);
+      J_.row(5)=J;
+      J_dot_.row(5)=J_dot;
 
-      
       //ORIENTATION TRACKING VARIANT 2: e=sin(alpha)*n
      // KDL::Vector a1 = pose_a_.M * frame1->getAxisXKDL();
      // KDL::Vector a2 = pose_a_.M * frame1->getAxisYKDL();
