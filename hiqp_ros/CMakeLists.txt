@@ -22,20 +22,21 @@ set(CMAKE_CXX_FLAGS "-O3 -std=c++11 -Wl,-z,defs")
 
 set(GUROBI_INCLUDE_DIR "$ENV{GUROBI_HOME}/include")
 set(GUROBI_LIB_DIR "$ENV{GUROBI_HOME}/lib")
-set(GUROBI_LIBS gurobi_c++ gurobi65)
+set(GUROBI_LIBS gurobi_c++ gurobi75)
 
 find_package(catkin REQUIRED COMPONENTS roscpp
                                         controller_interface
                                         visualization_msgs
                                         kdl_parser
                                         hiqp_core
+					filters
                                         hiqp_msgs
                                         control_msgs
                                         actionlib)
 
 find_package(orocos_kdl REQUIRED)
 
-catkin_package(CATKIN_DEPENDS roscpp controller_interface visualization_msgs hiqp_core hiqp_msgs kdl_parser control_msgs actionlib
+catkin_package(CATKIN_DEPENDS roscpp controller_interface visualization_msgs filters hiqp_core hiqp_msgs kdl_parser control_msgs actionlib
                INCLUDE_DIRS include
                LIBRARIES ${PROJECT_NAME} hiqp_client
                DEPENDS orocos_kdl)
@@ -53,7 +54,8 @@ add_library(${PROJECT_NAME} src/hiqp_joint_velocity_controller.cpp
                             src/hiqp_service_handler.cpp
                             src/ros_topic_subscriber.cpp
                             src/ros_visualizer.cpp
-                            src/utilities.cpp)
+                            src/utilities.cpp
+                            src/hiqp_kfilter.cpp)
 
 add_dependencies(${PROJECT_NAME} hiqp_msgs_generate_messages_cpp)
 

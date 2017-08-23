@@ -35,6 +35,7 @@
 #include <hiqp_ros/hiqp_service_handler.h>
 #include <hiqp_ros/ros_topic_subscriber.h>
 #include <hiqp_ros/ros_visualizer.h>
+#include <filters/transfer_function.h>
 
 #include <fstream>
 
@@ -51,8 +52,9 @@ class HiQPJointVelocityController
   ~HiQPJointVelocityController() noexcept;
 
   void initialize();
-  void computeControls(Eigen::VectorXd& u);
 
+  void updateControls(Eigen::VectorXd& ddq, Eigen::VectorXd& u);
+  
  private:
   HiQPJointVelocityController(const HiQPJointVelocityController& other) =
       delete;
@@ -67,13 +69,13 @@ class HiQPJointVelocityController
 
   void loadRenderingParameters();
   int loadAndSetupTaskMonitoring();
-  // void addAllTopicSubscriptions();
+  void addTfTopicSubscriptions();
   void loadJointLimitsFromParamServer();
   void loadGeometricPrimitivesFromParamServer();
   void loadTasksFromParamServer();
 
   bool is_active_;
-
+  filters::MultiChannelTransferFunctionFilter<double> output_ctrl_filter_;
   bool monitoring_active_;
   double monitoring_publish_rate_;
   ros::Time last_monitoring_update_;
@@ -89,8 +91,8 @@ class HiQPJointVelocityController
 
   ROSVisualizer ros_visualizer_;
   std::shared_ptr<Visualizer> visualizer_;
-  Eigen::VectorXd u_vel_;
   hiqp::TaskManager task_manager_;
+  Eigen::VectorXd u_vel_;
   std::shared_ptr<hiqp::TaskManager> task_manager_ptr_;
 };
 

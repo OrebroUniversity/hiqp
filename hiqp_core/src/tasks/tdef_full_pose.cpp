@@ -45,11 +45,12 @@ namespace hiqp {
       }
 
       e_ = Eigen::VectorXd::Zero(n_controls);
+      f_ = Eigen::VectorXd::Zero(n_controls);      
       e_dot_ = Eigen::VectorXd::Zero(n_controls);
       J_ = Eigen::MatrixXd::Zero(n_controls, n_joints);
       J_dot_ = Eigen::MatrixXd::Zero(n_controls, n_joints);
       performance_measures_.resize(0);
-      task_types_.insert(task_types_.begin(), n_controls, 0); //equality task
+      task_signs_.insert(task_signs_.begin(), n_controls, 0); //equality task
   
       // The jacobian is constant with zero-columns for non-writable joints
       // -1  0  0  0  0
@@ -62,20 +63,7 @@ namespace hiqp {
 	}
       }
 
-      //Initialize e, e_dot
-      const KDL::JntArray& q = robot_state->kdl_jnt_array_vel_.q;
-      const KDL::JntArray& q_dot = robot_state->kdl_jnt_array_vel_.qdot;
-      int j=0;
-      for (int i=0; i<n_controls; i++){
-	if (robot_state->isQNrWritable(i)) {
-	  e_(j)=desired_configuration_.at(j)-q(i);
-	  e_dot_(j)=-q_dot(i);
-	  j++;
-	}
-      }
-    
-
-      return 0;
+        return 0;
     }
 
     int TDefFullPose::update(RobotStatePtr robot_state) {

@@ -20,6 +20,7 @@
 #include <atomic>
 #include <string>
 #include <vector>
+#include <iostream>
 
 namespace hiqp {
 namespace geometric_primitives {
@@ -48,7 +49,7 @@ class GeometricPrimitive {
   inline int getVisualId() { return visual_id_; }
 
   inline std::string getName() { return name_; }
-  inline std::string getFrameId() { return frame_id_; }
+  inline std::string getFrameId() {return frame_id_; }
   inline bool isVisible() { return visible_; }
 
   inline double getRedComponent() { return r_; }
@@ -58,6 +59,7 @@ class GeometricPrimitive {
   inline std::vector<double> getColor() { return {r_, g_, b_, a_}; }
   inline std::vector<double> getParameters() { return parameters_; }
 
+  inline void resetFrameId(std::string frame_id) { frame_id_ = frame_id; }
  protected:
   std::string name_;
   std::string frame_id_;

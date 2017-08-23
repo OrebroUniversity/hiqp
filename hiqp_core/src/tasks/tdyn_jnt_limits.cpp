@@ -21,30 +21,68 @@
 namespace hiqp {
 namespace tasks {
 
-int TDynJntLimits::init(const std::vector<std::string>& parameters,
-                        RobotStatePtr robot_state,
-                        const Eigen::VectorXd& e_initial,
-                        const Eigen::VectorXd& e_final) {
+int TDynJntLimits::init(const std::vector<std::string>& parameters, RobotStatePtr robot_state, const Eigen::VectorXd& e_initial, const Eigen::VectorXd& e_dot_initial, const Eigen::VectorXd& e_final, const Eigen::VectorXd& e_dot_final) {
+        assert((e_dot_initial.rows()==4) && (e_final.rows() == 4) && (e_dot_final.rows() == 4) );
   int size = parameters.size();
   if (size != 3) {
     printHiqpWarning("TDynJntLimits requires 3 parameters, got " +
                      std::to_string(size) + "! Initialization failed!");
     return -1;
   }
+  Kp_=std::stod(parameters.at(1)); //P gain for joint limits
+  Kd_=std::stod(parameters.at(2)); //D gain for joint limits
 
-  e_dot_star_.resize(4);
-  dq_max_ = std::stod(parameters.at(1));
-  gain_ = std::stod(parameters.at(2));
-  performance_measures_.resize(0);
+    performance_measures_.resize(0);
+  e_ddot_star_.resize(4);
+   double dt=robot_state->sampling_time_;
+   
+    e_ddot_star_(0)=-Kp_*e_initial(0)-Kd_*e_dot_initial(0);
+  e_ddot_star_(1)=-Kp_*e_initial(1)-Kd_*e_dot_initial(1);
+  e_ddot_star_(2)=1/dt*e_initial(2);
+  e_ddot_star_(3)=1/dt*e_initial(3);
+  
+  // //Truncate the desired accelerations from the joint limit avoidance in order to avoid possible infeasibilites with the opposite joint velocity limit avoidance
+  if(-e_ddot_star_(0) < e_ddot_star_(3))
+    e_ddot_star_(0) = -e_ddot_star_(3);
+  if(-e_ddot_star_(1) > e_ddot_star_(2))
+    e_ddot_star_(1)=-e_ddot_star_(2);
+
+      // =============Debug======================
+      // std::cerr<<"e_initial: "<<e_initial.transpose()<<std::endl;
+      // std::cerr<<"e_dot_initial: "<<e_dot_initial.transpose()<<std::endl;
+      // std::cerr<<"e_final: "<<e_final.transpose()<<std::endl;
+      // std::cerr<<"e_dot_final: "<<e_dot_final.transpose()<<std::endl;
+      // std::cerr<<"size: "<<size<<std::endl;
+      // std::cerr<<"Kp_: "<<std::endl<<Kp_<<std::endl;
+      // std::cerr<<"Kd_: "<<std::endl<<Kd_<<std::endl;
+      // std::cerr<<"e_ddot_star: "<<e_ddot_star_.transpose()<<std::endl;
+      // ===========End Debug====================
+
   return 0;
 }
 
-int TDynJntLimits::update(RobotStatePtr robot_state, const Eigen::VectorXd& e,
-                          const Eigen::MatrixXd& J) {
-  e_dot_star_(0) = -dq_max_;
-  e_dot_star_(1) = dq_max_;
-  e_dot_star_(2) = -gain_ * e(2);
-  e_dot_star_(3) = -gain_ * e(3);
+int TDynJntLimits::update(const RobotStatePtr robot_state, const std::shared_ptr< TaskDefinition > def){
+
+   double dt=robot_state->sampling_time_;
+   Eigen::VectorXd e=def->getTaskValue();
+   Eigen::VectorXd e_dot=def->getTaskDerivative();   
+   
+  e_ddot_star_(0)=-Kp_*e(0)-Kd_*e_dot(0);
+  e_ddot_star_(1)=-Kp_*e(1)-Kd_*e_dot(1);
+  e_ddot_star_(2)=1/dt*e(2);
+  e_ddot_star_(3)=1/dt*e(3);
+
+  // //Truncate the desired accelerations from the joint limit avoidance in order to avoid possible infeasibilites with the opposite joint velocity limit avoidance
+  if(-e_ddot_star_(0) < e_ddot_star_(3))
+    e_ddot_star_(0) = -e_ddot_star_(3);
+  if(-e_ddot_star_(1) > e_ddot_star_(2))
+    e_ddot_star_(1)=-e_ddot_star_(2);
+  
+  //DEBUG===================================
+  //  std::cerr<<"dt: "<<dt<<std::endl;
+  // std::cerr<<"e_ddot_star_: "<<e_ddot_star_.transpose()<<std::endl;
+  //DEBUG END ===============================
+  
   return 0;
 }
 

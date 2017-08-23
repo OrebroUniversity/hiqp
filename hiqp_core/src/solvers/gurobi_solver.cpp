@@ -52,9 +52,33 @@ bool GurobiSolver::solve(std::vector<double>& solution) {
 
   for (auto&& kv : stages_map_) {
     current_priority = kv.first;
+
     const HiQPStage& current_stage = kv.second;
 
+    //DEBUG =========================================
+    // std::cerr<<"Current stage: "<<std::endl;
+    // std::cerr<<"stage priority: "<<current_priority<<std::endl;
+    // std::cerr<<"B_: "<<std::endl<<current_stage.B_<<std::endl;
+    // std::cerr<<"constraint_signs_: ";
+    // for (int i=0; i<current_stage.constraint_signs_.size();i++)
+    //   std::cerr<<current_stage.constraint_signs_[i]<<" ";
+
+    // std::cerr<<std::endl;
+    // std::cerr<<"b_: "<<std::endl<<current_stage.b_<<std::endl;
+    //END DEBUG =========================================
+	
     hqp_constraints_.appendConstraints(current_stage);
+    //DEBUG =========================================
+    // std::cerr<<"HQP Constraints: "<<std::endl;
+    // std::cerr<<"B_: "<<std::endl<<hqp_constraints_.B_<<std::endl;
+    // std::cerr<<"constraint_signs_: ";
+    // for (int i=0; i<hqp_constraints_.constraint_signs_.size();i++)
+    //   std::cerr<<hqp_constraints_.constraint_signs_[i]<<" ";
+
+    // std::cerr<<std::endl;
+    // std::cerr<<"b_: "<<std::endl<<hqp_constraints_.b_<<std::endl;
+    // std::cerr<<"w_: "<<std::endl<<hqp_constraints_.w_<<std::endl;
+    //END DEBUG =========================================
 
     QPProblem qp_problem(env_, hqp_constraints_, n_solution_dims_);
 
@@ -69,7 +93,7 @@ bool GurobiSolver::solve(std::vector<double>& solution) {
     }
 
     try {
-      qp_problem.solve();
+      if(!qp_problem.solve()) return false;
     } catch (GRBException e) {
       std::cerr << "In GurobiSolver::QPProblem::solve : Gurobi exception with "
                    "error code "
@@ -201,26 +225,31 @@ void GurobiSolver::QPProblem::setup() {
   // DEBUG END ==========================================
 }
 
-void GurobiSolver::QPProblem::solve() {
+bool GurobiSolver::QPProblem::solve() {
   model_.optimize();
   int status = model_.get(GRB_IntAttr_Status);
   double runtime = model_.get(GRB_DoubleAttr_Runtime);
 
   if (status != GRB_OPTIMAL) {
-    if (status == GRB_TIME_LIMIT)
-      ROS_WARN(
-          "Stage solving runtime %f sec exceeds the set time limit of %f sec.",
+    if (status == GRB_TIME_LIMIT){
+      ROS_WARN("Stage solving runtime %f sec exceeds the set time limit of %f sec.",
           runtime, TIME_LIMIT);
-    else
-      ROS_ERROR_THROTTLE(
-          10,
-          "In GurobiSolver::QPProblem::solve(...): No optimal solution found for stage with "
+    return false;
+    }
+    else{
+      ROS_ERROR("In GurobiSolver::QPProblem::solve(...): No optimal solution found for stage with "
           "priority %d. Status is %d.",
           0, status);
-
-    // model.write("/home/rkg/Desktop/model.lp");
-    // model.write("/home/yumi/Desktop/model.sol");
+      return false;
+    }
+    
+    //DEBUG =======================================
+     model_.write("/home/rkg/Desktop/model.lp");
+     exit(0);
+    //DEBUG END ====================================
+     return false;
   }
+  return true;
 }
 
 void GurobiSolver::QPProblem::getSolution(std::vector<double>& solution) {

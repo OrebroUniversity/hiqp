@@ -20,6 +20,8 @@
 #include <hiqp/utilities.h>
 #include <ros/console.h>
 #include <iomanip>  // std::setw
+#include <iostream>
+#include <fstream>
 
 #ifdef HIQP_CASADI
 #include <hiqp/solvers/casadi_solver.h>
@@ -59,7 +61,6 @@ bool TaskManager::getAccelerationControls(RobotStatePtr robot_state,
   }
 
   solver_->clearStages();
-
   resource_mutex_.lock();
   for (auto&& kv : task_map_) {
     if (kv.second->getActive()) {
@@ -70,20 +71,84 @@ bool TaskManager::getAccelerationControls(RobotStatePtr robot_state,
 			     kv.second->getJacobianDerivative(),
 			     robot_state->kdl_jnt_array_vel_.qdot,
                              kv.second->getTaskTypes());
+	//DEBUG ==================================================
+	// std::cerr<<"Task: "<<kv.second->getTaskName()<<std::endl;
+	// std::cerr<<"J_: "<<std::endl<<kv.second->getJacobian()<<std::endl;
+	// std::cerr<<"J_dot_: "<<std::endl<< kv.second->getJacobianDerivative()<<std::endl;
+	// std::cerr<<"e_: "<<kv.second->getValue().transpose()<<std::endl;
+	// std::cerr<<"e_dot_: "<<kv.second->getValueDerivative().transpose()<<std::endl;
+	// std::cerr<<"dde_star: "<<kv.second->getDynamics().transpose()<<std::endl;
+	// std::cerr<<"dq: "<<robot_state->kdl_jnt_array_vel_.qdot.data.transpose()<<std::endl;
+        // std::cerr<<"q: "<<robot_state->kdl_jnt_array_vel_.q.data.transpose()<<std::endl;
+	// std::cerr<<"__________________________________________________________"<<std::endl<<std::endl;
+	
+	// if(strcmp(kv.second->getTaskName().c_str(), "frame_frame_tracking") == 0){
+	//   KDL::JntArray qdot__ = robot_state->kdl_jnt_array_vel_.qdot;
+	//   KDL::JntArray q__ = robot_state->kdl_jnt_array_vel_.q;
+	//   unsigned int q_nr=qdot__.rows();
+	//   std::ofstream dq;
+	//   std::ofstream q;
+	//   std::ofstream de;
+	//   std::ofstream e;
+	//   std::ofstream dde_star;
+	//   std::ofstream J;
+	//   std::ofstream dJ;
+	//   dq.open ("/home/rkg/ros/amici_ws/src/hiqp/matlab/dq.dat", std::ios::out | std::ios::app );
+	//   q.open ("/home/rkg/ros/amici_ws/src/hiqp/matlab/q.dat", std::ios::out | std::ios::app );
+	//   de.open ("/home/rkg/ros/amici_ws/src/hiqp/matlab/de.dat", std::ios::out | std::ios::app );
+	//   e.open ("/home/rkg/ros/amici_ws/src/hiqp/matlab/e.dat", std::ios::out | std::ios::app );
+	//   dde_star.open ("/home/rkg/ros/amici_ws/src/hiqp/matlab/dde_star.dat", std::ios::out | std::ios::app );
+	//   J.open ("/home/rkg/ros/amici_ws/src/hiqp/matlab/J.dat", std::ios::out | std::ios::app );
+	//   dJ.open ("/home/rkg/ros/amici_ws/src/hiqp/matlab/dJ.dat", std::ios::out | std::ios::app );	  
+	//   for(unsigned int i=0; i<q_nr; i++){
+	//     dq<<qdot__(i)<<" ";
+        //     q<<q__(i)<<" ";	    
+	//   }
+	//   e<<kv.second->getValue().transpose()<<"\n";
+        //   de<<kv.second->getValueDerivative().transpose()<<"\n";
+        //   dde_star<<kv.second->getDynamics().transpose()<<"\n";
+	//   J<<kv.second->getJacobian()<<"\n"<<"\n";
+	//   dJ<<kv.second->getJacobianDerivative()<<"\n"<<"\n";	  
+	//   dq<<"\n";
+	//   q<<"\n";	  
+	//   dq.close();
+	//   q.close();
+	//   e.close();
+	//   de.close();
+	//   dde_star.close();
+	//   J.close();
+	//   dJ.close();
+	// }
+	//DEBUG END ===============================================
       }
     }
   }
   resource_mutex_.unlock();
 
   if (!solver_->solve(controls)) {
-    ROS_WARN_THROTTLE(
-        10,
-        "Unable to solve the hierarchical QP, setting the velocity controls to "
-        "zero!");
-    for (int i = 0; i < controls.size(); ++i) controls.at(i) = 0;
+    ROS_WARN_THROTTLE(10, "Unable to solve the hierarchical QP, setting accelerations to zero ");
+
+    double dt=robot_state->sampling_time_;
+    for (int i = 0; i < controls.size(); ++i){
+      controls.at(i) = 0.0;
+    }
 
     return false;
   }
+  
+  //  DEBUG ==================================================
+   // for (auto&& kv : task_map_) {
+   //   if (kv.second->getActive()) {
+   //     if(strcmp(kv.second->getTaskName().c_str(),"frame_frame_tracking") == 0){
+   // 	 std::ofstream u;
+   // 	 u.open ("/home/rkg/ros/amici_ws/src/hiqp/matlab/u.dat", std::ios::out | std::ios::app );
+   // 	 for (int i = 0; i < controls.size(); ++i) u<<controls.at(i)<<" ";
+   // 	 u<<"\n";	  
+   // 	 u.close();
+   //     }
+   //   }
+   // }
+   // DEBUG END ===============================================
 
   return true;
 }
@@ -138,7 +203,8 @@ int TaskManager::setTask(const std::string& task_name, unsigned int priority,
   task->setMonitored(monitored);
 
   if (task->init(def_params, dyn_params, robot_state) != 0) {
-    // printHiqpWarning("The task '" + task_name + "' was not added!");
+    printHiqpWarning("The task '" + task_name + "' was not added!");
+
     resource_mutex_.unlock();
     return -1;
   } else {

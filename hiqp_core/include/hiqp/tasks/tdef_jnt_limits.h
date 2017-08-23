@@ -24,9 +24,19 @@
 
 namespace hiqp {
 namespace tasks {
+  
 
 /*! \brief A task definition that sets velocity and position limitations of a
- * specific joint.
+ * specific joint. Designed to be used in conjunction with TDynJntLimits dynamics, avoidance for joint \f$i\f$ is implemented as
+ *
+   \f{eqnarray*}{
+       -\ddot{q}_i & \geq & -K_p(q_{ub_{i}}-q_i)+K_d\dot{q}_i,\\
+       -\ddot{q}_i & \leq & -K_p(q_{lb_{i}}-q_i)+K_d\dot{q}_i, \\
+       \ddot{q}_i & \leq & \frac{1}{\Delta t}(\dot{q}_{max_{i}}-\dot{q}_i),\\
+       \ddot{q}_i & \geq & \frac{1}{\Delta t}(-\dot{q}_{max_{i}}-\dot{q}_i),
+   \f}
+   *
+   *where \f$q_{ub_i}\f$ and \f$q_{lb_i}\f$ are upper and lower joint limit, \f$\dot{q}_{max}\f$ is the (positive) joint velocity maximum and \f$\Delta t\f$ the controller period.
  *  \author Marcus A Johansson */
 class TDefJntLimits : public TaskDefinition {
  public:
@@ -51,8 +61,9 @@ class TDefJntLimits : public TaskDefinition {
 
   std::string link_frame_name_;
   std::size_t link_frame_q_nr_;
-  double jnt_upper_bound_;
-  double jnt_lower_bound_;
+  double q_lb_;
+  double q_ub_;
+  double dq_max_;
 };
 
 }  // namespace tasks

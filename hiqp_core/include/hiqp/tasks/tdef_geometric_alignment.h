@@ -27,55 +27,65 @@
 #include <kdl/treejnttojacsolver.hpp>
 
 namespace hiqp {
-namespace tasks {
+  namespace tasks {
 
-/*! \brief A task definition that rotates primitives to align with each other.
- *  \author Marcus A Johansson */
-template <typename PrimitiveA, typename PrimitiveB>
-class TDefGeometricAlignment : public TaskDefinition {
- public:
-  TDefGeometricAlignment(std::shared_ptr<GeometricPrimitiveMap> geom_prim_map,
-                         std::shared_ptr<Visualizer> visualizer);
-  ~TDefGeometricAlignment() noexcept = default;
+    /*! \brief A task definition that rotates primitives to align with each other.
+     *  \author Marcus A Johansson */
+    template <typename PrimitiveA, typename PrimitiveB>
+      class TDefGeometricAlignment : public TaskDefinition {
+    public:
+      TDefGeometricAlignment(std::shared_ptr<GeometricPrimitiveMap> geom_prim_map,
+			     std::shared_ptr<Visualizer> visualizer);
+      ~TDefGeometricAlignment() noexcept = default;
 
-  int init(const std::vector<std::string>& parameters,
-           RobotStatePtr robot_state);
+      int init(const std::vector<std::string>& parameters,
+	       RobotStatePtr robot_state);
 
-  int update(RobotStatePtr robot_state);
+      int update(RobotStatePtr robot_state);
 
-  int monitor();
+      int monitor();
+  
+    protected:
+      std::shared_ptr<PrimitiveA> primitive_a_;
+      std::shared_ptr<PrimitiveB> primitive_b_;
+      
+    private:
+      TDefGeometricAlignment(const TDefGeometricAlignment& other) = delete;
+      TDefGeometricAlignment(TDefGeometricAlignment&& other) = delete;
+      TDefGeometricAlignment& operator=(const TDefGeometricAlignment& other) =
+	delete;
+      TDefGeometricAlignment& operator=(TDefGeometricAlignment&& other) noexcept =
+	delete;
 
- private:
-  TDefGeometricAlignment(const TDefGeometricAlignment& other) = delete;
-  TDefGeometricAlignment(TDefGeometricAlignment&& other) = delete;
-  TDefGeometricAlignment& operator=(const TDefGeometricAlignment& other) =
-      delete;
-  TDefGeometricAlignment& operator=(TDefGeometricAlignment&& other) noexcept =
-      delete;
+      int align(std::shared_ptr<PrimitiveA> first,
+		std::shared_ptr<PrimitiveB> second,
+		const RobotStatePtr robot_state);
+      /// \brief helper function to compute the task quantities for constant unit vectors whose time derivative is zero in the link frame - uses dot product formulation
+      int alignUnitVectors(const KDL::Vector& v1, const KDL::Vector v2, const RobotStatePtr robot_state);
+      /// \brief helper function to compute the task quantities for one constant unit vector and one general vector whose time derivative in the link frame can change - uses dot product formulation 
+      int alignUnitVectorVector(const Eigen::VectorXd& qdot, const Eigen::Vector3d& v1, const Eigen::Vector3d& v2, const Eigen::Vector3d& v1_dot, const Eigen::Vector3d& v2_dot, const Eigen::Matrix3Xd& J_v1, const Eigen::Matrix3Xd& J_v2, const Eigen::Matrix3Xd& J_v1_dot, const Eigen::Matrix3Xd& J_v2_dot);
 
-  int align(std::shared_ptr<PrimitiveA> first,
-            std::shared_ptr<PrimitiveB> second);
-  int alignVectors(const KDL::Vector& v1, const KDL::Vector v2);
+            /// \brief helper function to compute the task quantities for aligning two vectors - uses cross product notation
+      int rotateVectors(const Eigen::Vector3d& v1, const Eigen::Vector3d& v2, const Eigen::Vector3d& v1_dot, const Eigen::Vector3d& v2_dot, const Eigen::Matrix3Xd& J_v1, const Eigen::Matrix3Xd& J_v2, const Eigen::Matrix3Xd& J_v1_dot, const Eigen::Matrix3Xd& J_v2_dot);
 
-  /// \brief This sets jacobian columns corresponding to non-writable joints to
-  /// 0
-  void maskJacobian(RobotStatePtr robot_state);
+      /// \brief This sets jacobian columns corresponding to non-writable joints to
+      /// 0
+      void maskJacobian(RobotStatePtr robot_state);
+      void maskJacobianDerivative(RobotStatePtr robot_state);
+  
+      std::shared_ptr<KDL::TreeFkSolverPos_recursive> fk_solver_pos_;
+      std::shared_ptr<KDL::TreeJntToJacSolver> fk_solver_jac_;
 
-  std::shared_ptr<KDL::TreeFkSolverPos_recursive> fk_solver_pos_;
-  std::shared_ptr<KDL::TreeJntToJacSolver> fk_solver_jac_;
+      KDL::Frame pose_a_;
+      KDL::Jacobian jacobian_a_;
+      KDL::Jacobian jacobian_dot_a_;
+  
+      KDL::Frame pose_b_;
+      KDL::Jacobian jacobian_b_;
+      KDL::Jacobian jacobian_dot_b_;
+    };
 
-  std::shared_ptr<PrimitiveA> primitive_a_;
-  KDL::Frame pose_a_;
-  KDL::Jacobian jacobian_a_;
-
-  std::shared_ptr<PrimitiveB> primitive_b_;
-  KDL::Frame pose_b_;
-  KDL::Jacobian jacobian_b_;
-
-  double delta_;  // the angular error margin
-};
-
-}  // namespace tasks
+  }  // namespace tasks
 
 }  // namespace hiqp
 

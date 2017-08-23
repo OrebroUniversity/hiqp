@@ -124,7 +124,7 @@ bool HiQPClient::setTasks(const std::vector<hiqp_msgs::Task>& tasks) {
       ROS_WARN("Either all or some of the tasks were not added.");
     }
     
-    return (returnValue != setTasksMsg.response.success.size());
+    return (returnValue == setTasksMsg.response.success.size());
   } else {
     ROS_WARN("set_tasks service call failed.");
   }
@@ -205,7 +205,7 @@ std::string taskMeasuresAsString(
   std::string s;
   for (auto task_measure : task_measures->task_measures) {
     double sq_error;
-    if (task_measure.task_type == 0) {
+    if (task_measure.task_sign == 0) {
       sq_error =
           std::inner_product(task_measure.e.begin(), task_measure.e.end(),
                              task_measure.e.begin(), 0.0);
@@ -216,7 +216,7 @@ std::string taskMeasuresAsString(
     } else {
       sq_error = task_measure.e[0];
       s += "\n[" + task_measure.task_name + "] Progress: " +
-           (sq_error * task_measure.task_type > 0 ? "In limits" : "Off limits");
+           (sq_error * task_measure.task_sign > 0 ? "In limits" : "Off limits");
     }
   }
   s += "\n";
@@ -230,14 +230,14 @@ void HiQPClient::taskMeasuresCallback(
                             taskMeasuresAsString(task_measures).c_str());
   for (auto task_measure : task_measures->task_measures) {
     double sq_error;
-    if (task_measure.task_type == hiqp_msgs::TaskMeasure::EQ)
+    if (task_measure.task_sign == hiqp_msgs::TaskMeasure::EQ)
       sq_error =
           std::inner_product(task_measure.e.begin(), task_measure.e.end(),
                              task_measure.e.begin(), 0.0);
     else
       sq_error = task_measure.e[0];
 
-    task_name_task_type_map_[task_measure.task_name] = task_measure.task_type;
+    task_name_task_sign_map_[task_measure.task_name] = task_measure.task_sign;
     task_name_sq_error_map_[task_measure.task_name] = sq_error;
   }
   resource_mutex_.unlock();
@@ -287,12 +287,12 @@ void HiQPClient::waitForCompletion(
         continue;
       }
 
-      if (task_name_task_type_map_[task_name] == 0) {
+      if (task_name_task_sign_map_[task_name] == 0) {
         if (it_sq_error->second < tol) {
           status += 1;
         }
       } else {
-        if (it_sq_error->second * task_name_task_type_map_[task_name] >
+        if (it_sq_error->second * task_name_task_sign_map_[task_name] >
             -1 * tol) {
           status += 1;
         }
@@ -340,14 +340,19 @@ bool HiQPClient::setJointAngles(const std::vector<double>& joint_angles,
   }
 
   bool ret = this->setTask("joint_configuration", 3, true, true, true, def_params,
-                {"TDynLinear", "0.75"});
+                {"TDynPD", "0.75"});
   if (ret) {
-      if (remove)
+      if (remove) {
 	  waitForCompletion({"joint_configuration"}, {TaskDoneReaction::REMOVE},
 		  {tol});
-      else
+
+      }
+      else {
 	  waitForCompletion({"joint_configuration"}, {TaskDoneReaction::NONE},
 		  {tol});
+      }
+  } else {
+      ROS_ERROR("could not set joint configuration task");
   }
 
   return ret;
@@ -355,7 +360,7 @@ bool HiQPClient::setJointAngles(const std::vector<double>& joint_angles,
 
 bool HiQPClient::removeAllTasks() {
   hiqp_msgs::RemoveAllTasks removeAllTasksMsg;
-  if (remove_all_primitives_client_.call(removeAllTasksMsg)) {
+  if (remove_all_tasks_client_.call(removeAllTasksMsg)) {
     if (removeAllTasksMsg.response.success) {
       ROS_INFO("All tasks removed.");
       return true;

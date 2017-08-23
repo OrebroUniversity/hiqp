@@ -119,7 +119,7 @@ class Task {
    * respectively. */
   std::vector<int> getTaskTypes() const {
     if (def_)
-      return def_->task_types_;
+      return def_->task_signs_;
     else
       return std::vector<int>();
   }

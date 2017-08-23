@@ -31,6 +31,7 @@
 #include <hiqp_msgs/Vector3d.h>
 
 #include <geometry_msgs/PoseStamped.h>  // teleoperation magnet sensors
+#include <tf/tfMessage.h>
 
 using hiqp::TaskMeasure;
 
@@ -64,7 +65,16 @@ void HiQPJointVelocityController::initialize() {
 
   if (loadAndSetupTaskMonitoring() != 0) return;
 
-  // addAllTopicSubscriptions();
+  bool tf_primitives = false;
+  if (!this->getControllerNodeHandle().getParam("load_primitives_from_tf",
+                                                tf_primitives)) {
+    ROS_WARN(
+        "Couldn't find parameter 'load_primitives_from_tf' on parameter "
+        "server, defaulting to no tf primitive tracking.");
+  }
+  if(tf_primitives) {
+      addTfTopicSubscriptions();
+  }
 
   service_handler_.advertiseAll();
 
@@ -76,36 +86,60 @@ void HiQPJointVelocityController::initialize() {
 
   loadTasksFromParamServer();
 
+  //   initialize output control filter 
+  if(output_ctrl_filter_.filters::MultiChannelFilterBase<double>::configure(this->getRobotState()->kdl_jnt_array_vel_.q.rows(),"output_ctrl_filter",this->getControllerNodeHandle())){ 
+    ROS_INFO_STREAM("Configured output control filter with name: "<<output_ctrl_filter_.getName()<<", type: "<<output_ctrl_filter_.getType()<<", nr. of channels: "<<this->getRobotState()->kdl_jnt_array_vel_.q.rows()<<".");
+  }
+  else{
+    ROS_WARN("Error in HiQPJointVelocityController::initialize(): Could not configure output control filter - no filtering will be applied!");
+  }
+
   u_vel_ = Eigen::VectorXd::Zero(getNJoints());
 }
 
-void HiQPJointVelocityController::computeControls(Eigen::VectorXd& u) {
-  if (!is_active_) return;
+  void HiQPJointVelocityController::updateControls(Eigen::VectorXd& ddq, Eigen::VectorXd& u) {
+    if (!is_active_) return;
 
-   std::vector<double> u_acc(u.size());
-
+    std::vector<double> _ddq(ddq.size());
+  
   // Time the acceleration control computation
   auto t_begin = std::chrono::high_resolution_clock::now();
-  task_manager_.getAccelerationControls(this->getRobotState(), u_acc);
+  task_manager_.getAccelerationControls(this->getRobotState(), _ddq);
   auto t_end = std::chrono::high_resolution_clock::now();
   std::chrono::duration<double, std::milli> opt_time = t_end - t_begin;
 
   int i = 0;
-  for (auto&& oc : u_acc) {
-    u(i++) = oc;
+  for (auto&& oc : _ddq) {
+    ddq(i++) = oc;
   }
+  //OPTION 1: store prev. control velocities for integration
+  u=u_vel_+ddq*period_.toSec();
+   u_vel_=u; //store the computed velocity controls for the next integration step
 
-  //integrate the acceleration controls once to obtain corresponding velocity controls
-  u=u_vel_+u*period_.toSec();
-  u_vel_=u; //store the computed velocity controls for the next integration step
-    
+
+  //  OPTION 2: filter the computed velocity differences 
+  //  Eigen::VectorXd qdot=this->getRobotState()->kdl_jnt_array_vel_.qdot.data;
+  //  u=period_.toSec()*ddq; //delta dq
+  // //filter the controls
+  // unsigned int q_nr=u.rows();
+  // std::vector<double> u_in(q_nr),  u_out(q_nr);
+  // for(unsigned int i=0; i<q_nr; i++) u_in[i]=u(i);
+
+  // if(output_ctrl_filter_.update(u_in,u_out)){
+  //   for(unsigned int i=0; i<q_nr; i++)  u(i)=u_out[i];
+  // }
+  // else{
+  //   ROS_WARN("HiQPJointVelocityController::computeControls(...): could not update output control filter!");
+  // }
+
+	  
   renderPrimitives();
 
   monitorTasks(static_cast<double>(opt_time.count()));
 
   // if (outcon.size() != 0) {
   //   if (total > 3000.0) {
-  //     std::cout << "Velocity Controls computation took " << total / n
+  //     std::cout << "Acceleration Controls computation took " << total / n
   //               << " milliseconds.\n";
 
   //     fflush(stdout);
@@ -153,7 +187,7 @@ void HiQPJointVelocityController::monitorTasks(double acc_ctl_comp_time) {
       for (auto&& measure : measures) {
         hiqp_msgs::TaskMeasure msg;
         msg.task_name = measure.task_name_;
-        msg.task_type = measure.task_type_;
+        msg.task_sign = measure.task_sign_;
         msg.e = std::vector<double>(
             measure.e_.data(),
             measure.e_.data() + measure.e_.rows() * measure.e_.cols());
@@ -238,16 +272,25 @@ void HiQPJointVelocityController::loadJointLimitsFromParamServer() {
             std::to_string(static_cast<double>(limitations[1])));
         def_params.push_back(
             std::to_string(static_cast<double>(limitations[2])));
+ def_params.push_back(
+            std::to_string(static_cast<double>(limitations[0])));
 
         std::vector<std::string> dyn_params;
         dyn_params.push_back("TDynJntLimits");
-        dyn_params.push_back(
-            std::to_string(static_cast<double>(limitations[0])));
-        dyn_params.push_back(
+	 dyn_params.push_back(
             std::to_string(static_cast<double>(limitations[3])));
+        dyn_params.push_back(
+            std::to_string(static_cast<double>(limitations[4])));
 
-        task_manager_.setTask(link_frame + "_jntlimits", 1, true, true, false,
-                              def_params, dyn_params, this->getRobotState());
+        if(task_manager_.setTask(link_frame + "_jntlimits", 1, true, true, false,
+				 def_params, dyn_params, this->getRobotState()) !=0){
+        ROS_WARN_STREAM(
+            "Error while loading "
+            << "hiqp_preload_jnt_limits parameter from the "
+            << "parameter server. Could not set task.");
+        parsing_success = false;
+	}
+	  
       } catch (const XmlRpc::XmlRpcException& e) {
         ROS_WARN_STREAM(
             "Error while loading "
@@ -370,6 +413,15 @@ void HiQPJointVelocityController::loadTasksFromParamServer() {
     if (parsing_success)
       ROS_INFO("Loaded and initiated tasks from .yaml file successfully!");
   }
+}
+
+void HiQPJointVelocityController::addTfTopicSubscriptions()
+{
+   topic_subscriber_.init( &task_manager_, this->getRobotState() );
+
+   topic_subscriber_.addSubscription<tf::tfMessage>(
+     this->getControllerNodeHandle(), "/tf", 100
+   );
 }
 
 }  // namespace hiqp_ros
