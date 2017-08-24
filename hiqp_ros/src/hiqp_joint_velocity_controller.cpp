@@ -269,18 +269,21 @@ void HiQPJointVelocityController::loadJointLimitsFromParamServer() {
         def_params.push_back("TDefJntLimits");
         def_params.push_back(link_frame);
         def_params.push_back(
-            std::to_string(static_cast<double>(limitations[1])));
+            std::to_string(static_cast<double>(limitations[0])));
         def_params.push_back(
+            std::to_string(static_cast<double>(limitations[1])));
+ def_params.push_back(
             std::to_string(static_cast<double>(limitations[2])));
  def_params.push_back(
-            std::to_string(static_cast<double>(limitations[0])));
+            std::to_string(static_cast<double>(limitations[3])));
 
+ 
         std::vector<std::string> dyn_params;
         dyn_params.push_back("TDynJntLimits");
 	 dyn_params.push_back(
-            std::to_string(static_cast<double>(limitations[3])));
-        dyn_params.push_back(
             std::to_string(static_cast<double>(limitations[4])));
+        dyn_params.push_back(
+            std::to_string(static_cast<double>(limitations[5])));
 
         if(task_manager_.setTask(link_frame + "_jntlimits", 1, true, true, false,
 				 def_params, dyn_params, this->getRobotState()) !=0){

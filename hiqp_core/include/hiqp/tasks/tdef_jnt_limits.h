@@ -64,6 +64,7 @@ class TDefJntLimits : public TaskDefinition {
   double q_lb_;
   double q_ub_;
   double dq_max_;
+  double ddq_max_;  
 };
 
 }  // namespace tasks

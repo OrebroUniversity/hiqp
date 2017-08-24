@@ -176,7 +176,7 @@ namespace hiqp {
       //   def_ = std::make_shared<
       //       TDefGeometricProjection<GeometricLine, GeometricLine> >(
       //       geom_prim_map_, visualizer_);
-      //}
+      // }
       else if (prim_type1.compare("sphere") == 0 &&
                prim_type2.compare("plane") == 0) {
 	def_ = std::make_shared<
@@ -231,7 +231,13 @@ namespace hiqp {
 	def_ = std::make_shared<
           TDefGeometricAlignment<GeometricLine, GeometricSphere> >(
 								   geom_prim_map_, visualizer_);
-      } else if (prim_type1.compare("frame") == 0 &&
+      }else if (prim_type1.compare("frame") == 0 &&
+		prim_type2.compare("cylinder") == 0) {
+	def_ = std::make_shared<
+          TDefGeometricAlignment<GeometricFrame, GeometricCylinder> >(
+								   geom_prim_map_, visualizer_);
+      }
+      else if (prim_type1.compare("frame") == 0 &&
 		 prim_type2.compare("frame") == 0) {
 	def_ = std::make_shared<
           TDefGeometricAlignment<GeometricFrame, GeometricFrame> >(

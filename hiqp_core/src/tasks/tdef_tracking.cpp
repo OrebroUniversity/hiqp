@@ -31,11 +31,12 @@ namespace hiqp {
     int TDefTracking<GeometricPoint, GeometricPoint>::track(std::shared_ptr<GeometricPoint> point1,
 									 std::shared_ptr<GeometricPoint> point2,
 									 const RobotStatePtr robot_state) {
+
       KDL::Vector p1__ = pose_a_.M * point1->getPointKDL(); //point 1 from link origin to ee expressed in the world frame
       KDL::Vector p2__ = pose_b_.M * point2->getPointKDL(); //point 2 from link origin to ee expressed in the world frame
       KDL::Vector p1 = pose_a_.p + p1__;  //absolute ee point 1 expressed in the world frame
       KDL::Vector p2 = pose_b_.p + p2__;  //absolute ee point 2 expressed in the world frame
-    
+
       double q_nr=jacobian_a_.columns();
       KDL::Jacobian J_p2, J_p1, J_dot_p2, J_dot_p1;
       J_p2.resize(q_nr);
@@ -91,8 +92,8 @@ namespace hiqp {
     int TDefTracking<GeometricFrame, GeometricFrame>::track(std::shared_ptr<GeometricFrame> frame1,
 							    std::shared_ptr<GeometricFrame> frame2,
 							    const RobotStatePtr robot_state) {
-            double q_nr=jacobian_a_.columns();
-	    Eigen::VectorXd qdot=robot_state->kdl_jnt_array_vel_.qdot.data;
+      double q_nr=jacobian_a_.columns();
+      Eigen::VectorXd qdot=robot_state->kdl_jnt_array_vel_.qdot.data;
 	    
       //POSITION TRACKING
       KDL::Vector p1__ = pose_a_.M * frame1->getCenterKDL(); //point 1 from link origin to the frame center expressed in the world frame

@@ -58,9 +58,12 @@ namespace hiqp {
 
       unsigned int n_task_dimensions = 1;
       if (prim_type1.compare("frame") == 0 && prim_type2.compare("frame") == 0) {
-	n_task_dimensions = 2;
+	n_task_dimensions = 3;
       }
-
+      else if (prim_type1.compare("frame") == 0 && prim_type2.compare("cylinder") == 0) {
+	n_task_dimensions = 3;
+      }
+     
       unsigned int n_joints = robot_state->getNumJoints();
       e_ = Eigen::VectorXd::Zero(n_task_dimensions);
       f_ = Eigen::VectorXd::Zero(n_task_dimensions);      

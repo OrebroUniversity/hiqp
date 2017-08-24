@@ -22,7 +22,7 @@ namespace hiqp {
 namespace tasks {
 
 int TDynJntLimits::init(const std::vector<std::string>& parameters, RobotStatePtr robot_state, const Eigen::VectorXd& e_initial, const Eigen::VectorXd& e_dot_initial, const Eigen::VectorXd& e_final, const Eigen::VectorXd& e_dot_final) {
-        assert((e_dot_initial.rows()==4) && (e_final.rows() == 4) && (e_dot_final.rows() == 4) );
+        assert((e_dot_initial.rows()==6) && (e_final.rows() == 6) && (e_dot_final.rows() == 6) );
   int size = parameters.size();
   if (size != 3) {
     printHiqpWarning("TDynJntLimits requires 3 parameters, got " +
@@ -33,13 +33,15 @@ int TDynJntLimits::init(const std::vector<std::string>& parameters, RobotStatePt
   Kd_=std::stod(parameters.at(2)); //D gain for joint limits
 
     performance_measures_.resize(0);
-  e_ddot_star_.resize(4);
+  e_ddot_star_.resize(6);
    double dt=robot_state->sampling_time_;
    
     e_ddot_star_(0)=-Kp_*e_initial(0)-Kd_*e_dot_initial(0);
   e_ddot_star_(1)=-Kp_*e_initial(1)-Kd_*e_dot_initial(1);
   e_ddot_star_(2)=1/dt*e_initial(2);
   e_ddot_star_(3)=1/dt*e_initial(3);
+  e_ddot_star_(4)=e_initial(4);
+  e_ddot_star_(5)=e_initial(5);
   
   // //Truncate the desired accelerations from the joint limit avoidance in order to avoid possible infeasibilites with the opposite joint velocity limit avoidance
   if(-e_ddot_star_(0) < e_ddot_star_(3))
@@ -71,7 +73,9 @@ int TDynJntLimits::update(const RobotStatePtr robot_state, const std::shared_ptr
   e_ddot_star_(1)=-Kp_*e(1)-Kd_*e_dot(1);
   e_ddot_star_(2)=1/dt*e(2);
   e_ddot_star_(3)=1/dt*e(3);
-
+  e_ddot_star_(4)=e(4);
+  e_ddot_star_(5)=e(5);
+  
   // //Truncate the desired accelerations from the joint limit avoidance in order to avoid possible infeasibilites with the opposite joint velocity limit avoidance
   if(-e_ddot_star_(0) < e_ddot_star_(3))
     e_ddot_star_(0) = -e_ddot_star_(3);

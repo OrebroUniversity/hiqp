@@ -82,7 +82,7 @@ class GeometricFrame : public GeometricPrimitive {
     Eigen::Vector3d ay = q_._transformVector(Eigen::Vector3d(0, 1, 0));
     axis_y_ = KDL::Vector(ay(0), ay(1), ay(2));
 
-    Eigen::Vector3d az = q_._transformVector(Eigen::Vector3d(0, 1, 0));
+    Eigen::Vector3d az = q_._transformVector(Eigen::Vector3d(0, 0, 1));
     axis_z_ = KDL::Vector(az(0), az(1), az(2));
 
     return 0;

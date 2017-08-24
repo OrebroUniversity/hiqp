@@ -362,49 +362,58 @@ namespace hiqp {
     // //
     // ///////////////////////////////////////////////////////////////////////////////
 
-    // template <>
-    // int TDefGeometricProjection<GeometricLine, GeometricLine>::project(
-    //     std::shared_ptr<GeometricLine> line1,
-    //     std::shared_ptr<GeometricLine> line2) {
-    //   KDL::Vector v1 = pose_a_.M * line1->getDirectionKDL();
-    //   KDL::Vector d1__ = pose_a_.M * line1->getOffsetKDL();
-    //   KDL::Vector d1 = pose_a_.p + d1__;
+      //   template <>
+      // 	int TDefGeometricProjection<GeometricLine, GeometricLine>::project(std::shared_ptr<GeometricLine> line1,
+      // 									    std::shared_ptr<GeometricLine> line2,
+      // 									    const RobotStatePtr robot_state) {
+      // KDL::Vector v1 = pose_a_.M * line1->getDirectionKDL();
+      // KDL::Vector p1__ = pose_a_.M * line1->getOffsetKDL();
+      // KDL::Vector p1 = pose_a_.p + d1__;
 
-    //   KDL::Vector v2 = pose_b_.M * line2->getDirectionKDL();
-    //   KDL::Vector d2__ = pose_b_.M * line2->getOffsetKDL();
-    //   KDL::Vector d2 = pose_b_.p + d2__;
+      // KDL::Vector v2 = pose_b_.M * line2->getDirectionKDL();
+      // KDL::Vector p2__ = pose_b_.M * line2->getOffsetKDL();
+      // KDL::Vector p2 = pose_b_.p + d2__;
 
-    //   // Make a line, line3, that is perpendicular to both line1 and line2
+      // double q_nr=jacobian_a_.columns();
+      // Eigen::VectorXd qdot=robot_state->kdl_jnt_array_vel_.qdot.data;      	
+      
+      // // Make a line, line3, that is perpendicular to both line1 and line2
 
-    //   // KDL::Vector v3 = v1 * v2; // v3 = v1 x v2 (cross product)
+      // // KDL::Vector v3 = v1 * v2; // v3 = v1 x v2 (cross product)
 
-    //   KDL::Rotation V = KDL::Rotation(v1, -v2, v1 * v2);
+      // KDL::Rotation V = KDL::Rotation(v1, -v2, v1 * v2);
 
-    //   // s are the parameter values for line1, line2 and line3 indicating the points
-    //   // of intersection
-    //   KDL::Vector s = V.Inverse() * (d2 - d1);
+      // // s are the parameter values for line1, line2 and line3 indicating the points
+      // // of intersection
+      // KDL::Vector s = V.Inverse() * (d2 - d1);
 
-    //   KDL::Vector d3 =
-    //       v1 * s.data[0] +
-    //       d1;  // the point in world coordinates that lies on line1 and line3
-    //   KDL::Vector d3_proj =
-    //       v2 * s.data[1] +
-    //       d2;  // the point in world coordinates that lies on line2 and line3
+      // KDL::Vector d3 =
+      //     v1 * s.data[0] +
+      //     d1;  // the point in world coordinates that lies on line1 and line3
+      // KDL::Vector d3_proj =
+      //     v2 * s.data[1] +
+      //     d2;  // the point in world coordinates that lies on line2 and line3
 
-    //   KDL::Vector d3__ = d3 - pose_a_.p;
-    //   KDL::Vector d3_proj__ = d3_proj - pose_b_.p;
+      // KDL::Vector d3__ = d3 - pose_a_.p;
+      // KDL::Vector d3_proj__ = d3_proj - pose_b_.p;
 
-    //   KDL::Vector d = d3_proj - d3;
+      // KDL::Vector d = d3_proj - d3;
 
-    //   e_(0) = KDL::dot(d, d);
+      // e_(0) = KDL::dot(d, d);
 
-    //   for (int q_nr = 0; q_nr < jacobian_a_.columns(); ++q_nr) {
-    //     KDL::Vector Jd3d3proj =
-    //         getRelativeVelocityJacobian(d3__, d3_proj__, q_nr);
-    //     J_(0, q_nr) = 2 * dot(d, Jd3d3proj);
-    //   }
-    //   return 0;
-    // }
+      // // for (int q_nr = 0; q_nr < jacobian_a_.columns(); ++q_nr) {
+      // //   KDL::Vector Jd3d3proj =
+      // //       getRelativeVelocityJacobian(d3__, d3_proj__, q_nr);
+      // //   J_(0, q_nr) = 2 * dot(d, Jd3d3proj);
+      // // }
+      // KDL::Jacobian J_d3(q_nr), J_d3_proj(q_nr);
+      // changeJacRefPoint(jacobian_a_, d3__, J_d3);
+      // changeJacRefPoint(jacobian_a_, d3_proj__, J_d3_proj);
+      // J_=2*Eigen::Map<Eigen::Matrix<double,1,3> >(d.data)*(J_d3_proj.data.topRows<3>()-J_d3.data.topRows<3>());
+      // e_dot_=J_*qdot;
+      // J_dot_.setZero();
+    // return 0;
+    //}
 
     // ///////////////////////////////////////////////////////////////////////////////
     // //  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
@@ -514,7 +523,7 @@ namespace hiqp {
     int TDefGeometricProjection<GeometricFrame, GeometricFrame>::project(std::shared_ptr<GeometricFrame> frame1,
 									 std::shared_ptr<GeometricFrame> frame2,
 									 const RobotStatePtr robot_state) {
-   KDL::Vector p1__ = pose_a_.M * frame1->getCenterKDL(); //point 1 from link origin to the frame center expressed in the world frame
+      KDL::Vector p1__ = pose_a_.M * frame1->getCenterKDL(); //point 1 from link origin to the frame center expressed in the world frame
       KDL::Vector p1 = pose_a_.p + p1__;  //absolute ee point 1 expressed in the world frame
   
       KDL::Vector p2__ = pose_b_.M * frame2->getCenterKDL(); //point 2 from link origin to the sframe center expressed in the world frame
