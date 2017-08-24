@@ -29,13 +29,15 @@ namespace hiqp {
       TDefTracking<PrimitiveA, PrimitiveB>::TDefTracking(
 							 std::shared_ptr<GeometricPrimitiveMap> geom_prim_map,
 							 std::shared_ptr<Visualizer> visualizer)
-      : TaskDefinition(geom_prim_map, visualizer) {}
+      : TaskDefinition(geom_prim_map, visualizer) {
+      d_max_=INFINITY;
+    }
 
     template <typename PrimitiveA, typename PrimitiveB>
       int TDefTracking<PrimitiveA, PrimitiveB>::init(const std::vector<std::string>& parameters, RobotStatePtr robot_state) {
       int parameters_size = parameters.size();
-      if (parameters_size != 4) {
-	printHiqpWarning("'" + getTaskName() + "': TDefTracking takes 4 parameters, got " +
+      if (parameters_size != 4 && parameters_size != 5) {
+	printHiqpWarning("'" + getTaskName() + "': TDefTracking takes 4 or 5 parameters, got " +
 			 std::to_string(parameters_size) + "! The task was not added!");
 	return -1;
       }
@@ -51,6 +53,11 @@ namespace hiqp {
 	printHiqpWarning("'" + getTaskName() + "': TDefTracking's parameter nr.4 needs whitespace "
 			 "separation! The task was not added!");
 	return -2;
+      }
+
+      if(parameters_size == 5){
+	d_max_= std::stod(parameters.at(4));
+	assert(d_max_ > 0.0);
       }
 
       unsigned int n_task_dimensions = 3;

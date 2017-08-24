@@ -37,6 +37,12 @@ namespace hiqp {
       KDL::Vector p1 = pose_a_.p + p1__;  //absolute ee point 1 expressed in the world frame
       KDL::Vector p2 = pose_b_.p + p2__;  //absolute ee point 2 expressed in the world frame
 
+      KDL::Vector dp=p2-p1;
+      //correct point 2's location if d max is exceeded
+      if(dp.Norm() > d_max_){
+	p2=dp/dp.Norm()*d_max_+p1;
+      }
+      
       double q_nr=jacobian_a_.columns();
       KDL::Jacobian J_p2, J_p1, J_dot_p2, J_dot_p1;
       J_p2.resize(q_nr);
@@ -66,6 +72,12 @@ namespace hiqp {
       KDL::Vector p2__ = pose_b_.M * frame->getCenterKDL(); //point 2 from link origin to ee expressed in the world frame
       KDL::Vector p1 = pose_a_.p + p1__;  //absolute ee point 1 expressed in the world frame
       KDL::Vector p2 = pose_b_.p + p2__;  //absolute ee point 2 expressed in the world frame
+
+      KDL::Vector dp=p2-p1;
+      //correct point 2's location if d max is exceeded
+      if(dp.Norm() > d_max_){
+	p2=dp/dp.Norm()*d_max_+p1;
+      }
     
       double q_nr=jacobian_a_.columns();
       KDL::Jacobian J_p2, J_p1, J_dot_p2, J_dot_p1;
@@ -101,6 +113,12 @@ namespace hiqp {
   
       KDL::Vector p2__ = pose_b_.M * frame2->getCenterKDL(); //point 2 from link origin to the sframe center expressed in the world frame
       KDL::Vector p2 = pose_b_.p + p2__; //absolute ee point 2 expressed in the world frame
+
+      KDL::Vector dp=p2-p1;
+      //correct point 2's location if d max is exceeded
+      if(dp.Norm() > d_max_){
+	p2=dp/dp.Norm()*d_max_+p1;
+      }
 
       KDL::Jacobian J_p2(q_nr), J_p1(q_nr), J_dot_p2(q_nr), J_dot_p1(q_nr);
       changeJacRefPoint(jacobian_a_, p1__, J_p1);

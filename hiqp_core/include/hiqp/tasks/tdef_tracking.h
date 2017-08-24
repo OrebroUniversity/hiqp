@@ -77,6 +77,8 @@ namespace hiqp {
       KDL::Frame pose_b_; 
       KDL::Jacobian jacobian_b_; ///< tree jacobian w.r.t. the center of the frame TDefTracking::pose_b_
       KDL::Jacobian jacobian_dot_b_;
+
+      double d_max_;
   
     };
 
