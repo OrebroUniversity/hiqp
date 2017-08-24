@@ -29,7 +29,7 @@ build/*/Debug/*
 build/*/MinSizeRel/*
 build/*/RelWithDebInfo/*
 build
-
+.dir-locals.el
 *#
 *.#
 *.zip
