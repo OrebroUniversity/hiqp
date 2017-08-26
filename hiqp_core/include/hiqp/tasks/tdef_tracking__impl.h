@@ -196,16 +196,12 @@ namespace hiqp {
   
       return 0;
     }
-
-    template <typename PrimitiveA, typename PrimitiveB>
+    
+     template <typename PrimitiveA, typename PrimitiveB>
       int TDefTracking<PrimitiveA, PrimitiveB>::alignUnitVectors(const KDL::Vector& v1, const KDL::Vector v2, const RobotStatePtr robot_state, Eigen::VectorXd& e, Eigen::VectorXd& e_dot, Eigen::MatrixXd& J, Eigen::MatrixXd& J_dot) {
 
       double q_nr=jacobian_a_.columns();
-      KDL::Jacobian J_v1, J_v2, J_v1_dot, J_v2_dot;
-      J_v1.resize(q_nr);
-      J_v2.resize(q_nr);
-      J_v1_dot.resize(q_nr);
-      J_v2_dot.resize(q_nr);
+      KDL::Jacobian J_v1(q_nr), J_v2(q_nr), J_v1_dot(q_nr), J_v2_dot(q_nr);
 
       changeJacRefPoint(jacobian_a_, v1, J_v1);
       J_v1.data=J_v1.data - jacobian_a_.data;
@@ -223,26 +219,25 @@ namespace hiqp {
 
       // VARIANT 1: e=acos(v1^T * v2) ==============================================
       /* Eigen::MatrixXd J__= Eigen::Map<const Eigen::Matrix<double,1,3> >(v2.data)*J_v1.data.topRows<3>()+Eigen::Map<const Eigen::Matrix<double,1,3> >(v1.data)*J_v2.data.topRows<3>(); */
-
-      /* e_(0) = acos(dot(v1,v2)); //-delta */
+      //e.resize(1);
+      /* e(0) = acos(dot(v1,v2)); //-delta */
       /* //regularize to avoid division-by-zero problems   */
       /* double eps=1e-5; */
-      /* J_= -1/sqrt(1+eps-pow(dot(v1,v2),2))*J__; */
-      /* e_dot_= J_*qdot; */
-      /* J_dot_= -1/sqrt(1+eps-pow(dot(v1,v2),2))*(v2_dot.transpose()*J_v1.data.topRows<3>()+Eigen::Map<const Eigen::Matrix<double,1,3> >(v2.data)*J_v1_dot.data.topRows<3>()+v1_dot.transpose()*J_v2.data.topRows<3>()+Eigen::Map<const Eigen::Matrix<double,1,3> >(v1.data)*J_v2_dot.data.topRows<3>())-J__*dot(v1,v2)/pow(1+eps-pow(dot(v1,v2),2),1.5)*(dot(v1,KDL::Vector(v2_dot(0), v2_dot(1), v2_dot(2)))+dot(KDL::Vector(v1_dot(0),v1_dot(1),v1_dot(2)),v2)); */
+      /* J= -1/sqrt(1+eps-pow(dot(v1,v2),2))*J__; */
+      /* e_dot= J*qdot; */
+      /* J_dot= -1/sqrt(1+eps-pow(dot(v1,v2),2))*(v2_dot.transpose()*J_v1.data.topRows<3>()+Eigen::Map<const Eigen::Matrix<double,1,3> >(v2.data)*J_v1_dot.data.topRows<3>()+v1_dot.transpose()*J_v2.data.topRows<3>()+Eigen::Map<const Eigen::Matrix<double,1,3> >(v1.data)*J_v2_dot.data.topRows<3>())-J__*dot(v1,v2)/pow(1+eps-pow(dot(v1,v2),2),1.5)*(dot(v1,KDL::Vector(v2_dot(0), v2_dot(1), v2_dot(2)))+dot(KDL::Vector(v1_dot(0),v1_dot(1),v1_dot(2)),v2)); */
       // END VARIANT 1 ==============================================================
 
       // VARIANT 2: e=v1^T * v2 -1 ==============================================
       e.resize(1);
-      e(0) = dot(v1,v2)-1.0;
-      J = Eigen::Map<const Eigen::Matrix<double,1,3> >(v2.data)*J_v1.data.topRows<3>()+Eigen::Map<const Eigen::Matrix<double,1,3> >(v1.data)*J_v2.data.topRows<3>();
-      e_dot = J_*qdot;
-      J_dot = v2_dot.transpose()*J_v1.data.topRows<3>()+Eigen::Map<const Eigen::Matrix<double,1,3> >(v2.data)*J_v1_dot.data.topRows<3>()+Eigen::Map<const Eigen::Matrix<double,1,3> >(v1.data)*J_v2_dot.data.topRows<3>()+v1_dot.transpose()*J_v2.data.topRows<3>();
+      e(0)=dot(v1,v2)-1.0;
+      J=Eigen::Map<const Eigen::Matrix<double,1,3> >(v2.data)*J_v1.data.topRows<3>()+Eigen::Map<const Eigen::Matrix<double,1,3> >(v1.data)*J_v2.data.topRows<3>();
+      e_dot= J*qdot;
+      J_dot=v2_dot.transpose()*J_v1.data.topRows<3>()+Eigen::Map<const Eigen::Matrix<double,1,3> >(v2.data)*J_v1_dot.data.topRows<3>()+Eigen::Map<const Eigen::Matrix<double,1,3> >(v1.data)*J_v2_dot.data.topRows<3>()+v1_dot.transpose()*J_v2.data.topRows<3>();
       // END VARIANT 2 ==============================================================
-      
+
       return 0;
     }
-
     
     template <typename PrimitiveA, typename PrimitiveB>
       int TDefTracking<PrimitiveA, PrimitiveB>::monitor() {

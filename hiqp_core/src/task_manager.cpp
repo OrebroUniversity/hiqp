@@ -81,7 +81,7 @@ bool TaskManager::getAccelerationControls(RobotStatePtr robot_state,
 	// std::cerr<<"dq: "<<robot_state->kdl_jnt_array_vel_.qdot.data.transpose()<<std::endl;
         // std::cerr<<"q: "<<robot_state->kdl_jnt_array_vel_.q.data.transpose()<<std::endl;
 	// std::cerr<<"__________________________________________________________"<<std::endl<<std::endl;
-	
+
 	// if(strcmp(kv.second->getTaskName().c_str(), "frame_frame_tracking") == 0){
 	//   KDL::JntArray qdot__ = robot_state->kdl_jnt_array_vel_.qdot;
 	//   KDL::JntArray q__ = robot_state->kdl_jnt_array_vel_.q;

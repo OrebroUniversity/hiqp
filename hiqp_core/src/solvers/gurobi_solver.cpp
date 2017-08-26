@@ -238,6 +238,12 @@ void GurobiSolver::QPProblem::setup() {
       else if (status == GRB_SUBOPTIMAL){
 	ROS_WARN("In GurobiSolver::QPProblem::solve(...): Only suboptimal QP solution found.");
       }
+      else if (status == GRB_NUMERIC){
+	ROS_WARN("In GurobiSolver::QPProblem::solve(...): QP optimization was terminated due to unrecoverable numerical difficulties.");
+      }
+      else if (status == GRB_ITERATION_LIMIT){
+	ROS_WARN("In GurobiSolver::QPProblem::solve(...): QP optimization was terminated because iteration limit was reached.");
+      }       
       else{
 	ROS_ERROR("In GurobiSolver::QPProblem::solve(...): No optimal solution found for stage with "
 		  "priority %d. Status is %d.",

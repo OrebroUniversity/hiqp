@@ -208,7 +208,7 @@ namespace hiqp {
 			 prim_type1 + "' and '" + prim_type2 + "'!");
 	return -1;
       }
-    }    
+    }
     else if (type.compare("TDefGeomAlign") == 0) {
       std::string prim_type1 = def_params.at(1);
       std::string prim_type2 = def_params.at(2);

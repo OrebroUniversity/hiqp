@@ -40,35 +40,35 @@ namespace hiqp {
       KDL::Vector v2 = pose_b_.M * line2->getDirectionKDL();
 
       //DOT PRODUCT =============================================      
-      //return alignUnitVectors(v1, v2, robot_state);
+      return alignUnitVectors(v1, v2, robot_state);
       //DOT PRODUCT END =========================================
 
       //CROSS PRODUCT =============================================      
-      double q_nr=jacobian_a_.columns();
-      KDL::Jacobian J_v1, J_p1, J_v2, J_v1_dot, J_v2_dot;
-      J_v1.resize(q_nr);
-      J_v2.resize(q_nr);
-      J_p1.resize(q_nr);
-      J_v1_dot.resize(q_nr);
-      J_v2_dot.resize(q_nr);
+      // double q_nr=jacobian_a_.columns();
+      // KDL::Jacobian J_v1, J_p1, J_v2, J_v1_dot, J_v2_dot;
+      // J_v1.resize(q_nr);
+      // J_v2.resize(q_nr);
+      // J_p1.resize(q_nr);
+      // J_v1_dot.resize(q_nr);
+      // J_v2_dot.resize(q_nr);
     
-      changeJacRefPoint(jacobian_a_, v1, J_v1);
-      J_v1.data=J_v1.data - jacobian_a_.data;
+      // changeJacRefPoint(jacobian_a_, v1, J_v1);
+      // J_v1.data=J_v1.data - jacobian_a_.data;
 
-      changeJacRefPoint(jacobian_b_, v2, J_v2);
-      J_v2.data=J_v2.data - jacobian_b_.data;
+      // changeJacRefPoint(jacobian_b_, v2, J_v2);
+      // J_v2.data=J_v2.data - jacobian_b_.data;
 
-      changeJacDotRefPoint(jacobian_a_,jacobian_dot_a_,robot_state->kdl_jnt_array_vel_, v1, J_v1_dot);
-      J_v1_dot.data = J_v1_dot.data - jacobian_dot_a_.data;
+      // changeJacDotRefPoint(jacobian_a_,jacobian_dot_a_,robot_state->kdl_jnt_array_vel_, v1, J_v1_dot);
+      // J_v1_dot.data = J_v1_dot.data - jacobian_dot_a_.data;
 
-      changeJacDotRefPoint(jacobian_b_,jacobian_dot_b_,robot_state->kdl_jnt_array_vel_, v2, J_v2_dot);
-      J_v2_dot.data = J_v2_dot.data - jacobian_dot_b_.data;
+      // changeJacDotRefPoint(jacobian_b_,jacobian_dot_b_,robot_state->kdl_jnt_array_vel_, v2, J_v2_dot);
+      // J_v2_dot.data = J_v2_dot.data - jacobian_dot_b_.data;
       
-      Eigen::VectorXd qdot=robot_state->kdl_jnt_array_vel_.qdot.data;
-      Eigen::Vector3d v1_dot=J_v1.data.topRows<3>()*qdot;
-      Eigen::Vector3d v2_dot=J_v2.data.topRows<3>()*qdot;
+      // Eigen::VectorXd qdot=robot_state->kdl_jnt_array_vel_.qdot.data;
+      // Eigen::Vector3d v1_dot=J_v1.data.topRows<3>()*qdot;
+      // Eigen::Vector3d v2_dot=J_v2.data.topRows<3>()*qdot;
 
-      return rotateVectors(Eigen::Vector3d(v1(0),v1(1),v1(2)), Eigen::Vector3d(v2(0),v2(1),v2(2)), v1_dot, v2_dot, J_v1.data.topRows<3>(), J_v2.data.topRows<3>(), J_v1_dot.data.topRows<3>(), J_v2_dot.data.topRows<3>());
+      // return rotateVectors(Eigen::Vector3d(v1(0),v1(1),v1(2)), Eigen::Vector3d(v2(0),v2(1),v2(2)), v1_dot, v2_dot, J_v1.data.topRows<3>(), J_v2.data.topRows<3>(), J_v1_dot.data.topRows<3>(), J_v2_dot.data.topRows<3>());
       //CROSS PRODUCT END =========================================      
     }
 
@@ -80,35 +80,35 @@ namespace hiqp {
       KDL::Vector v2 = pose_b_.M * plane->getNormalKDL();
 
       //DOT PRODUCT =============================================      
-      //return alignUnitVectors(v1, v2, robot_state);
+      return alignUnitVectors(v1, v2, robot_state);
       //DOT PRODUCT END =========================================
 
       //CROSS PRODUCT =============================================      
-      double q_nr=jacobian_a_.columns();
-      KDL::Jacobian J_v1, J_p1, J_v2, J_v1_dot, J_v2_dot;
-      J_v1.resize(q_nr);
-      J_v2.resize(q_nr);
-      J_p1.resize(q_nr);
-      J_v1_dot.resize(q_nr);
-      J_v2_dot.resize(q_nr);
+      // double q_nr=jacobian_a_.columns();
+      // KDL::Jacobian J_v1, J_p1, J_v2, J_v1_dot, J_v2_dot;
+      // J_v1.resize(q_nr);
+      // J_v2.resize(q_nr);
+      // J_p1.resize(q_nr);
+      // J_v1_dot.resize(q_nr);
+      // J_v2_dot.resize(q_nr);
     
-      changeJacRefPoint(jacobian_a_, v1, J_v1);
-      J_v1.data=J_v1.data - jacobian_a_.data;
+      // changeJacRefPoint(jacobian_a_, v1, J_v1);
+      // J_v1.data=J_v1.data - jacobian_a_.data;
 
-      changeJacRefPoint(jacobian_b_, v2, J_v2);
-      J_v2.data=J_v2.data - jacobian_b_.data;
+      // changeJacRefPoint(jacobian_b_, v2, J_v2);
+      // J_v2.data=J_v2.data - jacobian_b_.data;
 
-      changeJacDotRefPoint(jacobian_a_,jacobian_dot_a_,robot_state->kdl_jnt_array_vel_, v1, J_v1_dot);
-      J_v1_dot.data = J_v1_dot.data - jacobian_dot_a_.data;
+      // changeJacDotRefPoint(jacobian_a_,jacobian_dot_a_,robot_state->kdl_jnt_array_vel_, v1, J_v1_dot);
+      // J_v1_dot.data = J_v1_dot.data - jacobian_dot_a_.data;
 
-      changeJacDotRefPoint(jacobian_b_,jacobian_dot_b_,robot_state->kdl_jnt_array_vel_, v2, J_v2_dot);
-      J_v2_dot.data = J_v2_dot.data - jacobian_dot_b_.data;
+      // changeJacDotRefPoint(jacobian_b_,jacobian_dot_b_,robot_state->kdl_jnt_array_vel_, v2, J_v2_dot);
+      // J_v2_dot.data = J_v2_dot.data - jacobian_dot_b_.data;
       
-      Eigen::VectorXd qdot=robot_state->kdl_jnt_array_vel_.qdot.data;
-      Eigen::Vector3d v1_dot=J_v1.data.topRows<3>()*qdot;
-      Eigen::Vector3d v2_dot=J_v2.data.topRows<3>()*qdot;
+      // Eigen::VectorXd qdot=robot_state->kdl_jnt_array_vel_.qdot.data;
+      // Eigen::Vector3d v1_dot=J_v1.data.topRows<3>()*qdot;
+      // Eigen::Vector3d v2_dot=J_v2.data.topRows<3>()*qdot;
       
-      return rotateVectors(Eigen::Vector3d(v1(0),v1(1),v1(2)), Eigen::Vector3d(v2(0),v2(1),v2(2)), v1_dot, v2_dot, J_v1.data.topRows<3>(), J_v2.data.topRows<3>(), J_v1_dot.data.topRows<3>(), J_v2_dot.data.topRows<3>());
+      // return rotateVectors(Eigen::Vector3d(v1(0),v1(1),v1(2)), Eigen::Vector3d(v2(0),v2(1),v2(2)), v1_dot, v2_dot, J_v1.data.topRows<3>(), J_v2.data.topRows<3>(), J_v1_dot.data.topRows<3>(), J_v2_dot.data.topRows<3>());
       //CROSS PRODUCT END =============================================
     }
 
@@ -166,11 +166,11 @@ namespace hiqp {
       J_v2_dot.data.topRows<3>() = vk_dot*(vk.transpose()*J_dp.data.topRows<3>()+dp.transpose()*J_vk.data.topRows<3>())+vk*(vk_dot.transpose()*J_dp.data.topRows<3>()+vk.transpose()*J_dp_dot.data.topRows<3>()+dp_dot.transpose()*J_vk.data.topRows<3>()+dp.transpose()*J_vk_dot.data.topRows<3>())-J_dp_dot.data.topRows<3>()+dp.dot(vk)*J_vk_dot.data.topRows<3>()+(dp_dot.dot(vk)+dp.dot(vk_dot))*J_vk.data.topRows<3>();
 
       //CROSS PRODUCT =============================================      
-       return rotateVectors(v1, v2, v1_dot, v2_dot, J_v1.data.topRows<3>(), J_v2.data.topRows<3>(), J_v1_dot.data.topRows<3>(), J_v2_dot.data.topRows<3>());
+       // return rotateVectors(v1, v2, v1_dot, v2_dot, J_v1.data.topRows<3>(), J_v2.data.topRows<3>(), J_v1_dot.data.topRows<3>(), J_v2_dot.data.topRows<3>());
       //CROSS PRODUCT END =========================================
 
       //DOT PRODUCT =============================================      
-      //return alignUnitVectorVector(qdot,v1, v2, v1_dot, v2_dot, J_v1.data.topRows<3>(), J_v2.data.topRows<3>(), J_v1_dot.data.topRows<3>(), J_v2_dot.data.topRows<3>());
+      return alignUnitVectorVector(qdot,v1, v2, v1_dot, v2_dot, J_v1.data.topRows<3>(), J_v2.data.topRows<3>(), J_v1_dot.data.topRows<3>(), J_v2_dot.data.topRows<3>());
       //DOT PRODUCT END =========================================
 
     }
@@ -215,11 +215,11 @@ namespace hiqp {
       Eigen::Vector3d v2_dot=J_v2.data.topRows<3>()*qdot;
 
       //CROSS PRODUCT ================================================
-       return rotateVectors(Eigen::Vector3d(v1(0),v1(1),v1(2)), Eigen::Vector3d(v2(0),v2(1),v2(2)), v1_dot, v2_dot, J_v1.data.topRows<3>(), J_v2.data.topRows<3>(), J_v1_dot.data.topRows<3>(), J_v2_dot.data.topRows<3>());
+       // return rotateVectors(Eigen::Vector3d(v1(0),v1(1),v1(2)), Eigen::Vector3d(v2(0),v2(1),v2(2)), v1_dot, v2_dot, J_v1.data.topRows<3>(), J_v2.data.topRows<3>(), J_v1_dot.data.topRows<3>(), J_v2_dot.data.topRows<3>());
       //CROSS PRODUCT END ============================================
 
       //DOT PRODUCT ================================================
-       // return alignUnitVectorVector(qdot, Eigen::Vector3d(v1(0),v1(1),v1(2)), Eigen::Vector3d(v2(0),v2(1),v2(2)), v1_dot, v2_dot, J_v1.data.topRows<3>(), J_v2.data.topRows<3>(), J_v1_dot.data.topRows<3>(), J_v2_dot.data.topRows<3>());
+       return alignUnitVectorVector(qdot, Eigen::Vector3d(v1(0),v1(1),v1(2)), Eigen::Vector3d(v2(0),v2(1),v2(2)), v1_dot, v2_dot, J_v1.data.topRows<3>(), J_v2.data.topRows<3>(), J_v1_dot.data.topRows<3>(), J_v2_dot.data.topRows<3>());
       //DOT PRODUCT END ============================================
  
     }
@@ -233,61 +233,61 @@ namespace hiqp {
       Eigen::VectorXd qdot=robot_state->kdl_jnt_array_vel_.qdot.data;
 	    
       //ORIENTATION TRACKING VARIANT 2: e=sin(alpha)*n
-      KDL::Vector a1 = pose_a_.M * frame1->getAxisXKDL();
-      KDL::Vector a2 = pose_a_.M * frame1->getAxisYKDL();
-      KDL::Vector a3 = pose_a_.M * frame1->getAxisZKDL();
-      KDL::Vector b1 = pose_b_.M * frame2->getAxisXKDL();
-      KDL::Vector b2 = pose_b_.M * frame2->getAxisYKDL();
-      KDL::Vector b3 = pose_b_.M * frame2->getAxisZKDL();     
+      // KDL::Vector a1 = pose_a_.M * frame1->getAxisXKDL();
+      // KDL::Vector a2 = pose_a_.M * frame1->getAxisYKDL();
+      // KDL::Vector a3 = pose_a_.M * frame1->getAxisZKDL();
+      // KDL::Vector b1 = pose_b_.M * frame2->getAxisXKDL();
+      // KDL::Vector b2 = pose_b_.M * frame2->getAxisYKDL();
+      // KDL::Vector b3 = pose_b_.M * frame2->getAxisZKDL();     
 
-      KDL::Jacobian J_a1(q_nr), J_b1(q_nr), J_dot_a1(q_nr), J_dot_b1(q_nr);
-      KDL::Jacobian J_a2(q_nr), J_b2(q_nr), J_dot_a2(q_nr), J_dot_b2(q_nr);      
-      KDL::Jacobian J_a3(q_nr), J_b3(q_nr), J_dot_a3(q_nr), J_dot_b3(q_nr);
+      // KDL::Jacobian J_a1(q_nr), J_b1(q_nr), J_dot_a1(q_nr), J_dot_b1(q_nr);
+      // KDL::Jacobian J_a2(q_nr), J_b2(q_nr), J_dot_a2(q_nr), J_dot_b2(q_nr);      
+      // KDL::Jacobian J_a3(q_nr), J_b3(q_nr), J_dot_a3(q_nr), J_dot_b3(q_nr);
       
-      changeJacRefPoint(jacobian_a_, a1, J_a1);
-      J_a1.data=J_a1.data-jacobian_a_.data;
-      changeJacRefPoint(jacobian_a_, a2, J_a2);
-      J_a2.data=J_a2.data-jacobian_a_.data;
-      changeJacRefPoint(jacobian_a_, a3, J_a3);
-      J_a3.data=J_a3.data-jacobian_a_.data;
-      changeJacRefPoint(jacobian_b_, b1, J_b1);
-      J_b1.data=J_b1.data-jacobian_b_.data;
-      changeJacRefPoint(jacobian_b_, b2, J_b2);
-      J_b2.data=J_b2.data-jacobian_b_.data;
-      changeJacRefPoint(jacobian_b_, b3, J_b3);
-      J_b3.data=J_b3.data-jacobian_b_.data;     
+      // changeJacRefPoint(jacobian_a_, a1, J_a1);
+      // J_a1.data=J_a1.data-jacobian_a_.data;
+      // changeJacRefPoint(jacobian_a_, a2, J_a2);
+      // J_a2.data=J_a2.data-jacobian_a_.data;
+      // changeJacRefPoint(jacobian_a_, a3, J_a3);
+      // J_a3.data=J_a3.data-jacobian_a_.data;
+      // changeJacRefPoint(jacobian_b_, b1, J_b1);
+      // J_b1.data=J_b1.data-jacobian_b_.data;
+      // changeJacRefPoint(jacobian_b_, b2, J_b2);
+      // J_b2.data=J_b2.data-jacobian_b_.data;
+      // changeJacRefPoint(jacobian_b_, b3, J_b3);
+      // J_b3.data=J_b3.data-jacobian_b_.data;     
      
-      changeJacDotRefPoint(jacobian_a_,jacobian_dot_a_,robot_state->kdl_jnt_array_vel_, a1, J_dot_a1);
-      J_dot_a1.data=J_dot_a1.data-jacobian_dot_a_.data;
-      changeJacDotRefPoint(jacobian_a_,jacobian_dot_a_,robot_state->kdl_jnt_array_vel_, a2, J_dot_a2);
-      J_dot_a2.data=J_dot_a2.data-jacobian_dot_a_.data;
-      changeJacDotRefPoint(jacobian_a_,jacobian_dot_a_,robot_state->kdl_jnt_array_vel_, a3, J_dot_a3);
-      J_dot_a3.data=J_dot_a3.data-jacobian_dot_a_.data;
-      changeJacDotRefPoint(jacobian_b_,jacobian_dot_b_,robot_state->kdl_jnt_array_vel_, b1, J_dot_b1);
-      J_dot_b1.data=J_dot_b1.data-jacobian_dot_b_.data;
-      changeJacDotRefPoint(jacobian_b_,jacobian_dot_b_,robot_state->kdl_jnt_array_vel_, b2, J_dot_b2);
-      J_dot_b2.data=J_dot_b2.data-jacobian_dot_b_.data;
-      changeJacDotRefPoint(jacobian_b_,jacobian_dot_b_,robot_state->kdl_jnt_array_vel_, b3, J_dot_b3);
-      J_dot_b3.data=J_dot_b3.data-jacobian_dot_b_.data;
+      // changeJacDotRefPoint(jacobian_a_,jacobian_dot_a_,robot_state->kdl_jnt_array_vel_, a1, J_dot_a1);
+      // J_dot_a1.data=J_dot_a1.data-jacobian_dot_a_.data;
+      // changeJacDotRefPoint(jacobian_a_,jacobian_dot_a_,robot_state->kdl_jnt_array_vel_, a2, J_dot_a2);
+      // J_dot_a2.data=J_dot_a2.data-jacobian_dot_a_.data;
+      // changeJacDotRefPoint(jacobian_a_,jacobian_dot_a_,robot_state->kdl_jnt_array_vel_, a3, J_dot_a3);
+      // J_dot_a3.data=J_dot_a3.data-jacobian_dot_a_.data;
+      // changeJacDotRefPoint(jacobian_b_,jacobian_dot_b_,robot_state->kdl_jnt_array_vel_, b1, J_dot_b1);
+      // J_dot_b1.data=J_dot_b1.data-jacobian_dot_b_.data;
+      // changeJacDotRefPoint(jacobian_b_,jacobian_dot_b_,robot_state->kdl_jnt_array_vel_, b2, J_dot_b2);
+      // J_dot_b2.data=J_dot_b2.data-jacobian_dot_b_.data;
+      // changeJacDotRefPoint(jacobian_b_,jacobian_dot_b_,robot_state->kdl_jnt_array_vel_, b3, J_dot_b3);
+      // J_dot_b3.data=J_dot_b3.data-jacobian_dot_b_.data;
 
-      Eigen::Matrix3d Sa1=skewSymmetricMatrix(Eigen::Vector3d(a1(0), a1(1), a1(2)));
-      Eigen::Matrix3d Sa2=skewSymmetricMatrix(Eigen::Vector3d(a2(0), a2(1), a2(2)));
-      Eigen::Matrix3d Sa3=skewSymmetricMatrix(Eigen::Vector3d(a3(0), a3(1), a3(2)));
-      Eigen::Matrix3d Sb1=skewSymmetricMatrix(Eigen::Vector3d(b1(0), b1(1), b1(2)));
-      Eigen::Matrix3d Sb2=skewSymmetricMatrix(Eigen::Vector3d(b2(0), b2(1), b2(2)));
-      Eigen::Matrix3d Sb3=skewSymmetricMatrix(Eigen::Vector3d(b3(0), b3(1), b3(2)));
+      // Eigen::Matrix3d Sa1=skewSymmetricMatrix(Eigen::Vector3d(a1(0), a1(1), a1(2)));
+      // Eigen::Matrix3d Sa2=skewSymmetricMatrix(Eigen::Vector3d(a2(0), a2(1), a2(2)));
+      // Eigen::Matrix3d Sa3=skewSymmetricMatrix(Eigen::Vector3d(a3(0), a3(1), a3(2)));
+      // Eigen::Matrix3d Sb1=skewSymmetricMatrix(Eigen::Vector3d(b1(0), b1(1), b1(2)));
+      // Eigen::Matrix3d Sb2=skewSymmetricMatrix(Eigen::Vector3d(b2(0), b2(1), b2(2)));
+      // Eigen::Matrix3d Sb3=skewSymmetricMatrix(Eigen::Vector3d(b3(0), b3(1), b3(2)));
 
-      Eigen::Matrix3d Sa1_dot=skewSymmetricMatrix((jacobian_dot_a_.data.bottomRows<3>()*qdot).cross(Eigen::Map<Eigen::Matrix<double,3,1> >(a1.data)));
-      Eigen::Matrix3d Sa2_dot=skewSymmetricMatrix((jacobian_dot_a_.data.bottomRows<3>()*qdot).cross(Eigen::Map<Eigen::Matrix<double,3,1> >(a2.data)));
-      Eigen::Matrix3d Sa3_dot=skewSymmetricMatrix((jacobian_dot_a_.data.bottomRows<3>()*qdot).cross(Eigen::Map<Eigen::Matrix<double,3,1> >(a3.data)));
-      Eigen::Matrix3d Sb1_dot=skewSymmetricMatrix((jacobian_dot_b_.data.bottomRows<3>()*qdot).cross(Eigen::Map<Eigen::Matrix<double,3,1> >(b1.data)));
-      Eigen::Matrix3d Sb2_dot=skewSymmetricMatrix((jacobian_dot_b_.data.bottomRows<3>()*qdot).cross(Eigen::Map<Eigen::Matrix<double,3,1> >(b2.data)));
-      Eigen::Matrix3d Sb3_dot=skewSymmetricMatrix((jacobian_dot_b_.data.bottomRows<3>()*qdot).cross(Eigen::Map<Eigen::Matrix<double,3,1> >(b3.data)));
+      // Eigen::Matrix3d Sa1_dot=skewSymmetricMatrix((jacobian_dot_a_.data.bottomRows<3>()*qdot).cross(Eigen::Map<Eigen::Matrix<double,3,1> >(a1.data)));
+      // Eigen::Matrix3d Sa2_dot=skewSymmetricMatrix((jacobian_dot_a_.data.bottomRows<3>()*qdot).cross(Eigen::Map<Eigen::Matrix<double,3,1> >(a2.data)));
+      // Eigen::Matrix3d Sa3_dot=skewSymmetricMatrix((jacobian_dot_a_.data.bottomRows<3>()*qdot).cross(Eigen::Map<Eigen::Matrix<double,3,1> >(a3.data)));
+      // Eigen::Matrix3d Sb1_dot=skewSymmetricMatrix((jacobian_dot_b_.data.bottomRows<3>()*qdot).cross(Eigen::Map<Eigen::Matrix<double,3,1> >(b1.data)));
+      // Eigen::Matrix3d Sb2_dot=skewSymmetricMatrix((jacobian_dot_b_.data.bottomRows<3>()*qdot).cross(Eigen::Map<Eigen::Matrix<double,3,1> >(b2.data)));
+      // Eigen::Matrix3d Sb3_dot=skewSymmetricMatrix((jacobian_dot_b_.data.bottomRows<3>()*qdot).cross(Eigen::Map<Eigen::Matrix<double,3,1> >(b3.data)));
      
-      e_.bottomRows<3>()=0.5*(Sa1*Eigen::Map<Eigen::Matrix<double,3,1> >(b1.data)+Sa2*Eigen::Map<Eigen::Matrix<double,3,1> >(b2.data)+Sa3*Eigen::Map<Eigen::Matrix<double,3,1> >(b3.data));
-      J_.bottomRows<3>()=0.5*(Sa1*J_b1.data.topRows<3>()-Sb1*J_a1.data.topRows<3>()+Sa2*J_b2.data.topRows<3>()-Sb2*J_a2.data.topRows<3>()+Sa3*J_b3.data.topRows<3>()-Sb3*J_a3.data.topRows<3>());
-      e_dot_.bottomRows<3>()=J_.bottomRows<3>()*robot_state->kdl_jnt_array_vel_.qdot.data;
-      J_dot_.bottomRows<3>()=0.5*(Sa1_dot*J_b1.data.topRows<3>()+Sa1*J_dot_b1.data.topRows<3>()-Sb1_dot*J_a1.data.topRows<3>()-Sb1*J_dot_a1.data.topRows<3>()+Sa2_dot*J_b2.data.topRows<3>()+Sa2*J_dot_b2.data.topRows<3>()-Sb2_dot*J_a2.data.topRows<3>()-Sb2*J_dot_a2.data.topRows<3>()+Sa3_dot*J_b3.data.topRows<3>()+Sa3*J_dot_b3.data.topRows<3>()-Sb3_dot*J_a3.data.topRows<3>()-Sb3*J_dot_a3.data.topRows<3>());
+      // e_.bottomRows<3>()=0.5*(Sa1*Eigen::Map<Eigen::Matrix<double,3,1> >(b1.data)+Sa2*Eigen::Map<Eigen::Matrix<double,3,1> >(b2.data)+Sa3*Eigen::Map<Eigen::Matrix<double,3,1> >(b3.data));
+      // J_.bottomRows<3>()=0.5*(Sa1*J_b1.data.topRows<3>()-Sb1*J_a1.data.topRows<3>()+Sa2*J_b2.data.topRows<3>()-Sb2*J_a2.data.topRows<3>()+Sa3*J_b3.data.topRows<3>()-Sb3*J_a3.data.topRows<3>());
+      // e_dot_.bottomRows<3>()=J_.bottomRows<3>()*robot_state->kdl_jnt_array_vel_.qdot.data;
+      // J_dot_.bottomRows<3>()=0.5*(Sa1_dot*J_b1.data.topRows<3>()+Sa1*J_dot_b1.data.topRows<3>()-Sb1_dot*J_a1.data.topRows<3>()-Sb1*J_dot_a1.data.topRows<3>()+Sa2_dot*J_b2.data.topRows<3>()+Sa2*J_dot_b2.data.topRows<3>()-Sb2_dot*J_a2.data.topRows<3>()-Sb2*J_dot_a2.data.topRows<3>()+Sa3_dot*J_b3.data.topRows<3>()+Sa3*J_dot_b3.data.topRows<3>()-Sb3_dot*J_a3.data.topRows<3>()-Sb3*J_dot_a3.data.topRows<3>());
       
       //CROSS PRODUCT =============================================
       // KDL::Vector v1 = pose_a_.M * frame1->getAxisXKDL();
@@ -359,45 +359,61 @@ namespace hiqp {
       //CROSS PRODUCT END ==========================================
 
       //DOT PRODUCT =============================================      
-      // KDL::Vector ax1 = pose_a_.M * frame1->getAxisXKDL();
-      // KDL::Vector ax2 = pose_b_.M * frame2->getAxisXKDL();
-      // KDL::Vector ay1 = pose_a_.M * frame1->getAxisYKDL();
-      // KDL::Vector ay2 = pose_b_.M * frame2->getAxisYKDL();
+      KDL::Vector ax1 = pose_a_.M * frame1->getAxisXKDL();
+      KDL::Vector ax2 = pose_b_.M * frame2->getAxisXKDL();
+      KDL::Vector ay1 = pose_a_.M * frame1->getAxisYKDL();
+      KDL::Vector ay2 = pose_b_.M * frame2->getAxisYKDL();
+      KDL::Vector az1 = pose_a_.M * frame1->getAxisZKDL();
+      KDL::Vector az2 = pose_b_.M * frame2->getAxisZKDL();
+      
+      //abuse the alignUnitVectors function to compute the relevant quantities to align both axis
+      alignUnitVectors(ay1, ay2, robot_state);
 
-      // //abuse the alignUnitVectors function to compute the relevant quantities to align both axis
-      // alignUnitVectors(ay1, ay2, robot_state);
+      //temporary save the task errors/jacobians
+      Eigen::VectorXd ey=e_;
+      Eigen::VectorXd ey_dot=e_dot_;  
+      Eigen::MatrixXd Jy=J_;
+      Eigen::MatrixXd Jy_dot=J_dot_;  
 
-      // //temporary save the task errors/jacobians
-      // Eigen::VectorXd ey=e_;
-      // Eigen::VectorXd ey_dot=e_dot_;  
-      // Eigen::MatrixXd Jy=J_;
-      // Eigen::MatrixXd Jy_dot=J_dot_;  
-      // double q_nr=J_.cols();
+      //overwrite the class member errors/jacobians
+      alignUnitVectors(az1, az2, robot_state);
 
-      // //overwrite the class member errors/jacobians
-      // alignUnitVectors(ax1, ax2, robot_state);
+      //temporary save the task errors/jacobians
+      Eigen::VectorXd ez=e_;
+      Eigen::VectorXd ez_dot=e_dot_;  
+      Eigen::MatrixXd Jz=J_;
+      Eigen::MatrixXd Jz_dot=J_dot_;
+      
+      //overwrite the class member errors/jacobians
+      alignUnitVectors(ax1, ax2, robot_state);
 
-      // //append the previously computed quantities
-      // e_.conservativeResize(2);
-      // e_(1)=ey(0);
-      // e_dot_.conservativeResize(2);
-      // e_dot_(1)=ey_dot(0);
-      // J_.conservativeResize(2,q_nr);
-      // J_.bottomRows<1>()=Jy;
-      // J_dot_.conservativeResize(2,q_nr);
-      // J_dot_.bottomRows<1>()=Jy_dot;
+      //append the previously computed quantities
+      e_.conservativeResize(3);
+      e_(1)=ey(0);
+      e_(2)=ez(0);
+      e_dot_.conservativeResize(3);
+      e_dot_(1)=ey_dot(0);
+      e_dot_(2)=ez_dot(0);      
+      J_.conservativeResize(3,q_nr);
+      J_.row(1)=Jy;
+      J_.row(2)=Jz;      
+      J_dot_.conservativeResize(3,q_nr);
+      J_dot_.row(1)=Jy_dot;
+      J_dot_.row(2)=Jz_dot;
       //DOT PRODUCT END =============================================      
       return 0;
     }
     
     template <>
     int TDefGeometricAlignment<GeometricFrame, GeometricCylinder>::align(std::shared_ptr<GeometricFrame> frame,
-								      std::shared_ptr<GeometricCylinder> cylinder,
-								      const RobotStatePtr robot_state) {
+									 std::shared_ptr<GeometricCylinder> cylinder,
+									 const RobotStatePtr robot_state) {
       double q_nr=jacobian_a_.columns();
       Eigen::VectorXd qdot=robot_state->kdl_jnt_array_vel_.qdot.data;
 	    
       //aligns the frame z axis with the cylinder axis and intersects the frame's x axis with the cylinder axis - the derivation is simplified in that the newly created frame is treated as static at each instant
+
+
       KDL::Vector a1 = pose_a_.M * frame->getAxisXKDL();
       KDL::Vector a2 = pose_a_.M * frame->getAxisYKDL();
       KDL::Vector a3 = pose_a_.M * frame->getAxisZKDL();
@@ -410,34 +426,75 @@ namespace hiqp {
       KDL::Vector b3 = pose_b_.M * cylinder->getDirectionKDL();      
       KDL::Vector b2 = b3*b1;
 
-      KDL::Jacobian J_a1(q_nr), J_dot_a1(q_nr);
-      KDL::Jacobian J_a2(q_nr), J_dot_a2(q_nr);      
-      KDL::Jacobian J_a3(q_nr), J_dot_a3(q_nr);
+      //VARIANT 1:  e=sin(alpha)*n (cross product)
+      //CROSS PRODUCT =============================================  
+      // KDL::Jacobian J_a1(q_nr), J_dot_a1(q_nr);
+      // KDL::Jacobian J_a2(q_nr), J_dot_a2(q_nr);      
+      // KDL::Jacobian J_a3(q_nr), J_dot_a3(q_nr);
       
-      changeJacRefPoint(jacobian_a_, a1, J_a1);
-      J_a1.data=J_a1.data-jacobian_a_.data;
-      changeJacRefPoint(jacobian_a_, a2, J_a2);
-      J_a2.data=J_a2.data-jacobian_a_.data;
-      changeJacRefPoint(jacobian_a_, a3, J_a3);
-      J_a3.data=J_a3.data-jacobian_a_.data;
+      // changeJacRefPoint(jacobian_a_, a1, J_a1);
+      // J_a1.data=J_a1.data-jacobian_a_.data;
+      // changeJacRefPoint(jacobian_a_, a2, J_a2);
+      // J_a2.data=J_a2.data-jacobian_a_.data;
+      // changeJacRefPoint(jacobian_a_, a3, J_a3);
+      // J_a3.data=J_a3.data-jacobian_a_.data;
      
-      changeJacDotRefPoint(jacobian_a_,jacobian_dot_a_,robot_state->kdl_jnt_array_vel_, a1, J_dot_a1);
-      J_dot_a1.data=J_dot_a1.data-jacobian_dot_a_.data;
-      changeJacDotRefPoint(jacobian_a_,jacobian_dot_a_,robot_state->kdl_jnt_array_vel_, a2, J_dot_a2);
-      J_dot_a2.data=J_dot_a2.data-jacobian_dot_a_.data;
-      changeJacDotRefPoint(jacobian_a_,jacobian_dot_a_,robot_state->kdl_jnt_array_vel_, a3, J_dot_a3);
-      J_dot_a3.data=J_dot_a3.data-jacobian_dot_a_.data;
+      // changeJacDotRefPoint(jacobian_a_,jacobian_dot_a_,robot_state->kdl_jnt_array_vel_, a1, J_dot_a1);
+      // J_dot_a1.data=J_dot_a1.data-jacobian_dot_a_.data;
+      // changeJacDotRefPoint(jacobian_a_,jacobian_dot_a_,robot_state->kdl_jnt_array_vel_, a2, J_dot_a2);
+      // J_dot_a2.data=J_dot_a2.data-jacobian_dot_a_.data;
+      // changeJacDotRefPoint(jacobian_a_,jacobian_dot_a_,robot_state->kdl_jnt_array_vel_, a3, J_dot_a3);
+      // J_dot_a3.data=J_dot_a3.data-jacobian_dot_a_.data;
 
-      Eigen::Matrix3d Sb1=skewSymmetricMatrix(Eigen::Vector3d(b1(0), b1(1), b1(2)));
-      Eigen::Matrix3d Sb2=skewSymmetricMatrix(Eigen::Vector3d(b2(0), b2(1), b2(2)));
-      Eigen::Matrix3d Sb3=skewSymmetricMatrix(Eigen::Vector3d(b3(0), b3(1), b3(2)));
+      // Eigen::Matrix3d Sb1=skewSymmetricMatrix(Eigen::Vector3d(b1(0), b1(1), b1(2)));
+      // Eigen::Matrix3d Sb2=skewSymmetricMatrix(Eigen::Vector3d(b2(0), b2(1), b2(2)));
+      // Eigen::Matrix3d Sb3=skewSymmetricMatrix(Eigen::Vector3d(b3(0), b3(1), b3(2)));
      
-      e_=-0.5*(Sb1*Eigen::Map<Eigen::Matrix<double,3,1> >(a1.data)+Sb2*Eigen::Map<Eigen::Matrix<double,3,1> >(a2.data)+Sb3*Eigen::Map<Eigen::Matrix<double,3,1> >(a3.data));
-      J_=-0.5*(Sb1*J_a1.data.topRows<3>()+Sb2*J_a2.data.topRows<3>()+Sb3*J_a3.data.topRows<3>());
-      e_dot_=J_*qdot;
-      J_dot_=-0.5*(Sb1*J_dot_a1.data.topRows<3>()+Sb2*J_dot_a2.data.topRows<3>()+Sb3*J_dot_a3.data.topRows<3>());
+      // e_=-0.5*(Sb1*Eigen::Map<Eigen::Matrix<double,3,1> >(a1.data)+Sb2*Eigen::Map<Eigen::Matrix<double,3,1> >(a2.data)+Sb3*Eigen::Map<Eigen::Matrix<double,3,1> >(a3.data));
+      // J_=-0.5*(Sb1*J_a1.data.topRows<3>()+Sb2*J_a2.data.topRows<3>()+Sb3*J_a3.data.topRows<3>());
+      // e_dot_=J_*qdot;
+      // J_dot_=-0.5*(Sb1*J_dot_a1.data.topRows<3>()+Sb2*J_dot_a2.data.topRows<3>()+Sb3*J_dot_a3.data.topRows<3>());
+      //CROSS PRODUCT END ==========================================
 
-            //DEBUG ====================================================
+      //VARIANT 2:  e_i=a_i^T*b_i - 1 (dot product)
+      //DOT PRODUCT =============================================        
+      alignUnitVectors(a2, b2, robot_state);
+
+      //temporary save the task errors/jacobians
+      Eigen::VectorXd ey=e_;
+      Eigen::VectorXd ey_dot=e_dot_;  
+      Eigen::MatrixXd Jy=J_;
+      Eigen::MatrixXd Jy_dot=J_dot_;  
+
+      //overwrite the class member errors/jacobians
+      alignUnitVectors(a3, b3, robot_state);
+
+      //temporary save the task errors/jacobians
+      Eigen::VectorXd ez=e_;
+      Eigen::VectorXd ez_dot=e_dot_;  
+      Eigen::MatrixXd Jz=J_;
+      Eigen::MatrixXd Jz_dot=J_dot_;
+      
+      //overwrite the class member errors/jacobians
+      alignUnitVectors(a1, b1, robot_state);
+
+      //append the previously computed quantities
+      e_.conservativeResize(3);
+      e_(1)=ey(0);
+      e_(2)=ez(0);
+      e_dot_.conservativeResize(3);
+      e_dot_(1)=ey_dot(0);
+      e_dot_(2)=ez_dot(0);      
+      J_.conservativeResize(3,q_nr);
+      J_.row(1)=Jy;
+      J_.row(2)=Jz;      
+      J_dot_.conservativeResize(3,q_nr);
+      J_dot_.row(1)=Jy_dot;
+      J_dot_.row(2)=Jz_dot;
+      //DOT PRODUCT END ==========================================
+      
+
+      //DEBUG ====================================================
       // std::cerr<<"a1: "<<(Eigen::Map<Eigen::Matrix<double,3,1> >(a1.data)).transpose()<<std::endl;
       // std::cerr<<"a2: "<<(Eigen::Map<Eigen::Matrix<double,3,1> >(a2.data)).transpose()<<std::endl;            std::cerr<<"a3: "<<(Eigen::Map<Eigen::Matrix<double,3,1> >(a3.data)).transpose()<<std::endl<<std::endl;      
 

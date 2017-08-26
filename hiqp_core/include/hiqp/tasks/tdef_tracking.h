@@ -56,8 +56,9 @@ namespace hiqp {
 	delete;
       TDefTracking& operator=(TDefTracking&& other) noexcept =
 	delete;
-      
+
       int alignUnitVectors(const KDL::Vector& v1, const KDL::Vector v2, const RobotStatePtr robot_state, Eigen::VectorXd& e, Eigen::VectorXd& e_dot, Eigen::MatrixXd& J, Eigen::MatrixXd& J_dot);
+
       int track(std::shared_ptr<PrimitiveA> first,
 		std::shared_ptr<PrimitiveB> second,
 		const RobotStatePtr robot_state);
