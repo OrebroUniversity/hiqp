@@ -28,15 +28,26 @@ namespace hiqp {
       int size = parameters.size();
       assert((e_dot_initial.rows()==dim) && (e_final.rows() == dim) && (e_dot_final.rows() == dim) );
   
-      if ((size != 2*dim*dim+1) && (size != 3)) {
-	printHiqpWarning("TDynPD for a " + std::to_string(dim) + "-dimensional task requires either " + std::to_string(2*dim*dim+1) +" or 3 parameters, got " + std::to_string(size) + "! Initialization failed!");
+      if ((size != 2*dim*dim+1) && (size != dim*2+1) && (size != 3)) {
+	printHiqpWarning("TDynPD for a " + std::to_string(dim) + "-dimensional task requires either 3 or" + std::to_string(2*dim+1) +" or "+std::to_string(2*dim*dim+1) + " parameters, got " + std::to_string(size) + "! Initialization failed!");
 	return -1;
       }
   
-      //read the gain matrices - if only one P and D parameter is given, the Kp/Kd matrices are assumed to be diagonal with common gain
-      if(size==3){
+      //read the gain matrices either given by the single gains, their diagonal elements or in full
+      if(size == 3){
 	Kp_=Eigen::MatrixXd::Identity(dim,dim)*std::stod(parameters.at(1));
 	Kd_=Eigen::MatrixXd::Identity(dim,dim)*std::stod(parameters.at(2));
+      }
+      else if(size==dim*2+1){ //read the diagonal elements
+	//mat1 = vec1.asDiagonal();
+	Eigen::VectorXd Kp_diag(dim);
+	Eigen::VectorXd Kd_diag(dim);
+	for(unsigned int i=0; i<dim;i++){
+	  Kp_diag(i)=std::stod(parameters.at(i+1));
+	  Kd_diag(i)=std::stod(parameters.at(i+1+dim));	    
+	}
+	Kp_=Kp_diag.asDiagonal();
+	Kd_=Kd_diag.asDiagonal();	
       }
       else{ //read the full matrices
 	double* Kp_data = new double[dim*dim];
@@ -68,7 +79,7 @@ namespace hiqp {
       e_ddot_star_= -Kp_*e_initial-Kd_*e_dot_initial;
       performance_measures_.resize(dim);
 
-      // //=============Debug======================
+      //=============Debug======================
       // std::cerr<<"e_initial: "<<e_initial.transpose()<<std::endl;
       // std::cerr<<"e_dot_initial: "<<e_dot_initial.transpose()<<std::endl;
       // std::cerr<<"e_final: "<<e_final.transpose()<<std::endl;
@@ -80,8 +91,8 @@ namespace hiqp {
       // std::cerr<<"A: "<<std::endl<<A<<std::endl;
       // std::cerr<<"Eigenvalues: "<<es.eigenvalues().transpose()<<std::endl;
       // std::cerr<<"e_ddot_star: "<<e_ddot_star_.transpose()<<std::endl;
-      // // //===========End Debug====================
-  
+      //===========End Debug====================
+
       return 0;
     }
     int TDynPD::update(const RobotStatePtr robot_state, const std::shared_ptr< TaskDefinition > def){

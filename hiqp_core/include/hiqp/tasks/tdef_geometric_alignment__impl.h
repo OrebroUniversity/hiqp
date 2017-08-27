@@ -26,18 +26,19 @@ namespace hiqp {
   namespace tasks {
 
     template <typename PrimitiveA, typename PrimitiveB>
-      TDefGeometricAlignment<PrimitiveA, PrimitiveB>::TDefGeometricAlignment(
-									     std::shared_ptr<GeometricPrimitiveMap> geom_prim_map,
+      TDefGeometricAlignment<PrimitiveA, PrimitiveB>::TDefGeometricAlignment(std::shared_ptr<GeometricPrimitiveMap> geom_prim_map,
 									     std::shared_ptr<Visualizer> visualizer)
-      : TaskDefinition(geom_prim_map, visualizer) {}
+      : TaskDefinition(geom_prim_map, visualizer) {
+      phi_max_=3.1415927/2;
+    }
 
     template <typename PrimitiveA, typename PrimitiveB>
       int TDefGeometricAlignment<PrimitiveA, PrimitiveB>::init(
 							       const std::vector<std::string>& parameters, RobotStatePtr robot_state) {
       int parameters_size = parameters.size();
-      if (parameters_size != 4) {
+      if (parameters_size != 4 && parameters_size != 5) {
 	printHiqpWarning(
-			 "'" + getTaskName() + "': TDefGeomAlign takes 4 parameters, got " +
+			 "'" + getTaskName() + "': TDefGeomAlign takes 4 or 5 parameters, got " +
 			 std::to_string(parameters_size) + "! The task was not added!");
 	return -1;
       }
@@ -54,6 +55,14 @@ namespace hiqp {
 			 "': TDefGeomAlign's parameter nr.4 needs whitespace "
 			 "separation! The task was not added!");
 	return -2;
+      }
+
+        if(parameters_size == 5){
+	phi_max_= std::stod(parameters.at(4));
+	if(phi_max_ <= 0.0 || phi_max_ > 3.1415927/2 ){
+	  printHiqpWarning("'" + getTaskName() + "': TDefTracking's parameter 5 needs to be between 0 and PI/2! The task was not added!");
+	  return -4;
+	}
       }
 
       unsigned int n_task_dimensions = 1;

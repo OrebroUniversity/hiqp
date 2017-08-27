@@ -83,6 +83,8 @@ namespace hiqp {
       KDL::Frame pose_b_;
       KDL::Jacobian jacobian_b_;
       KDL::Jacobian jacobian_dot_b_;
+
+      double phi_max_;
     };
 
   }  // namespace tasks

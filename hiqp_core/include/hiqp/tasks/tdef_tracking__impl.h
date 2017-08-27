@@ -19,7 +19,7 @@
 
 #include <iterator>
 #include <sstream>
-
+//#include <visualization_msgs/MarkerArray.h>
 #include <hiqp/utilities.h>
 
 namespace hiqp {
@@ -31,13 +31,15 @@ namespace hiqp {
 							 std::shared_ptr<Visualizer> visualizer)
       : TaskDefinition(geom_prim_map, visualizer) {
       d_max_=INFINITY;
+      phi_max_=3.1415927/2;
+      //                    marker_pub_ = nh_.advertise<visualization_msgs::MarkerArray> ("new_frame",1);
     }
 
     template <typename PrimitiveA, typename PrimitiveB>
       int TDefTracking<PrimitiveA, PrimitiveB>::init(const std::vector<std::string>& parameters, RobotStatePtr robot_state) {
       int parameters_size = parameters.size();
-      if (parameters_size != 4 && parameters_size != 5) {
-	printHiqpWarning("'" + getTaskName() + "': TDefTracking takes 4 or 5 parameters, got " +
+      if (parameters_size != 4 && parameters_size != 5 && parameters_size != 6) {
+	printHiqpWarning("'" + getTaskName() + "': TDefTracking takes 4, 5 or 6 parameters, got " +
 			 std::to_string(parameters_size) + "! The task was not added!");
 	return -1;
       }
@@ -55,9 +57,20 @@ namespace hiqp {
 	return -2;
       }
 
-      if(parameters_size == 5){
+      if(parameters_size >= 5){
 	d_max_= std::stod(parameters.at(4));
-	assert(d_max_ > 0.0);
+	if(d_max_ <= 0.0){
+	  printHiqpWarning("'" + getTaskName() + "': TDefTracking's parameter 5 needs to be positive! The task was not added!");
+	  return -3;
+	}
+      }
+
+      if(parameters_size >= 6){
+	phi_max_= std::stod(parameters.at(5));
+	if(phi_max_ <= 0.0 || phi_max_ > 3.1415927/2 ){
+	  printHiqpWarning("'" + getTaskName() + "': TDefTracking's parameter 6 needs to be between 0 and PI/2! The task was not added!");
+	  return -4;
+	}
       }
 
       unsigned int n_task_dimensions = 3;
@@ -197,7 +210,7 @@ namespace hiqp {
       return 0;
     }
     
-     template <typename PrimitiveA, typename PrimitiveB>
+    template <typename PrimitiveA, typename PrimitiveB>
       int TDefTracking<PrimitiveA, PrimitiveB>::alignUnitVectors(const KDL::Vector& v1, const KDL::Vector v2, const RobotStatePtr robot_state, Eigen::VectorXd& e, Eigen::VectorXd& e_dot, Eigen::MatrixXd& J, Eigen::MatrixXd& J_dot) {
 
       double q_nr=jacobian_a_.columns();
