@@ -383,15 +383,9 @@ namespace hiqp {
       //CROSS PRODUCT END ==========================================
 
       //DOT PRODUCT =============================================      
-      // KDL::Vector ax1 = pose_a_.M * frame1->getAxisXKDL();
-      // KDL::Vector ax2 = pose_b_.M * frame2->getAxisXKDL();
-      // KDL::Vector ay1 = pose_a_.M * frame1->getAxisYKDL();
-      // KDL::Vector ay2 = pose_b_.M * frame2->getAxisYKDL();
-      // KDL::Vector az1 = pose_a_.M * frame1->getAxisZKDL();
-      // KDL::Vector az2 = pose_b_.M * frame2->getAxisZKDL();
       
       // //abuse the alignUnitVectors function to compute the relevant quantities to align both axis
-      // alignUnitVectors(ay1, ay2, robot_state);
+      // alignUnitVectors(a2, b2, robot_state);
 
       // //temporary save the task errors/jacobians
       // Eigen::VectorXd ey=e_;
@@ -400,7 +394,7 @@ namespace hiqp {
       // Eigen::MatrixXd Jy_dot=J_dot_;  
 
       // //overwrite the class member errors/jacobians
-      // alignUnitVectors(az1, az2, robot_state);
+      // alignUnitVectors(a3, b3, robot_state);
 
       // //temporary save the task errors/jacobians
       // Eigen::VectorXd ez=e_;
@@ -409,7 +403,7 @@ namespace hiqp {
       // Eigen::MatrixXd Jz_dot=J_dot_;
       
       // //overwrite the class member errors/jacobians
-      // alignUnitVectors(ax1, ax2, robot_state);
+      // alignUnitVectors(a1, b1, robot_state);
 
       // //append the previously computed quantities
       // e_.conservativeResize(3);
