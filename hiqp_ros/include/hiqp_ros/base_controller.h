@@ -392,8 +392,8 @@ namespace hiqp_ros {
 
       Eigen::VectorXd _z(2*q_nr);
       for(unsigned int i=0; i<q_nr;i++){
-	_z(2*i)=q.data(i);
-	_z(2*i+1)=qdot.data(i);
+        _z(2*i)=q.data(i);
+        _z(2*i+1)=qdot.data(i);
       }
     
       KFVector z(2*q_nr,_z.data());
@@ -402,34 +402,30 @@ namespace hiqp_ros {
       k_filter_.step(ddq,z);
       KFVector x=k_filter_.getX();
       for(unsigned int i=0; i<q_nr;i++){
-	q.data(i)=x(2*i);
-	qdot.data(i)=x(2*i+1);
+        q.data(i)=x(2*i);
+        qdot.data(i)=x(2*i+1);
       }
     }
-    /* //TRANSFER FUNCTION FILTER UPDATE */
+     //TRANSFER FUNCTION FILTER UPDATE 
     // std::vector<double> q_in(q_nr), qdot_in(q_nr), q_out(q_nr), qdot_out(q_nr);
-    /* for(unsigned int i=0; i<q_nr; i++){ */
-    /*   q_in[i]=q.data(i); */
-    /*   qdot_in[i]=qdot.data(i); */
-    /* } */
-    /* if(input_pos_filter_.update(q_in,q_out)){ */
-    /*   for(unsigned int i=0; i<q_nr; i++)  q.data(i)=q_out[i]; */
-    /* } */
-    /* else{ */
-    /*   ROS_WARN("BaseController<HardwareInterfaceT>::sampleJointValues(): could not update input position filter!"); */
-    /* } */
-    /* if(input_vel_filter_.update(qdot_in,qdot_out)){ */
-    /*   for(unsigned int i=0; i<q_nr; i++)  qdot.data(i)=qdot_out[i]; */
-    /* } */
-    /* else{ */
-    /*   ROS_WARN("BaseController<HardwareInterfaceT>::sampleJointValues(): could not update input velocity filter!"); */
-    /* } */
+    // for(unsigned int i=0; i<q_nr; i++){
+    //   q_in[i]=q.data(i);
+    //   qdot_in[i]=qdot.data(i);
+    // }
+    // if(input_pos_filter_.update(q_in,q_out)){
+    //   for(unsigned int i=0; i<q_nr; i++)  q.data(i)=q_out[i];
+    // }
+    // else{
+    //   ROS_WARN("BaseController<HardwareInterfaceT>::sampleJointValues(): could not update input position filter!");
+    // }
+    // if(input_vel_filter_.update(qdot_in,qdot_out)){
+    //   for(unsigned int i=0; i<q_nr; i++)  qdot.data(i)=qdot_out[i];
+    // }
+    // else{
+    //   ROS_WARN("BaseController<HardwareInterfaceT>::sampleJointValues(): could not update input velocity filter!");
+    // }
 
-  /* for (auto&& handle : joint_handles_map_) { */
-  /*     q(handle.first) = handle.second.getPosition(); */
-  /*     qdot(handle.first) = handle.second.getVelocity(); */
-  /*     effort(handle.first) = handle.second.getEffort(); */
-  /*   } */
+
     
   }
   

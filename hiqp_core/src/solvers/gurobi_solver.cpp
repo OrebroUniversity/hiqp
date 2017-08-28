@@ -250,8 +250,8 @@ void GurobiSolver::QPProblem::setup() {
 		  0, status);
      
 	//DEBUG =======================================
-	model_.write("/home/rkg/Desktop/model.lp");
-	exit(0);
+	//model_.write("/home/rkg/Desktop/model.lp");
+	//exit(0);
 	//DEBUG END ====================================
 	return false;
       }
