@@ -271,8 +271,8 @@ namespace hiqp_ros {
     std::string robot_urdf;
     if (controller_nh_.searchParam("robot_description", full_parameter_path)) {
       controller_nh_.getParam(full_parameter_path, robot_urdf);
-      ROS_ASSERT(
-		 kdl_parser::treeFromString(robot_urdf, robot_state_data_.kdl_tree_));
+      bool success=kdl_parser::treeFromString(robot_urdf, robot_state_data_.kdl_tree_);
+      ROS_ASSERT(success);
       ROS_INFO(
 	       "Loaded the robot's urdf model and initialized the KDL tree "
 	       "successfully");
@@ -298,11 +298,11 @@ namespace hiqp_ros {
 
     unsigned int n_joint_names = joint_names.size();
     n_joints_ = robot_state_data_.kdl_tree_.getNrOfJoints();
+
     if (n_joint_names > n_joints_) {
       ROS_ERROR_STREAM(
 		       "In ROSKinematicsController: The .yaml file"
-		       << " includes more joint names than specified in the .urdf file."
-		       << " Could not successfully initialize controller. Aborting!\n");
+		       << " includes more joint names ("<<n_joint_names<<") than specified in the .urdf file ("<<n_joints_<<") Could not successfully initialize controller. Aborting!\n");
       return -3;
     }
 
