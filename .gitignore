@@ -9,6 +9,7 @@ eg/eg.*
 *.off
 *.x
 x.*
+*.#
 
 */doxygen
 
