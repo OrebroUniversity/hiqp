@@ -86,14 +86,6 @@ void HiQPJointVelocityController::initialize() {
 
   loadTasksFromParamServer();
 
-  //   initialize output control filter 
-  if(output_ctrl_filter_.filters::MultiChannelFilterBase<double>::configure(this->getRobotState()->kdl_jnt_array_vel_.q.rows(),"output_ctrl_filter",this->getControllerNodeHandle())){ 
-    ROS_INFO_STREAM("Configured output control filter with name: "<<output_ctrl_filter_.getName()<<", type: "<<output_ctrl_filter_.getType()<<", nr. of channels: "<<this->getRobotState()->kdl_jnt_array_vel_.q.rows()<<".");
-  }
-  else{
-    ROS_WARN("Error in HiQPJointVelocityController::initialize(): Could not configure output control filter - no filtering will be applied!");
-  }
-
   u_vel_ = Eigen::VectorXd::Zero(getNJoints());
 }
 
@@ -115,24 +107,7 @@ void HiQPJointVelocityController::initialize() {
   //OPTION 1: store prev. control velocities for integration
   u=u_vel_+ddq*period_.toSec();
    u_vel_=u; //store the computed velocity controls for the next integration step
-
-
-  //  OPTION 2: filter the computed velocity differences 
-  //  Eigen::VectorXd qdot=this->getRobotState()->kdl_jnt_array_vel_.qdot.data;
-  //  u=period_.toSec()*ddq; //delta dq
-  // //filter the controls
-  // unsigned int q_nr=u.rows();
-  // std::vector<double> u_in(q_nr),  u_out(q_nr);
-  // for(unsigned int i=0; i<q_nr; i++) u_in[i]=u(i);
-
-  // if(output_ctrl_filter_.update(u_in,u_out)){
-  //   for(unsigned int i=0; i<q_nr; i++)  u(i)=u_out[i];
-  // }
-  // else{
-  //   ROS_WARN("HiQPJointVelocityController::computeControls(...): could not update output control filter!");
-  // }
-
-	  
+  
   renderPrimitives();
 
   monitorTasks(static_cast<double>(opt_time.count()));

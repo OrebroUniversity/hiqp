@@ -26,10 +26,8 @@
 #include <ros/node_handle.h>
 #include <ros/ros.h>
 
-#include <filters/transfer_function.h>
 #include <hiqp/robot_state.h>
 #include <hiqp_msgs/JointControllerState.h>
-#include <hiqp_ros/kalman/hiqp_kfilter.hpp>
 #include <hiqp_ros/utilities.h>
 #include <kdl/chaindynparam.hpp>
 #include <kdl/jntarray.hpp>
@@ -84,8 +82,6 @@ protected:
   //}
 
   ros::Duration period_;
-  filters::MultiChannelTransferFunctionFilter<double> input_vel_filter_;
-  filters::MultiChannelTransferFunctionFilter<double> input_pos_filter_;
 
 private:
   BaseController(const BaseController &other) = delete;
@@ -99,7 +95,6 @@ private:
   void sampleJointValues();
   void setControls();
   void publishControllerState();
-  void updateStateFilter();
 
   typedef std::map<unsigned int, hardware_interface::JointHandle>
       JointHandleMap;
@@ -117,7 +112,6 @@ private:
   std::mutex handles_mutex_;
   unsigned int n_joints_;
 
-  HiQPKFilter k_filter_;
   realtime_tools::RealtimePublisher<hiqp_msgs::JointControllerState>
       c_state_pub_;
   ros::Time last_c_state_update_;
@@ -144,133 +138,9 @@ bool BaseController<HardwareInterfaceT>::init(HardwareInterfaceT *hw,
   loadUrdfToKdlTree();
   loadJointsAndSetJointHandlesMap();
 
-  // initialize input velocity filter
-  if (input_vel_filter_.filters::MultiChannelFilterBase<double>::configure(
-          robot_state_ptr_->kdl_jnt_array_vel_.q.rows(), "input_vel_filter",
-          controller_nh_)) {
-    ROS_INFO_STREAM("Configured input velocity filter with name: "
-                    << input_vel_filter_.getName() << ", type: "
-                    << input_vel_filter_.getType() << ", nr. of channels: "
-                    << robot_state_ptr_->kdl_jnt_array_vel_.q.rows() << ".");
-  } else {
-    ROS_WARN("Error in BaseController<HardwareInterfaceT>::init(...): Could "
-             "not configure input velocity filter - no filtering will be "
-             "applied!");
-  }
-  // initialize input position filter
-  if (input_pos_filter_.filters::MultiChannelFilterBase<double>::configure(
-          robot_state_ptr_->kdl_jnt_array_vel_.q.rows(), "input_pos_filter",
-          controller_nh_)) {
-    ROS_INFO_STREAM("Configured input position filter with name: "
-                    << input_pos_filter_.getName() << ", type: "
-                    << input_pos_filter_.getType() << ", nr. of channels: "
-                    << robot_state_ptr_->kdl_jnt_array_vel_.q.rows() << ".");
-  } else {
-    ROS_WARN("Error in BaseController<HardwareInterfaceT>::init(...): Could "
-             "not configure input position filter - no filtering will be "
-             "applied!");
-  }
-
   sampleJointValues();
   initialize();
-
-  // INITIALIZE KALMAN FILTER
-  XmlRpc::XmlRpcValue config;
-  if (!controller_nh.getParam("kalman_state_filter", config)) {
-    ROS_WARN("Error in BaseController<HardwareInterfaceT>::init(...): Couldn't "
-             "load kalman filter parameters from the server!");
-  } else {
-    // get the params map
-    XmlRpc::XmlRpcValue _params = config["params"];
-    if (_params.getType() != XmlRpc::XmlRpcValue::TypeStruct) {
-      ROS_ERROR("Error in BaseController<HardwareInterfaceT>::init(...): "
-                "Kalman params must be a map");
-    } else {
-      // Load params into map
-      std::map<std::string, XmlRpc::XmlRpcValue> params;
-      for (XmlRpc::XmlRpcValue::iterator it = _params.begin();
-           it != _params.end(); ++it) {
-        ROS_DEBUG("Loading param %s\n", it->first.c_str());
-        params[it->first] = it->second;
-      }
-
-      std::map<std::string, XmlRpc::XmlRpcValue>::iterator it =
-          params.find("r_p");
-      if (it == params.end()) {
-        ROS_ERROR("Error in BaseController<HardwareInterfaceT>::init(...): "
-                  "could not find Kalman parameter r_p");
-      }
-      ROS_ASSERT(it->second.getType() == XmlRpc::XmlRpcValue::TypeDouble);
-      double r_p = it->second;
-      it = params.find("r_v");
-      if (it == params.end()) {
-        ROS_ERROR("Error in BaseController<HardwareInterfaceT>::init(...): "
-                  "could not find Kalman parameter r_v");
-      }
-      ROS_ASSERT(it->second.getType() == XmlRpc::XmlRpcValue::TypeDouble);
-      double r_v = it->second;
-      it = params.find("r_pv");
-      if (it == params.end()) {
-        ROS_ERROR("Error in BaseController<HardwareInterfaceT>::init(...): "
-                  "could not find Kalman parameter r_pv");
-      }
-      ROS_ASSERT(it->second.getType() == XmlRpc::XmlRpcValue::TypeDouble);
-      double r_pv = it->second;
-      it = params.find("q_p");
-      if (it == params.end()) {
-        ROS_ERROR("Error in BaseController<HardwareInterfaceT>::init(...): "
-                  "could not find Kalman parameter q_p");
-      }
-      ROS_ASSERT(it->second.getType() == XmlRpc::XmlRpcValue::TypeDouble);
-      double q_p = it->second;
-      it = params.find("q_v");
-      if (it == params.end()) {
-        ROS_ERROR("Error in BaseController<HardwareInterfaceT>::init(...): "
-                  "could not find Kalman parameter q_v");
-      }
-      ROS_ASSERT(it->second.getType() == XmlRpc::XmlRpcValue::TypeDouble);
-      double q_v = it->second;
-      it = params.find("q_pv");
-      if (it == params.end()) {
-        ROS_ERROR("Error in BaseController<HardwareInterfaceT>::init(...): "
-                  "could not find Kalman parameter q_pv");
-      }
-      ROS_ASSERT(it->second.getType() == XmlRpc::XmlRpcValue::TypeDouble);
-      double q_pv = it->second;
-      it = params.find("p0");
-      if (it == params.end()) {
-        ROS_ERROR("Error in BaseController<HardwareInterfaceT>::init(...): "
-                  "could not find Kalman parameter p0");
-      }
-      ROS_ASSERT(it->second.getType() == XmlRpc::XmlRpcValue::TypeDouble);
-      double p0 = it->second;
-
-      KDL::JntArray q = robot_state_data_.kdl_jnt_array_vel_.q;
-      KDL::JntArray qdot = robot_state_data_.kdl_jnt_array_vel_.qdot;
-      unsigned int q_nr = q.rows();
-      k_filter_.setDim(2 * q_nr, q_nr, 2 * q_nr, 2 * q_nr, 2 * q_nr);
-      Eigen::MatrixXd _R = Eigen::MatrixXd::Ones(q_nr * 2, q_nr * 2) * r_pv;
-      Eigen::MatrixXd _Q = Eigen::MatrixXd::Ones(q_nr * 2, q_nr * 2) * q_pv;
-      Eigen::MatrixXd _P0 = Eigen::MatrixXd::Identity(q_nr * 2, q_nr * 2) * p0;
-      Eigen::VectorXd _x0(2 * q_nr);
-
-      for (unsigned int i = 0; i < q_nr; i++) {
-        _x0(2 * i) = q.data(i);
-        _x0(2 * i + 1) = qdot.data(i);
-        _R(2 * i, 2 * i) = r_p;
-        _R(2 * i + 1, 2 * i + 1) = r_v;
-        _Q(2 * i, 2 * i) = q_p;
-        _Q(2 * i + 1, 2 * i + 1) = q_v;
-      }
-      KFVector x0(2 * q_nr, _x0.data());
-      KFMatrix R(2 * q_nr, 2 * q_nr, _R.data());
-      KFMatrix Q(2 * q_nr, 2 * q_nr, _Q.data());
-      KFMatrix P0(2 * q_nr, 2 * q_nr, _P0.data());
-
-      k_filter_.init(x0, P0, R, Q, period_.toSec());
-    }
-  }
-
+  
   c_state_pub_.init(controller_nh, "joint_controller_state", 1);
   last_c_state_update_ = ros::Time::now();
   controller_nh.param("c_state_publish_rate", c_state_publish_rate_, 100.0);
@@ -293,7 +163,6 @@ void BaseController<HardwareInterfaceT>::update(const ros::Time &time,
                                                 const ros::Duration &period) {
   period_ = period;
   sampleJointValues();
-  updateStateFilter(); // Kalman filter step using zk, uk-1
   updateControls(ddq_, u_);
   setControls();
   publishControllerState();
@@ -444,54 +313,6 @@ void BaseController<HardwareInterfaceT>::publishControllerState() {
       c_state_pub_.unlockAndPublish();
     }
   }
-}
-
-template <typename HardwareInterfaceT>
-void BaseController<HardwareInterfaceT>::updateStateFilter() {
-  KDL::JntArray &q = robot_state_data_.kdl_jnt_array_vel_.q;
-  KDL::JntArray &qdot = robot_state_data_.kdl_jnt_array_vel_.qdot;
-  unsigned int q_nr = q.rows();
-
-  // KALMAN FILTER UPDATE
-  if (k_filter_.isInitialized()) {
-    k_filter_.setSamplingTime(period_.toSec());
-
-    Eigen::VectorXd _z(2 * q_nr);
-    for (unsigned int i = 0; i < q_nr; i++) {
-      _z(2 * i) = q.data(i);
-      _z(2 * i + 1) = qdot.data(i);
-    }
-
-    KFVector z(2 * q_nr, _z.data());
-    KFVector ddq(q_nr, ddq_.data());
-
-    k_filter_.step(ddq, z);
-    KFVector x = k_filter_.getX();
-    for (unsigned int i = 0; i < q_nr; i++) {
-      q.data(i) = x(2 * i);
-      qdot.data(i) = x(2 * i + 1);
-    }
-  }
-  // TRANSFER FUNCTION FILTER UPDATE
-  // std::vector<double> q_in(q_nr), qdot_in(q_nr), q_out(q_nr), qdot_out(q_nr);
-  // for(unsigned int i=0; i<q_nr; i++){
-  //   q_in[i]=q.data(i);
-  //   qdot_in[i]=qdot.data(i);
-  // }
-  // if(input_pos_filter_.update(q_in,q_out)){
-  //   for(unsigned int i=0; i<q_nr; i++)  q.data(i)=q_out[i];
-  // }
-  // else{
-  //   ROS_WARN("BaseController<HardwareInterfaceT>::sampleJointValues(): could
-  //   not update input position filter!");
-  // }
-  // if(input_vel_filter_.update(qdot_in,qdot_out)){
-  //   for(unsigned int i=0; i<q_nr; i++)  qdot.data(i)=qdot_out[i];
-  // }
-  // else{
-  //   ROS_WARN("BaseController<HardwareInterfaceT>::sampleJointValues(): could
-  //   not update input velocity filter!");
-  // }
 }
 
 } // namespace force_controllers

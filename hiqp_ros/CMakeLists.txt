@@ -29,7 +29,6 @@ find_package(catkin REQUIRED COMPONENTS roscpp
                                         visualization_msgs
                                         kdl_parser
                                         hiqp_core
-					filters
 					realtime_tools					
                                         hiqp_msgs
                                         control_msgs
@@ -37,7 +36,7 @@ find_package(catkin REQUIRED COMPONENTS roscpp
 
 find_package(orocos_kdl REQUIRED)
 
-catkin_package(CATKIN_DEPENDS roscpp controller_interface visualization_msgs filters realtime_tools hiqp_core hiqp_msgs kdl_parser control_msgs actionlib
+catkin_package(CATKIN_DEPENDS roscpp controller_interface visualization_msgs realtime_tools hiqp_core hiqp_msgs kdl_parser control_msgs actionlib
                INCLUDE_DIRS include
                LIBRARIES ${PROJECT_NAME} hiqp_client
                DEPENDS orocos_kdl)
@@ -55,8 +54,7 @@ add_library(${PROJECT_NAME} src/hiqp_joint_velocity_controller.cpp
                             src/hiqp_service_handler.cpp
                             src/ros_topic_subscriber.cpp
                             src/ros_visualizer.cpp
-                            src/utilities.cpp
-                            src/hiqp_kfilter.cpp)
+                            src/utilities.cpp)
 
 add_dependencies(${PROJECT_NAME} hiqp_msgs_generate_messages_cpp)
 
