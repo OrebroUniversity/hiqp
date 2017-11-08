@@ -187,6 +187,7 @@ namespace hiqp {
     KDL::Vector tip=T_total.p; //reference point expressed in the root frame
     Eigen::VectorXd vn=jac.data*qdot_in.data; //tip velocity
 
+    
     //forward-pass from root to tip to calculate the jacobian derivative
     KDL::TreeJntToJacSolver jnt_jac_solver(tree);
     KDL::Jacobian jnt_jac(tree.getNrOfJoints());
@@ -204,6 +205,7 @@ namespace hiqp {
 
       if (GetTreeElementSegment(segments[i]->second).getJoint().getType() != KDL::Joint::None) {
 	// compute the jacobian w.r.t, the current joint center to compute the joint velocity
+	jnt_jac.data.setZero();
 	assert(jnt_jac_solver.JntToJac(q_in,jnt_jac,segments[i]->first) == 0);
 	Eigen::VectorXd v=jnt_jac.data*qdot_in.data;
 	
