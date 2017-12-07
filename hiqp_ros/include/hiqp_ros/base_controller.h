@@ -22,7 +22,9 @@
 #include <string>
 #include <vector>
 
-#include <controller_interface/controller.h>
+#include <controller_interface/multi_interface_controller.h>
+#include <hardware_interface/force_torque_sensor_interface.h>
+#include <hardware_interface/robot_hw.h>
 #include <ros/node_handle.h>
 #include <ros/ros.h>
 
@@ -50,12 +52,16 @@ using hiqp::RobotStatePtr;
  *  \author Marcus A Johansson */
 template <typename HardwareInterfaceT>
 class BaseController
-    : public controller_interface::Controller<HardwareInterfaceT> {
+    : public controller_interface::MultiInterfaceController<
+          HardwareInterfaceT, hardware_interface::ForceTorqueSensorInterface> {
 public:
-  BaseController() = default;
+  BaseController()
+      : controller_interface::MultiInterfaceController<
+            HardwareInterfaceT, hardware_interface::ForceTorqueSensorInterface>(
+            true){};
   ~BaseController() noexcept = default;
 
-  bool init(HardwareInterfaceT *hw, ros::NodeHandle &controller_nh);
+  bool init(hardware_interface::RobotHW *hw, ros::NodeHandle &controller_nh);
 
   void starting(const ros::Time &time) {}
 
@@ -92,12 +98,16 @@ private:
   // void loadDesiredSamplingTime();
   int loadUrdfToKdlTree();
   int loadJointsAndSetJointHandlesMap();
+  int loadSensorsAndSetSensorHandlesMap();
   void sampleJointValues();
+  void sampleSensorValues();  
   void setControls();
   void publishControllerState();
 
   typedef std::map<unsigned int, hardware_interface::JointHandle>
       JointHandleMap;
+  typedef std::map<std::string, hardware_interface::ForceTorqueSensorHandle>
+      SensorHandleMap;
 
   RobotState robot_state_data_;
   RobotStatePtr robot_state_ptr_;
@@ -107,10 +117,14 @@ private:
 
   ros::NodeHandle controller_nh_;
   std::shared_ptr<ros::NodeHandle> controller_nh_ptr_;
-  HardwareInterfaceT *hardware_interface_;
+  HardwareInterfaceT *jnt_hw_;
+  hardware_interface::ForceTorqueSensorInterface *fts_hw_;
   JointHandleMap joint_handles_map_;
+  SensorHandleMap sensor_handles_map_;
+
   std::mutex handles_mutex_;
   unsigned int n_joints_;
+  unsigned int n_sensors_;  
 
   realtime_tools::RealtimePublisher<hiqp_msgs::JointControllerState>
       c_state_pub_;
@@ -124,10 +138,22 @@ private:
 //
 //////////////////////////////////////////////////////////////////////////////
 
+//=====================================================================================
 template <typename HardwareInterfaceT>
-bool BaseController<HardwareInterfaceT>::init(HardwareInterfaceT *hw,
+bool BaseController<HardwareInterfaceT>::init(hardware_interface::RobotHW *hw,
                                               ros::NodeHandle &controller_nh) {
-  hardware_interface_ = hw;
+  jnt_hw_ = hw->get<HardwareInterfaceT>();
+  if (!jnt_hw_) {
+    ROS_ERROR("Could not get joint hardware interface. Cannot initialize "
+              "controller.");
+    return false;
+  }
+  // try to initialize optional force/torque sensors
+  fts_hw_ = hw->get<hardware_interface::ForceTorqueSensorInterface>();
+  if (!fts_hw_)
+    ROS_WARN("Could not get force/torque sensor hardware interface. No fts "
+             "information will be available.");
+
   controller_nh_ = controller_nh;
   controller_nh_ptr_.reset(&controller_nh_);
   robot_state_ptr_.reset(&robot_state_data_);
@@ -137,37 +163,50 @@ bool BaseController<HardwareInterfaceT>::init(HardwareInterfaceT *hw,
 
   loadUrdfToKdlTree();
   loadJointsAndSetJointHandlesMap();
+  loadSensorsAndSetSensorHandlesMap();
 
   sampleJointValues();
+  sampleSensorValues();  
   initialize();
-  
+
   c_state_pub_.init(controller_nh, "joint_controller_state", 1);
   last_c_state_update_ = ros::Time::now();
   controller_nh.param("c_state_publish_rate", c_state_publish_rate_, 100.0);
-  c_state_pub_.msg_.name.resize(n_joints_);
-
-   for (auto&& it : robot_state_data_.kdl_tree_.getSegments()) {
-     c_state_pub_.msg_.name.at(it.second.q_nr)=it.second.segment.getJoint().getName();
-     
-    }
+  c_state_pub_.msg_.joints.resize(n_joints_);
+  c_state_pub_.msg_.sensors.resize(n_sensors_);
   
+  for (auto &&it : robot_state_data_.kdl_tree_.getSegments()) {
+    c_state_pub_.msg_.joints.at(it.second.q_nr).name = it.second.segment.getJoint().getName();
+  }
+
+  for (unsigned int i=0; i<n_sensors_;i++){
+    c_state_pub_.msg_.sensors.at(i).name=robot_state_data_.sensor_handle_info_[i].sensor_name_;
+    c_state_pub_.msg_.sensors.at(i).frame_id=robot_state_data_.sensor_handle_info_[i].frame_id_;    
+  }
+
+  /* for (unsigned i=0; i<sensor_names.size(); i++){ */
+  /*   // sensor handle */
+  /*   sensors_.push_back(hw_e->getHandle(sensor_names[i])); */
+
   /* for (auto &&handle : joint_handles_map_) { */
-  /*   //    std::cerr<<"at: "<<handle.first<<", name: "<<handle.second.getName()<<std::endl; */
+  /*   //    std::cerr<<"at: "<<handle.first<<", name:
+   * "<<handle.second.getName()<<std::endl; */
   /*       c_state_pub_.msg_.name.at(handle.first) = handle.second.getName(); */
   /* } */
   return true;
 }
-
+//=====================================================================================
 template <typename HardwareInterfaceT>
 void BaseController<HardwareInterfaceT>::update(const ros::Time &time,
                                                 const ros::Duration &period) {
   period_ = period;
   sampleJointValues();
+  sampleSensorValues();    
   updateControls(ddq_, u_);
   setControls();
   publishControllerState();
 }
-
+//=====================================================================================
 template <typename HardwareInterfaceT>
 int BaseController<HardwareInterfaceT>::loadUrdfToKdlTree() {
   std::string full_parameter_path;
@@ -186,7 +225,23 @@ int BaseController<HardwareInterfaceT>::loadUrdfToKdlTree() {
   }
   return 0;
 }
+//=====================================================================================
+template <typename HardwareInterfaceT>
+int BaseController<HardwareInterfaceT>::loadSensorsAndSetSensorHandlesMap() {
+  if (!fts_hw_)
+    return -1;
 
+  const std::vector<std::string> &sensor_names = fts_hw_->getNames();
+  n_sensors_= sensor_names.size();
+  for (unsigned i = 0; i < n_sensors_; i++) {
+    ROS_DEBUG("Got sensor %s", sensor_names[i].c_str());
+    sensor_handles_map_.emplace(sensor_names[i],
+                                fts_hw_->getHandle(sensor_names[i]));
+  }
+
+  return 0;
+}
+//=====================================================================================
 template <typename HardwareInterfaceT>
 int BaseController<HardwareInterfaceT>::loadJointsAndSetJointHandlesMap() {
   std::string param_name = "joints";
@@ -219,7 +274,7 @@ int BaseController<HardwareInterfaceT>::loadJointsAndSetJointHandlesMap() {
       unsigned int q_nr =
           hiqp::kdl_getQNrFromJointName(robot_state_data_.kdl_tree_, name);
       // std::cout << "Joint found: '" << name << "', qnr: " << q_nr << "\n";
-      joint_handles_map_.emplace(q_nr, hardware_interface_->getHandle(name));
+      joint_handles_map_.emplace(q_nr, jnt_hw_->getHandle(name));
       qnrs.erase(std::remove(qnrs.begin(), qnrs.end(), q_nr), qnrs.end());
       robot_state_data_.joint_handle_info_.push_back(
           hiqp::JointHandleInfo(q_nr, name, true, true));
@@ -253,7 +308,24 @@ int BaseController<HardwareInterfaceT>::loadJointsAndSetJointHandlesMap() {
   u_ = Eigen::VectorXd::Zero(n_joints_);
   return 0;
 }
+ //=====================================================================================
+template <typename HardwareInterfaceT>
+void BaseController<HardwareInterfaceT>::sampleSensorValues() {
 
+   if (!fts_hw_)
+    return;
+
+  handles_mutex_.lock();
+
+  for( unsigned int i=0; i<robot_state_data_.sensor_handle_info_.size();i++){
+    hiqp::SensorHandleInfo &h = robot_state_data_.sensor_handle_info_[i];
+    h.force_=Eigen::Map<Eigen::Vector3d>(const_cast<double*>(sensor_handles_map_.at(h.sensor_name_).getForce()));
+    h.torque_=Eigen::Map<Eigen::Vector3d>(const_cast<double*>(sensor_handles_map_.at(h.sensor_name_).getTorque()));    
+  }
+
+  handles_mutex_.unlock();
+}
+//=====================================================================================
 template <typename HardwareInterfaceT>
 void BaseController<HardwareInterfaceT>::sampleJointValues() {
   robot_state_data_.sampling_time_ = period_.toSec();
@@ -274,7 +346,7 @@ void BaseController<HardwareInterfaceT>::sampleJointValues() {
 
   handles_mutex_.unlock();
 }
-
+//=====================================================================================
 template <typename HardwareInterfaceT>
 void BaseController<HardwareInterfaceT>::setControls() {
   handles_mutex_.lock();
@@ -283,7 +355,7 @@ void BaseController<HardwareInterfaceT>::setControls() {
   }
   handles_mutex_.unlock();
 }
-
+//=====================================================================================
 template <typename HardwareInterfaceT>
 void BaseController<HardwareInterfaceT>::publishControllerState() {
 
@@ -293,23 +365,30 @@ void BaseController<HardwareInterfaceT>::publishControllerState() {
     last_c_state_update_ = now;
 
     if (c_state_pub_.trylock()) {
-      handles_mutex_.lock();
+
       KDL::JntArray q = robot_state_data_.kdl_jnt_array_vel_.q;
       KDL::JntArray qdot = robot_state_data_.kdl_jnt_array_vel_.qdot;
       KDL::JntArray effort = robot_state_data_.kdl_effort_;
-      handles_mutex_.unlock();
 
       c_state_pub_.msg_.header.stamp = ros::Time::now();
-      c_state_pub_.msg_.position.clear();
-      c_state_pub_.msg_.velocity.clear();
-      c_state_pub_.msg_.effort.clear();
-      c_state_pub_.msg_.command.clear();
+
       for (unsigned int i = 0; i < n_joints_; i++) {
-        c_state_pub_.msg_.command.push_back(u_(i));
-        c_state_pub_.msg_.position.push_back(q(i));
-        c_state_pub_.msg_.velocity.push_back(qdot(i));
-        c_state_pub_.msg_.effort.push_back(effort(i));
+        c_state_pub_.msg_.joints[i].command = u_(i);
+        c_state_pub_.msg_.joints[i].position = q(i);
+        c_state_pub_.msg_.joints[i].velocity = qdot(i);
+        c_state_pub_.msg_.joints[i].effort = effort(i);
       }
+      for (unsigned int i = 0; i < n_sensors_; i++) {
+	c_state_pub_.msg_.sensors[i].force.clear();
+	c_state_pub_.msg_.sensors[i].force.push_back(robot_state_data_.sensor_handle_info_[i].force_(0));
+	c_state_pub_.msg_.sensors[i].force.push_back(robot_state_data_.sensor_handle_info_[i].force_(1));
+	c_state_pub_.msg_.sensors[i].force.push_back(robot_state_data_.sensor_handle_info_[i].force_(2));
+	c_state_pub_.msg_.sensors[i].torque.clear();		
+	c_state_pub_.msg_.sensors[i].torque.push_back(robot_state_data_.sensor_handle_info_[i].torque_(0));
+	c_state_pub_.msg_.sensors[i].torque.push_back(robot_state_data_.sensor_handle_info_[i].torque_(1));
+	c_state_pub_.msg_.sensors[i].torque.push_back(robot_state_data_.sensor_handle_info_[i].torque_(2));	
+      }
+
       c_state_pub_.unlockAndPublish();
     }
   }

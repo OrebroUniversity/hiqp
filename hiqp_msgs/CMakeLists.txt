@@ -27,6 +27,8 @@ add_message_files(FILES TaskMeasure.msg
                         TaskMeasures.msg
                         StringArray.msg
                         JointControllerState.msg
+			JointInfo.msg
+			FTSInfo.msg
                         Vector3d.msg
                         Task.msg)
 

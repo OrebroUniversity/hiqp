@@ -28,16 +28,27 @@ namespace hiqp {
  * name, and whether that joint's resource is readable/writable.
  *  \author Marcus A Johansson */
 struct JointHandleInfo {
-  JointHandleInfo(unsigned int q_nr, const std::string& joint_name,
+  JointHandleInfo(unsigned int q_nr, const std::string &joint_name,
                   bool readable, bool writable)
-      : q_nr_(q_nr),
-        joint_name_(joint_name),
-        readable_(readable),
+      : q_nr_(q_nr), joint_name_(joint_name), readable_(readable),
         writable_(writable) {}
   unsigned int q_nr_;
   std::string joint_name_;
   bool readable_;
   bool writable_;
+};
+ 
+/*! \brief Holds information about the attached force/torque sensor names, frame ids and force/torque measurements.
+ *\author Robert Krug */
+struct SensorHandleInfo {
+  SensorHandleInfo(const std::string &sensor_name, const std::string &frame_id,
+                   const Eigen::Vector3d &force, const Eigen::Vector3d &torque)
+      : sensor_name_(sensor_name), frame_id_(frame_id), force_(force),
+        torque_(torque) {}
+  std::string sensor_name_;
+  std::string frame_id_;
+  Eigen::Vector3d force_;
+  Eigen::Vector3d torque_;
 };
 
 /*! \brief Holds the state of the robot (sampling time, kdl tree, joint
@@ -50,11 +61,13 @@ struct RobotState {
   KDL::JntArrayVel kdl_jnt_array_vel_;
   KDL::JntArray kdl_effort_;
   std::vector<JointHandleInfo> joint_handle_info_;
+  std::vector<SensorHandleInfo> sensor_handle_info_;
 
   /// \brief Returns whether the joint with qnr is writable or not
   inline bool isQNrWritable(unsigned int qnr) const {
-    for (auto&& jhi : joint_handle_info_) {
-      if (jhi.q_nr_ == qnr) return jhi.writable_;
+    for (auto &&jhi : joint_handle_info_) {
+      if (jhi.q_nr_ == qnr)
+        return jhi.writable_;
     }
     return false;
   }
@@ -67,8 +80,9 @@ struct RobotState {
   /// resources)
   inline unsigned int getNumControls() const {
     unsigned int n = 0;
-    for (auto&& jhi : joint_handle_info_) {
-      if (jhi.writable_) n++;
+    for (auto &&jhi : joint_handle_info_) {
+      if (jhi.writable_)
+        n++;
     }
     return n;
   }
@@ -80,6 +94,6 @@ struct RobotState {
  *  \author Marcus A Johansson */
 typedef std::shared_ptr<const RobotState> RobotStatePtr;
 
-}  // namespace hiqp
+} // namespace hiqp
 
-#endif  // include guard
+#endif // include guard
