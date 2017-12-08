@@ -26,11 +26,11 @@ namespace hiqp {
   namespace tasks {
 
     template <typename PrimitiveA, typename PrimitiveB>
-      TDefForceProjection<PrimitiveA, PrimitiveB>::TDefForceProjection(std::shared_ptr<GeometricPrimitiveMap> geom_prim_map, std::shared_ptr<Visualizer> visualizer)
+      TDefFTSProjection<PrimitiveA, PrimitiveB>::TDefFTSProjection(std::shared_ptr<GeometricPrimitiveMap> geom_prim_map, std::shared_ptr<Visualizer> visualizer)
       : TDefGeometricProjection<PrimitiveA, PrimitiveB>(geom_prim_map, visualizer) {}
 
     template <typename PrimitiveA, typename PrimitiveB>
-      int TDefForceProjection<PrimitiveA, PrimitiveB>::init(const std::vector<std::string>& parameters, RobotStatePtr robot_state) {
+      int TDefFTSProjection<PrimitiveA, PrimitiveB>::init(const std::vector<std::string>& parameters, RobotStatePtr robot_state) {
       int parameters_size = parameters.size();
       /* if (parameters_size != 4) { */
       /* 	printHiqpWarning( */
@@ -48,7 +48,7 @@ namespace hiqp {
     }
 
     template <typename PrimitiveA, typename PrimitiveB>
-      int TDefForceProjection<PrimitiveA, PrimitiveB>::update(RobotStatePtr robot_state) {
+      int TDefFTSProjection<PrimitiveA, PrimitiveB>::update(RobotStatePtr robot_state) {
     
       //update the base class
       int retval=TDefGeometricProjection<PrimitiveA, PrimitiveB>::update(robot_state);
@@ -60,7 +60,7 @@ namespace hiqp {
     }
 
     template <typename PrimitiveA, typename PrimitiveB>
-      int TDefForceProjection<PrimitiveA, PrimitiveB>::monitor() {
+      int TDefFTSProjection<PrimitiveA, PrimitiveB>::monitor() {
       return 0;
     }
   }  // namespace tasks

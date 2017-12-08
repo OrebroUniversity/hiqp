@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include <hiqp/tasks/tdef_force_projection.h>
+#include <hiqp/tasks/tdef_fts_projection.h>
 
 // #include <hiqp/geometric_primitives/geometric_box.h>
 // #include <hiqp/geometric_primitives/geometric_cylinder.h>
@@ -44,10 +44,10 @@ namespace hiqp {
     //
     ///////////////////////////////////////////////////////////////////////////////
 
-    template <>
-    int TDefForceProjection<GeometricPoint, GeometricPoint>::projectForces(std::shared_ptr<GeometricPoint> point1,
-    								       	 std::shared_ptr<GeometricPoint> point2,
-    									 const RobotStatePtr robot_state) {
+    // template <>
+    // int TDefFTSProjection<GeometricPoint, GeometricPoint>::projectForces(std::shared_ptr<GeometricPoint> point1,
+    // 								       	 std::shared_ptr<GeometricPoint> point2,
+    // 									 const RobotStatePtr robot_state) {
 
   
       // KDL::Vector p1__ = pose_a_.M * point1->getPointKDL(); //point 1 from link origin to ee expressed in the world frame
@@ -109,11 +109,11 @@ namespace hiqp {
       // std::cerr<<"J_dot_: "<<std::endl<<J_dot_<<std::endl; 
       // DEBUG END =====================================================
   
-       return 0;
-     }
+     //   return 0;
+     // }
 
 //     // template <>
-//     // int TDefForceProjection<GeometricPoint, GeometricLine>::projectForces(
+//     // int TDefFTSProjection<GeometricPoint, GeometricLine>::projectForces(
 //     //     std::shared_ptr<GeometricPoint> point,
 //     //     std::shared_ptr<GeometricLine> line) {
 //     //   KDL::Vector p__ = pose_a_.M * point->getPointKDL();
@@ -146,10 +146,10 @@ namespace hiqp {
 //     //   return 0;
 //     // }
 
-//     // template <>
-//     // int TDefForceProjection<GeometricPoint, GeometricPlane>::projectForces(std::shared_ptr<GeometricPoint> point,
-//     // 									 std::shared_ptr<GeometricPlane> plane,
-//     // 									const RobotStatePtr robot_state) {
+    template <>
+    int TDefFTSProjection<GeometricPoint, GeometricPlane>::projectForces(std::shared_ptr<GeometricPoint> point,
+    									 std::shared_ptr<GeometricPlane> plane,
+    									const RobotStatePtr robot_state) {
   
 //     //   KDL::Vector p1__ = pose_a_.M * point->getPointKDL(); //point 1 from link origin to ee expressed in the world frame
 //     //   KDL::Vector p1 = pose_a_.p + p1__; //absolute ee point 1 expressed in the world frame
@@ -204,11 +204,11 @@ namespace hiqp {
 //     //   // std::cerr<<"J_dot_: "<<std::endl<<J_dot_<<std::endl<<std::endl; 
 //     //   // // // DEBUG END =====================================================
 
-//     //   return 0;
-//     // }
+				return 0;
+     }
 
 //     // template <>
-//     // int TDefForceProjection<GeometricPoint, GeometricBox>::projectForces(
+//     // int TDefFTSProjection<GeometricPoint, GeometricBox>::projectForces(
 //     //     std::shared_ptr<GeometricPoint> point, std::shared_ptr<GeometricBox> box) {
 //     //   KDL::Vector p__ = pose_a_.M * point->getPointKDL();
 //     //   KDL::Vector p = pose_a_.p + p__;
@@ -254,7 +254,7 @@ namespace hiqp {
 //     // }
 
 //     // template <>
-//     // int TDefForceProjection<GeometricPoint, GeometricCylinder>::projectForces(std::shared_ptr<GeometricPoint> point,
+//     // int TDefFTSProjection<GeometricPoint, GeometricCylinder>::projectForces(std::shared_ptr<GeometricPoint> point,
 //     // 									    std::shared_ptr<GeometricCylinder> cylinder,
 //     // 									    const RobotStatePtr robot_state) {
 //     //   KDL::Vector p2__ = pose_a_.M * point->getPointKDL(); //ee point expressed in the world frame
@@ -307,7 +307,7 @@ namespace hiqp {
 //     // }
 
 //     // template <>
-//     // int TDefForceProjection<GeometricPoint, GeometricSphere>::projectForces(std::shared_ptr<GeometricPoint> point,
+//     // int TDefFTSProjection<GeometricPoint, GeometricSphere>::projectForces(std::shared_ptr<GeometricPoint> point,
 //     // 									  std::shared_ptr<GeometricSphere> sphere,
 //     // 									  const RobotStatePtr robot_state) {
 
@@ -357,7 +357,7 @@ namespace hiqp {
 //     // ///////////////////////////////////////////////////////////////////////////////
 
 //     // template <>
-//     // int TDefForceProjection<GeometricLine, GeometricLine>::projectForces(
+//     // int TDefFTSProjection<GeometricLine, GeometricLine>::projectForces(
 //     //     std::shared_ptr<GeometricLine> line1,
 //     //     std::shared_ptr<GeometricLine> line2) {
 //     //   KDL::Vector v1 = pose_a_.M * line1->getDirectionKDL();
@@ -411,7 +411,7 @@ namespace hiqp {
 //     // ///////////////////////////////////////////////////////////////////////////////
 
 //     // template <>
-//     // int TDefForceProjection<GeometricSphere, GeometricPlane>::projectForces(std::shared_ptr<GeometricSphere> sphere,
+//     // int TDefFTSProjection<GeometricSphere, GeometricPlane>::projectForces(std::shared_ptr<GeometricSphere> sphere,
 //     // 									  std::shared_ptr<GeometricPlane> plane,
 //     // 									  const RobotStatePtr robot_state) {
 
@@ -456,7 +456,7 @@ namespace hiqp {
 //     // }
 
 //     // template <>
-//     // int TDefForceProjection<GeometricSphere, GeometricSphere>::projectForces(std::shared_ptr<GeometricSphere> sphere1,
+//     // int TDefFTSProjection<GeometricSphere, GeometricSphere>::projectForces(std::shared_ptr<GeometricSphere> sphere1,
 //     // 									   std::shared_ptr<GeometricSphere> sphere2,
 //     // 									   const RobotStatePtr robot_state) {
 //     //   KDL::Vector p1__ = pose_a_.M * sphere1->getCenterKDL(); //point 1 from link origin to the sphere center expressed in the world frame
@@ -505,7 +505,7 @@ namespace hiqp {
 //     // ///////////////////////////////////////////////////////////////////////////////
 
 //    //  template <>
-//    //  int TDefForceProjection<GeometricFrame, GeometricFrame>::projectForces(std::shared_ptr<GeometricFrame> frame1,
+//    //  int TDefFTSProjection<GeometricFrame, GeometricFrame>::projectForces(std::shared_ptr<GeometricFrame> frame1,
 //    // 									 std::shared_ptr<GeometricFrame> frame2,
 //    // 									 const RobotStatePtr robot_state) {
 //    // KDL::Vector p1__ = pose_a_.M * frame1->getCenterKDL(); //point 1 from link origin to the frame center expressed in the world frame

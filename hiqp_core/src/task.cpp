@@ -21,7 +21,7 @@
 #include <hiqp/tasks/tdef_geometric_alignment.h>
 #include <hiqp/tasks/tdef_geometric_projection.h>
 #include <hiqp/tasks/tdef_tracking.h>
-#include <hiqp/tasks/tdef_force_projection.h>
+#include <hiqp/tasks/tdef_fts_projection.h>
 #include <hiqp/tasks/tdef_jnt_config.h>
 #include <hiqp/tasks/tdef_jnt_limits.h>
 // #include <hiqp/tasks/tdef_meta_task.h>
@@ -46,7 +46,7 @@ namespace hiqp {
   using tasks::TDefGeometricAlignment;
   using tasks::TDefGeometricProjection;
   using tasks::TDefTracking;  
-  using tasks::TDefForceProjection;  
+  using tasks::TDefFTSProjection;  
   using tasks::TDefJntConfig;
   using tasks::TDefJntLimits;
   // using tasks::TDefMetaTask;
@@ -196,15 +196,15 @@ namespace hiqp {
 	return -1;
       }
     }
-    else if (type.compare("TDefForceProj") == 0) {
+    else if (type.compare("TDefFTSProj") == 0) {
       std::string prim_type1 = def_params.at(1);
       std::string prim_type2 = def_params.at(2);
-      if (prim_type1.compare("point") == 0 && prim_type2.compare("point") == 0) {
+      if (prim_type1.compare("point") == 0 && prim_type2.compare("plane") == 0) {
 	def_ = std::make_shared<
-          TDefForceProjection<GeometricPoint, GeometricPoint> >(geom_prim_map_, visualizer_);
+          TDefFTSProjection<GeometricPoint, GeometricPoint> >(geom_prim_map_, visualizer_);
       } 
       else {
-	printHiqpWarning("TDefForceProj does not support primitive combination of types '" +
+	printHiqpWarning("TDefFTSProj does not support primitive combination of types '" +
 			 prim_type1 + "' and '" + prim_type2 + "'!");
 	return -1;
       }

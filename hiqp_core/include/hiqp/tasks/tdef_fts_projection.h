@@ -14,8 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef HIQP_TDEF_FORCE_PROJECTION_H
-#define HIQP_TDEF_FORCE_PROJECTION_H
+#ifndef HIQP_TDEF_FTS_PROJECTION_H
+#define HIQP_TDEF_FTS_PROJECTION_H
 
 #include <string>
 #include <vector>
@@ -32,11 +32,11 @@ namespace hiqp {
     /*! \brief A task definition that projects task errors, Jacobians, their derivatives as well as given 6D forces into the operational space of the task
      *  \author Robert Krug */
     template <typename PrimitiveA, typename PrimitiveB>
-      class TDefForceProjection : public TDefGeometricProjection<PrimitiveA, PrimitiveB> {
+      class TDefFTSProjection : public TDefGeometricProjection<PrimitiveA, PrimitiveB> {
     public:
-      TDefForceProjection(std::shared_ptr<GeometricPrimitiveMap> geom_prim_map,
+      TDefFTSProjection(std::shared_ptr<GeometricPrimitiveMap> geom_prim_map,
                           std::shared_ptr<Visualizer> visualizer);
-      ~TDefForceProjection() noexcept = default;
+      ~TDefFTSProjection() noexcept = default;
 
       int init(const std::vector<std::string>& parameters,
       	       RobotStatePtr robot_state);
@@ -57,6 +57,6 @@ namespace hiqp {
 
 }  // namespace hiqp
 
-#include <hiqp/tasks/tdef_force_projection__impl.h>
+#include <hiqp/tasks/tdef_fts_projection__impl.h>
 
 #endif  // include guard
