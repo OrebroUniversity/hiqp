@@ -44,10 +44,10 @@ namespace hiqp {
     //
     ///////////////////////////////////////////////////////////////////////////////
 
-    // template <>
-    // int TDefFTSProjection<GeometricPoint, GeometricPoint>::projectForces(std::shared_ptr<GeometricPoint> point1,
-    // 								       	 std::shared_ptr<GeometricPoint> point2,
-    // 									 const RobotStatePtr robot_state) {
+    template <>
+    int TDefFTSProjection<GeometricPoint, GeometricPoint>::projectForces(std::shared_ptr<GeometricPoint> point1,
+    								       	 std::shared_ptr<GeometricPoint> point2,
+    									 const RobotStatePtr robot_state) {
 
   
       // KDL::Vector p1__ = pose_a_.M * point1->getPointKDL(); //point 1 from link origin to ee expressed in the world frame
@@ -109,8 +109,8 @@ namespace hiqp {
       // std::cerr<<"J_dot_: "<<std::endl<<J_dot_<<std::endl; 
       // DEBUG END =====================================================
   
-     //   return 0;
-     // }
+       return 0;
+     }
 
 //     // template <>
 //     // int TDefFTSProjection<GeometricPoint, GeometricLine>::projectForces(

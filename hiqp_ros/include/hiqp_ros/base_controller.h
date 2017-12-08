@@ -179,20 +179,12 @@ bool BaseController<HardwareInterfaceT>::init(hardware_interface::RobotHW *hw,
     c_state_pub_.msg_.joints.at(it.second.q_nr).name = it.second.segment.getJoint().getName();
   }
 
+
   for (unsigned int i=0; i<n_sensors_;i++){
     c_state_pub_.msg_.sensors.at(i).name=robot_state_data_.sensor_handle_info_[i].sensor_name_;
     c_state_pub_.msg_.sensors.at(i).frame_id=robot_state_data_.sensor_handle_info_[i].frame_id_;    
   }
 
-  /* for (unsigned i=0; i<sensor_names.size(); i++){ */
-  /*   // sensor handle */
-  /*   sensors_.push_back(hw_e->getHandle(sensor_names[i])); */
-
-  /* for (auto &&handle : joint_handles_map_) { */
-  /*   //    std::cerr<<"at: "<<handle.first<<", name:
-   * "<<handle.second.getName()<<std::endl; */
-  /*       c_state_pub_.msg_.name.at(handle.first) = handle.second.getName(); */
-  /* } */
   return true;
 }
 //=====================================================================================
@@ -239,8 +231,9 @@ int BaseController<HardwareInterfaceT>::loadSensorsAndSetSensorHandlesMap() {
     ROS_DEBUG("Got sensor %s", sensor_names[i].c_str());
     sensor_handles_map_.emplace(sensor_names[i],
                                 fts_hw_->getHandle(sensor_names[i]));
-  }
 
+    robot_state_data_.sensor_handle_info_.push_back(hiqp::SensorHandleInfo(sensor_names[i], fts_hw_->getHandle(sensor_names[i]).getFrameId())); 
+  }
   return 0;
 }
 //=====================================================================================
@@ -322,7 +315,7 @@ void BaseController<HardwareInterfaceT>::sampleSensorValues() {
   for( unsigned int i=0; i<robot_state_data_.sensor_handle_info_.size();i++){
     hiqp::SensorHandleInfo &h = robot_state_data_.sensor_handle_info_[i];
     h.force_=Eigen::Map<Eigen::Vector3d>(const_cast<double*>(sensor_handles_map_.at(h.sensor_name_).getForce()));
-    h.torque_=Eigen::Map<Eigen::Vector3d>(const_cast<double*>(sensor_handles_map_.at(h.sensor_name_).getTorque()));    
+    h.torque_=Eigen::Map<Eigen::Vector3d>(const_cast<double*>(sensor_handles_map_.at(h.sensor_name_).getTorque()));
   }
 
   handles_mutex_.unlock();
@@ -381,14 +374,14 @@ void BaseController<HardwareInterfaceT>::publishControllerState() {
         c_state_pub_.msg_.joints[i].effort = effort(i);
       }
       for (unsigned int i = 0; i < n_sensors_; i++) {
-	c_state_pub_.msg_.sensors[i].force.clear();
-	c_state_pub_.msg_.sensors[i].force.push_back(robot_state_data_.sensor_handle_info_[i].force_(0));
-	c_state_pub_.msg_.sensors[i].force.push_back(robot_state_data_.sensor_handle_info_[i].force_(1));
-	c_state_pub_.msg_.sensors[i].force.push_back(robot_state_data_.sensor_handle_info_[i].force_(2));
-	c_state_pub_.msg_.sensors[i].torque.clear();		
-	c_state_pub_.msg_.sensors[i].torque.push_back(robot_state_data_.sensor_handle_info_[i].torque_(0));
-	c_state_pub_.msg_.sensors[i].torque.push_back(robot_state_data_.sensor_handle_info_[i].torque_(1));
-	c_state_pub_.msg_.sensors[i].torque.push_back(robot_state_data_.sensor_handle_info_[i].torque_(2));	
+  	c_state_pub_.msg_.sensors[i].force.clear();
+  	c_state_pub_.msg_.sensors[i].force.push_back(robot_state_data_.sensor_handle_info_[i].force_(0));
+  	c_state_pub_.msg_.sensors[i].force.push_back(robot_state_data_.sensor_handle_info_[i].force_(1));
+  	c_state_pub_.msg_.sensors[i].force.push_back(robot_state_data_.sensor_handle_info_[i].force_(2));
+  	c_state_pub_.msg_.sensors[i].torque.clear();
+  	c_state_pub_.msg_.sensors[i].torque.push_back(robot_state_data_.sensor_handle_info_[i].torque_(0));
+  	c_state_pub_.msg_.sensors[i].torque.push_back(robot_state_data_.sensor_handle_info_[i].torque_(1));
+  	c_state_pub_.msg_.sensors[i].torque.push_back(robot_state_data_.sensor_handle_info_[i].torque_(2));
       }
 
       c_state_pub_.unlockAndPublish();

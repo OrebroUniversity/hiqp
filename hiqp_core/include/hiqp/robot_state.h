@@ -41,6 +41,8 @@ struct JointHandleInfo {
 /*! \brief Holds information about the attached force/torque sensor names, frame ids and force/torque measurements.
  *\author Robert Krug */
 struct SensorHandleInfo {
+    SensorHandleInfo(const std::string &sensor_name, const std::string &frame_id)
+      : sensor_name_(sensor_name), frame_id_(frame_id) {}
   SensorHandleInfo(const std::string &sensor_name, const std::string &frame_id,
                    const Eigen::Vector3d &force, const Eigen::Vector3d &torque)
       : sensor_name_(sensor_name), frame_id_(frame_id), force_(force),
