@@ -228,8 +228,10 @@ int BaseController<HardwareInterfaceT>::loadUrdfToKdlTree() {
 //=====================================================================================
 template <typename HardwareInterfaceT>
 int BaseController<HardwareInterfaceT>::loadSensorsAndSetSensorHandlesMap() {
-  if (!fts_hw_)
+  if (!fts_hw_){
+    n_sensors_ = 0;
     return -1;
+  }
 
   const std::vector<std::string> &sensor_names = fts_hw_->getNames();
   n_sensors_= sensor_names.size();
