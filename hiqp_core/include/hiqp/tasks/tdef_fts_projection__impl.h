@@ -14,8 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef HIQP_TDEF_FORCE_PROJECTION__IMPL_H
-#define HIQP_TDEF_FORCE_PROJECTION__IMPL_H
+#ifndef HIQP_TDEF_FTS_PROJECTION__IMPL_H
+#define HIQP_TDEF_FTS_PROJECTION__IMPL_H
 
 #include <iterator>
 #include <sstream>
@@ -31,19 +31,25 @@ namespace hiqp {
 
     template <typename PrimitiveA, typename PrimitiveB>
       int TDefFTSProjection<PrimitiveA, PrimitiveB>::init(const std::vector<std::string>& parameters, RobotStatePtr robot_state) {
-      int parameters_size = parameters.size();
-      /* if (parameters_size != 4) { */
-      /* 	printHiqpWarning( */
-      /* 			 "'" + getTaskName() + "': TDefGeomProj takes 4 parameters, got " + */
-      /* 			 std::to_string(parameters_size) + "! The task was not added!"); */
-      /* 	return -1; */
-      /* } */
+  
+        int parameters_size = parameters.size();
+      if (parameters_size != 5) {
+      	printHiqpWarning(
+      			 "'" + hiqp::TaskDefinition::getTaskName() + "': TDefFTSProj takes 5 parameters, got " +
+      			 std::to_string(parameters_size) + "! The task was not added!");
+      	return -1;
+      }
+
+      std::string sensor=parameters[4];
+   
 
       //initialize the base class
-      int retval=TDefGeometricProjection<PrimitiveA, PrimitiveB>::init(parameters, robot_state);
+      int retval=TDefGeometricProjection<PrimitiveA, PrimitiveB>::init(std::vector<std::string>(parameters.begin(), parameters.begin() + 4), robot_state);
       if(retval != 0)
 	return retval;
 
+      //      std::stringstream ss(parameters.at(3));
+      
       return 0;
     }
 

@@ -78,7 +78,7 @@ namespace hiqp {
 	std::make_shared<KDL::TreeJntToJacSolver>(robot_state->kdl_tree_);
 
       std::shared_ptr<GeometricPrimitiveMap> gpm = this->getGeometricPrimitiveMap();
-
+	    
       primitive_a_ = gpm->getGeometricPrimitive<PrimitiveA>(args.at(0));
       if (primitive_a_ == nullptr) {
 	printHiqpWarning(

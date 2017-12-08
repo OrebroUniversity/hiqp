@@ -201,7 +201,7 @@ namespace hiqp {
       std::string prim_type2 = def_params.at(2);
       if (prim_type1.compare("point") == 0 && prim_type2.compare("plane") == 0) {
 	def_ = std::make_shared<
-          TDefFTSProjection<GeometricPoint, GeometricPoint> >(geom_prim_map_, visualizer_);
+          TDefFTSProjection<GeometricPoint, GeometricPlane> >(geom_prim_map_, visualizer_);
       } 
       else {
 	printHiqpWarning("TDefFTSProj does not support primitive combination of types '" +
