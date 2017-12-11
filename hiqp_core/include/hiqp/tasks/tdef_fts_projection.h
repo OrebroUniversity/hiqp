@@ -27,37 +27,39 @@
 /* #include <kdl/treejnttojacsolver.hpp> */
 
 namespace hiqp {
-  namespace tasks {
+namespace tasks {
 
-    /*! \brief A task definition that projects task errors, Jacobians, their derivatives as well as given 6D forces into the operational space of the task
-     *  \author Robert Krug */
-    template <typename PrimitiveA, typename PrimitiveB>
-      class TDefFTSProjection : public TDefGeometricProjection<PrimitiveA, PrimitiveB> {
-    public:
-      TDefFTSProjection(std::shared_ptr<GeometricPrimitiveMap> geom_prim_map,
-                          std::shared_ptr<Visualizer> visualizer);
-      ~TDefFTSProjection() noexcept = default;
+/*! \brief A task definition that projects task errors, Jacobians, their
+ * derivatives as well as given 6D forces into the operational space of the task
+ *  \author Robert Krug */
+template <typename PrimitiveA, typename PrimitiveB>
+class TDefFTSProjection
+    : public TDefGeometricProjection<PrimitiveA, PrimitiveB> {
+public:
+  TDefFTSProjection(std::shared_ptr<GeometricPrimitiveMap> geom_prim_map,
+                    std::shared_ptr<Visualizer> visualizer);
+  ~TDefFTSProjection() noexcept = default;
 
-      int init(const std::vector<std::string>& parameters,
-      	       RobotStatePtr robot_state);
+  int init(const std::vector<std::string> &parameters,
+           RobotStatePtr robot_state);
 
-      int update(RobotStatePtr robot_state);
+  int update(RobotStatePtr robot_state);
 
-      int monitor();
+  int monitor();
 
-    private:
+private:
+  unsigned int sensor_id_;
+  int projectForces(std::shared_ptr<PrimitiveA> first,
+                    std::shared_ptr<PrimitiveB> second,
+                    const RobotStatePtr robot_state);
 
-      unsigned int sensor_id_;
-      int projectForces(std::shared_ptr<PrimitiveA> first,
-		  std::shared_ptr<PrimitiveB> second,
-		  const RobotStatePtr robot_state);
+  KDL::Frame pose_fts_;
+};
 
-    };
+} // namespace tasks
 
-  }  // namespace tasks
-
-}  // namespace hiqp
+} // namespace hiqp
 
 #include <hiqp/tasks/tdef_fts_projection__impl.h>
 
-#endif  // include guard
+#endif // include guard

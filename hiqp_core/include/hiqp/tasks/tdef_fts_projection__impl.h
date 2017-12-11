@@ -23,83 +23,92 @@
 #include <hiqp/utilities.h>
 
 namespace hiqp {
-  namespace tasks {
+namespace tasks {
 
-    template <typename PrimitiveA, typename PrimitiveB>
-      TDefFTSProjection<PrimitiveA, PrimitiveB>::TDefFTSProjection(std::shared_ptr<GeometricPrimitiveMap> geom_prim_map, std::shared_ptr<Visualizer> visualizer)
-      : TDefGeometricProjection<PrimitiveA, PrimitiveB>(geom_prim_map, visualizer) {}
+template <typename PrimitiveA, typename PrimitiveB>
+TDefFTSProjection<PrimitiveA, PrimitiveB>::TDefFTSProjection(
+    std::shared_ptr<GeometricPrimitiveMap> geom_prim_map,
+    std::shared_ptr<Visualizer> visualizer)
+    : TDefGeometricProjection<PrimitiveA, PrimitiveB>(geom_prim_map,
+                                                      visualizer) {}
 
-    template <typename PrimitiveA, typename PrimitiveB>
-      int TDefFTSProjection<PrimitiveA, PrimitiveB>::init(const std::vector<std::string>& parameters, RobotStatePtr robot_state) {
-  
-        int parameters_size = parameters.size();
-      if (parameters_size != 5) {
-      	printHiqpWarning(
-      			 "'" + hiqp::TaskDefinition::getTaskName() + "': TDefFTSProj takes 5 parameters, got " +
-      			 std::to_string(parameters_size) + "! The task was not added!");
-      	return -1;
-      }
+template <typename PrimitiveA, typename PrimitiveB>
+int TDefFTSProjection<PrimitiveA, PrimitiveB>::init(
+    const std::vector<std::string> &parameters, RobotStatePtr robot_state) {
 
-      std::string sensor_name=parameters[4];
-      //make sure a sensor with the given name is available and find its index
-      std::vector<hiqp::SensorHandleInfo> sensors = robot_state->sensor_handle_info_;
+  int parameters_size = parameters.size();
+  if (parameters_size != 5) {
+    printHiqpWarning("'" + hiqp::TaskDefinition::getTaskName() +
+                     "': TDefFTSProj takes 5 parameters, got " +
+                     std::to_string(parameters_size) +
+                     "! The task was not added!");
+    return -1;
+  }
 
-      std::cerr<<"sensor names: ";
-      for(unsigned int i=0; i<sensors.size();i++)
-	std::cerr<<sensors[i].sensor_name_;
-      std::cerr<<std::endl;
+  // make sure a sensor with the given name is available and find its index
+  std::string sensor_name = parameters[4];
 
-      unsigned int i;
-      for( i=0; i<sensors.size();i++){
-        if(!strcmp(sensors[i].sensor_name_.c_str(),sensor_name.c_str())){
-	  sensor_id_ = i;
-	  break;
-	}
-      }
-      if(i == sensors.size()){
-	      	printHiqpWarning("Sensor with name " + sensor_name + " is not available. Cannot initialize task definition.");
-        return -2;
-      }
-       std::cerr<<"Sensor id is: "<<sensor_id_<<std::endl; 
-      
-      //std::vector< std::string>::iterator it=std::find(sensors.begin(),sensors.end(),sensor_name.c_str());
-      /* if (it != sensors.end()) */
-      /* 	sensor_id_=std::distance(sensors.begin()-it); */
-
-
-      /* } */
-      /* else{ */
-  
-      /* } */
-
-         //initialize the base class
-      int retval=TDefGeometricProjection<PrimitiveA, PrimitiveB>::init(std::vector<std::string>(parameters.begin(), parameters.begin() + 4), robot_state);
-      if(retval != 0)
-	return retval;
-
-      //      std::stringstream ss(parameters.at(3));
-      
-      return 0;
+  std::vector<hiqp::SensorHandleInfo> sensors =
+      robot_state->sensor_handle_info_;
+  unsigned int i;
+  for (i = 0; i < sensors.size(); i++) {
+    if (!strcmp(sensors[i].sensor_name_.c_str(), sensor_name.c_str())) {
+      sensor_id_ = i;
+      break;
     }
+  }
+  if (i == sensors.size()) {
+    printHiqpWarning("Sensor with name " + sensor_name +
+                     " is not available. Cannot initialize task definition.");
+    return -2;
+  }
 
-    template <typename PrimitiveA, typename PrimitiveB>
-      int TDefFTSProjection<PrimitiveA, PrimitiveB>::update(RobotStatePtr robot_state) {
-    
-      //update the base class
-      int retval=TDefGeometricProjection<PrimitiveA, PrimitiveB>::update(robot_state);
-      if(retval != 0)
-	return retval;
-      
-      projectForces(this->primitive_a_, this->primitive_b_,robot_state);
-      return 0;
-    }
+  // initialize the base class
+  int retval = TDefGeometricProjection<PrimitiveA, PrimitiveB>::init(
+      std::vector<std::string>(parameters.begin(), parameters.begin() + 4),
+      robot_state);
+  if (retval != 0)
+    return retval;
 
-    template <typename PrimitiveA, typename PrimitiveB>
-      int TDefFTSProjection<PrimitiveA, PrimitiveB>::monitor() {
-      return 0;
-    }
-  }  // namespace tasks
+  //      std::stringstream ss(parameters.at(3));
 
-}  // namespace hiqp
+  return 0;
+}
 
-#endif  // include guard
+template <typename PrimitiveA, typename PrimitiveB>
+int TDefFTSProjection<PrimitiveA, PrimitiveB>::update(
+    RobotStatePtr robot_state) {
+
+  // update the base class
+  int retval =
+      TDefGeometricProjection<PrimitiveA, PrimitiveB>::update(robot_state);
+  if (retval != 0)
+    return retval;
+
+  std::string sensor_frame_id =
+      robot_state->sensor_handle_info_[sensor_id_].frame_id_;
+  retval = TDefGeometricProjection<PrimitiveA, PrimitiveB>::fk_solver_pos_
+               ->JntToCart(robot_state->kdl_jnt_array_vel_.q, pose_fts_,
+                           sensor_frame_id);
+  if (retval != 0) {
+    std::cerr << "In TDefFTSProjection::update : Can't solve position "
+              << "of link '" << sensor_frame_id << "'"
+              << " in the "
+              << "KDL tree! KDL::TreeFkSolverPos_recursive::JntToCart return "
+              << "error code '" << retval << "'\n";
+    return -1;
+  }
+
+  projectForces(this->primitive_a_, this->primitive_b_, robot_state);
+  return 0;
+}
+
+template <typename PrimitiveA, typename PrimitiveB>
+int TDefFTSProjection<PrimitiveA, PrimitiveB>::monitor() {
+  return 0;
+}
+} // namespace tasks
+
+} // namespace hiqp
+
+#endif // include guard
