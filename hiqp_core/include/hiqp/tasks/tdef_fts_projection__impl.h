@@ -40,10 +40,39 @@ namespace hiqp {
       	return -1;
       }
 
-      std::string sensor=parameters[4];
-   
+      std::string sensor_name=parameters[4];
+      //make sure a sensor with the given name is available and find its index
+      std::vector<hiqp::SensorHandleInfo> sensors = robot_state->sensor_handle_info_;
 
-      //initialize the base class
+      std::cerr<<"sensor names: ";
+      for(unsigned int i=0; i<sensors.size();i++)
+	std::cerr<<sensors[i].sensor_name_;
+      std::cerr<<std::endl;
+
+      unsigned int i;
+      for( i=0; i<sensors.size();i++){
+        if(!strcmp(sensors[i].sensor_name_.c_str(),sensor_name.c_str())){
+	  sensor_id_ = i;
+	  break;
+	}
+      }
+      if(i == sensors.size()){
+	      	printHiqpWarning("Sensor with name " + sensor_name + " is not available. Cannot initialize task definition.");
+        return -2;
+      }
+       std::cerr<<"Sensor id is: "<<sensor_id_<<std::endl; 
+      
+      //std::vector< std::string>::iterator it=std::find(sensors.begin(),sensors.end(),sensor_name.c_str());
+      /* if (it != sensors.end()) */
+      /* 	sensor_id_=std::distance(sensors.begin()-it); */
+
+
+      /* } */
+      /* else{ */
+  
+      /* } */
+
+         //initialize the base class
       int retval=TDefGeometricProjection<PrimitiveA, PrimitiveB>::init(std::vector<std::string>(parameters.begin(), parameters.begin() + 4), robot_state);
       if(retval != 0)
 	return retval;

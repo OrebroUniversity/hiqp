@@ -47,6 +47,7 @@ namespace hiqp {
 
     private:
 
+      unsigned int sensor_id_;
       int projectForces(std::shared_ptr<PrimitiveA> first,
 		  std::shared_ptr<PrimitiveB> second,
 		  const RobotStatePtr robot_state);

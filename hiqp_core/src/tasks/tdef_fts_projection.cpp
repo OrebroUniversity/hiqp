@@ -150,6 +150,7 @@ namespace hiqp {
     int TDefFTSProjection<GeometricPoint, GeometricPlane>::projectForces(std::shared_ptr<GeometricPoint> point,
     									 std::shared_ptr<GeometricPlane> plane,
     									const RobotStatePtr robot_state) {
+      std::cerr<<"Trying to project forces..."<<std::endl;
   
 //     //   KDL::Vector p1__ = pose_a_.M * point->getPointKDL(); //point 1 from link origin to ee expressed in the world frame
 //     //   KDL::Vector p1 = pose_a_.p + p1__; //absolute ee point 1 expressed in the world frame
