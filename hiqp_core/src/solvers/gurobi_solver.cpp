@@ -26,12 +26,12 @@
 
 #define OUTPUT_FLAG 0
 #define PRESOLVE -1
-#define OPTIMALITY_TOL 1e-6
+#define OPTIMALITY_TOL 1e-2
 #define SCALE_FLAG 1
-#define TIME_LIMIT 1.0  // 0.005
+#define TIME_LIMIT 1
 #define DUAL_REDUCTIONS 1
 #define TIKHONOV_FACTOR 5 * 1e-5
-
+#define METHOD 2 // solution method. for QP allowed are 0 (primal simplex) 1 (dual simplex) and 2 (barrier)
 namespace hiqp {
 
 GurobiSolver::GurobiSolver() {
@@ -41,6 +41,8 @@ GurobiSolver::GurobiSolver() {
   env_.set(GRB_IntParam_ScaleFlag, SCALE_FLAG);
   env_.set(GRB_DoubleParam_TimeLimit, TIME_LIMIT);
   env_.set(GRB_IntParam_DualReductions, DUAL_REDUCTIONS);
+  env_.set(GRB_IntParam_Presolve, PRESOLVE);
+//  env_.set(GRB_IntParam_Method, METHOD);
 }
 
 bool GurobiSolver::solve(std::vector<double>& solution) {
@@ -83,7 +85,7 @@ bool GurobiSolver::solve(std::vector<double>& solution) {
     QPProblem qp_problem(env_, hqp_constraints_, n_solution_dims_);
 
     try {
-      qp_problem.setup();
+      qp_problem.setup(solution);
     } catch (GRBException e) {
       std::cerr << "In GurobiSolver::QPProblem::setup : Gurobi exception with "
                    "error code "
@@ -149,7 +151,7 @@ GurobiSolver::QPProblem::~QPProblem() {
   delete[] constraints_;
 }
 
-void GurobiSolver::QPProblem::setup() {
+void GurobiSolver::QPProblem::setup(std::vector<double> &start) {
   unsigned int stage_dims = hqp_constraints_.n_stage_dims_;
   unsigned int acc_stage_dims = hqp_constraints_.n_acc_stage_dims_;
   unsigned int total_stage_dims = stage_dims + acc_stage_dims;
@@ -211,6 +213,8 @@ void GurobiSolver::QPProblem::setup() {
   obj.addTerms(coeff_ddq_, ddq_, ddq_, solution_dims_);
   obj.addTerms(coeff_w_, w_, w_, stage_dims);
   model_.setObjective(obj, GRB_MINIMIZE);
+  //for (unsigned int i = 0; i < solution_dims_; ++i)
+  //   ddq_[i].set(GRB_DoubleAttr_PStart, start[i]);
   model_.update();
 
   // DEBUG =============================================
@@ -232,8 +236,8 @@ void GurobiSolver::QPProblem::setup() {
 
     if (status != GRB_OPTIMAL) {
       if (status == GRB_TIME_LIMIT){
-	ROS_WARN("In GurobiSolver::QPProblem::solve(...): Stage solving runtime %f sec exceeds the set time limit of %f sec.",
-		 runtime, TIME_LIMIT);
+	//ROS_WARN("In GurobiSolver::QPProblem::solve(...): Stage solving runtime %f sec exceeds the set time limit of %f sec.",
+//		 runtime, TIME_LIMIT);
       }
       else if (status == GRB_SUBOPTIMAL){
 	ROS_WARN("In GurobiSolver::QPProblem::solve(...): Only suboptimal QP solution found.");

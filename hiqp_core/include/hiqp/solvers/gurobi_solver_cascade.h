@@ -14,8 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef HIQP_GUROBI_SOLVER_H
-#define HIQP_GUROBI_SOLVER_H
+#ifndef HIQP_GUROBI_SOLVER_CASCADE_H
+#define HIQP_GUROBI_SOLVER_CASCADE_H
 
 #include <gurobi_c++.h>
 #include <hiqp/hiqp_solver.h>
@@ -23,18 +23,43 @@
 namespace hiqp {
 /*! \brief An optimization based solver for a set of stages based on Gurobi.
  *  \author Robert Krug, Marcus A Johansson */
-class GurobiSolver : public HiQPSolver {
+class GurobiSolverCascade : public HiQPSolver {
  public:
-  GurobiSolver();
-  ~GurobiSolver() noexcept {}
+  GurobiSolverCascade();
+  ~GurobiSolverCascade() noexcept {
+      QPProblemMap::iterator it = problems_.begin();
+      while(it!=problems_.end()) {
+	if(it->second != NULL) delete it->second;
+	it++;
+      }
+      problems_.clear();
+  }
 
   bool solve(std::vector<double>& solution);
 
+#if 0
+  virtual int clearStages() {
+    //stages_map_.clear();
+    return 0;
+  }
+
+  /*! \brief Appends the internal set of stages with a task. If a stage with the
+   * priority is not currently present in the stages map, it is created,
+   * otherwise the task is appended to that existing stage. */
+  virtual int appendStage(std::size_t priority_level,
+		  const Eigen::VectorXd& e_ddot_star,
+                  const Eigen::MatrixXd& J,
+                  const Eigen::MatrixXd& J_dot,
+		  const KDL::JntArray& q_dot,
+                  const std::vector<int>& constraint_signs,
+		  const std::string stage_name="");
+#endif
+
  private:
-  GurobiSolver(const GurobiSolver& other) = delete;
-  GurobiSolver(GurobiSolver&& other) = delete;
-  GurobiSolver& operator=(const GurobiSolver& other) = delete;
-  GurobiSolver& operator=(GurobiSolver&& other) noexcept = delete;
+  GurobiSolverCascade(const GurobiSolverCascade& other) = delete;
+  GurobiSolverCascade(GurobiSolverCascade&& other) = delete;
+  GurobiSolverCascade& operator=(const GurobiSolverCascade& other) = delete;
+  GurobiSolverCascade& operator=(GurobiSolverCascade&& other) noexcept = delete;
   
 /*! \brief maintains the accumulated constraints for solving the QP in the p-th stage. After appending constraints, the entries of the slack variables w_ correspond to the previously found solutions and zeros for the current (to be solved) stage */
   struct HQPConstraints {
@@ -57,11 +82,12 @@ class GurobiSolver : public HiQPSolver {
 
     ~QPProblem();
 
-    void setup(std::vector<double> &start);
+    void setup();
+    void update(GRBEnv &env_, HQPConstraints& hqp_constraints);
     bool solve();
     void getSolution(std::vector<double>& solution);
 
-    GRBModel model_;  // Gurobi model (one per each QP problem is used)
+    GRBModel* model;  // Gurobi model (one per each QP problem is used)
     HQPConstraints& hqp_constraints_;
     unsigned int solution_dims_;
 
@@ -80,7 +106,9 @@ class GurobiSolver : public HiQPSolver {
 
     GRBConstr* constraints_;  //
   };
-
+  
+  typedef std::map<size_t,QPProblem*> QPProblemMap;
+  QPProblemMap problems_;
   GRBEnv env_;
   unsigned int n_solution_dims_;  // number of solution dimensions
   HQPConstraints hqp_constraints_;

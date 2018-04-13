@@ -28,6 +28,7 @@
 #endif
 #ifdef HIQP_GUROBI
 #include <hiqp/solvers/gurobi_solver.h>
+#include <hiqp/solvers/gurobi_solver_cascade.h>
 #endif
 
 #include <Eigen/Dense>
@@ -44,7 +45,8 @@ TaskManager::TaskManager(std::shared_ptr<Visualizer> visualizer)
   solver_ = std::make_shared<CasadiSolver>();
 #endif
 #ifdef HIQP_GUROBI
-  solver_ = std::make_shared<GurobiSolver>();
+  //solver_ = std::make_shared<GurobiSolver>();
+  solver_ = std::make_shared<GurobiSolverCascade>();
 #endif
 }
 

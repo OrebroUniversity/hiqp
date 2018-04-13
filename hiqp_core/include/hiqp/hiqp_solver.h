@@ -33,6 +33,8 @@ struct HiQPStage {
   Eigen::VectorXd b_;
   Eigen::MatrixXd B_;
   std::vector<int> constraint_signs_;
+  typedef std::map<std::string,std::pair<size_t,size_t> > TaskStageMap;
+  TaskStageMap task_stage_map_;
 };
 
 /*! \brief The base class for a solver for controls from a set of stages. Keeps
@@ -56,7 +58,7 @@ class HiQPSolver {
 
   virtual bool solve(std::vector<double>& solution) = 0;
 
-  int clearStages() {
+  virtual int clearStages() {
     stages_map_.clear();
     return 0;
   }
@@ -64,12 +66,13 @@ class HiQPSolver {
   /*! \brief Appends the internal set of stages with a task. If a stage with the
    * priority is not currently present in the stages map, it is created,
    * otherwise the task is appended to that existing stage. */
-  int appendStage(std::size_t priority_level,
+  virtual int appendStage(std::size_t priority_level,
 		  const Eigen::VectorXd& e_ddot_star,
                   const Eigen::MatrixXd& J,
                   const Eigen::MatrixXd& J_dot,
 		  const KDL::JntArray& q_dot,
-                  const std::vector<int>& constraint_signs) {
+                  const std::vector<int>& constraint_signs,
+		  const std::string stage_name="") {
     
       // DEBUG =============================================
     /* std::cerr<<"HiQPSolver::appendStage inputs: "<<std::endl; */
