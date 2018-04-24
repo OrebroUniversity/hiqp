@@ -35,6 +35,7 @@ int ROSVisualizer::init(ros::NodeHandle* controller_nh) {
   marker_array_pub_ =
       controller_nh_->advertise<visualization_msgs::MarkerArray>(
           "visualization_marker", 1);
+  controller_nh_->param<std::string>("marker_prefix", marker_prefix, "/");
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -47,7 +48,7 @@ int ROSVisualizer::apply(int id, std::shared_ptr<GeometricPoint> point,
                          int action) {
   visualization_msgs::Marker marker;
 
-  marker.header.frame_id = "/" + point->getFrameId();
+  marker.header.frame_id = marker_prefix + point->getFrameId();
   marker.header.stamp = ros::Time::now();
   marker.ns = kNamespace;
   if (action == ACTION_ADD)
@@ -93,7 +94,7 @@ int ROSVisualizer::apply(int id, std::shared_ptr<GeometricLine> line,
                          int action) {
   visualization_msgs::Marker marker;
 
-  marker.header.frame_id = "/" + line->getFrameId();
+  marker.header.frame_id = marker_prefix + line->getFrameId();
   marker.header.stamp = ros::Time::now();
   marker.ns = kNamespace;
   if (action == ACTION_ADD)
@@ -148,7 +149,7 @@ int ROSVisualizer::apply(int id, std::shared_ptr<GeometricPlane> plane,
                          int action) {
   visualization_msgs::Marker marker;
 
-  marker.header.frame_id = "/" + plane->getFrameId();
+  marker.header.frame_id = marker_prefix + plane->getFrameId();
   marker.header.stamp = ros::Time::now();
   marker.ns = kNamespace;
   if (action == ACTION_ADD)
@@ -201,7 +202,7 @@ int ROSVisualizer::apply(int id, std::shared_ptr<GeometricBox> box,
                          int action) {
   visualization_msgs::Marker marker;
 
-  marker.header.frame_id = "/" + box->getFrameId();
+  marker.header.frame_id = marker_prefix + box->getFrameId();
   marker.header.stamp = ros::Time::now();
   marker.ns = kNamespace;
   if (action == ACTION_ADD)
@@ -250,7 +251,7 @@ int ROSVisualizer::apply(int id, std::shared_ptr<GeometricCylinder> cylinder,
                          int action) {
   visualization_msgs::Marker marker;
 
-  marker.header.frame_id = "/" + cylinder->getFrameId();
+  marker.header.frame_id = marker_prefix + cylinder->getFrameId();
   marker.header.stamp = ros::Time::now();
   marker.ns = kNamespace;
   if (action == ACTION_ADD)
@@ -305,7 +306,7 @@ int ROSVisualizer::apply(int id, std::shared_ptr<GeometricSphere> sphere,
                          int action) {
   visualization_msgs::Marker marker;
 
-  marker.header.frame_id = "/" + sphere->getFrameId();
+  marker.header.frame_id = marker_prefix + sphere->getFrameId();
   marker.header.stamp = ros::Time::now();
   marker.ns = kNamespace;
   if (action == ACTION_ADD)
@@ -362,7 +363,7 @@ int ROSVisualizer::apply(int id, std::shared_ptr<GeometricFrame> frame,
   visualization_msgs::MarkerArray marker_array;
   {
     visualization_msgs::Marker marker;
-    marker.header.frame_id = "/" + frame->getFrameId();
+    marker.header.frame_id = marker_prefix + frame->getFrameId();
     marker.header.stamp = ros::Time::now();
     marker.ns = kNamespace;
     if (action == ACTION_ADD)
@@ -390,7 +391,7 @@ int ROSVisualizer::apply(int id, std::shared_ptr<GeometricFrame> frame,
   }
   {
     visualization_msgs::Marker marker;
-    marker.header.frame_id = "/" + frame->getFrameId();
+    marker.header.frame_id = marker_prefix + frame->getFrameId();
     marker.header.stamp = ros::Time::now();
     marker.ns = kNamespace;
     if (action == ACTION_ADD)
@@ -420,7 +421,7 @@ int ROSVisualizer::apply(int id, std::shared_ptr<GeometricFrame> frame,
   }
   {
     visualization_msgs::Marker marker;
-    marker.header.frame_id = "/" + frame->getFrameId();
+    marker.header.frame_id = marker_prefix + frame->getFrameId();
     marker.header.stamp = ros::Time::now();
     marker.ns = kNamespace;
     if (action == ACTION_ADD)

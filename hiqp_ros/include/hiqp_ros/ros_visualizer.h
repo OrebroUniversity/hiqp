@@ -91,6 +91,7 @@ class ROSVisualizer : public hiqp::Visualizer {
   ros::Publisher marker_array_pub_;
 
   std::size_t next_id_;
+  std::string marker_prefix;
 };
 
 }  // namespace hiqp
