@@ -45,7 +45,9 @@ void HiQPClient::connectToServer() {
           "remove_all_primitives");
   remove_all_primitives_client_.waitForExistence();
 
-  task_measures_sub_ = nh_.subscribe("task_measures", 1,
+  std::string topic_global= "/" + robot_namespace_ + "/" + controller_namespace_ + "/task_measures";
+  //std::cerr<<"Subscribing to "<<topic_global<<std::endl;
+  task_measures_sub_ = nh_.subscribe(topic_global, 1,
                                      &HiQPClient::taskMeasuresCallback, this);
 
   ROS_INFO("Connected to HiQP Servers.");
@@ -146,6 +148,13 @@ bool HiQPClient::removeTasks(const std::vector<std::string>& task_names) {
 
     if (returnValue == removeTasksMsg.response.success.size()) {
       ROS_INFO("Remove task(s) succeeded.");
+      
+      resource_mutex_.lock();
+      for(auto task_name : task_names) {
+         task_name_sq_error_map_.erase(task_name);
+      }
+      resource_mutex_.unlock();
+
       return true;
     } else {
       ROS_WARN("Either all or some of the tasks were not removed.");
@@ -225,9 +234,9 @@ std::string taskMeasuresAsString(
 
 void HiQPClient::taskMeasuresCallback(
     const hiqp_msgs::TaskMeasuresConstPtr& task_measures) {
-  resource_mutex_.lock();
-  ROS_INFO_DELAYED_THROTTLE(5.0, "%s",
+  ROS_INFO_THROTTLE(5, "%s",
                             taskMeasuresAsString(task_measures).c_str());
+  resource_mutex_.lock();
   for (auto task_measure : task_measures->task_measures) {
     double sq_error;
     if (task_measure.task_sign == hiqp_msgs::TaskMeasure::EQ)
@@ -287,6 +296,7 @@ void HiQPClient::waitForCompletion(
         continue;
       }
 
+      //std::cerr<<"error "<<it_sq_error->second<<std::endl;
       if (task_name_task_sign_map_[task_name] == 0) {
         if (it_sq_error->second < tol) {
           status += 1;
@@ -326,7 +336,9 @@ void HiQPClient::waitForCompletion(
         deactivateTask(task_name);
         break;
     }
+    resource_mutex_.lock();
     task_name_sq_error_map_.erase(task_name);
+    resource_mutex_.unlock();
   }
   removeTasks(tasks_to_remove);
 }
