@@ -51,6 +51,7 @@ link_directories(${GUROBI_LIB_DIR})
 
 # hiqp-ros library
 add_library(${PROJECT_NAME} src/hiqp_joint_velocity_controller.cpp
+                            src/hiqp_joint_effort_controller.cpp
                             src/hiqp_service_handler.cpp
                             src/ros_topic_subscriber.cpp
                             src/ros_visualizer.cpp

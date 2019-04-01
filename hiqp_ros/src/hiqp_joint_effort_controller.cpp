@@ -31,6 +31,7 @@
 #include <hiqp_msgs/Vector3d.h>
 
 #include <geometry_msgs/PoseStamped.h>  // teleoperation magnet sensors
+#include <tf/tfMessage.h>
 
 using hiqp::TaskMeasure;
 
@@ -64,7 +65,13 @@ void HiQPJointEffortController::initialize() {
 
   if (loadAndSetupTaskMonitoring() != 0) return;
 
-  // addAllTopicSubscriptions();
+  bool tf_primitives = false;
+  if (!this->getControllerNodeHandle().getParam("load_primitives_from_tf",
+                                                tf_primitives)) {
+    ROS_WARN(
+        "Couldn't find parameter 'load_primitives_from_tf' on parameter "
+        "server, defaulting to no tf primitive tracking.");
+  }
 
   service_handler_.advertiseAll();
 
@@ -77,19 +84,27 @@ void HiQPJointEffortController::initialize() {
   loadTasksFromParamServer();
 }
 
-void HiQPJointEffortController::computeControls(Eigen::VectorXd& u) {
+void HiQPJointEffortController::updateControls(Eigen::VectorXd& ddq, Eigen::VectorXd& u) {
+
   if (!is_active_) return;
 
-  std::vector<double> outcon(u.size());
-  task_manager_.getVelocityControls(this->getRobotState(), outcon);
+  std::vector<double> _ddq(ddq.size());
+  
+  // Time the acceleration control computation
+  auto t_begin = std::chrono::high_resolution_clock::now();
+  task_manager_.getAccelerationControls(this->getRobotState(), _ddq);
+  auto t_end = std::chrono::high_resolution_clock::now();
+  std::chrono::duration<double, std::milli> opt_time = t_end - t_begin;
+
   int i = 0;
-  for (auto&& oc : outcon) {
-    u(i++) = oc;
+  for (auto&& oc : _ddq) {
+    ddq(i++) = oc;
   }
+  u = ddq;
 
   renderPrimitives();
 
-  monitorTasks();
+  monitorTasks(static_cast<double>(opt_time.count()));
 
   return;
 }
@@ -113,7 +128,7 @@ void HiQPJointEffortController::renderPrimitives() {
   }
 }
 
-void HiQPJointEffortController::monitorTasks() {
+void HiQPJointEffortController::monitorTasks(double acc_ctl_comp_time) {
   if (monitoring_active_) {
     ros::Time now = ros::Time::now();
     ros::Duration d = now - last_monitoring_update_;
@@ -127,21 +142,27 @@ void HiQPJointEffortController::monitorTasks() {
       for (auto&& measure : measures) {
         hiqp_msgs::TaskMeasure msg;
         msg.task_name = measure.task_name_;
+        msg.task_sign = measure.task_sign_;
         msg.e = std::vector<double>(
             measure.e_.data(),
             measure.e_.data() + measure.e_.rows() * measure.e_.cols());
         msg.de = std::vector<double>(
             measure.de_.data(),
             measure.de_.data() + measure.de_.rows() * measure.de_.cols());
+	msg.dde_star = std::vector<double>(
+            measure.dde_star_.data(),
+            measure.dde_star_.data() + measure.dde_star_.rows() * measure.dde_star_.cols());
         msg.pm = std::vector<double>(
             measure.pm_.data(),
             measure.pm_.data() + measure.pm_.rows() * measure.pm_.cols());
         msgs.task_measures.push_back(msg);
       }
-      monitoring_pub_.publish(msgs);
+      msgs.acc_ctl_comp_time = acc_ctl_comp_time;
+      if (!msgs.task_measures.empty()) monitoring_pub_.publish(msgs);
     }
   }
 }
+
 
 // void HiQPJointEffortController::addAllTopicSubscriptions()
 // {
@@ -230,7 +251,7 @@ void HiQPJointEffortController::loadJointLimitsFromParamServer() {
         dyn_params.push_back(
             std::to_string(static_cast<double>(limitations[0])));
 
-        task_manager_.setTask(link_frame + "_jntlimits", 1, true, true,
+        task_manager_.setTask(link_frame + "_jntlimits", 1, true, true, false,
                               def_params, dyn_params, this->getRobotState());
       } catch (const XmlRpc::XmlRpcException& e) {
         ROS_WARN_STREAM(
@@ -286,7 +307,7 @@ void HiQPJointEffortController::loadGeometricPrimitivesFromParamServer() {
           parameters.push_back(static_cast<double>(parameters_xml[j]));
         }
 
-        task_manager_.addPrimitive(name, type, frame_id, visible, color,
+        task_manager_.setPrimitive(name, type, frame_id, visible, color,
                                    parameters);
       } catch (const XmlRpc::XmlRpcException& e) {
         ROS_WARN_STREAM(
@@ -336,9 +357,10 @@ void HiQPJointEffortController::loadTasksFromParamServer() {
             static_cast<int>(hiqp_preload_tasks[i]["priority"]);
         bool visible = static_cast<bool>(hiqp_preload_tasks[i]["visible"]);
         bool active = static_cast<bool>(hiqp_preload_tasks[i]["active"]);
+        bool monitored = static_cast<bool>(hiqp_preload_tasks[i]["monitored"]);
 
-        task_manager_.setTask(name, priority, visible, active, def_params,
-                              dyn_params, this->getRobotState());
+        task_manager_.setTask(name, priority, visible, active, monitored,
+                              def_params, dyn_params, this->getRobotState());
       } catch (const XmlRpc::XmlRpcException& e) {
         ROS_WARN_STREAM(
             "Error while loading "

@@ -8,5 +8,13 @@
       The HiQPJointVelocityController generates velocity commands for a set of joints. It expects a VelocityJointInterface type of hardware interface.
     </description>
   </class>
+  
+  <class name="hiqp_ros/HiQPJointEffortController" 
+         type="hiqp_ros::HiQPJointEffortController" 
+         base_class_type="controller_interface::ControllerBase">
+    <description>
+      The HiQPJointEffortController generates acceleration commands for a set of joints. It expects a EffortJointInterface type of hardware interface.
+    </description>
+  </class>
 
 </library>

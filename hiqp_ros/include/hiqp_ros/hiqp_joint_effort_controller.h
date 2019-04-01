@@ -17,15 +17,26 @@
 #ifndef HIQP_JOINT_EFFORT_CONTROLLER_H
 #define HIQP_JOINT_EFFORT_CONTROLLER_H
 
-#include <memory>
+#include <string>
+#include <vector>
 
 #include <hardware_interface/joint_command_interface.h>
 #include <ros/ros.h>
+
+#include <kdl/jntarray.hpp>
+#include <kdl/jntarrayvel.hpp>
+#include <kdl/tree.hpp>
+#include <kdl_parser/kdl_parser.hpp>
+
+#include <hiqp/hiqp_time_point.h>
+#include <hiqp/task_manager.h>
 
 #include <hiqp_ros/base_controller.h>
 #include <hiqp_ros/hiqp_service_handler.h>
 #include <hiqp_ros/ros_topic_subscriber.h>
 #include <hiqp_ros/ros_visualizer.h>
+
+#include <fstream>
 
 namespace hiqp_ros {
 typedef hardware_interface::EffortJointInterface JointEffortInterface;
@@ -39,7 +50,8 @@ class HiQPJointEffortController : public BaseController<JointEffortInterface> {
   ~HiQPJointEffortController() noexcept;
 
   void initialize();
-  void computeControls(Eigen::VectorXd& u);
+  //void computeControls(Eigen::VectorXd& u);
+  void updateControls(Eigen::VectorXd& ddq, Eigen::VectorXd& u);
 
  private:
   HiQPJointEffortController(const HiQPJointEffortController& other) = delete;
@@ -49,7 +61,7 @@ class HiQPJointEffortController : public BaseController<JointEffortInterface> {
   HiQPJointEffortController& operator=(
       HiQPJointEffortController&& other) noexcept = delete;
 
-  void monitorTasks();
+  void monitorTasks(double vel_ctl_comp_time);
   void renderPrimitives();
 
   void loadRenderingParameters();
