@@ -127,8 +127,10 @@ class HiQPClient {
 
   bool deactivateTask(const std::string& task_name);
 
-  bool removeTask(const std::string& task_name);
+  void activateTasks(const std::vector<std::string>& task_names);
 
+  bool removeTask(const std::string& task_name);
+  
   bool removeTasks(const std::vector <std::string>& task_names);
 
   bool removePrimitive(const std::string& primitive_name);
