@@ -38,6 +38,9 @@
 
 #include <fstream>
 
+//For dynamics model
+#include <kdl/chaindynparam.hpp>
+
 namespace hiqp_ros {
 typedef hardware_interface::EffortJointInterface JointEffortInterface;
 
@@ -72,6 +75,9 @@ class HiQPJointEffortController : public BaseController<JointEffortInterface> {
   void loadTasksFromParamServer();
 
   bool is_active_;
+  unsigned int n_actuated_joints_;
+
+  bool be_model_based_;
 
   bool monitoring_active_;
   double monitoring_publish_rate_;
@@ -91,6 +97,10 @@ class HiQPJointEffortController : public BaseController<JointEffortInterface> {
 
   hiqp::TaskManager task_manager_;
   std::shared_ptr<hiqp::TaskManager> task_manager_ptr_;
+    
+  KDL::Vector gravity_vector_kdl;
+  KDL::Chain robot_chain;
+ // std::shared_ptr<KDL::ChainDynParam> id_solver_;
 };
 
 }  // namespace hiqp_ros

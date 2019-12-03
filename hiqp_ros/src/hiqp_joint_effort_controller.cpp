@@ -50,6 +50,7 @@ namespace hiqp_ros {
 HiQPJointEffortController::HiQPJointEffortController()
     : is_active_(true),
       monitoring_active_(false),
+      be_model_based_(false),
       visualizer_(&ros_visualizer_),
       task_manager_(visualizer_),
       task_manager_ptr_(&task_manager_) {}
@@ -72,6 +73,14 @@ void HiQPJointEffortController::initialize() {
         "Couldn't find parameter 'load_primitives_from_tf' on parameter "
         "server, defaulting to no tf primitive tracking.");
   }
+  
+  if (!this->getControllerNodeHandle().getParam("model_based",
+                                                be_model_based_)) {
+    ROS_WARN(
+        "Couldn't find parameter 'model_based' on parameter "
+        "server, defaulting to not using the inverse dynamics model.");
+    be_model_based_=false;
+  }
 
   service_handler_.advertiseAll();
 
@@ -82,6 +91,43 @@ void HiQPJointEffortController::initialize() {
   loadGeometricPrimitivesFromParamServer();
 
   loadTasksFromParamServer();
+
+  //initialize dynamics solver
+  if(be_model_based_) {
+
+    gravity_vector_kdl = KDL::Vector(0.0,0.0,-9.81);
+    //get the number of actuated joints right
+    n_actuated_joints_=0;
+    for (int i=0; i<getNJoints(); i++) {
+      if(this->getRobotState()->isQNrWritable(i)) n_actuated_joints_++;
+    }
+    std::cerr<<"number of actuated joints is "<<n_actuated_joints_<<std::endl;
+
+    std::string chain_root, chain_tip;
+    if (!this->getControllerNodeHandle().getParam("chain_root",
+                      chain_root)) {
+      ROS_WARN(
+              "Couldn't find parameter 'chain_root' on parameter "
+              "server, defaulting to not using the inverse dynamics model.");
+      be_model_based_=false;
+    }
+    if (!this->getControllerNodeHandle().getParam("chain_tip",
+                      chain_tip)) {
+      ROS_WARN(
+              "Couldn't find parameter 'chain_tip' on parameter "
+              "server, defaulting to not using the inverse dynamics model.");
+      be_model_based_=false;
+    }
+
+    if(this->getRobotState()->kdl_tree_.getChain(chain_root, chain_tip, robot_chain) && be_model_based_) {
+      std::cerr<<"Got chain: "<<robot_chain<<std::endl;
+      std::cerr<<"Chain has "<<robot_chain.getNrOfJoints()<<" joints and "
+	       <<robot_chain.getNrOfSegments()<< " segments\n";
+    } else {
+      ROS_WARN("Could not get chain, defaulting to no use of inverse dynamics model");
+      be_model_based_=false;
+    }
+  }
 }
 
 void HiQPJointEffortController::updateControls(Eigen::VectorXd& ddq, Eigen::VectorXd& u) {
@@ -100,7 +146,62 @@ void HiQPJointEffortController::updateControls(Eigen::VectorXd& ddq, Eigen::Vect
   for (auto&& oc : _ddq) {
     ddq(i++) = oc;
   }
-  u = ddq;
+
+  std::cerr<<"ddq = "<<ddq.transpose()<<std::endl;
+  if(!be_model_based_) {
+    u = ddq;
+  } else {
+    std::cerr<<"Chain has "<<robot_chain.getNrOfJoints()<<" joints and "
+	       <<robot_chain.getNrOfSegments()<< " segments\n";
+    
+    KDL::ChainDynParam id_solver(robot_chain,gravity_vector_kdl);
+    
+    //setup varriables
+    KDL::JntArray q_actuated(n_actuated_joints_),
+                  dq_actuated(n_actuated_joints_),
+                  ddq_desired(n_actuated_joints_), 
+                  torques(n_actuated_joints_);
+
+    q_actuated.data = this->getRobotState()->kdl_jnt_array_vel_.q.data.head(n_actuated_joints_);
+    dq_actuated.data = this->getRobotState()->kdl_jnt_array_vel_.qdot.data.head(n_actuated_joints_);
+
+    ddq_desired.data = ddq.head(n_actuated_joints_);
+
+    
+    KDL::JntArray coriolis_kdl(n_actuated_joints_), 
+	          gravity_kdl(n_actuated_joints_);
+    KDL::JntSpaceInertiaMatrix mass_kdl(n_actuated_joints_);
+
+    //get gravity torque
+    int error_number = id_solver.JntToGravity(q_actuated, gravity_kdl);
+    //std::cerr<<"Gravity errno "<<error_number<<" value: "<<gravity_kdl.data.transpose()<<std::endl;
+
+    error_number = id_solver.JntToCoriolis(q_actuated, dq_actuated, coriolis_kdl);
+    //std::cerr<<"Coriolis errno "<<error_number<<" value: "<<coriolis_kdl.data.transpose()<<std::endl;
+
+    error_number = id_solver.JntToMass(q_actuated, mass_kdl);
+    //std::cerr<<"Mass errno "<<error_number<<" value:\n" <<mass_kdl.data<<std::endl; 
+
+    //run the inverse dynamics solver to get torques
+    /*int error_value = id_solver_->CartToJnt(q_actuated, 
+                         dq_actuated,
+                         ddq_desired,
+                         external_forces,
+                         torques);
+    */
+  
+    Eigen::MatrixXd tau (n_actuated_joints_, 1);
+    tau = mass_kdl.data*ddq_desired.data + coriolis_kdl.data + gravity_kdl.data;
+    //tau = gravity_kdl.data;
+
+    u.head(n_actuated_joints_) = tau;
+
+    std::cerr<<"Setting model-based commands: "
+             <<"\n q   = "<<q_actuated.data.transpose()
+             <<"\n dq  = "<<dq_actuated.data.transpose()
+             <<"\n ddq = "<<ddq_desired.data.transpose()
+             <<"\n tau = "<<tau.transpose()<<std::endl;
+  }
 
   renderPrimitives();
 
