@@ -94,14 +94,52 @@ void HiQPJointEffortController::initialize() {
 
   //initialize dynamics solver
   if(be_model_based_) {
-
-    gravity_vector_kdl = KDL::Vector(0.0,0.0,-9.81);
     //get the number of actuated joints right
     n_actuated_joints_=0;
     for (int i=0; i<getNJoints(); i++) {
       if(this->getRobotState()->isQNrWritable(i)) n_actuated_joints_++;
     }
     std::cerr<<"number of actuated joints is "<<n_actuated_joints_<<std::endl;
+
+    //get impedance parameters from config file
+    std::string param_name = "kv";
+    std::vector<double> kv_gains, kd_gains;
+    if (!this->getControllerNodeHandle().getParam(param_name, kv_gains)) {
+      ROS_ERROR_STREAM("In HiQPJointEffortController: Call to getParam('"
+                     << param_name << "') in namespace '"
+                     << this->getControllerNodeHandle().getNamespace() << "' failed.");
+      return;
+    }
+    param_name = "kd";
+    if (!this->getControllerNodeHandle().getParam(param_name, kd_gains)) {
+      ROS_ERROR_STREAM("In HiQPJointEffortController: Call to getParam('"
+                     << param_name << "') in namespace '"
+                     << this->getControllerNodeHandle().getNamespace() << "' failed.");
+      return;
+    }
+    if(kv_gains.size() != kd_gains.size() || kv_gains.size() != n_actuated_joints_) {
+      ROS_ERROR_STREAM("In HiQPJointEffortController: kv and kd gains are not the correct size. Expected "
+		     << n_actuated_joints_ << " Got "<<kv_gains.size() <<" and "<<kd_gains.size());
+      return;
+    }
+
+    Kv = Eigen::Matrix<double, 7, 7>::Identity();
+    Kd = Eigen::Matrix<double, 7, 7>::Identity();
+
+    for(int i=0; i<n_actuated_joints_; i++) {
+      Kv(i,i) = kv_gains[i];
+      Kd(i,i) = kd_gains[i];
+    }
+    /*
+    controller_nh.param("alpha_vel", alpha_vel_, 0.99);
+    controller_nh.param("delta_tau_max", delta_tau_max_, 0.1);
+    alpha_vel_ = std::max(std::min(alpha_vel_, 1.0), 0.0);
+    */
+
+    std::cerr<<"Kv = "<<Kv<<std::endl;
+
+    //setup KDL related parameters
+    gravity_vector_kdl = KDL::Vector(0.0,0.0,-9.81);
 
     std::string chain_root, chain_tip;
     if (!this->getControllerNodeHandle().getParam("chain_root",
@@ -127,6 +165,9 @@ void HiQPJointEffortController::initialize() {
       ROS_WARN("Could not get chain, defaulting to no use of inverse dynamics model");
       be_model_based_=false;
     }
+    u_vel_ = Eigen::VectorXd::Zero(n_actuated_joints_);
+    q_int_ = Eigen::VectorXd::Zero(n_actuated_joints_);
+
   }
 }
 
@@ -147,13 +188,21 @@ void HiQPJointEffortController::updateControls(Eigen::VectorXd& ddq, Eigen::Vect
     ddq(i++) = oc;
   }
 
-  std::cerr<<"ddq = "<<ddq.transpose()<<std::endl;
+  //std::cerr<<"ddq = "<<ddq.transpose()<<std::endl;
   if(!be_model_based_) {
     u = ddq;
   } else {
-    std::cerr<<"Chain has "<<robot_chain.getNrOfJoints()<<" joints and "
-	       <<robot_chain.getNrOfSegments()<< " segments\n";
-    
+
+    double dt = period_.toSec();
+    Eigen::Matrix<double, 7, 1> q_d; 	  //q desired
+    Eigen::Matrix<double, 7, 1> dq_d;	  //q dot desired
+    Eigen::Matrix<double, 7, 1> ddq_d = ddq.head(n_actuated_joints_); //q dot dot desired
+    //double alpha = 0.9;
+    dq_d  = u_vel_ + dt*ddq_d; //computed velocity target
+    u_vel_= dq_d; //store the computed velocity controls for the next integration step
+    q_d = q_int_ + dt*dq_d; //compute joint target
+    q_int_= q_d;   //store the computed desired q for the next integration step
+
     KDL::ChainDynParam id_solver(robot_chain,gravity_vector_kdl);
     
     //setup varriables
@@ -165,7 +214,7 @@ void HiQPJointEffortController::updateControls(Eigen::VectorXd& ddq, Eigen::Vect
     q_actuated.data = this->getRobotState()->kdl_jnt_array_vel_.q.data.head(n_actuated_joints_);
     dq_actuated.data = this->getRobotState()->kdl_jnt_array_vel_.qdot.data.head(n_actuated_joints_);
 
-    ddq_desired.data = ddq.head(n_actuated_joints_);
+    //ddq_desired.data = ddq.head(n_actuated_joints_);
 
     
     KDL::JntArray coriolis_kdl(n_actuated_joints_), 
@@ -182,25 +231,22 @@ void HiQPJointEffortController::updateControls(Eigen::VectorXd& ddq, Eigen::Vect
     error_number = id_solver.JntToMass(q_actuated, mass_kdl);
     //std::cerr<<"Mass errno "<<error_number<<" value:\n" <<mass_kdl.data<<std::endl; 
 
-    //run the inverse dynamics solver to get torques
-    /*int error_value = id_solver_->CartToJnt(q_actuated, 
-                         dq_actuated,
-                         ddq_desired,
-                         external_forces,
-                         torques);
-    */
-  
     Eigen::MatrixXd tau (n_actuated_joints_, 1);
-    tau = mass_kdl.data*ddq_desired.data + coriolis_kdl.data + gravity_kdl.data;
+    //computed torque control: forward model + impedance term
+    tau = mass_kdl.data*ddq_d + coriolis_kdl.data + gravity_kdl.data + 
+	    Kv*(dq_d-dq_actuated.data) + Kd*(q_d-q_actuated.data);
     //tau = gravity_kdl.data;
 
     u.head(n_actuated_joints_) = tau;
 
+    /*
     std::cerr<<"Setting model-based commands: "
-             <<"\n q   = "<<q_actuated.data.transpose()
-             <<"\n dq  = "<<dq_actuated.data.transpose()
-             <<"\n ddq = "<<ddq_desired.data.transpose()
+             //<<"\n q   = "<<q_actuated.data.transpose()
+             //<<"\n dq  = "<<dq_actuated.data.transpose()
+             <<"\n ddq_d = "<<ddq_d.transpose()
+	     <<"\n imp_t = "<<(Kv*(dq_d-dq_actuated.data) + Kd*(q_d-q_actuated.data)).transpose()
              <<"\n tau = "<<tau.transpose()<<std::endl;
+	     */
   }
 
   renderPrimitives();
@@ -219,6 +265,20 @@ void HiQPJointEffortController::updateControls(Eigen::VectorXd& ddq, Eigen::Vect
 //                      P R I V A T E   M E T H O D S
 //
 ////////////////////////////////////////////////////////////////////////////////
+
+Eigen::Matrix<double, 7, 1> HiQPJointEffortController::saturateTorqueRate(
+    const Eigen::Matrix<double, 7, 1>& tau_d_calculated,
+    const Eigen::Matrix<double, 7, 1>& tau_J_d) {  
+
+  Eigen::Matrix<double, 7, 1> tau_d_saturated{};
+  for (size_t i = 0; i < 7; i++) {
+    double difference = tau_d_calculated[i] - tau_J_d[i];
+    tau_d_saturated[i] =
+        tau_J_d[i] + std::max(std::min(difference, delta_tau_max_), -delta_tau_max_);
+  }
+  return tau_d_saturated;
+}
+
 
 void HiQPJointEffortController::renderPrimitives() {
   ros::Time now = ros::Time::now();

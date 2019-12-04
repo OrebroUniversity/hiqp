@@ -100,7 +100,22 @@ class HiQPJointEffortController : public BaseController<JointEffortInterface> {
     
   KDL::Vector gravity_vector_kdl;
   KDL::Chain robot_chain;
- // std::shared_ptr<KDL::ChainDynParam> id_solver_;
+  //previous commanded joint velocity
+  Eigen::VectorXd u_vel_;
+  //previous commanded 
+  Eigen::VectorXd q_int_;
+  //stiffness of impedance tracking behavior
+  Eigen::Matrix<double, 7, 7> Kv;
+  Eigen::Matrix<double, 7, 7> Kd;
+  Eigen::Matrix<double, 7, 1> dq_filtered_;
+  Eigen::Matrix<double, 7, 1> tau_;
+
+  double delta_tau_max_{0.1};
+  //interface for keeping commanded torque sane
+  Eigen::Matrix<double, 7, 1> saturateTorqueRate(
+      const Eigen::Matrix<double, 7, 1>& tau_d_calculated,
+      const Eigen::Matrix<double, 7, 1>& tau_J_d);
+
 };
 
 }  // namespace hiqp_ros
