@@ -40,7 +40,7 @@ class ROSVisualizer : public hiqp::Visualizer {
   ROSVisualizer();
   ~ROSVisualizer() noexcept {}
 
-  int init(ros::NodeHandle* controller_nh);
+  int init(ros::NodeHandle &controller_nh);
 
   int add(std::shared_ptr<GeometricPoint> point);
   int add(std::shared_ptr<GeometricLine> line);
@@ -86,7 +86,7 @@ class ROSVisualizer : public hiqp::Visualizer {
   const double kFrameArrowRadius = 0.0017;
   const double kFrameArrowLength = 0.04;
 
-  ros::NodeHandle* controller_nh_;
+  ros::NodeHandle controller_nh_;
 
   ros::Publisher marker_array_pub_;
 

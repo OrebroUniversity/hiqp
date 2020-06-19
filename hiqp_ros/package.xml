@@ -17,7 +17,8 @@
   <build_depend>control_msgs</build_depend>
   <build_depend>kdl_parser</build_depend>
   <build_depend>visualization_msgs</build_depend>
-  <build_depend>orocos_kdl</build_depend>
+  <build_depend>liborocos-kdl</build_depend>
+  <build_depend>liborocos-kdl-dev</build_depend>
   <build_depend>hiqp_core</build_depend>
   <build_depend>hiqp_msgs</build_depend>
   <build_depend>filters</build_depend>  
@@ -31,7 +32,8 @@
   <run_depend>controller_interface</run_depend>
   <run_depend>control_msgs</run_depend>
   <run_depend>visualization_msgs</run_depend>
-  <run_depend>orocos_kdl</run_depend>
+  <run_depend>liborocos-kdl</run_depend>
+  <run_depend>liborocos-kdl-dev</run_depend>
   <run_depend>hiqp_core</run_depend>
   <run_depend>hiqp_msgs</run_depend>
 

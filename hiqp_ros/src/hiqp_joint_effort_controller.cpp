@@ -58,12 +58,14 @@ HiQPJointEffortController::HiQPJointEffortController()
 HiQPJointEffortController::~HiQPJointEffortController() noexcept {}
 
 void HiQPJointEffortController::initialize() {
-  ros_visualizer_.init(&(this->getControllerNodeHandle()));
+  ROS_INFO("HiQPJointEffortController initializing");
+  
   service_handler_.init(this->getControllerNodeHandlePtr(), task_manager_ptr_,
                         this->getRobotState());
+  //ros_visualizer_.init(this->getControllerNodeHandle());
+  ros_visualizer_.init(this->controller_nh_);
 
   loadRenderingParameters();
-
   if (loadAndSetupTaskMonitoring() != 0) return;
 
   bool tf_primitives = false;
@@ -85,11 +87,8 @@ void HiQPJointEffortController::initialize() {
   service_handler_.advertiseAll();
 
   task_manager_.init(getNJoints());
-
   loadJointLimitsFromParamServer();
-
   loadGeometricPrimitivesFromParamServer();
-
   loadTasksFromParamServer();
 
   //initialize dynamics solver

@@ -45,7 +45,7 @@ class GeometricPrimitive {
   /*! \brief Must be specified by the inheriting class. */
   virtual int init(const std::vector<double>& parameters) = 0;
 
-  inline int setVisualId(int visual_id) { visual_id_ = visual_id; }
+  inline void setVisualId(int visual_id) { visual_id_ = visual_id; }
   inline int getVisualId() { return visual_id_; }
 
   inline std::string getName() { return name_; }

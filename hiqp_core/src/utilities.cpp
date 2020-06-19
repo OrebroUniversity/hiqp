@@ -109,9 +109,13 @@ namespace hiqp {
   int kdl_getAllQNrFromTree(const KDL::Tree& kdl_tree,
 			    std::vector<unsigned int>& qnrs) {
     qnrs.clear();
-    for (auto&& element : kdl_tree.getSegments()) {
-      qnrs.push_back(element.second.q_nr);
+    KDL::SegmentMap all_segments = kdl_tree.getSegments();
+    std::cerr<<"KDL tree has "<<all_segments.size()<<" elements\n";
+    for (KDL::SegmentMap::const_iterator element=all_segments.cbegin(); element!=all_segments.cend(); element++ ) {
+      qnrs.push_back(element->second.q_nr);
+      std::cerr<<element->first<<" added joint "<<element->second.q_nr<<" for segment "<<element->second.segment.getName()<<std::endl;
     }
+    return 0;
   }
 
   std::string kdl_getJointNameFromQNr(const KDL::Tree& kdl_tree,

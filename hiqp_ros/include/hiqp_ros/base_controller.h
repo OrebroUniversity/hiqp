@@ -89,12 +89,6 @@ protected:
 
   ros::Duration period_;
 
-private:
-  BaseController(const BaseController &other) = delete;
-  BaseController(BaseController &&other) = delete;
-  BaseController &operator=(const BaseController &other) = delete;
-  BaseController &operator=(BaseController &&other) noexcept = delete;
-
   // void loadDesiredSamplingTime();
   int loadUrdfToKdlTree();
   int loadJointsAndSetJointHandlesMap();
@@ -130,6 +124,14 @@ private:
       c_state_pub_;
   ros::Time last_c_state_update_;
   double c_state_publish_rate_;
+
+///Goodbye paranoia: the above should be accessible to derived controllers.
+private:
+  BaseController(const BaseController &other) = delete;
+  BaseController(BaseController &&other) = delete;
+  BaseController &operator=(const BaseController &other) = delete;
+  BaseController &operator=(BaseController &&other) noexcept = delete;
+
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -158,15 +160,22 @@ bool BaseController<HardwareInterfaceT>::init(hardware_interface::RobotHW *hw,
   controller_nh_ptr_.reset(&controller_nh_);
   robot_state_ptr_.reset(&robot_state_data_);
 
+  ROS_INFO("Set up all handles");
+
   ros::Time t = ros::Time::now();
   last_sampling_time_point_.setTimePoint(t.sec, t.nsec);
 
   loadUrdfToKdlTree();
+  ROS_INFO("Loaded KDL tree");
   loadJointsAndSetJointHandlesMap();
+  ROS_INFO("Set up the joint handles map");
   loadSensorsAndSetSensorHandlesMap();
+  ROS_INFO("Loaded sensors and sensor map");
 
   sampleJointValues();
+  //ROS_INFO("Sampled joint values");
   sampleSensorValues();  
+  //ROS_INFO("Calling initialize to derived instance");
   initialize();
 
   c_state_pub_.init(controller_nh, "joint_controller_state", 1);
@@ -239,6 +248,7 @@ int BaseController<HardwareInterfaceT>::loadSensorsAndSetSensorHandlesMap() {
 //=====================================================================================
 template <typename HardwareInterfaceT>
 int BaseController<HardwareInterfaceT>::loadJointsAndSetJointHandlesMap() {
+  ROS_INFO("Setting up joint handle map...");
   std::string param_name = "joints";
   std::vector<std::string> joint_names;
   if (!controller_nh_.getParam(param_name, joint_names)) {
@@ -251,6 +261,7 @@ int BaseController<HardwareInterfaceT>::loadJointsAndSetJointHandlesMap() {
   unsigned int n_joint_names = joint_names.size();
   n_joints_ = robot_state_data_.kdl_tree_.getNrOfJoints();
 
+  //ROS_INFO_STREAM("We have " << n_joint_names << " joints in the controller parameter and " << n_joints_ << " joints in the robot model");
   if (n_joint_names > n_joints_) {
     ROS_ERROR_STREAM(
         "In ROSKinematicsController: The .yaml file"
@@ -261,14 +272,27 @@ int BaseController<HardwareInterfaceT>::loadJointsAndSetJointHandlesMap() {
   }
 
   std::vector<unsigned int> qnrs;
-  hiqp::kdl_getAllQNrFromTree(robot_state_data_.kdl_tree_, qnrs);
+
+  qnrs.clear();
+  KDL::SegmentMap all_segments = robot_state_data_.kdl_tree_.getSegments();
+  std::cerr<<"KDL tree has "<<all_segments.size()<<" elements\n";
+  for (KDL::SegmentMap::const_iterator element=all_segments.cbegin(); 
+		  element!=all_segments.cend(); element++ ) {
+    qnrs.push_back(element->second.q_nr);
+    std::cerr<<element->first<<" added joint "<<element->second.q_nr
+	     <<" for segment "<<element->second.segment.getName()<<std::endl;
+  }
+
+  //FIXME: this breaks, code duplication above instead.
+  //hiqp::kdl_getAllQNrFromTree(robot_state_data_.kdl_tree_, qnrs);
+  
   robot_state_data_.joint_handle_info_.clear();
 
   for (auto &&name : joint_names) {
     try {
       unsigned int q_nr =
           hiqp::kdl_getQNrFromJointName(robot_state_data_.kdl_tree_, name);
-      // std::cout << "Joint found: '" << name << "', qnr: " << q_nr << "\n";
+      ROS_INFO_STREAM("Joint found: '" << name << "', qnr: " << q_nr);
       joint_handles_map_.emplace(q_nr, jnt_hw_->getHandle(name));
       qnrs.erase(std::remove(qnrs.begin(), qnrs.end(), q_nr), qnrs.end());
       robot_state_data_.joint_handle_info_.push_back(

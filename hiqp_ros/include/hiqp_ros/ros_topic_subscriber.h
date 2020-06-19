@@ -42,13 +42,13 @@ class ROSTopicSubscriber {
   ROSTopicSubscriber() {}
   ~ROSTopicSubscriber() {}
 
-  int init(hiqp::TaskManager* task_manager, hiqp::RobotStatePtr robot_state_ptr) { 
+  void init(hiqp::TaskManager* task_manager, hiqp::RobotStatePtr robot_state_ptr) { 
       task_manager_ = task_manager; 
       robot_state_ptr_ = robot_state_ptr;
   }
 
   template <typename ROSMessageType>
-  int addSubscription(ros::NodeHandle& controller_nh,
+  void addSubscription(ros::NodeHandle& controller_nh,
                       const std::string& topic_name, unsigned int buffer_size) {
     sub = controller_nh.subscribe(
         topic_name, buffer_size,

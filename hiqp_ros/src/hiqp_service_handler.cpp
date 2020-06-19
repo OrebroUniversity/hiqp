@@ -156,7 +156,9 @@ bool HiQPServiceHandler::demonitorTask(
 bool HiQPServiceHandler::setPrimitives(
     hiqp_msgs::SetPrimitives::Request& req,
     hiqp_msgs::SetPrimitives::Response& res) {
+
   for (auto primitive : req.primitives) {
+    ROS_INFO_STREAM("Setting primitive "<<primitive.name<<" of type "<<primitive.type); 
     int retval = task_manager_->setPrimitive(
         primitive.name, primitive.type, primitive.frame_id, primitive.visible,
         primitive.color, primitive.parameters);

@@ -40,7 +40,8 @@ class GeometricFrame : public GeometricPrimitive {
   ~GeometricFrame() noexcept {}
 
   int init(const std::vector<double>& parameters) {
-    GeometricPrimitive::init(parameters);
+    //GeometricPrimitive::init(parameters);
+    parameters_ = parameters;
     int size = parameters.size();
     if (!(size == 3 || size == 6 || size == 7)) {
       printHiqpWarning("GeometricFrame requires 3, 6 or 7 parameters, got " +

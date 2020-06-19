@@ -268,6 +268,7 @@ namespace hiqp {
     //}
     else {
       try {
+	//FIXME deprecated interface, check and fix!
 	def_ = std::shared_ptr<hiqp::TaskDefinition>(
 						     tdef_loader_.createClassInstance("hiqp::tasks::" + type));
 	def_->initializeTaskDefinition(geom_prim_map_, visualizer_);

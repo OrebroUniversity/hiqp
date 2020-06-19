@@ -507,6 +507,7 @@ namespace hiqp {
       J_dot_=Eigen::Map<Eigen::Matrix<double,1,3> >(d.data)/(e_(0)+eps)*J_dot_p1p2.data.topRows<3>()+(d_dot.transpose()/(e_(0)+eps) - (Eigen::Map<Eigen::Matrix<double,1,3> >(d.data)*d_dot)*Eigen::Map<Eigen::Matrix<double,1,3> >(d.data)/pow(pow(e_(0)+eps,2),1.5))*J_p1p2.data.topRows<3>();
       e_dot_=J_*qdot;
     
+      return 0;
     }
 
     // ///////////////////////////////////////////////////////////////////////////////

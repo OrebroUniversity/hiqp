@@ -57,7 +57,7 @@ HiQPJointVelocityController::HiQPJointVelocityController()
 HiQPJointVelocityController::~HiQPJointVelocityController() noexcept {}
 
 void HiQPJointVelocityController::initialize() {
-  ros_visualizer_.init(&(this->getControllerNodeHandle()));
+  ros_visualizer_.init(this->getControllerNodeHandle());
   service_handler_.init(this->getControllerNodeHandlePtr(), task_manager_ptr_,
                         this->getRobotState());
 

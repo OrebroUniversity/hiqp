@@ -302,6 +302,7 @@ int TaskManager::activateTask(const std::string& task_name) {
                      "': No task with that name found.");
   }
   resource_mutex_.unlock();
+  return 0;
 }
 
 int TaskManager::deactivateTask(const std::string& task_name) {
@@ -314,6 +315,7 @@ int TaskManager::deactivateTask(const std::string& task_name) {
                      "': No task with that name found.");
   }
   resource_mutex_.unlock();
+  return 0;
 }
 
 int TaskManager::monitorTask(const std::string& task_name) {
@@ -326,6 +328,7 @@ int TaskManager::monitorTask(const std::string& task_name) {
                      task_name + "': No task with that name found.");
   }
   resource_mutex_.unlock();
+  return 0;
 }
 
 int TaskManager::demonitorTask(const std::string& task_name) {
@@ -338,6 +341,7 @@ int TaskManager::demonitorTask(const std::string& task_name) {
                      task_name + "': No task with that name found.");
   }
   resource_mutex_.unlock();
+  return 0;
 }
 
 int TaskManager::setPrimitive(const std::string& name, const std::string& type,
@@ -401,6 +405,7 @@ int TaskManager::removePriorityLevel(unsigned int priority) {
     }
   }
   resource_mutex_.unlock();
+  return 0;
 }
 
 int TaskManager::activatePriorityLevel(unsigned int priority) {
@@ -409,6 +414,7 @@ int TaskManager::activatePriorityLevel(unsigned int priority) {
     if (kv.second->getPriority() == priority) kv.second->setActive(true);
   }
   resource_mutex_.unlock();
+  return 0;
 }
 
 int TaskManager::deactivatePriorityLevel(unsigned int priority) {
@@ -417,6 +423,7 @@ int TaskManager::deactivatePriorityLevel(unsigned int priority) {
     if (kv.second->getPriority() == priority) kv.second->setActive(false);
   }
   resource_mutex_.unlock();
+  return 0;
 }
 
 int TaskManager::monitorPriorityLevel(unsigned int priority) {
@@ -425,6 +432,7 @@ int TaskManager::monitorPriorityLevel(unsigned int priority) {
     if (kv.second->getPriority() == priority) kv.second->setMonitored(true);
   }
   resource_mutex_.unlock();
+  return 0;
 }
 
 int TaskManager::demonitorPriorityLevel(unsigned int priority) {
@@ -433,6 +441,7 @@ int TaskManager::demonitorPriorityLevel(unsigned int priority) {
     if (kv.second->getPriority() == priority) kv.second->setMonitored(false);
   }
   resource_mutex_.unlock();
+  return 0;
 }
 
 }  // namespace hiqp

@@ -71,7 +71,7 @@ add_library(${PROJECT_NAME} src/utilities.cpp
                             src/task_manager.cpp
                             src/task.cpp
 
-                            src/geometric_primitives/geometric_primitive.cpp
+			    #src/geometric_primitives/geometric_primitive.cpp
                             src/geometric_primitives/geometric_primitive_map.cpp
 
                             ${SOLVER_SOURCE_FILE}

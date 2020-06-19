@@ -30,12 +30,13 @@ double marker_lifetime = 10;  // added markers live for 1 second
 
 ROSVisualizer::ROSVisualizer() : next_id_(0) {}
 
-int ROSVisualizer::init(ros::NodeHandle* controller_nh) {
+int ROSVisualizer::init(ros::NodeHandle &controller_nh) {
   controller_nh_ = controller_nh;
   marker_array_pub_ =
-      controller_nh_->advertise<visualization_msgs::MarkerArray>(
+      controller_nh_.advertise<visualization_msgs::MarkerArray>(
           "visualization_marker", 1);
-  controller_nh_->param<std::string>("marker_prefix", marker_prefix, "/");
+  controller_nh_.param<std::string>("marker_prefix", marker_prefix, "/");
+  return 0;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

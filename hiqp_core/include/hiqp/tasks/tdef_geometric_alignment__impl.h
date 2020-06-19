@@ -253,6 +253,7 @@ namespace hiqp {
       /* std::cerr<<"J_dot_: "<<J_dot_<<std::endl<<std::endl; */
       /* std::cerr<<"J_dot_*qdot: "<<J_dot_*qdot<<std::endl<<std::endl; */		
       //DEBUG END =========================================
+      return 0;
     }
 
     template <typename PrimitiveA, typename PrimitiveB>
@@ -275,6 +276,7 @@ namespace hiqp {
       /* std::cerr<<"e_dot_: "<<e_dot_.transpose()<<std::endl; */
       /* std::cerr<<"J_dot_: "<<J_dot_<<std::endl<<std::endl;	 */	
       //DEBUG END =========================================
+      return 0;
     }
 	
     template <typename PrimitiveA, typename PrimitiveB>
