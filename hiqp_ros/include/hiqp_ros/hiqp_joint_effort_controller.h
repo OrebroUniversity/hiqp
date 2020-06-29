@@ -105,16 +105,21 @@ class HiQPJointEffortController : public BaseController<JointEffortInterface> {
   //previous commanded 
   Eigen::VectorXd q_int_;
   //stiffness of impedance tracking behavior
-  Eigen::Matrix<double, 7, 7> Kv;
-  Eigen::Matrix<double, 7, 7> Kd;
-  Eigen::Matrix<double, 7, 1> dq_filtered_;
-  Eigen::Matrix<double, 7, 1> tau_;
+  Eigen::MatrixXd Kv;
+  Eigen::MatrixXd Kd;
+  //Eigen::MatrixXd dq_filtered_;
+  //Eigen::MatrixXd tau_;
 
   double delta_tau_max_{0.1};
   //interface for keeping commanded torque sane
-  Eigen::Matrix<double, 7, 1> saturateTorqueRate(
-      const Eigen::Matrix<double, 7, 1>& tau_d_calculated,
-      const Eigen::Matrix<double, 7, 1>& tau_J_d);
+#if 0
+  Eigen::MatrixXd saturateTorqueRate(
+	const Eigen::MatrixXd& tau_d_calculated,       
+        const Eigen::MatrixXd& tau_J_d);              
+#endif
+//  Eigen::Matrix<double, 7, 1> saturateTorqueRate(
+//      const Eigen::Matrix<double, 7, 1>& tau_d_calculated,
+//      const Eigen::Matrix<double, 7, 1>& tau_J_d);
 
 };
 

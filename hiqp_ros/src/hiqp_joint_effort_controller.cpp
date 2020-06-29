@@ -122,8 +122,8 @@ void HiQPJointEffortController::initialize() {
       return;
     }
 
-    Kv = Eigen::Matrix<double, 7, 7>::Identity();
-    Kd = Eigen::Matrix<double, 7, 7>::Identity();
+    Kv = Eigen::MatrixXd::Identity(n_actuated_joints_,n_actuated_joints_);// Eigen::Matrix<double,7,7>::Identity();
+    Kd = Eigen::MatrixXd::Identity(n_actuated_joints_,n_actuated_joints_);//Eigen::Matrix<double, 7, 7>::Identity();
 
     for(int i=0; i<n_actuated_joints_; i++) {
       Kv(i,i) = kv_gains[i];
@@ -193,9 +193,9 @@ void HiQPJointEffortController::updateControls(Eigen::VectorXd& ddq, Eigen::Vect
   } else {
 
     double dt = period_.toSec();
-    Eigen::Matrix<double, 7, 1> q_d; 	  //q desired
-    Eigen::Matrix<double, 7, 1> dq_d;	  //q dot desired
-    Eigen::Matrix<double, 7, 1> ddq_d = ddq.head(n_actuated_joints_); //q dot dot desired
+    Eigen::MatrixXd q_d; 	  //q desired					//<double, 7, 1>
+    Eigen::MatrixXd dq_d;	  //q dot desired                                 <double, 7, 1>
+    Eigen::MatrixXd ddq_d = ddq.head(n_actuated_joints_); //q dot dot desired     <double, 7, 1>
     //double alpha = 0.9;
     dq_d  = u_vel_ + dt*ddq_d; //computed velocity target
     u_vel_= dq_d; //store the computed velocity controls for the next integration step
@@ -236,6 +236,8 @@ void HiQPJointEffortController::updateControls(Eigen::VectorXd& ddq, Eigen::Vect
 	    Kv*(dq_d-dq_actuated.data) + Kd*(q_d-q_actuated.data);
     //tau = gravity_kdl.data;
 
+    //TODO: here saturate torques?
+
     u.head(n_actuated_joints_) = tau;
 
     /*
@@ -264,20 +266,20 @@ void HiQPJointEffortController::updateControls(Eigen::VectorXd& ddq, Eigen::Vect
 //                      P R I V A T E   M E T H O D S
 //
 ////////////////////////////////////////////////////////////////////////////////
+#if 0
+Eigen::MatrixXd HiQPJointEffortController::saturateTorqueRate(  //<double, 7, 1>
+    const Eigen::MatrixXd& tau_d_calculated,        //<double, 7, 1>
+    const Eigen::MatrixXd& tau_J_d) {               //<double, 7, 1>
 
-Eigen::Matrix<double, 7, 1> HiQPJointEffortController::saturateTorqueRate(
-    const Eigen::Matrix<double, 7, 1>& tau_d_calculated,
-    const Eigen::Matrix<double, 7, 1>& tau_J_d) {  
-
-  Eigen::Matrix<double, 7, 1> tau_d_saturated{};
-  for (size_t i = 0; i < 7; i++) {
+  Eigen::MatrixXd tau_d_saturated = Eigen::MatrixXd::Zero(n_actuated_joints_,1);
+  for (size_t i = 0; i < n_actuated_joints_; i++) {
     double difference = tau_d_calculated[i] - tau_J_d[i];
     tau_d_saturated[i] =
         tau_J_d[i] + std::max(std::min(difference, delta_tau_max_), -delta_tau_max_);
   }
   return tau_d_saturated;
 }
-
+#endif
 
 void HiQPJointEffortController::renderPrimitives() {
   ros::Time now = ros::Time::now();

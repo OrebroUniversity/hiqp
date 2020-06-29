@@ -70,17 +70,19 @@ bool GurobiSolver::solve(std::vector<double>& solution) {
     //END DEBUG =========================================
 	
     hqp_constraints_.appendConstraints(current_stage);
+#if 0
     //DEBUG =========================================
-    // std::cerr<<"HQP Constraints: "<<std::endl;
-    // std::cerr<<"B_: "<<std::endl<<hqp_constraints_.B_<<std::endl;
-    // std::cerr<<"constraint_signs_: ";
-    // for (int i=0; i<hqp_constraints_.constraint_signs_.size();i++)
-    //   std::cerr<<hqp_constraints_.constraint_signs_[i]<<" ";
+     std::cerr<<"HQP Constraints: "<<std::endl;
+     std::cerr<<"B_: "<<std::endl<<hqp_constraints_.B_<<std::endl;
+     std::cerr<<"constraint_signs_: ";
+     for (int i=0; i<hqp_constraints_.constraint_signs_.size();i++)
+       std::cerr<<hqp_constraints_.constraint_signs_[i]<<" ";
 
-    // std::cerr<<std::endl;
-    // std::cerr<<"b_: "<<std::endl<<hqp_constraints_.b_<<std::endl;
-    // std::cerr<<"w_: "<<std::endl<<hqp_constraints_.w_<<std::endl;
+     std::cerr<<std::endl;
+     std::cerr<<"b_: "<<std::endl<<hqp_constraints_.b_<<std::endl;
+     std::cerr<<"w_: "<<std::endl<<hqp_constraints_.w_<<std::endl;
     //END DEBUG =========================================
+#endif
 
     QPProblem qp_problem(env_, hqp_constraints_, n_solution_dims_);
 
@@ -115,6 +117,9 @@ bool GurobiSolver::solve(std::vector<double>& solution) {
       return false;
     }
   }
+ 
+  Eigen::Map<Eigen::VectorXd> qddstar (solution.data(),solution.size()); 
+  std::cerr<<"q* = ["<<std::endl<<qddstar<<"]';\n";
 
   return true;
 }
