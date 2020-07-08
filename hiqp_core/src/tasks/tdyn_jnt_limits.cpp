@@ -63,7 +63,7 @@ namespace hiqp {
       return 0;
     }
 
-    int TDynJntLimits::update(const RobotStatePtr robot_state, const std::shared_ptr< TaskDefinition > def){
+    int TDynJntLimits::update(const RobotStatePtr robot_state, const TaskDefinitionPtr def){
 
       double dt=robot_state->sampling_time_;
       Eigen::VectorXd e=def->getTaskValue();

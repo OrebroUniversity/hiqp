@@ -27,6 +27,8 @@
 
 #include <Eigen/Dense>
 
+#include <boost/shared_ptr.hpp>
+
 namespace hiqp {
 
   using geometric_primitives::GeometricPrimitiveMap;
@@ -39,12 +41,12 @@ namespace hiqp {
    *  \author Marcus A Johansson */
   class TaskDefinition {
   public:
-    inline TaskDefinition() {}
-  TaskDefinition(std::shared_ptr<GeometricPrimitiveMap> geom_prim_map,
+    inline TaskDefinition() {} // std::cerr<<"Definition base constructor (SHOULD NOT APPEAR?)\n"; }
+    TaskDefinition(std::shared_ptr<GeometricPrimitiveMap> geom_prim_map,
 		 std::shared_ptr<Visualizer> visualizer)
-    : geometric_primitive_map_(geom_prim_map), visualizer_(visualizer) {}
+    : geometric_primitive_map_(geom_prim_map), visualizer_(visualizer) {} // std::cerr<<"Definition base parametrized constructor (SHOULD NOT APPEAR?)\n"; }
 
-    ~TaskDefinition() noexcept {}
+    virtual ~TaskDefinition() noexcept {} // std::cerr<<"Definition base destructor (SHOULD NOT APPEAR?)\n"; }
 
     inline void initializeTaskDefinition(
 					 std::shared_ptr<GeometricPrimitiveMap> geom_prim_map,
@@ -138,6 +140,7 @@ namespace hiqp {
     }
   };
 
+  typedef boost::shared_ptr<TaskDefinition> TaskDefinitionPtr;
 }  // namespace hiqp
 
 #endif  // include guard

@@ -64,7 +64,9 @@ namespace hiqp {
       tdyn_loader_("hiqp_core", "hiqp::TaskDynamics"),
       geom_prim_map_(geom_prim_map),
       visualizer_(visualizer),
-      n_controls_(n_controls) {}
+      n_controls_(n_controls) {
+//        std::cerr<<"Creating task object\n";
+      }
 
   int Task::init(const std::vector<std::string>& def_params,
 		 const std::vector<std::string>& dyn_params,
@@ -115,7 +117,7 @@ namespace hiqp {
   int Task::update(RobotStatePtr robot_state) {
     if (!checkConsistency(robot_state)) return -1;
     if (def_->update(robot_state) != 0) return -2;
-    if (dyn_->update(robot_state, def_) != 0) return -3;
+    if (dyn_->update(robot_state, def_ ) != 0) return -3;
     return 0;
 
     // DEBUG =============================================
@@ -134,60 +136,60 @@ namespace hiqp {
     std::string type = def_params.at(0);
 
     if (type.compare("TDefJntConfig") == 0) {
-      def_ = std::make_shared<TDefJntConfig>(geom_prim_map_, visualizer_);
+      def_ = boost::make_shared<TDefJntConfig>(geom_prim_map_, visualizer_);
     } else if (type.compare("TDefFullPose") == 0) {
-      def_ = std::make_shared<TDefFullPose>(geom_prim_map_, visualizer_);
+      def_ = boost::make_shared<TDefFullPose>(geom_prim_map_, visualizer_);
     }
     else if (type.compare("TDefJntLimits") == 0) {
-      def_ = std::make_shared<TDefJntLimits>(geom_prim_map_, visualizer_);
+      def_ = boost::make_shared<TDefJntLimits>(geom_prim_map_, visualizer_);
     }
     else if (type.compare("TDefGeomProj") == 0) {
       std::string prim_type1 = def_params.at(1);
       std::string prim_type2 = def_params.at(2);
       if (prim_type1.compare("point") == 0 && prim_type2.compare("point") == 0) {
-	def_ = std::make_shared<
+	def_ = boost::make_shared<
           TDefGeometricProjection<GeometricPoint, GeometricPoint> >(geom_prim_map_, visualizer_);
       } // else if (prim_type1.compare("point") == 0 &&
       //            prim_type2.compare("line") == 0) {
-      //   def_ = std::make_shared<
+      //   def_ = boost::make_shared<
       //       TDefGeometricProjection<GeometricPoint, GeometricLine> >(
       //       geom_prim_map_, visualizer_);
       // }
       else if (prim_type1.compare("point") == 0 &&
                prim_type2.compare("plane") == 0) {
-	def_ = std::make_shared<
+	def_ = boost::make_shared<
           TDefGeometricProjection<GeometricPoint, GeometricPlane> >(geom_prim_map_, visualizer_);
       } //else if (prim_type1.compare("point") == 0 &&
       //            prim_type2.compare("box") == 0) {
-      //   def_ = std::make_shared<
+      //   def_ = boost::make_shared<
       //       TDefGeometricProjection<GeometricPoint, GeometricBox> >(
       //       geom_prim_map_, visualizer_);
       // }
       else if (prim_type1.compare("point") == 0 &&
                prim_type2.compare("cylinder") == 0) {
-	def_ = std::make_shared<
+	def_ = boost::make_shared<
           TDefGeometricProjection<GeometricPoint, GeometricCylinder> >(geom_prim_map_, visualizer_);
       }else if (prim_type1.compare("point") == 0 &&
 		prim_type2.compare("sphere") == 0) {
-	def_ = std::make_shared<
+	def_ = boost::make_shared<
           TDefGeometricProjection<GeometricPoint, GeometricSphere> >(geom_prim_map_, visualizer_);
       }// else if (prim_type1.compare("line") == 0 &&
       //            prim_type2.compare("line") == 0) {
-      //   def_ = std::make_shared<
+      //   def_ = boost::make_shared<
       //       TDefGeometricProjection<GeometricLine, GeometricLine> >(
       //       geom_prim_map_, visualizer_);
       // }
       else if (prim_type1.compare("sphere") == 0 &&
                prim_type2.compare("plane") == 0) {
-	def_ = std::make_shared<
+	def_ = boost::make_shared<
           TDefGeometricProjection<GeometricSphere, GeometricPlane> >(geom_prim_map_, visualizer_);
       }else if (prim_type1.compare("sphere") == 0 &&
 		prim_type2.compare("sphere") == 0) {
-	def_ = std::make_shared<
+	def_ = boost::make_shared<
           TDefGeometricProjection<GeometricSphere, GeometricSphere> >(geom_prim_map_, visualizer_);
       }else if (prim_type1.compare("frame") == 0 &&
 		prim_type2.compare("frame") == 0) {
-	def_ = std::make_shared<
+	def_ = boost::make_shared<
           TDefGeometricProjection<GeometricFrame, GeometricFrame> >(geom_prim_map_, visualizer_);
       }
       else {
@@ -200,7 +202,7 @@ namespace hiqp {
       std::string prim_type1 = def_params.at(1);
       std::string prim_type2 = def_params.at(2);
       if (prim_type1.compare("point") == 0 && prim_type2.compare("plane") == 0) {
-	def_ = std::make_shared<
+	def_ = boost::make_shared<
           TDefFTSProjection<GeometricPoint, GeometricPlane> >(geom_prim_map_, visualizer_);
       } 
       else {
@@ -213,33 +215,33 @@ namespace hiqp {
       std::string prim_type1 = def_params.at(1);
       std::string prim_type2 = def_params.at(2);
       if (prim_type1.compare("line") == 0 && prim_type2.compare("line") == 0) {
-	def_ = std::make_shared<
+	def_ = boost::make_shared<
           TDefGeometricAlignment<GeometricLine, GeometricLine> >(geom_prim_map_,
                                                                  visualizer_);
       }else if (prim_type1.compare("line") == 0 &&
 		prim_type2.compare("plane") == 0) {
-	def_ = std::make_shared<
+	def_ = boost::make_shared<
           TDefGeometricAlignment<GeometricLine, GeometricPlane> >(
 								  geom_prim_map_, visualizer_);
       } else if (prim_type1.compare("line") == 0 &&
 		 prim_type2.compare("cylinder") == 0) {
-	def_ = std::make_shared<
+	def_ = boost::make_shared<
           TDefGeometricAlignment<GeometricLine, GeometricCylinder> >(
 								     geom_prim_map_, visualizer_);
       }else if (prim_type1.compare("line") == 0 &&
 		prim_type2.compare("sphere") == 0) {
-	def_ = std::make_shared<
+	def_ = boost::make_shared<
           TDefGeometricAlignment<GeometricLine, GeometricSphere> >(
 								   geom_prim_map_, visualizer_);
       }else if (prim_type1.compare("frame") == 0 &&
 		prim_type2.compare("cylinder") == 0) {
-	def_ = std::make_shared<
+	def_ = boost::make_shared<
           TDefGeometricAlignment<GeometricFrame, GeometricCylinder> >(
 								   geom_prim_map_, visualizer_);
       }
       else if (prim_type1.compare("frame") == 0 &&
 		 prim_type2.compare("frame") == 0) {
-	def_ = std::make_shared<
+	def_ = boost::make_shared<
           TDefGeometricAlignment<GeometricFrame, GeometricFrame> >(
 								   geom_prim_map_, visualizer_);
       } else {
@@ -253,24 +255,23 @@ namespace hiqp {
       std::string prim_type1 = def_params.at(1);
       std::string prim_type2 = def_params.at(2);
       if (prim_type1.compare("point") == 0 && prim_type2.compare("point") == 0) {
-	def_ = std::make_shared<TDefTracking<GeometricPoint, GeometricPoint> >(geom_prim_map_, visualizer_);
+	def_ = boost::make_shared<TDefTracking<GeometricPoint, GeometricPoint> >(geom_prim_map_, visualizer_);
       }else if (prim_type1.compare("point") == 0 && prim_type2.compare("frame") == 0) {
-	def_ = std::make_shared<TDefTracking<GeometricPoint, GeometricFrame> >(geom_prim_map_, visualizer_);
+	def_ = boost::make_shared<TDefTracking<GeometricPoint, GeometricFrame> >(geom_prim_map_, visualizer_);
       } else if (prim_type1.compare("frame") == 0 && prim_type2.compare("frame") == 0) {
-	def_ = std::make_shared<TDefTracking<GeometricFrame, GeometricFrame> >(geom_prim_map_, visualizer_);
+	def_ = boost::make_shared<TDefTracking<GeometricFrame, GeometricFrame> >(geom_prim_map_, visualizer_);
       } else {
 	printHiqpWarning("TDefTracking does not support primitive combination of types '" +
 			 prim_type1 + "' and '" + prim_type2 + "'!");
 	return -1;
       }
     }// else if (type.compare("TDefMetaTask") == 0) {
-    //   def_ = std::make_shared<TDefMetaTask>(geom_prim_map_, visualizer_);
+    //   def_ = boost::make_shared<TDefMetaTask>(geom_prim_map_, visualizer_);
     //}
     else {
       try {
 	//FIXME deprecated interface, check and fix!
-	def_ = std::shared_ptr<hiqp::TaskDefinition>(
-						     tdef_loader_.createClassInstance("hiqp::tasks::" + type));
+	def_ = tdef_loader_.createInstance("hiqp::tasks::" + type);
 	def_->initializeTaskDefinition(geom_prim_map_, visualizer_);
       } catch (pluginlib::PluginlibException& ex) {
 	printHiqpWarning("The task definition type name '" + type +
@@ -286,22 +287,21 @@ namespace hiqp {
     std::string type = dyn_params.at(0);
 
     if (type.compare("TDynPD") == 0) {
-      dyn_ = std::make_shared<TDynPD>(geom_prim_map_, visualizer_);
+      dyn_ = boost::make_shared<TDynPD>(geom_prim_map_, visualizer_);
     }
     else if (type.compare("TDynJntLimits") == 0) {
-      dyn_ = std::make_shared<TDynJntLimits>(geom_prim_map_, visualizer_);
+      dyn_ = boost::make_shared<TDynJntLimits>(geom_prim_map_, visualizer_);
       //else if (type.compare("TDynCubic") == 0) {
-      //   dyn_ = std::make_shared<TDynCubic>(geom_prim_map_, visualizer_);
+      //   dyn_ = boost::make_shared<TDynCubic>(geom_prim_map_, visualizer_);
       // } else if (type.compare("TDynMinimalJerk") == 0) {
-      //   dyn_ = std::make_shared<TDynMinimalJerk>(geom_prim_map_, visualizer_);
+      //   dyn_ = boost::make_shared<TDynMinimalJerk>(geom_prim_map_, visualizer_);
       // } else if (type.compare("TDynHyperSin") == 0) {
-      //   dyn_ = std::make_shared<TDynHyperSin>(geom_prim_map_, visualizer_);
+      //   dyn_ = boost::make_shared<TDynHyperSin>(geom_prim_map_, visualizer_);
     } else if (type.compare("TDynLinearImpedance") == 0) {
-      dyn_ = std::make_shared<TDynLinearImpedance>(geom_prim_map_, visualizer_);      
+      dyn_ = boost::make_shared<TDynLinearImpedance>(geom_prim_map_, visualizer_);      
     } else {
       try {
-	dyn_ = std::shared_ptr<hiqp::TaskDynamics>(
-						   tdyn_loader_.createClassInstance("hiqp::tasks::" + type));
+	dyn_ = tdyn_loader_.createInstance("hiqp::tasks::" + type);
 	dyn_->initializeTaskDynamics(geom_prim_map_, visualizer_);
       } catch (pluginlib::PluginlibException& ex) {
 	ROS_ERROR("The plugin failed to load for some reason. Error: %s",

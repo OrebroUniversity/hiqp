@@ -39,7 +39,14 @@ class Task {
   Task(std::shared_ptr<GeometricPrimitiveMap> geom_prim_map,
        std::shared_ptr<Visualizer> visualizer, int n_controls);
 
-  ~Task() noexcept {}
+  ~Task() noexcept { 
+     //std::cerr<<"Destroying Task with name "<<task_name_<<std::endl;
+     //std::cerr<<"Def use count: "<<def_.use_count()<<" Dyn use count "<<dyn_.use_count()<<std::endl;
+     def_.reset();
+     dyn_.reset();
+     //std::cerr<<"Now Def use count: "<<def_.use_count()<<" Dyn use count "<<dyn_.use_count()<<std::endl;
+     //std::cerr<<"Pluginlib loaders going out of scope NOW\n;";
+  }
 
   /*! \brief This should be called after all fields of Task are set properly. */
   int init(const std::vector<std::string>& def_params,
@@ -146,8 +153,8 @@ class Task {
   /// the sizes of e, J, de*, task types, and number of joints of the robot
   bool checkConsistency(RobotStatePtr robot_state);
 
-  std::shared_ptr<TaskDefinition> def_;
-  std::shared_ptr<TaskDynamics> dyn_;
+  boost::shared_ptr<TaskDefinition> def_;
+  boost::shared_ptr<TaskDynamics> dyn_;
 
   pluginlib::ClassLoader<TaskDefinition> tdef_loader_;
   pluginlib::ClassLoader<TaskDynamics> tdyn_loader_;
@@ -163,6 +170,14 @@ class Task {
   bool monitored_;
   std::vector<std::string> def_params_;
   std::vector<std::string> dyn_params_;
+
+#if 0
+  template<typename T>
+  std::shared_ptr<T> make_shared_ptr(boost::shared_ptr<T>& ptr)
+  {
+    return std::shared_ptr<T>(ptr.get(), [ptr](...) mutable {ptr.reset();});
+  }
+#endif
 };
 
 }  // namespace hiqp

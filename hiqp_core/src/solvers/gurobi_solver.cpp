@@ -118,8 +118,8 @@ bool GurobiSolver::solve(std::vector<double>& solution) {
     }
   }
  
-  Eigen::Map<Eigen::VectorXd> qddstar (solution.data(),solution.size()); 
-  std::cerr<<"q* = ["<<std::endl<<qddstar<<"]';\n";
+//  Eigen::Map<Eigen::VectorXd> qddstar (solution.data(),solution.size()); 
+//  std::cerr<<"q* = ["<<std::endl<<qddstar<<"]';\n";
 
   return true;
 }

@@ -94,7 +94,7 @@ int TDynLinearImpedance::init(const std::vector<std::string> &parameters,
 }
 
 int TDynLinearImpedance::update(const RobotStatePtr robot_state,
-                                const std::shared_ptr<TaskDefinition> def) {
+                                const TaskDefinitionPtr def) {
   // linear impedance control law
   e_ddot_star_ =
       B_inv_ * (-Kp_ * def->getTaskValue() - Kd_ * def->getTaskDerivative() +

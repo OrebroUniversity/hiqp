@@ -64,6 +64,8 @@ bool TaskManager::getAccelerationControls(RobotStatePtr robot_state,
 
   solver_->clearStages();
   resource_mutex_.lock();
+  //clear the task map from prior iteration
+  robot_state->task_status_map_.clear();
   for (auto&& kv : task_map_) {
     if (kv.second->getActive()) {
       if (kv.second->update(robot_state) == 0) {
@@ -73,6 +75,22 @@ bool TaskManager::getAccelerationControls(RobotStatePtr robot_state,
 			     kv.second->getJacobianDerivative(),
 			     robot_state->kdl_jnt_array_vel_.qdot,
                              kv.second->getTaskTypes());
+
+	///TSV: added below to enable anyone with a robot state to check what tasks are running
+	///     Logic being: some tasks (RL in particular) can use information about the null-space
+	///     of higher priority tasks to decide on actions
+	//fill in task state
+	TaskStatus state;
+	state.priority_ = kv.second->getPriority();
+	state.J_ = kv.second->getJacobian();
+	state.dJ_ = kv.second->getJacobianDerivative();
+	state.e_ = kv.second->getValue();
+	state.de_ = kv.second->getValueDerivative();
+	state.dde_star_ = kv.second->getDynamics();
+	state.task_signs_ = kv.second->getTaskTypes();
+	//push it into the buffer
+	robot_state->task_status_map_.push_back(state);
+
 	//DEBUG ==================================================
 	// std::cerr<<"Task: "<<kv.second->getTaskName()<<std::endl;
 	// std::cerr<<"J_: "<<std::endl<<kv.second->getJacobian()<<std::endl;
@@ -83,44 +101,44 @@ bool TaskManager::getAccelerationControls(RobotStatePtr robot_state,
 	// std::cerr<<"dq: "<<robot_state->kdl_jnt_array_vel_.qdot.data.transpose()<<std::endl;
         // std::cerr<<"q: "<<robot_state->kdl_jnt_array_vel_.q.data.transpose()<<std::endl;
 	// std::cerr<<"__________________________________________________________"<<std::endl<<std::endl;
+#if 0
+	KDL::JntArray qdot__ = robot_state->kdl_jnt_array_vel_.qdot;
+	KDL::JntArray q__ = robot_state->kdl_jnt_array_vel_.q;
+	unsigned int q_nr=qdot__.rows();
+	std::ofstream dq;
+	std::ofstream q;
+	std::ofstream de;
+	std::ofstream e;
+	std::ofstream dde_star;
+	std::ofstream J;
+	std::ofstream dJ;
+	dq.open ("/home/tsv/hiqp_logs/"+kv.second->getTaskName()+"_dq.dat", std::ios::out | std::ios::app );
+	q.open ("/home/tsv/hiqp_logs/"+kv.second->getTaskName()+"_q.dat", std::ios::out | std::ios::app );
+	de.open ("/home/tsv/hiqp_logs/"+kv.second->getTaskName()+"_de.dat", std::ios::out | std::ios::app );
+	e.open ("/home/tsv/hiqp_logs/"+kv.second->getTaskName()+"_e.dat", std::ios::out | std::ios::app );
+	dde_star.open ("/home/tsv/hiqp_logs/"+kv.second->getTaskName()+"_dde_star.dat", std::ios::out | std::ios::app );
+	J.open ("/home/tsv/hiqp_logs/"+kv.second->getTaskName()+"_J.dat", std::ios::out | std::ios::app );
+	dJ.open ("/home/tsv/hiqp_logs/"+kv.second->getTaskName()+"_dJ.dat", std::ios::out | std::ios::app );	  
+	for(unsigned int i=0; i<q_nr; i++){
+	  dq<<qdot__(i)<<" ";
+          q<<q__(i)<<" ";	    
+	}
+	e<<kv.second->getValue().transpose()<<"\n";
+        de<<kv.second->getValueDerivative().transpose()<<"\n";
+        dde_star<<kv.second->getDynamics().transpose()<<"\n";
+	J<<kv.second->getJacobian()<<"\n"<<"\n";
+	dJ<<kv.second->getJacobianDerivative()<<"\n"<<"\n";	  
+	dq<<"\n";
+	q<<"\n";	  
+	dq.close();
+	q.close();
+	e.close();
+	de.close();
+	dde_star.close();
+	J.close();
+	dJ.close();
+#endif
 
-	// if(strcmp(kv.second->getTaskName().c_str(), "frame_frame_tracking") == 0){
-	//   KDL::JntArray qdot__ = robot_state->kdl_jnt_array_vel_.qdot;
-	//   KDL::JntArray q__ = robot_state->kdl_jnt_array_vel_.q;
-	//   unsigned int q_nr=qdot__.rows();
-	//   std::ofstream dq;
-	//   std::ofstream q;
-	//   std::ofstream de;
-	//   std::ofstream e;
-	//   std::ofstream dde_star;
-	//   std::ofstream J;
-	//   std::ofstream dJ;
-	//   dq.open ("/home/rkg/ros/amici_ws/src/hiqp/matlab/dq.dat", std::ios::out | std::ios::app );
-	//   q.open ("/home/rkg/ros/amici_ws/src/hiqp/matlab/q.dat", std::ios::out | std::ios::app );
-	//   de.open ("/home/rkg/ros/amici_ws/src/hiqp/matlab/de.dat", std::ios::out | std::ios::app );
-	//   e.open ("/home/rkg/ros/amici_ws/src/hiqp/matlab/e.dat", std::ios::out | std::ios::app );
-	//   dde_star.open ("/home/rkg/ros/amici_ws/src/hiqp/matlab/dde_star.dat", std::ios::out | std::ios::app );
-	//   J.open ("/home/rkg/ros/amici_ws/src/hiqp/matlab/J.dat", std::ios::out | std::ios::app );
-	//   dJ.open ("/home/rkg/ros/amici_ws/src/hiqp/matlab/dJ.dat", std::ios::out | std::ios::app );	  
-	//   for(unsigned int i=0; i<q_nr; i++){
-	//     dq<<qdot__(i)<<" ";
-        //     q<<q__(i)<<" ";	    
-	//   }
-	//   e<<kv.second->getValue().transpose()<<"\n";
-        //   de<<kv.second->getValueDerivative().transpose()<<"\n";
-        //   dde_star<<kv.second->getDynamics().transpose()<<"\n";
-	//   J<<kv.second->getJacobian()<<"\n"<<"\n";
-	//   dJ<<kv.second->getJacobianDerivative()<<"\n"<<"\n";	  
-	//   dq<<"\n";
-	//   q<<"\n";	  
-	//   dq.close();
-	//   q.close();
-	//   e.close();
-	//   de.close();
-	//   dde_star.close();
-	//   J.close();
-	//   dJ.close();
-	// }
 	//DEBUG END ===============================================
       }
     }
@@ -138,19 +156,15 @@ bool TaskManager::getAccelerationControls(RobotStatePtr robot_state,
     return false;
   }
   
-  //  DEBUG ==================================================
-   // for (auto&& kv : task_map_) {
-   //   if (kv.second->getActive()) {
-   //     if(strcmp(kv.second->getTaskName().c_str(),"frame_frame_tracking") == 0){
-   // 	 std::ofstream u;
-   // 	 u.open ("/home/rkg/ros/amici_ws/src/hiqp/matlab/u.dat", std::ios::out | std::ios::app );
-   // 	 for (int i = 0; i < controls.size(); ++i) u<<controls.at(i)<<" ";
-   // 	 u<<"\n";	  
-   // 	 u.close();
-   //     }
-   //   }
-   // }
+   #if 0
+   //  DEBUG ==================================================
+   std::ofstream u;
+   u.open ("/home/tsv/hiqp_logs/ddq_star.dat", std::ios::out | std::ios::app );
+   for (int i = 0; i < controls.size(); ++i) u<<controls.at(i)<<" ";
+   u<<"\n";	  
+   u.close();
    // DEBUG END ===============================================
+   #endif
 
   return true;
 }

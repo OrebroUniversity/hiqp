@@ -37,13 +37,13 @@ namespace hiqp {
    *  \author Marcus A Johansson */
   class TaskDynamics {
   public:
-    inline TaskDynamics() {}
+    inline TaskDynamics() {} // std::cerr<<"Dynamics base constructor (SHOULD NOT APPEAR?)\n"; }
 
-  TaskDynamics(std::shared_ptr<GeometricPrimitiveMap> geom_prim_map,
+    TaskDynamics(std::shared_ptr<GeometricPrimitiveMap> geom_prim_map,
                std::shared_ptr<Visualizer> visualizer)
-    : geometric_primitive_map_(geom_prim_map), visualizer_(visualizer) {}
+    : geometric_primitive_map_(geom_prim_map), visualizer_(visualizer) { }// std::cerr<<"Dynamics base parametrized constructor (SHOULD NOT APPEAR?)\n";}
 
-    ~TaskDynamics() noexcept {}
+    virtual ~TaskDynamics() noexcept {} // std::cerr<<"Dynamics base destructor (SHOULD NOT APPEAR?)\n";}
 
     inline void initializeTaskDynamics(
 				       std::shared_ptr<GeometricPrimitiveMap> geom_prim_map,
@@ -55,7 +55,7 @@ namespace hiqp {
 
     virtual int init(const std::vector<std::string>& parameters, RobotStatePtr robot_state, const Eigen::VectorXd& e_initial, const Eigen::VectorXd& e_dot_initial, const Eigen::VectorXd& e_final, const Eigen::VectorXd& e_dot_final) = 0;
 
-    virtual int update(const RobotStatePtr robot_state, const std::shared_ptr< TaskDefinition > def) = 0;
+    virtual int update(const RobotStatePtr robot_state, const TaskDefinitionPtr def) = 0;
 
     virtual int monitor() = 0;
 

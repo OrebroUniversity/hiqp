@@ -95,7 +95,7 @@ namespace hiqp {
 
       return 0;
     }
-    int TDynPD::update(const RobotStatePtr robot_state, const std::shared_ptr< TaskDefinition > def){
+    int TDynPD::update(const RobotStatePtr robot_state, const TaskDefinitionPtr def){
       //PD control law
       e_ddot_star_= -Kp_*def->getTaskValue()-Kd_*def->getTaskDerivative();
       //DEBUG===================================

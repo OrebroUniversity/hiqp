@@ -37,7 +37,7 @@ namespace hiqp {
        */
       int init(const std::vector<std::string>& parameters, RobotStatePtr robot_state, const Eigen::VectorXd& e_initial, const Eigen::VectorXd& e_dot_initial, const Eigen::VectorXd& e_final, const Eigen::VectorXd& e_dot_final);
 
-      int update(const RobotStatePtr robot_state, const std::shared_ptr< TaskDefinition > def);
+      int update(const RobotStatePtr robot_state, const TaskDefinitionPtr def);
       int monitor();
     protected:
       Eigen::MatrixXd Kp_; ///< Controller proportional gain matrix

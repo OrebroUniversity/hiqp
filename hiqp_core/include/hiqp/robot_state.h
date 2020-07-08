@@ -53,6 +53,19 @@ struct SensorHandleInfo {
   Eigen::Vector3d torque_;
 };
 
+/*! \brief Holds the task status for each currently running task in the task manager
+ *  \author Todor Stoyanov
+ */
+typedef struct TaskStatus {
+   int priority_;
+   Eigen::MatrixXd J_, dJ_;
+   Eigen::VectorXd e_, de_, dde_star_;
+   std::vector<int> task_signs_;
+   //Eigen::VectorXd w_;
+   public:
+   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+} TaskStatus;
+
 /*! \brief Holds the state of the robot (sampling time, kdl tree, joint
  * positions and velocities)
  *  \author Marcus A Johansson */
@@ -64,6 +77,7 @@ struct RobotState {
   KDL::JntArray kdl_effort_;
   std::vector<JointHandleInfo> joint_handle_info_;
   std::vector<SensorHandleInfo> sensor_handle_info_;
+  std::vector<TaskStatus> task_status_map_;
 
   /// \brief Returns whether the joint with qnr is writable or not
   inline bool isQNrWritable(unsigned int qnr) const {
@@ -94,7 +108,8 @@ struct RobotState {
 /*! \brief A const pointer type to a robot state. Used to reference to the
  * current robot state throught the framework.
  *  \author Marcus A Johansson */
-typedef std::shared_ptr<const RobotState> RobotStatePtr;
+typedef std::shared_ptr<RobotState> RobotStatePtr;
+typedef std::shared_ptr<const RobotState> RobotStateConstPtr;
 
 } // namespace hiqp
 

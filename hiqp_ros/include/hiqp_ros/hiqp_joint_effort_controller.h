@@ -92,10 +92,9 @@ class HiQPJointEffortController : public BaseController<JointEffortInterface> {
 
   HiQPServiceHandler service_handler_;  // takes care of all ros service calls
 
-  ROSVisualizer ros_visualizer_;
+  //ROSVisualizer ros_visualizer_;
   std::shared_ptr<Visualizer> visualizer_;
 
-  hiqp::TaskManager task_manager_;
   std::shared_ptr<hiqp::TaskManager> task_manager_ptr_;
     
   KDL::Vector gravity_vector_kdl;

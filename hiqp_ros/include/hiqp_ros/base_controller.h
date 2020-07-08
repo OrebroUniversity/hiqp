@@ -63,11 +63,11 @@ public:
 
   bool init(hardware_interface::RobotHW *hw, ros::NodeHandle &controller_nh);
 
-  void starting(const ros::Time &time) {}
+  void starting(const ros::Time &time) {ROS_INFO("base controller starting");}
 
   void update(const ros::Time &time, const ros::Duration &period);
 
-  void stopping(const ros::Time &time) {}
+  void stopping(const ros::Time &time) {ROS_INFO("base controller stoping");}
 
   virtual void initialize() = 0;
 
@@ -103,7 +103,7 @@ protected:
   typedef std::map<std::string, hardware_interface::ForceTorqueSensorHandle>
       SensorHandleMap;
 
-  RobotState robot_state_data_;
+  //RobotState robot_state_data_;
   RobotStatePtr robot_state_ptr_;
   HiQPTimePoint last_sampling_time_point_;
   double desired_sampling_time_;
@@ -157,8 +157,8 @@ bool BaseController<HardwareInterfaceT>::init(hardware_interface::RobotHW *hw,
              "information will be available.");
 
   controller_nh_ = controller_nh;
-  controller_nh_ptr_.reset(&controller_nh_);
-  robot_state_ptr_.reset(&robot_state_data_);
+  controller_nh_ptr_.reset(new ros::NodeHandle(controller_nh_));
+  robot_state_ptr_ = RobotStatePtr(new RobotState()); //.reset(&robot_state_data_);
 
   ROS_INFO("Set up all handles");
 
@@ -184,14 +184,14 @@ bool BaseController<HardwareInterfaceT>::init(hardware_interface::RobotHW *hw,
   c_state_pub_.msg_.joints.resize(n_joints_);
   c_state_pub_.msg_.sensors.resize(n_sensors_);
   
-  for (auto &&it : robot_state_data_.kdl_tree_.getSegments()) {
+  for (auto &&it : robot_state_ptr_->kdl_tree_.getSegments()) {
     c_state_pub_.msg_.joints.at(it.second.q_nr).name = it.second.segment.getJoint().getName();
   }
 
 
   for (unsigned int i=0; i<n_sensors_;i++){
-    c_state_pub_.msg_.sensors.at(i).name=robot_state_data_.sensor_handle_info_[i].sensor_name_;
-    c_state_pub_.msg_.sensors.at(i).frame_id=robot_state_data_.sensor_handle_info_[i].frame_id_;    
+    c_state_pub_.msg_.sensors.at(i).name=robot_state_ptr_->sensor_handle_info_[i].sensor_name_;
+    c_state_pub_.msg_.sensors.at(i).frame_id=robot_state_ptr_->sensor_handle_info_[i].frame_id_;    
   }
 
   return true;
@@ -215,7 +215,7 @@ int BaseController<HardwareInterfaceT>::loadUrdfToKdlTree() {
   if (controller_nh_.searchParam("robot_description", full_parameter_path)) {
     controller_nh_.getParam(full_parameter_path, robot_urdf);
     bool success =
-        kdl_parser::treeFromString(robot_urdf, robot_state_data_.kdl_tree_);
+        kdl_parser::treeFromString(robot_urdf, robot_state_ptr_->kdl_tree_);
     ROS_ASSERT(success);
     ROS_INFO("Loaded the robot's urdf model and initialized the KDL tree "
              "successfully");
@@ -241,7 +241,7 @@ int BaseController<HardwareInterfaceT>::loadSensorsAndSetSensorHandlesMap() {
     sensor_handles_map_.emplace(sensor_names[i],
                                 fts_hw_->getHandle(sensor_names[i]));
 
-    robot_state_data_.sensor_handle_info_.push_back(hiqp::SensorHandleInfo(sensor_names[i], fts_hw_->getHandle(sensor_names[i]).getFrameId())); 
+    robot_state_ptr_->sensor_handle_info_.push_back(hiqp::SensorHandleInfo(sensor_names[i], fts_hw_->getHandle(sensor_names[i]).getFrameId())); 
   }
   return 0;
 }
@@ -259,7 +259,7 @@ int BaseController<HardwareInterfaceT>::loadJointsAndSetJointHandlesMap() {
   }
 
   unsigned int n_joint_names = joint_names.size();
-  n_joints_ = robot_state_data_.kdl_tree_.getNrOfJoints();
+  n_joints_ = robot_state_ptr_->kdl_tree_.getNrOfJoints();
 
   //ROS_INFO_STREAM("We have " << n_joint_names << " joints in the controller parameter and " << n_joints_ << " joints in the robot model");
   if (n_joint_names > n_joints_) {
@@ -274,7 +274,7 @@ int BaseController<HardwareInterfaceT>::loadJointsAndSetJointHandlesMap() {
   std::vector<unsigned int> qnrs;
 
   qnrs.clear();
-  KDL::SegmentMap all_segments = robot_state_data_.kdl_tree_.getSegments();
+  KDL::SegmentMap all_segments = robot_state_ptr_->kdl_tree_.getSegments();
   std::cerr<<"KDL tree has "<<all_segments.size()<<" elements\n";
   for (KDL::SegmentMap::const_iterator element=all_segments.cbegin(); 
 		  element!=all_segments.cend(); element++ ) {
@@ -286,16 +286,16 @@ int BaseController<HardwareInterfaceT>::loadJointsAndSetJointHandlesMap() {
   //FIXME: this breaks, code duplication above instead.
   //hiqp::kdl_getAllQNrFromTree(robot_state_data_.kdl_tree_, qnrs);
   
-  robot_state_data_.joint_handle_info_.clear();
+  robot_state_ptr_->joint_handle_info_.clear();
 
   for (auto &&name : joint_names) {
     try {
       unsigned int q_nr =
-          hiqp::kdl_getQNrFromJointName(robot_state_data_.kdl_tree_, name);
+          hiqp::kdl_getQNrFromJointName(robot_state_ptr_->kdl_tree_, name);
       ROS_INFO_STREAM("Joint found: '" << name << "', qnr: " << q_nr);
       joint_handles_map_.emplace(q_nr, jnt_hw_->getHandle(name));
       qnrs.erase(std::remove(qnrs.begin(), qnrs.end(), q_nr), qnrs.end());
-      robot_state_data_.joint_handle_info_.push_back(
+      robot_state_ptr_->joint_handle_info_.push_back(
           hiqp::JointHandleInfo(q_nr, name, true, true));
     } catch (const hardware_interface::HardwareInterfaceException &e) {
       ROS_ERROR_STREAM("Exception thrown: " << e.what());
@@ -307,22 +307,22 @@ int BaseController<HardwareInterfaceT>::loadJointsAndSetJointHandlesMap() {
 
   for (auto &&qnr : qnrs) {
     std::string joint_name =
-        hiqp::kdl_getJointNameFromQNr(robot_state_data_.kdl_tree_, qnr);
+        hiqp::kdl_getJointNameFromQNr(robot_state_ptr_->kdl_tree_, qnr);
     hiqp::JointHandleInfo jhi(qnr, joint_name, true, false);
-    robot_state_data_.joint_handle_info_.push_back(jhi);
+    robot_state_ptr_->joint_handle_info_.push_back(jhi);
   }
 
   std::cout << "Joint handle info:\n";
-  for (auto &&jhi : robot_state_data_.joint_handle_info_) {
+  for (auto &&jhi : robot_state_ptr_->joint_handle_info_) {
     std::cout << jhi.q_nr_ << ", " << jhi.joint_name_ << ", " << jhi.readable_
               << ", " << jhi.writable_ << "\n";
   }
 
-  robot_state_data_.kdl_jnt_array_vel_.resize(n_joints_);
-  KDL::SetToZero(robot_state_data_.kdl_jnt_array_vel_.q);
-  KDL::SetToZero(robot_state_data_.kdl_jnt_array_vel_.qdot);
-  robot_state_data_.kdl_effort_.resize(n_joints_);
-  KDL::SetToZero(robot_state_data_.kdl_effort_);
+  robot_state_ptr_->kdl_jnt_array_vel_.resize(n_joints_);
+  KDL::SetToZero(robot_state_ptr_->kdl_jnt_array_vel_.q);
+  KDL::SetToZero(robot_state_ptr_->kdl_jnt_array_vel_.qdot);
+  robot_state_ptr_->kdl_effort_.resize(n_joints_);
+  KDL::SetToZero(robot_state_ptr_->kdl_effort_);
   ddq_ = Eigen::VectorXd::Zero(n_joints_);
   u_ = Eigen::VectorXd::Zero(n_joints_);
   return 0;
@@ -336,8 +336,8 @@ void BaseController<HardwareInterfaceT>::sampleSensorValues() {
 
   handles_mutex_.lock();
 
-  for( unsigned int i=0; i<robot_state_data_.sensor_handle_info_.size();i++){
-    hiqp::SensorHandleInfo &h = robot_state_data_.sensor_handle_info_[i];
+  for( unsigned int i=0; i<robot_state_ptr_->sensor_handle_info_.size();i++){
+    hiqp::SensorHandleInfo &h = robot_state_ptr_->sensor_handle_info_[i];
     h.force_=Eigen::Map<Eigen::Vector3d>(const_cast<double*>(sensor_handles_map_.at(h.sensor_name_).getForce()));
     h.torque_=Eigen::Map<Eigen::Vector3d>(const_cast<double*>(sensor_handles_map_.at(h.sensor_name_).getTorque()));
   }
@@ -347,11 +347,11 @@ void BaseController<HardwareInterfaceT>::sampleSensorValues() {
 //=====================================================================================
 template <typename HardwareInterfaceT>
 void BaseController<HardwareInterfaceT>::sampleJointValues() {
-  robot_state_data_.sampling_time_ = period_.toSec();
+  robot_state_ptr_->sampling_time_ = period_.toSec();
 
-  KDL::JntArray &q = robot_state_data_.kdl_jnt_array_vel_.q;
-  KDL::JntArray &qdot = robot_state_data_.kdl_jnt_array_vel_.qdot;
-  KDL::JntArray &effort = robot_state_data_.kdl_effort_;
+  KDL::JntArray &q = robot_state_ptr_->kdl_jnt_array_vel_.q;
+  KDL::JntArray &qdot = robot_state_ptr_->kdl_jnt_array_vel_.qdot;
+  KDL::JntArray &effort = robot_state_ptr_->kdl_effort_;
   q.data.setZero();
   qdot.data.setZero();
   effort.data.setZero();
@@ -385,9 +385,9 @@ void BaseController<HardwareInterfaceT>::publishControllerState() {
 
     if (c_state_pub_.trylock()) {
 
-      KDL::JntArray q = robot_state_data_.kdl_jnt_array_vel_.q;
-      KDL::JntArray qdot = robot_state_data_.kdl_jnt_array_vel_.qdot;
-      KDL::JntArray effort = robot_state_data_.kdl_effort_;
+      KDL::JntArray q = robot_state_ptr_->kdl_jnt_array_vel_.q;
+      KDL::JntArray qdot = robot_state_ptr_->kdl_jnt_array_vel_.qdot;
+      KDL::JntArray effort = robot_state_ptr_->kdl_effort_;
 
       c_state_pub_.msg_.header.stamp = ros::Time::now();
 
@@ -399,13 +399,13 @@ void BaseController<HardwareInterfaceT>::publishControllerState() {
       }
       for (unsigned int i = 0; i < n_sensors_; i++) {
   	c_state_pub_.msg_.sensors[i].force.clear();
-  	c_state_pub_.msg_.sensors[i].force.push_back(robot_state_data_.sensor_handle_info_[i].force_(0));
-  	c_state_pub_.msg_.sensors[i].force.push_back(robot_state_data_.sensor_handle_info_[i].force_(1));
-  	c_state_pub_.msg_.sensors[i].force.push_back(robot_state_data_.sensor_handle_info_[i].force_(2));
+  	c_state_pub_.msg_.sensors[i].force.push_back(robot_state_ptr_->sensor_handle_info_[i].force_(0));
+  	c_state_pub_.msg_.sensors[i].force.push_back(robot_state_ptr_->sensor_handle_info_[i].force_(1));
+  	c_state_pub_.msg_.sensors[i].force.push_back(robot_state_ptr_->sensor_handle_info_[i].force_(2));
   	c_state_pub_.msg_.sensors[i].torque.clear();
-  	c_state_pub_.msg_.sensors[i].torque.push_back(robot_state_data_.sensor_handle_info_[i].torque_(0));
-  	c_state_pub_.msg_.sensors[i].torque.push_back(robot_state_data_.sensor_handle_info_[i].torque_(1));
-  	c_state_pub_.msg_.sensors[i].torque.push_back(robot_state_data_.sensor_handle_info_[i].torque_(2));
+  	c_state_pub_.msg_.sensors[i].torque.push_back(robot_state_ptr_->sensor_handle_info_[i].torque_(0));
+  	c_state_pub_.msg_.sensors[i].torque.push_back(robot_state_ptr_->sensor_handle_info_[i].torque_(1));
+  	c_state_pub_.msg_.sensors[i].torque.push_back(robot_state_ptr_->sensor_handle_info_[i].torque_(2));
       }
 
       c_state_pub_.unlockAndPublish();
