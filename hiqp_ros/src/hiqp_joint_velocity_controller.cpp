@@ -50,14 +50,15 @@ namespace hiqp_ros {
 HiQPJointVelocityController::HiQPJointVelocityController()
     : is_active_(true),
       monitoring_active_(false),
-      visualizer_(&ros_visualizer_),
-      task_manager_(visualizer_),
-      task_manager_ptr_(&task_manager_) {}
+      visualizer_(new ROSVisualizer()),
+      task_manager_ptr_(new hiqp::TaskManager(visualizer_)) {}
 
 HiQPJointVelocityController::~HiQPJointVelocityController() noexcept {}
 
 void HiQPJointVelocityController::initialize() {
-  ros_visualizer_.init(this->getControllerNodeHandle());
+  std::shared_ptr<ROSVisualizer> ros_visualizer = std::static_pointer_cast<ROSVisualizer>(visualizer_);
+  ros_visualizer->init(this->controller_nh_);
+
   service_handler_.init(this->getControllerNodeHandlePtr(), task_manager_ptr_,
                         this->getRobotState());
 
@@ -78,7 +79,7 @@ void HiQPJointVelocityController::initialize() {
 
   service_handler_.advertiseAll();
 
-  task_manager_.init(getNJoints());
+  task_manager_ptr_->init(getNJoints());
 
   loadJointLimitsFromParamServer();
 
@@ -96,7 +97,7 @@ void HiQPJointVelocityController::initialize() {
   
   // Time the acceleration control computation
   auto t_begin = std::chrono::high_resolution_clock::now();
-  task_manager_.getAccelerationControls(this->getRobotState(), _ddq);
+  task_manager_ptr_->getAccelerationControls(this->getRobotState(), _ddq);
   auto t_end = std::chrono::high_resolution_clock::now();
   std::chrono::duration<double, std::milli> opt_time = t_end - t_begin;
 
@@ -144,7 +145,7 @@ void HiQPJointVelocityController::renderPrimitives() {
   ros::Duration d = now - last_rendering_update_;
   if (d.toSec() >= 1.0 / rendering_publish_rate_) {
     last_rendering_update_ = now;
-    task_manager_.renderPrimitives();
+    task_manager_ptr_->renderPrimitives();
   }
 }
 
@@ -155,7 +156,7 @@ void HiQPJointVelocityController::monitorTasks(double acc_ctl_comp_time) {
     if (d.toSec() >= 1.0 / monitoring_publish_rate_) {
       last_monitoring_update_ = now;
       std::vector<TaskMeasure> measures;
-      task_manager_.getTaskMeasures(measures);
+      task_manager_ptr_->getTaskMeasures(measures);
 
       hiqp_msgs::TaskMeasures msgs;
       msgs.stamp = now;
@@ -260,7 +261,7 @@ void HiQPJointVelocityController::loadJointLimitsFromParamServer() {
         dyn_params.push_back(
             std::to_string(static_cast<double>(limitations[5])));
 
-        if(task_manager_.setTask(link_frame + "_jntlimits", 1, true, true, false,
+        if(task_manager_ptr_->setTask(link_frame + "_jntlimits", 1, true, true, false,
 				 def_params, dyn_params, this->getRobotState()) !=0){
         ROS_WARN_STREAM(
             "Error while loading "
@@ -323,7 +324,7 @@ void HiQPJointVelocityController::loadGeometricPrimitivesFromParamServer() {
           parameters.push_back(static_cast<double>(parameters_xml[j]));
         }
 
-        task_manager_.setPrimitive(name, type, frame_id, visible, color,
+        task_manager_ptr_->setPrimitive(name, type, frame_id, visible, color,
                                    parameters);
       } catch (const XmlRpc::XmlRpcException& e) {
         ROS_WARN_STREAM(
@@ -375,7 +376,7 @@ void HiQPJointVelocityController::loadTasksFromParamServer() {
         bool active = static_cast<bool>(hiqp_preload_tasks[i]["active"]);
         bool monitored = static_cast<bool>(hiqp_preload_tasks[i]["monitored"]);
 
-        task_manager_.setTask(name, priority, visible, active, monitored,
+        task_manager_ptr_->setTask(name, priority, visible, active, monitored,
                               def_params, dyn_params, this->getRobotState());
       } catch (const XmlRpc::XmlRpcException& e) {
         ROS_WARN_STREAM(
@@ -395,7 +396,7 @@ void HiQPJointVelocityController::loadTasksFromParamServer() {
 
 void HiQPJointVelocityController::addTfTopicSubscriptions()
 {
-   topic_subscriber_.init( &task_manager_, this->getRobotState() );
+   topic_subscriber_.init( task_manager_ptr_, this->getRobotState() );
 
    topic_subscriber_.addSubscription<tf::tfMessage>(
      this->getControllerNodeHandle(), "/tf", 100

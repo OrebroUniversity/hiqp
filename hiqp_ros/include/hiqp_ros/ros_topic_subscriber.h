@@ -42,7 +42,7 @@ class ROSTopicSubscriber {
   ROSTopicSubscriber() {}
   ~ROSTopicSubscriber() {}
 
-  void init(hiqp::TaskManager* task_manager, hiqp::RobotStatePtr robot_state_ptr) { 
+  void init(std::shared_ptr<hiqp::TaskManager> task_manager, hiqp::RobotStatePtr robot_state_ptr) { 
       task_manager_ = task_manager; 
       robot_state_ptr_ = robot_state_ptr;
   }
@@ -68,7 +68,7 @@ class ROSTopicSubscriber {
 
   ros::Subscriber sub;
 
-  hiqp::TaskManager* task_manager_;
+  std::shared_ptr<hiqp::TaskManager> task_manager_;
   hiqp::RobotStatePtr robot_state_ptr_;
 };
 
