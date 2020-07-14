@@ -109,6 +109,7 @@ class TaskManager {
   int monitorPriorityLevel(unsigned int priority);
   int demonitorPriorityLevel(unsigned int priority);
 
+  //void sortTaskMapByPriority();
  private:
   TaskManager(const TaskManager& other) = delete;
   TaskManager(TaskManager&& other) = delete;

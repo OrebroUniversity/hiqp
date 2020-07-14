@@ -22,6 +22,7 @@
 #include <iomanip>  // std::setw
 #include <iostream>
 #include <fstream>
+#include <queue>
 
 #ifdef HIQP_CASADI
 #include <hiqp/solvers/casadi_solver.h>
@@ -62,42 +63,56 @@ bool TaskManager::getAccelerationControls(RobotStatePtr robot_state,
     return false;
   }
 
-  solver_->clearStages();
   resource_mutex_.lock();
+
+  //TSV: moved solver access within mutex
+  solver_->clearStages();
+  
   //clear the task map from prior iteration
   robot_state->task_status_map_.clear();
+
+  auto cmp = [](std::shared_ptr<Task> left, std::shared_ptr<Task> right) { return left->getPriority() > right->getPriority(); };
+  std::priority_queue<std::shared_ptr<Task>, std::vector<std::shared_ptr<Task> >, decltype(cmp) > task_queue(cmp);
+
   for (auto&& kv : task_map_) {
     if (kv.second->getActive()) {
-      if (kv.second->update(robot_state) == 0) {
-        solver_->appendStage(kv.second->getPriority(),
-			     kv.second->getDynamics(),
-                             kv.second->getJacobian(),
-			     kv.second->getJacobianDerivative(),
+	task_queue.push(kv.second);
+    }
+  }
+
+  while(!task_queue.empty()) {
+      std::shared_ptr<Task> task = task_queue.top();
+      if (task->update(robot_state) == 0) {
+        solver_->appendStage(task->getPriority(),
+			     task->getDynamics(),
+                             task->getJacobian(),
+			     task->getJacobianDerivative(),
 			     robot_state->kdl_jnt_array_vel_.qdot,
-                             kv.second->getTaskTypes());
+                             task->getTaskTypes());
 
 	///TSV: added below to enable anyone with a robot state to check what tasks are running
 	///     Logic being: some tasks (RL in particular) can use information about the null-space
 	///     of higher priority tasks to decide on actions
 	//fill in task state
 	TaskStatus state;
-	state.priority_ = kv.second->getPriority();
-	state.J_ = kv.second->getJacobian();
-	state.dJ_ = kv.second->getJacobianDerivative();
-	state.e_ = kv.second->getValue();
-	state.de_ = kv.second->getValueDerivative();
-	state.dde_star_ = kv.second->getDynamics();
-	state.task_signs_ = kv.second->getTaskTypes();
+	state.priority_ = task->getPriority();
+	state.J_ = task->getJacobian();
+	state.dJ_ = task->getJacobianDerivative();
+	state.e_ = task->getValue();
+	state.de_ = task->getValueDerivative();
+	state.dde_star_ = task->getDynamics();
+	state.task_signs_ = task->getTaskTypes();
 	//push it into the buffer
 	robot_state->task_status_map_.push_back(state);
 
 	//DEBUG ==================================================
-	// std::cerr<<"Task: "<<kv.second->getTaskName()<<std::endl;
-	// std::cerr<<"J_: "<<std::endl<<kv.second->getJacobian()<<std::endl;
-	// std::cerr<<"J_dot_: "<<std::endl<< kv.second->getJacobianDerivative()<<std::endl;
-	// std::cerr<<"e_: "<<kv.second->getValue().transpose()<<std::endl;
-	// std::cerr<<"e_dot_: "<<kv.second->getValueDerivative().transpose()<<std::endl;
-	// std::cerr<<"dde_star: "<<kv.second->getDynamics().transpose()<<std::endl;
+	//std::cerr<<"Task: "<<task->getTaskName()<<" at prio "<<task->getPriority()<<std::endl;
+	//std::cerr<<"task map is now "<<robot_state->task_status_map_.size()<<" tasks long\n";
+	// std::cerr<<"J_: "<<std::endl<<task->getJacobian()<<std::endl;
+	// std::cerr<<"J_dot_: "<<std::endl<< task->getJacobianDerivative()<<std::endl;
+	//std::cerr<<"e_: "<<task->getValue().transpose()<<std::endl;
+	// std::cerr<<"e_dot_: "<<task->getValueDerivative().transpose()<<std::endl;
+	// std::cerr<<"dde_star: "<<task->getDynamics().transpose()<<std::endl;
 	// std::cerr<<"dq: "<<robot_state->kdl_jnt_array_vel_.qdot.data.transpose()<<std::endl;
         // std::cerr<<"q: "<<robot_state->kdl_jnt_array_vel_.q.data.transpose()<<std::endl;
 	// std::cerr<<"__________________________________________________________"<<std::endl<<std::endl;
@@ -112,22 +127,22 @@ bool TaskManager::getAccelerationControls(RobotStatePtr robot_state,
 	std::ofstream dde_star;
 	std::ofstream J;
 	std::ofstream dJ;
-	dq.open ("/home/tsv/hiqp_logs/"+kv.second->getTaskName()+"_dq.dat", std::ios::out | std::ios::app );
-	q.open ("/home/tsv/hiqp_logs/"+kv.second->getTaskName()+"_q.dat", std::ios::out | std::ios::app );
-	de.open ("/home/tsv/hiqp_logs/"+kv.second->getTaskName()+"_de.dat", std::ios::out | std::ios::app );
-	e.open ("/home/tsv/hiqp_logs/"+kv.second->getTaskName()+"_e.dat", std::ios::out | std::ios::app );
-	dde_star.open ("/home/tsv/hiqp_logs/"+kv.second->getTaskName()+"_dde_star.dat", std::ios::out | std::ios::app );
-	J.open ("/home/tsv/hiqp_logs/"+kv.second->getTaskName()+"_J.dat", std::ios::out | std::ios::app );
-	dJ.open ("/home/tsv/hiqp_logs/"+kv.second->getTaskName()+"_dJ.dat", std::ios::out | std::ios::app );	  
+	dq.open ("/home/tsv/hiqp_logs/"+task->getTaskName()+"_dq.dat", std::ios::out | std::ios::app );
+	q.open ("/home/tsv/hiqp_logs/"+task->getTaskName()+"_q.dat", std::ios::out | std::ios::app );
+	de.open ("/home/tsv/hiqp_logs/"+task->getTaskName()+"_de.dat", std::ios::out | std::ios::app );
+	e.open ("/home/tsv/hiqp_logs/"+task->getTaskName()+"_e.dat", std::ios::out | std::ios::app );
+	dde_star.open ("/home/tsv/hiqp_logs/"+task->getTaskName()+"_dde_star.dat", std::ios::out | std::ios::app );
+	J.open ("/home/tsv/hiqp_logs/"+task->getTaskName()+"_J.dat", std::ios::out | std::ios::app );
+	dJ.open ("/home/tsv/hiqp_logs/"+task->getTaskName()+"_dJ.dat", std::ios::out | std::ios::app );	  
 	for(unsigned int i=0; i<q_nr; i++){
 	  dq<<qdot__(i)<<" ";
           q<<q__(i)<<" ";	    
 	}
-	e<<kv.second->getValue().transpose()<<"\n";
-        de<<kv.second->getValueDerivative().transpose()<<"\n";
-        dde_star<<kv.second->getDynamics().transpose()<<"\n";
-	J<<kv.second->getJacobian()<<"\n"<<"\n";
-	dJ<<kv.second->getJacobianDerivative()<<"\n"<<"\n";	  
+	e<<task->getValue().transpose()<<"\n";
+        de<<task->getValueDerivative().transpose()<<"\n";
+        dde_star<<task->getDynamics().transpose()<<"\n";
+	J<<task->getJacobian()<<"\n"<<"\n";
+	dJ<<task->getJacobianDerivative()<<"\n"<<"\n";	  
 	dq<<"\n";
 	q<<"\n";	  
 	dq.close();
@@ -141,10 +156,9 @@ bool TaskManager::getAccelerationControls(RobotStatePtr robot_state,
 
 	//DEBUG END ===============================================
       }
-    }
+      task_queue.pop();  
   }
-  resource_mutex_.unlock();
-
+  
   if (!solver_->solve(controls)) {
     ROS_WARN_THROTTLE(10, "Unable to solve the hierarchical QP, setting accelerations to zero ");
 
@@ -153,8 +167,11 @@ bool TaskManager::getAccelerationControls(RobotStatePtr robot_state,
       controls.at(i) = 0.0;
     }
 
+    resource_mutex_.unlock();
     return false;
   }
+  resource_mutex_.unlock();
+
   
    #if 0
    //  DEBUG ==================================================

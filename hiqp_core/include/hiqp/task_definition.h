@@ -80,6 +80,7 @@ namespace hiqp {
     virtual Eigen::VectorXd getFinalTaskDerivative(RobotStatePtr robot_state) {
       return Eigen::VectorXd::Zero(e_dot_.rows());
     }
+    inline unsigned int getPriority() { return priority_; }
 
   protected:
 	
@@ -93,7 +94,6 @@ namespace hiqp {
     unsigned int n_dimensions_;
 
     inline std::string getTaskName() { return task_name_; }
-    inline unsigned int getPriority() { return priority_; }
     inline bool getActive() { return active_; }
     inline bool getVisible() { return visible_; }
     inline std::shared_ptr<Visualizer> getVisualizer() { return visualizer_; }
