@@ -74,9 +74,11 @@ bool TaskManager::getAccelerationControls(RobotStatePtr robot_state,
   auto cmp = [](std::shared_ptr<Task> left, std::shared_ptr<Task> right) { return left->getPriority() > right->getPriority(); };
   std::priority_queue<std::shared_ptr<Task>, std::vector<std::shared_ptr<Task> >, decltype(cmp) > task_queue(cmp);
 
+  bool dump=false;
   for (auto&& kv : task_map_) {
     if (kv.second->getActive()) {
 	task_queue.push(kv.second);
+	dump = dump || (kv.first == "ee_rl");
     }
   }
 
@@ -170,10 +172,12 @@ bool TaskManager::getAccelerationControls(RobotStatePtr robot_state,
     resource_mutex_.unlock();
     return false;
   }
+  robot_state->ddq_star = controls;
   resource_mutex_.unlock();
 
-  
+ 
    #if 0
+   if(dump) { 
    //  DEBUG ==================================================
    std::ofstream u;
    u.open ("/home/tsv/hiqp_logs/ddq_star.dat", std::ios::out | std::ios::app );
@@ -181,6 +185,7 @@ bool TaskManager::getAccelerationControls(RobotStatePtr robot_state,
    u<<"\n";	  
    u.close();
    // DEBUG END ===============================================
+   }
    #endif
 
   return true;

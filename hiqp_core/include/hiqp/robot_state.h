@@ -78,6 +78,7 @@ struct RobotState {
   std::vector<JointHandleInfo> joint_handle_info_;
   std::vector<SensorHandleInfo> sensor_handle_info_;
   std::vector<TaskStatus> task_status_map_;
+  std::vector<double> ddq_star;
 
   /// \brief Returns whether the joint with qnr is writable or not
   inline bool isQNrWritable(unsigned int qnr) const {

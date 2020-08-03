@@ -203,7 +203,9 @@ void GurobiSolver::QPProblem::setup(std::vector<double> &start) {
       // Force the slack variables to be zero in the highest stage
       lhsides_[acc_stage_dims + i] -= w_[i] * 0.0;
     else
-      lhsides_[acc_stage_dims + i] -= w_[i];
+      lhsides_[acc_stage_dims + i] -= w_[i]; 
+
+    //std::cerr << "i: "<<i<<" stg: "<<acc_stage_dims<<" lhs:" << lhsides_[acc_stage_dims + i] << std::endl;
   }
 
   // Add constraints to the QP model
@@ -223,14 +225,14 @@ void GurobiSolver::QPProblem::setup(std::vector<double> &start) {
   model_.update();
 
   // DEBUG =============================================
-  // std::cerr << std::setprecision(2) << "Gurobi solver stage " << s_count << "
+  //std::cerr << std::setprecision(2) << "Gurobi solver stage " << stage_dims; 
   // matrices:" << std::endl;
   // std::cerr << "A" << std::endl << A_ << std::endl;
   // std::cerr << "signs: ";
   // for (unsigned k=0; k<constraint_signs_.size(); k++)
   //   std::cerr << constraint_signs_[k] << " ";
   // std::cerr << std::endl << "b" << b_.transpose() << std::endl;
-  // std::cerr << "w" << w_.transpose() << std::endl;
+  //std::cerr << " w:" << w_->transpose() << std::endl;
   // DEBUG END ==========================================
 }
 
