@@ -66,6 +66,75 @@ class HiQPSolver {
   /*! \brief Appends the internal set of stages with a task. If a stage with the
    * priority is not currently present in the stages map, it is created,
    * otherwise the task is appended to that existing stage. */
+  virtual int appendVelocityStage(std::size_t priority_level,
+		  const Eigen::VectorXd& e_dot_star,
+                  const Eigen::MatrixXd& J,
+                  const std::vector<int>& constraint_signs,
+		  const std::string stage_name="") {
+    if(!velocityLevel) return -1; //do not append velocity stages for acceleration-level solver
+
+    int dim=e_dot_star.rows();
+    assert((J.rows()==dim) && (constraint_signs.size()==dim));
+    
+    StageMap::iterator it = stages_map_.find(priority_level);
+
+    if (it == stages_map_.end()) {
+
+      HiQPStage stage;
+      stage.b_ = e_dot_star;
+      stage.B_ = J;
+      stage.constraint_signs_ = constraint_signs;
+      stage.nRows = dim;
+      stages_map_.emplace(priority_level, stage);
+      // DEBUG =============================================
+      /* std::cerr<<std::setprecision(2)<<"append new stage: "<<std::endl; */
+      /* std::cerr<<"J_t: "<<std::endl<<stage.J_<<std::endl; */
+      /* std::cerr<<"signs: "; */
+      /* for (unsigned int k=0;k<stage.constraint_signs_.size();k++) */
+      /*   std::cerr<<stage.constraint_signs_[k]<<" "; */
+
+      /* std::cerr<<std::endl<<"de*: "<<stage.e_dot_star_.transpose()<<std::endl; */
+      // DEBUG END ==========================================
+    } else {
+      int rows = it->second.b_.rows() + dim;
+      // DEBUG =============================================
+      /* std::cerr<<std::setprecision(2)<<"HiQPSolver::appendStage - before appending existing stage: "<<std::endl; */
+      /* std::cerr<<"J_t: "<<std::endl<<it->second.J_<<std::endl; */
+      /* std::cerr<<"signs: "; */
+      /* for (unsigned int k=0;k<it->second.constraint_signs_.size();k++) */
+      /*  std::cerr<<it->second.constraint_signs_[k]<<" "; */
+
+      /* std::cerr<<std::endl<<"de*: "<<it->second.e_dot_star_.transpose()<<std::endl;  */
+      // DEBUG END ==========================================
+      
+      Eigen::VectorXd b__(rows);
+      b__ << it->second.b_, e_dot_star;
+      it->second.b_ = b__;
+      Eigen::MatrixXd B__(rows, it->second.B_.cols());
+      B__ << it->second.B_, J;
+      it->second.B_ = B__;
+      it->second.constraint_signs_.insert(it->second.constraint_signs_.end(),
+                                          constraint_signs.begin(),
+                                          constraint_signs.end());
+      it->second.nRows += dim;
+      // DEBUG =============================================
+      /* std::cerr<<std::setprecision(2)<<"HiQPSolver::appendStage - after appending existing stage: "<<std::endl; */
+      /* std::cerr<<"J_t: "<<std::endl<<it->second.J_<<std::endl; */
+      /* std::cerr<<"signs: "; */
+      /* for (unsigned int k=0;k<it->second.constraint_signs_.size();k++) */
+      /*  std::cerr<<it->second.constraint_signs_[k]<<" "; */
+
+      /* std::cerr<<std::endl<<"de*: "<<it->second.e_dot_star_.transpose()<<std::endl;  */
+      // DEBUG END ==========================================
+    }
+
+    return 0;
+
+  }
+
+  /*! \brief Appends the internal set of stages with a task. If a stage with the
+   * priority is not currently present in the stages map, it is created,
+   * otherwise the task is appended to that existing stage. */
   virtual int appendStage(std::size_t priority_level,
 		  const Eigen::VectorXd& e_ddot_star,
                   const Eigen::MatrixXd& J,
@@ -74,7 +143,9 @@ class HiQPSolver {
                   const std::vector<int>& constraint_signs,
 		  const std::string stage_name="") {
     
-      // DEBUG =============================================
+    if(velocityLevel) return -1; //do not append acceleration stages for a velocity-level solver
+
+    // DEBUG =============================================
     /* std::cerr<<"HiQPSolver::appendStage inputs: "<<std::endl; */
     /* std::cerr<<"e_ddot_star: "<<e_ddot_star.transpose()<<std::endl; */
     /* std::cerr<<"J: "<<std::endl<<J<<std::endl; */
@@ -149,9 +220,11 @@ class HiQPSolver {
     return 0;
   }
 
+  void setVelocityControlMode(bool beVelocity) { velocityLevel = beVelocity; }
  protected:
   typedef std::map<std::size_t, HiQPStage> StageMap;
   StageMap stages_map_;
+  bool velocityLevel = false;
 
  private:
   HiQPSolver(const HiQPSolver& other) = delete;

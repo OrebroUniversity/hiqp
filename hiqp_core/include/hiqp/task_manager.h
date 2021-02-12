@@ -56,11 +56,15 @@ class TaskManager {
   TaskManager(std::shared_ptr<Visualizer> visualizer);
   ~TaskManager() noexcept;
 
-  void init(unsigned int n_controls);
+  void init(unsigned int n_controls, bool beVelControl=false);
 
   /*! \brief Generates controls from a particular robot state. */
   bool getAccelerationControls(RobotStatePtr robot_state,
                            std::vector<double>& controls);
+
+  /*! \brief Generates velocity-level controls from a particular robot state */
+  bool getVelocityControls(RobotStatePtr robot_state,
+                                        std::vector<double> &controls);
 
   /*! \brief Retrieves the performance measures for every active task along
    *         with the task's name and unique identifier. */
@@ -128,6 +132,7 @@ class TaskManager {
   std::mutex resource_mutex_;
 
   unsigned int n_controls_;
+  std::vector<double> controls_;
 };
 
 }  // namespace hiqp

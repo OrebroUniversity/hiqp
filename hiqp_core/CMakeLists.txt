@@ -83,6 +83,7 @@ add_library(${PROJECT_NAME} src/utilities.cpp
                             src/tasks/tdyn_jnt_limits.cpp
                             # src/tasks/tdyn_minimal_jerk.cpp
                             src/tasks/tdyn_linear_impedance.cpp
+                            src/tasks/tdyn_linear.cpp
 #                            src/tasks/tdef_meta_task.cpp
                             src/tasks/tdef_tracking.cpp
                             src/tasks/tdef_full_pose.cpp
