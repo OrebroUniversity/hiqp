@@ -27,9 +27,13 @@
 #ifdef HIQP_CASADI
 #include <hiqp/solvers/casadi_solver.h>
 #endif
+
 #ifdef HIQP_GUROBI
 #include <hiqp/solvers/gurobi_solver.h>
 #include <hiqp/solvers/gurobi_solver_cascade.h>
+#endif
+
+#ifdef HIQP_RP_SOLVER
 #include <hiqp/solvers/rp_solver.h>
 #endif
 
@@ -47,9 +51,11 @@ TaskManager::TaskManager(std::shared_ptr<Visualizer> visualizer)
   solver_ = std::make_shared<CasadiSolver>();
 #endif
 #ifdef HIQP_GUROBI
-  solver_ = std::make_shared<RPSolver>();
-  //solver_ = std::make_shared<GurobiSolver>();
+  solver_ = std::make_shared<GurobiSolver>();
   //solver_ = std::make_shared<GurobiSolverCascade>();
+#endif
+#ifdef HIQP_RP_SOLVER
+  solver_ = std::make_shared<RPSolver>();
 #endif
 }
 

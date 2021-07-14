@@ -81,7 +81,7 @@ class RPSolver : public HiQPSolver {
         j++;
 	Eigen::JacobiSVD<Eigen::MatrixXd> svd(T, Eigen::ComputeFullU | Eigen::ComputeFullV);
         if(svd.rank()==i+1)
-        {
+	{
           i++;
           break;
         } else {
@@ -90,6 +90,32 @@ class RPSolver : public HiQPSolver {
       }
     }
   }
+
+  inline void pseudo_inverse(const Eigen::MatrixXd &M_, Eigen::MatrixXd &M_pinv_,bool damped = true)
+{
+
+    double epsilon = 0.1;
+
+    double lambda_max_ = damped?1000:0.0;
+    double lambda_quad = 0.0;
+    Eigen::JacobiSVD<Eigen::MatrixXd> svd(M_, Eigen::ComputeFullU | Eigen::ComputeFullV);
+
+    Eigen::JacobiSVD<Eigen::MatrixXd>::SingularValuesType sing_vals_ = svd.singularValues();
+
+    double minimum_sing_vals_ = sing_vals_(sing_vals_.size()-1); // take last element of the vector
+    if(minimum_sing_vals_ < epsilon) {
+	    lambda_quad = ( 1 - (minimum_sing_vals_ / epsilon)* (minimum_sing_vals_ / epsilon) ) * (lambda_max_*lambda_max_);
+    }
+
+    Eigen::MatrixXd S_ = M_;       // copying the dimensions of M_, its content is not needed.
+    S_.setZero();
+
+    for (int i = 0; i < sing_vals_.size(); i++)
+	    S_(i,i) = (sing_vals_(i))/(sing_vals_(i)*sing_vals_(i) + lambda_quad);
+
+    M_pinv_ = Eigen::MatrixXd(svd.matrixV()*S_.transpose()*svd.matrixU().transpose());
+}
+
 
 };
 

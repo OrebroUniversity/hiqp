@@ -86,6 +86,8 @@ namespace hiqp {
 	
     Eigen::VectorXd e_;            ///< the task function value e(q)
     Eigen::VectorXd e_dot_;        ///< the task function derivative (e_dot(q)=J(q)*q_dot
+    Eigen::VectorXd e_prev_;            ///< the task function value e(q) at t-1
+    Eigen::VectorXd e_dot_prev_;        ///< the task function derivative (e_dot(q)=J(q)*q_dot at t-1
     Eigen::MatrixXd J_;            ///< the task jacobian J(q)
     Eigen::MatrixXd J_dot_;        ///< the task jacobian derivative J_dot(q)
     std::vector<int> task_signs_;  ///< -1 leq, 0 eq, 1 geq
@@ -99,6 +101,13 @@ namespace hiqp {
     inline std::shared_ptr<Visualizer> getVisualizer() { return visualizer_; }
     inline std::shared_ptr<GeometricPrimitiveMap> getGeometricPrimitiveMap() {
       return geometric_primitive_map_;
+    }
+    inline void low_pass(double alpha_=0.01) {
+	e_ = (1-alpha_)*e_prev_ + alpha_*e_;
+	e_dot_ = (1-alpha_)*e_dot_prev_ + alpha_*e_dot_;
+
+	e_prev_=e_;
+	e_dot_prev_=e_dot_;
     }
 
   private:
@@ -136,6 +145,7 @@ namespace hiqp {
       e_dot_initial_ = e_dot_;
       J_dot_initial_ = J_dot_;
       f_initial_ = f_;
+
       return 0;
     }
   };

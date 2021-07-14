@@ -17,8 +17,9 @@
 cmake_minimum_required(VERSION 2.8.6)
 project(hiqp_core)
 
-# Available backends: qpoases, gurobi, casadi
+# Available backends: gurobi (stable), rpsolver (unstable), casadi (deprecated)
 set(HIQP_QPSOLVER_BACKEND "gurobi")
+#set(HIQP_QPSOLVER_BACKEND "rpsolver")
 
 ###
 ### --- DONT EDIT BELOW THIS LINE ---
@@ -64,6 +65,9 @@ include_directories(${GUROBI_INCLUDE_DIR} ${CASADI_INCLUDE_DIR})
 link_directories(${GUROBI_LIB_DIR})
 set(SOLVER_SOURCE_FILE "src/solvers/casadi_solver.cpp")
 add_definitions(-DHIQP_CASADI)
+elseif(${HIQP_QPSOLVER_BACKEND} STREQUAL "rpsolver")
+set(SOLVER_SOURCE_FILE "src/solvers/rp_solver.cpp")
+add_definitions(-DHIQP_RP_SOLVER)
 endif()
 
 add_library(${PROJECT_NAME} src/utilities.cpp
@@ -75,7 +79,6 @@ add_library(${PROJECT_NAME} src/utilities.cpp
 		    src/geometric_primitives/geometric_primitive_map.cpp
 
 		    ${SOLVER_SOURCE_FILE}
-		    src/solvers/rp_solver.cpp
 
                             src/tasks/tdyn_pd.cpp
                             # src/tasks/tdyn_cubic.cpp

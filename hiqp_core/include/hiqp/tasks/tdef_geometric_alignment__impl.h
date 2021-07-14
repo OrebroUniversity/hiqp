@@ -79,6 +79,10 @@ namespace hiqp {
       J_ = Eigen::MatrixXd::Zero(n_task_dimensions, n_joints);
       e_dot_ = Eigen::VectorXd::Zero(n_task_dimensions);
       J_dot_= Eigen::MatrixXd::Zero(n_task_dimensions, n_joints);
+      
+      e_prev_=e_;
+      e_dot_prev_=e_dot_;
+      
   
       performance_measures_.resize(0);
 
@@ -115,6 +119,7 @@ namespace hiqp {
 
     template <typename PrimitiveA, typename PrimitiveB>
       int TDefGeometricAlignment<PrimitiveA, PrimitiveB>::update(RobotStatePtr robot_state) {
+      
       int retval = 0;
 
       retval = fk_solver_pos_->JntToCart(robot_state->kdl_jnt_array_vel_.q, pose_a_,
@@ -198,6 +203,8 @@ namespace hiqp {
 	e_dot_.setZero();
       }
       
+      //low_pass(); 
+
       return 0;
     }
 

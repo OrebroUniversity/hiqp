@@ -53,16 +53,22 @@ bool RPSolver::solve(std::vector<double>& solution) {
 	  }
 	}*/
 	J_RA=current_stage.B_;
-	Eigen::MatrixXd J_RA_pinv = dampedPseudoInverse(J_RA);
+	//Eigen::MatrixXd J_RA_pinv = dampedPseudoInverse(J_RA);
+	Eigen::MatrixXd J_RA_pinv;
+	pseudo_inverse(J_RA,J_RA_pinv);
 	this->rank_update(current_stage.B_, J_RA_pinv, T_k);
 
     } else {
 	Eigen::MatrixXd J_RA_k (J_RA.rows()+current_stage.B_.rows(),n_solution_dims_);
 	J_RA_k.topRows(current_stage.B_.rows()) = current_stage.B_;	
 	J_RA_k.bottomRows(J_RA.rows()) = J_RA;
-        Eigen::MatrixXd J_RA_pinv_prev = dampedPseudoInverse(J_RA);	
+        //Eigen::MatrixXd J_RA_pinv_prev = dampedPseudoInverse(J_RA);	
+        Eigen::MatrixXd J_RA_pinv_prev;
+	pseudo_inverse(J_RA,J_RA_pinv_prev);	
 	J_RA = J_RA_k;
-        Eigen::MatrixXd J_RA_pinv = dampedPseudoInverse(J_RA);	
+        //Eigen::MatrixXd J_RA_pinv = dampedPseudoInverse(J_RA);	
+        Eigen::MatrixXd J_RA_pinv;
+	pseudo_inverse(J_RA,J_RA_pinv);	
 	this->rank_update(current_stage.B_, J_RA_pinv, T_k);
 	//std::cerr<<"J_RA_pinv_k+1 = ["<<J_RA_pinv_prev<<"];\n";
 	//std::cerr<<"J_RA_pinv_k = ["<<J_RA_pinv<<"];\n";
@@ -73,7 +79,9 @@ bool RPSolver::solve(std::vector<double>& solution) {
     }
    
     Eigen::MatrixXd JTk =  current_stage.B_*T_k;
-    Eigen::MatrixXd JTk_pinv = pseudoInverse(JTk);    
+    //Eigen::MatrixXd JTk_pinv = pseudoInverse(JTk);
+    Eigen::MatrixXd JTk_pinv;
+    pseudo_inverse(JTk,JTk_pinv,false);    
     //std::cerr<<"Tk x JTk# =["<<T_k*JTk_pinv<<"];\n";
     //std::cerr<<"delta dq = ["<<(T_k*JTk_pinv*(current_stage.b_ - current_stage.B_*ddq_prev_)).transpose()<<"];\n";
     ddq_ = ddq_prev_ + T_k*JTk_pinv*(current_stage.b_ - current_stage.B_*ddq_prev_);

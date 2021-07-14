@@ -355,11 +355,13 @@ void BaseController<HardwareInterfaceT>::sampleJointValues() {
   q.data.setZero();
   qdot.data.setZero();
   effort.data.setZero();
+  //double alpha = 0.05;
 
   handles_mutex_.lock();
   for (auto &&handle : joint_handles_map_) {
     q(handle.first) = handle.second.getPosition();
-    qdot(handle.first) = handle.second.getVelocity();
+    qdot(handle.first) = handle.second.getVelocity(); 
+    //qdot(handle.first) = (1-alpha)*qdot(handle.first) +alpha*handle.second.getVelocity(); //FIXME!! low-pass on velocity
     effort(handle.first) = handle.second.getEffort();
   }
 
