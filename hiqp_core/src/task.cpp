@@ -31,6 +31,7 @@
 #include <hiqp/tasks/tdyn_jnt_limits.h>
 #include <hiqp/tasks/tdyn_pd.h>
 #include <hiqp/tasks/tdyn_linear_impedance.h>
+#include <hiqp/tasks/tdyn_linear.h>
 // #include <hiqp/tasks/tdyn_minimal_jerk.h>
 
 #include <hiqp/utilities.h>
@@ -52,6 +53,7 @@ namespace hiqp {
   // using tasks::TDefMetaTask;
 
   using tasks::TDynPD;
+  using tasks::TDynLinear;
   using tasks::TDynLinearImpedance;  
   // using tasks::TDynCubic;
   // using tasks::TDynHyperSin;
@@ -299,6 +301,8 @@ namespace hiqp {
       //   dyn_ = boost::make_shared<TDynHyperSin>(geom_prim_map_, visualizer_);
     } else if (type.compare("TDynLinearImpedance") == 0) {
       dyn_ = boost::make_shared<TDynLinearImpedance>(geom_prim_map_, visualizer_);      
+    } else if (type.compare("TDynLinear") == 0) {
+      dyn_ = boost::make_shared<TDynLinear>(geom_prim_map_, visualizer_);      
     } else {
       try {
 	dyn_ = tdyn_loader_.createInstance("hiqp::tasks::" + type);

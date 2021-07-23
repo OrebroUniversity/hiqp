@@ -27,9 +27,14 @@
 #ifdef HIQP_CASADI
 #include <hiqp/solvers/casadi_solver.h>
 #endif
+
 #ifdef HIQP_GUROBI
 #include <hiqp/solvers/gurobi_solver.h>
 #include <hiqp/solvers/gurobi_solver_cascade.h>
+#endif
+
+#ifdef HIQP_RP_SOLVER
+#include <hiqp/solvers/rp_solver.h>
 #endif
 
 #include <Eigen/Dense>
@@ -49,17 +54,108 @@ TaskManager::TaskManager(std::shared_ptr<Visualizer> visualizer)
   solver_ = std::make_shared<GurobiSolver>();
   //solver_ = std::make_shared<GurobiSolverCascade>();
 #endif
+#ifdef HIQP_RP_SOLVER
+  solver_ = std::make_shared<RPSolver>();
+#endif
 }
 
 TaskManager::~TaskManager() noexcept {}
 
-void TaskManager::init(unsigned int n_controls) { n_controls_ = n_controls; }
+void TaskManager::init(unsigned int n_controls, bool beVelControl) { 
+  n_controls_ = n_controls; 
+  for (int i = 0; i < n_controls_; ++i) controls_.push_back(0);
+
+  solver_->setVelocityControlMode(beVelControl);
+}
+
+bool TaskManager::getVelocityControls(RobotStatePtr robot_state,
+                                        std::vector<double> &controls) {
+    if (task_map_.size() < 1) {
+      for (int i=0; i<controls.size(); ++i)
+        controls.at(i) = 0;
+      
+      return false;
+    }
+
+    resource_mutex_.lock();
+    solver_->clearStages();
+    
+    //clear the task map from prior iteration
+    robot_state->task_status_map_.clear();
+   
+    auto cmp = [](std::shared_ptr<Task> left, std::shared_ptr<Task> right) { return left->getPriority() > right->getPriority(); };
+    std::priority_queue<std::shared_ptr<Task>, std::vector<std::shared_ptr<Task> >, decltype(cmp) > task_queue(cmp);
+ 
+    bool dump=false;
+    for (auto&& kv : task_map_) {
+      if (kv.second->getActive()) {
+          task_queue.push(kv.second);
+          dump = dump || (kv.first == "ee_rl");
+      }
+    }
+   
+    while(!task_queue.empty()) {
+        std::shared_ptr<Task> task = task_queue.top();
+        if (task->update(robot_state) == 0) {
+          solver_->appendVelocityStage(task->getPriority(),
+			     task->getDynamics(),
+                             task->getJacobian(),
+                             task->getTaskTypes());
+	  ///TSV: added below to enable anyone with a robot state to check what tasks are running
+	  ///     Logic being: some tasks (RL in particular) can use information about the null-space
+	  ///     of higher priority tasks to decide on actions
+	  //fill in task state
+	  TaskStatus state;
+	  state.priority_ = task->getPriority();
+	  state.J_ = task->getJacobian();
+	  state.e_ = task->getValue();
+	  state.de_ = task->getValueDerivative();
+	  state.dde_star_ = task->getDynamics();
+	  state.task_signs_ = task->getTaskTypes();
+	  //push it into the buffer
+	  robot_state->task_status_map_.push_back(state);
+          
+	  //DEBUG ==================================================
+	  //std::cerr<<"Task: "<<task->getTaskName()<<" at prio "<<task->getPriority()<<std::endl;
+	  //std::cerr<<"task map is now "<<robot_state->task_status_map_.size()<<" tasks long\n";
+	  // std::cerr<<"J_: "<<std::endl<<task->getJacobian()<<std::endl;
+	  // std::cerr<<"J_dot_: "<<std::endl<< task->getJacobianDerivative()<<std::endl;
+	  //std::cerr<<"e_: "<<task->getValue().transpose()<<std::endl;
+	  // std::cerr<<"e_dot_: "<<task->getValueDerivative().transpose()<<std::endl;
+	  // std::cerr<<"dde_star: "<<task->getDynamics().transpose()<<std::endl;
+	  // std::cerr<<"dq: "<<robot_state->kdl_jnt_array_vel_.qdot.data.transpose()<<std::endl;
+          // std::cerr<<"q: "<<robot_state->kdl_jnt_array_vel_.q.data.transpose()<<std::endl;
+	  // std::cerr<<"__________________________________________________________"<<std::endl<<std::endl;
+	  //DEBUG END ===============================================
+        }
+      task_queue.pop();  
+    }
+    
+    if (!solver_->solve(controls_)) {
+      ROS_WARN_THROTTLE(10, "Unable to solve the hierarchical QP, setting accelerations to zero ");
+ 
+      double dt=robot_state->sampling_time_;
+      for (int i = 0; i < controls.size(); ++i){
+        controls.at(i) = 0.0;
+      }
+      controls_ = controls;
+   
+      resource_mutex_.unlock();
+      return false;
+    }
+    controls = controls_;
+ 
+    robot_state->ddq_star = controls;
+    resource_mutex_.unlock();
+    return true;
+  }
+
 
 bool TaskManager::getAccelerationControls(RobotStatePtr robot_state,
                                       std::vector<double>& controls) {
   if (task_map_.size() < 1) {
     for (int i = 0; i < controls.size(); ++i) controls.at(i) = 0;
-
+    controls_ = controls;
     return false;
   }
 
@@ -161,17 +257,20 @@ bool TaskManager::getAccelerationControls(RobotStatePtr robot_state,
       task_queue.pop();  
   }
   
-  if (!solver_->solve(controls)) {
+  if (!solver_->solve(controls_)) {
     ROS_WARN_THROTTLE(10, "Unable to solve the hierarchical QP, setting accelerations to zero ");
 
     double dt=robot_state->sampling_time_;
     for (int i = 0; i < controls.size(); ++i){
       controls.at(i) = 0.0;
     }
+    controls_ = controls;
 
     resource_mutex_.unlock();
     return false;
   }
+  controls = controls_;
+
   robot_state->ddq_star = controls;
   resource_mutex_.unlock();
 

@@ -17,8 +17,9 @@
 cmake_minimum_required(VERSION 2.8.6)
 project(hiqp_core)
 
-# Available backends: qpoases, gurobi, casadi
+# Available backends: gurobi (stable), rpsolver (unstable), casadi (deprecated)
 set(HIQP_QPSOLVER_BACKEND "gurobi")
+#set(HIQP_QPSOLVER_BACKEND "rpsolver")
 
 ###
 ### --- DONT EDIT BELOW THIS LINE ---
@@ -35,46 +36,49 @@ find_package(orocos_kdl REQUIRED)
 find_package(Eigen3 REQUIRED)
 
 catkin_package(CATKIN_DEPENDS rosconsole pluginlib
-               INCLUDE_DIRS include 
-               LIBRARIES ${PROJECT_NAME} 
+       INCLUDE_DIRS include 
+       LIBRARIES ${PROJECT_NAME} 
 #               CATKIN_DEPENDS roscpp visualization_msgs
-               DEPENDS orocos_kdl)
+       DEPENDS orocos_kdl)
 
 include_directories(include ${catkin_INCLUDE_DIRS} ${EIGEN3_INCLUDE_DIR})
 
 set(SOLVER_SOURCE_FILE "")
 if(${HIQP_QPSOLVER_BACKEND} STREQUAL "qpoases")
-    set(SOLVER_SOURCE_FILE "src/solvers/qpoases_solver.cpp")
-    add_definitions(-DHIQP_QPOASES)
+set(SOLVER_SOURCE_FILE "src/solvers/qpoases_solver.cpp")
+add_definitions(-DHIQP_QPOASES)
 elseif(${HIQP_QPSOLVER_BACKEND} STREQUAL "gurobi")
-    set(GUROBI_INCLUDE_DIR "$ENV{GUROBI_HOME}/include") 
-    set(GUROBI_LIB_DIR "$ENV{GUROBI_HOME}/lib")
-    set(GUROBI_LIBS gurobi_c++ gurobi90)
-    include_directories(${GUROBI_INCLUDE_DIR})
-    link_directories(${GUROBI_LIB_DIR})
-    set(SOLVER_SOURCE_FILE "src/solvers/gurobi_solver.cpp" "src/solvers/gurobi_solver_cascade.cpp")
-    add_definitions(-DHIQP_GUROBI)
+set(GUROBI_INCLUDE_DIR "$ENV{GUROBI_HOME}/include") 
+set(GUROBI_LIB_DIR "$ENV{GUROBI_HOME}/lib")
+set(GUROBI_LIBS gurobi_c++ gurobi90)
+include_directories(${GUROBI_INCLUDE_DIR})
+link_directories(${GUROBI_LIB_DIR})
+set(SOLVER_SOURCE_FILE "src/solvers/gurobi_solver.cpp" "src/solvers/gurobi_solver_cascade.cpp")
+add_definitions(-DHIQP_GUROBI)
 elseif(${HIQP_QPSOLVER_BACKEND} STREQUAL "casadi")
-    set(GUROBI_INCLUDE_DIR "$ENV{GUROBI_HOME}/include") 
-    set(GUROBI_LIB_DIR "$ENV{GUROBI_HOME}/lib")
-    set(GUROBI_LIBS gurobi_c++ gurobi90)
-    find_package(CASADI REQUIRED)
-    catkin_package(LIBRARIES casadi)
-    include_directories(${GUROBI_INCLUDE_DIR} ${CASADI_INCLUDE_DIR})
-    link_directories(${GUROBI_LIB_DIR})
-    set(SOLVER_SOURCE_FILE "src/solvers/casadi_solver.cpp")
-    add_definitions(-DHIQP_CASADI)
+set(GUROBI_INCLUDE_DIR "$ENV{GUROBI_HOME}/include") 
+set(GUROBI_LIB_DIR "$ENV{GUROBI_HOME}/lib")
+set(GUROBI_LIBS gurobi_c++ gurobi90)
+find_package(CASADI REQUIRED)
+catkin_package(LIBRARIES casadi)
+include_directories(${GUROBI_INCLUDE_DIR} ${CASADI_INCLUDE_DIR})
+link_directories(${GUROBI_LIB_DIR})
+set(SOLVER_SOURCE_FILE "src/solvers/casadi_solver.cpp")
+add_definitions(-DHIQP_CASADI)
+elseif(${HIQP_QPSOLVER_BACKEND} STREQUAL "rpsolver")
+set(SOLVER_SOURCE_FILE "src/solvers/rp_solver.cpp")
+add_definitions(-DHIQP_RP_SOLVER)
 endif()
 
 add_library(${PROJECT_NAME} src/utilities.cpp
-                            src/hiqp_time_point.cpp
-                            src/task_manager.cpp
-                            src/task.cpp
+		    src/hiqp_time_point.cpp
+		    src/task_manager.cpp
+		    src/task.cpp
 
-			    #src/geometric_primitives/geometric_primitive.cpp
-                            src/geometric_primitives/geometric_primitive_map.cpp
+		    #src/geometric_primitives/geometric_primitive.cpp
+		    src/geometric_primitives/geometric_primitive_map.cpp
 
-                            ${SOLVER_SOURCE_FILE}
+		    ${SOLVER_SOURCE_FILE}
 
                             src/tasks/tdyn_pd.cpp
                             # src/tasks/tdyn_cubic.cpp
@@ -82,6 +86,7 @@ add_library(${PROJECT_NAME} src/utilities.cpp
                             src/tasks/tdyn_jnt_limits.cpp
                             # src/tasks/tdyn_minimal_jerk.cpp
                             src/tasks/tdyn_linear_impedance.cpp
+                            src/tasks/tdyn_linear.cpp
 #                            src/tasks/tdef_meta_task.cpp
                             src/tasks/tdef_tracking.cpp
                             src/tasks/tdef_full_pose.cpp

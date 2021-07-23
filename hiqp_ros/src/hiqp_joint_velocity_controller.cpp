@@ -79,7 +79,7 @@ void HiQPJointVelocityController::initialize() {
 
   service_handler_.advertiseAll();
 
-  task_manager_ptr_->init(getNJoints());
+  task_manager_ptr_->init(getNJoints(), true);
 
   loadJointLimitsFromParamServer();
 
@@ -90,42 +90,27 @@ void HiQPJointVelocityController::initialize() {
   u_vel_ = Eigen::VectorXd::Zero(getNJoints());
 }
 
-  void HiQPJointVelocityController::updateControls(Eigen::VectorXd& ddq, Eigen::VectorXd& u) {
-    if (!is_active_) return;
+void HiQPJointVelocityController::updateControls(Eigen::VectorXd& dq, Eigen::VectorXd& u) {
+  if (!is_active_) return;
 
-    std::vector<double> _ddq(ddq.size());
+  std::vector<double> _dq(dq.size());
   
   // Time the acceleration control computation
   auto t_begin = std::chrono::high_resolution_clock::now();
-  task_manager_ptr_->getAccelerationControls(this->getRobotState(), _ddq);
+  task_manager_ptr_->getVelocityControls(this->getRobotState(), _dq);
   auto t_end = std::chrono::high_resolution_clock::now();
   std::chrono::duration<double, std::milli> opt_time = t_end - t_begin;
 
   int i = 0;
-  for (auto&& oc : _ddq) {
-    ddq(i++) = oc;
+  for (auto&& oc : _dq) {
+    dq(i++) = oc;
   }
-  //OPTION 1: store prev. control velocities for integration
-  u=u_vel_+ddq*period_.toSec();
-   u_vel_=u; //store the computed velocity controls for the next integration step
+  u=dq; //u_vel_+ddq*period_.toSec();
+  //u_vel_=u; //store the computed velocity controls for the next integration step
   
   renderPrimitives();
 
   monitorTasks(static_cast<double>(opt_time.count()));
-
-  // if (outcon.size() != 0) {
-  //   if (total > 3000.0) {
-  //     std::cout << "Acceleration Controls computation took " << total / n
-  //               << " milliseconds.\n";
-
-  //     fflush(stdout);
-  //     n = 0;
-  //     total = 0.0;
-  //   } else {
-  //     n++;
-  //     total += static_cast<double>(opt_time.count());
-  //   }
-  // }
 
   return;
 }

@@ -69,6 +69,9 @@ namespace hiqp {
       J_ = Eigen::MatrixXd::Zero(1, n_joints);
       e_dot_ = Eigen::VectorXd::Zero(1);
       J_dot_= Eigen::MatrixXd::Zero(1, n_joints);
+      e_prev_=e_;
+      e_dot_prev_=e_dot_;
+      
 
       performance_measures_.resize(0);
 
@@ -205,6 +208,8 @@ namespace hiqp {
 	e_dot_.setZero();
       }
   
+      //low_pass(); 
+      
       return 0;
     }
 
