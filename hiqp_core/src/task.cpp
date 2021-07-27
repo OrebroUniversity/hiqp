@@ -175,12 +175,13 @@ namespace hiqp {
 		prim_type2.compare("sphere") == 0) {
 	def_ = boost::make_shared<
           TDefGeometricProjection<GeometricPoint, GeometricSphere> >(geom_prim_map_, visualizer_);
-      }// else if (prim_type1.compare("line") == 0 &&
-      //            prim_type2.compare("line") == 0) {
-      //   def_ = boost::make_shared<
-      //       TDefGeometricProjection<GeometricLine, GeometricLine> >(
-      //       geom_prim_map_, visualizer_);
-      // }
+      }
+      else if (prim_type1.compare("line") == 0 &&
+                 prim_type2.compare("line") == 0) {
+        def_ = boost::make_shared<
+            TDefGeometricProjection<GeometricLine, GeometricLine> >(
+            geom_prim_map_, visualizer_);
+      }
       else if (prim_type1.compare("sphere") == 0 &&
                prim_type2.compare("plane") == 0) {
 	def_ = boost::make_shared<
