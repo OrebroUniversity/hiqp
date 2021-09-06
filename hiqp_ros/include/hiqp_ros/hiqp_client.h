@@ -1,3 +1,6 @@
+#ifndef HIQP_CLIENT_HH
+#define HIQP_CLIENT_HH
+
 #include <hiqp_msgs/ActivateTask.h>
 #include <hiqp_msgs/DeactivateTask.h>
 #include <hiqp_msgs/MonitorTask.h>
@@ -168,3 +171,5 @@ hiqp_msgs::Primitive createPrimitiveMsg(const std::string& name,
                                         const std::vector<double>& color,
                                         const std::vector<double>& parameters);
 }
+
+#endif
