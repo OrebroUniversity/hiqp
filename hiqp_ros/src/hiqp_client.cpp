@@ -28,6 +28,14 @@ void HiQPClient::connectToServer() {
       nh_.serviceClient<hiqp_msgs::DeactivateTask>("deactivate_task");
   deactivate_task_client_.waitForExistence();
 
+	get_all_primitives_client_ =
+      nh_.serviceClient<hiqp_msgs::GetAllPrimitives>("get_all_primitives");
+  get_all_primitives_client_.waitForExistence();
+
+  get_all_tasks_client_ =
+      nh_.serviceClient<hiqp_msgs::GetAllTasks>("get_all_tasks");
+  get_all_tasks_client_.waitForExistence();
+  
   remove_tasks_client_ =
       nh_.serviceClient<hiqp_msgs::RemoveTasks>("remove_tasks");
   remove_tasks_client_.waitForExistence();
@@ -221,6 +229,32 @@ void HiQPClient::activateTasks(const std::vector<std::string>& task_names) {
                     task_name.c_str());
         }
     }
+}
+
+std::vector<hiqp_msgs::Primitive> HiQPClient::getAllPrimitives() {
+	hiqp_msgs::GetAllPrimitives getAllPrimitivesMsg;
+	std::vector<hiqp_msgs::Primitive> primitives;
+
+	if (get_all_primitives_client_.call(getAllPrimitivesMsg)) {
+    primitives = getAllPrimitivesMsg.response.primitives;
+  } else {
+    ROS_WARN("get_all_primitives service call failed.");
+    primitives = {};
+  }
+  return primitives;
+}
+
+std::vector<hiqp_msgs::Task> HiQPClient::getAllTasks() {
+	hiqp_msgs::GetAllTasks getAllTasksMsg;
+	std::vector<hiqp_msgs::Task> tasks;
+
+	if (get_all_tasks_client_.call(getAllTasksMsg)) {
+    tasks = getAllTasksMsg.response.tasks;
+  } else {
+    ROS_WARN("get_all_tasks service call failed.");
+    tasks = {};
+  }
+  return tasks;
 }
 
 std::string taskMeasuresAsString(
