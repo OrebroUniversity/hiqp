@@ -61,6 +61,10 @@ void HiQPServiceHandler::advertiseAll() {
   demonitor_priority_level_service_ = node_handle_->advertiseService(
       "demonitor_priority_level", &HiQPServiceHandler::demonitorPriorityLevel,
       this);
+
+  is_task_set_service_ = node_handle_->advertiseService(
+      "is_task_set", &HiQPServiceHandler::isTaskSet,
+      this);
 }
 
 bool HiQPServiceHandler::setTasks(hiqp_msgs::SetTasks::Request& req,
@@ -262,5 +266,12 @@ bool HiQPServiceHandler::demonitorPriorityLevel(
     hiqp_msgs::DemonitorPriorityLevel::Response& res) {
   task_manager_->demonitorPriorityLevel(req.priority);
   res.success = true;
+  return true;
+}
+
+bool HiQPServiceHandler::isTaskSet(
+    hiqp_msgs::IsTaskSet::Request& req,
+    hiqp_msgs::IsTaskSet::Response& res) {
+  res.is_set = task_manager_->isTaskSet(req.name);
   return true;
 }

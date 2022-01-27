@@ -45,6 +45,8 @@
 #include <hiqp_msgs/MonitorPriorityLevel.h>
 #include <hiqp_msgs/RemovePriorityLevel.h>
 
+#include <hiqp_msgs/IsTaskSet.h>
+
 class HiQPServiceHandler {
  public:
   HiQPServiceHandler() = default;
@@ -111,6 +113,9 @@ class HiQPServiceHandler {
                             hiqp_msgs::MonitorPriorityLevel::Response& res);
   bool demonitorPriorityLevel(hiqp_msgs::DemonitorPriorityLevel::Request& req,
                               hiqp_msgs::DemonitorPriorityLevel::Response& res);
+                              
+  bool isTaskSet(hiqp_msgs::IsTaskSet::Request& req,
+                 hiqp_msgs::IsTaskSet::Response& res);
 
   std::shared_ptr<ros::NodeHandle> node_handle_;
   std::shared_ptr<hiqp::TaskManager> task_manager_;
@@ -137,6 +142,8 @@ class HiQPServiceHandler {
   ros::ServiceServer deactivate_priority_level_service_;
   ros::ServiceServer monitor_priority_level_service_;
   ros::ServiceServer demonitor_priority_level_service_;
+  
+  ros::ServiceServer is_task_set_service_;
 };
 
 #endif

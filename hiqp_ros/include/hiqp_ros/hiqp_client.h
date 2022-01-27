@@ -13,6 +13,7 @@
 #include <hiqp_msgs/GetAllPrimitives.h>
 #include <hiqp_msgs/GetAllTasks.h>
 #include <hiqp_msgs/TaskMeasures.h>
+#include <hiqp_msgs/IsTaskSet.h>
 
 #include <ros/ros.h>
 #include <sensor_msgs/JointState.h>
@@ -77,6 +78,8 @@ class HiQPClient {
   ros::ServiceClient remove_all_tasks_client_;
 
   ros::ServiceClient remove_all_primitives_client_;
+  
+  ros::ServiceClient is_task_set_client_;
 
   ros::Subscriber task_measures_sub_;
 

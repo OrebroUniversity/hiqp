@@ -579,4 +579,15 @@ int TaskManager::demonitorPriorityLevel(unsigned int priority) {
   return 0;
 }
 
+bool TaskManager::isTaskSet(const std::string& task_name) {
+	resource_mutex_.lock();
+	bool is_task_set = false;
+	
+	if (task_map_.count(task_name) == 1) {
+		is_task_set = true;
+	}
+	
+	resource_mutex_.unlock();
+	return is_task_set;
+}
 }  // namespace hiqp

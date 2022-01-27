@@ -52,6 +52,11 @@ void HiQPClient::connectToServer() {
       nh_.serviceClient<hiqp_msgs::RemoveAllPrimitives>(
           "remove_all_primitives");
   remove_all_primitives_client_.waitForExistence();
+  
+  is_task_set_client_ =
+      nh_.serviceClient<hiqp_msgs::IsTaskSet>(
+          "is_task_set");
+  is_task_set_client_.waitForExistence();
 
   std::string topic_global= "/" + robot_namespace_ + "/" + controller_namespace_ + "/task_measures";
   //std::cerr<<"Subscribing to "<<topic_global<<std::endl;
@@ -321,6 +326,9 @@ void HiQPClient::waitForCompletion(
   
   ros::Duration max_exec_dur(max_exec_time);
   bool time_exceeded = false;
+  
+  hiqp_msgs::IsTaskSet isTaskSetMsg;
+  
   while (status < task_names.size() && ros::ok()) {
     ROS_INFO_THROTTLE(5, "[waitForCompletion]: %d out of %ld tasks complete.",
                       status, task_names.size());
@@ -339,6 +347,19 @@ void HiQPClient::waitForCompletion(
         time_exceeded = true;
         break;
       }
+      
+      isTaskSetMsg.request.name = task_name;
+      if (is_task_set_client_.call(isTaskSetMsg)) {
+      	if (!isTaskSetMsg.response.is_set) {
+      		ROS_INFO("%s task has been removed.", task_name.c_str());
+      		status += 1;
+        	resource_mutex_.unlock();
+        	continue;
+      	}
+      } else {
+      	ROS_WARN("is_task_set_ service call failed.");
+      }
+      
       if (it_sq_error == task_name_sq_error_map_.end()) {
         resource_mutex_.unlock();
         continue;
