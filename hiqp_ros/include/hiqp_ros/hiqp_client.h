@@ -176,6 +176,8 @@ class HiQPClient {
                          const std::vector<TaskDoneReaction>& reactions,
                          const std::vector<double>& error_tol,
                          double max_exec_time=0);
+                         
+  bool isTaskSet(const std::string& task_name);
 };
 
 hiqp_msgs::Task createTaskMsg(const std::string& name, int16_t priority,

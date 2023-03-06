@@ -475,6 +475,21 @@ bool HiQPClient::resetHiQPController() {
   return ret;
 }
 
+bool HiQPClient::isTaskSet(const std::string& task_name) {
+	hiqp_msgs::IsTaskSet isTaskSetMsg;
+  isTaskSetMsg.request.name = task_name;
+
+  if (is_task_set_client_.call(isTaskSetMsg)) {
+		if (isTaskSetMsg.response.is_set) {
+      ROS_INFO("All tasks removed.");
+      return true;
+  	} else {
+    	ROS_WARN("is_task_set service call failed.");
+  	}
+  }
+  return false;
+}
+
 hiqp_msgs::Task createTaskMsg(const std::string& name, int16_t priority,
                               bool visible, bool active, bool monitored,
                               const std::vector<std::string>& def_params,
