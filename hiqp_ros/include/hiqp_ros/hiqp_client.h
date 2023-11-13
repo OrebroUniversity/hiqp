@@ -10,7 +10,10 @@
 #include <hiqp_msgs/RemoveTasks.h>
 #include <hiqp_msgs/SetPrimitives.h>
 #include <hiqp_msgs/SetTasks.h>
+#include <hiqp_msgs/GetAllPrimitives.h>
+#include <hiqp_msgs/GetAllTasks.h>
 #include <hiqp_msgs/TaskMeasures.h>
+#include <hiqp_msgs/IsTaskSet.h>
 
 #include <ros/ros.h>
 #include <sensor_msgs/JointState.h>
@@ -32,6 +35,16 @@ class HiQPClient {
 
   ros::NodeHandle robot_nh_;
 
+	/**
+   * A client to the get_all_primitives service.
+   */
+  ros::ServiceClient get_all_primitives_client_;
+
+  /**
+   * A client to the get_all_tasks service.
+   */
+  ros::ServiceClient get_all_tasks_client_;
+  
   /**
    * A client to the set_primitives service.
    */
@@ -65,6 +78,8 @@ class HiQPClient {
   ros::ServiceClient remove_all_tasks_client_;
 
   ros::ServiceClient remove_all_primitives_client_;
+  
+  ros::ServiceClient is_task_set_client_;
 
   ros::Subscriber task_measures_sub_;
 
@@ -89,7 +104,7 @@ class HiQPClient {
              bool auto_connect = true);
 
   void connectToServer();
-
+  
   /**
    * Call the set_primitive service on the hiqp controller.
    *
@@ -143,6 +158,10 @@ class HiQPClient {
   bool removeAllTasks();
 
   bool removeAllPrimitives();
+  
+  std::vector<hiqp_msgs::Primitive> getAllPrimitives();
+
+  std::vector<hiqp_msgs::Task> getAllTasks();
 
   bool resetHiQPController();
 
@@ -157,6 +176,8 @@ class HiQPClient {
                          const std::vector<TaskDoneReaction>& reactions,
                          const std::vector<double>& error_tol,
                          double max_exec_time=0);
+                         
+  bool isTaskSet(const std::string& task_name);
 };
 
 hiqp_msgs::Task createTaskMsg(const std::string& name, int16_t priority,

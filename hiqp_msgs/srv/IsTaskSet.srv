@@ -1,0 +1,3 @@
+string       name          # name of the task to be checked
+---
+bool         is_set       # true if task is currently set

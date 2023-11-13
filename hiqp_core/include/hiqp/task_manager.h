@@ -112,6 +112,8 @@ class TaskManager {
   int deactivatePriorityLevel(unsigned int priority);
   int monitorPriorityLevel(unsigned int priority);
   int demonitorPriorityLevel(unsigned int priority);
+  
+  bool isTaskSet(const std::string& task_name);
 
   //void sortTaskMapByPriority();
  private:

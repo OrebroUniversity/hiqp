@@ -50,7 +50,8 @@ add_service_files(FILES SetTasks.srv
                         ActivatePriorityLevel.srv
                         DeactivatePriorityLevel.srv
                         MonitorPriorityLevel.srv
-                        DemonitorPriorityLevel.srv)
+                        DemonitorPriorityLevel.srv
+                        IsTaskSet.srv)
 
 generate_messages(DEPENDENCIES std_msgs
                                geometry_msgs
