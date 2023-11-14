@@ -27,8 +27,6 @@
 
 #include <Eigen/Dense>
 
-#include <boost/shared_ptr.hpp>
-
 namespace hiqp {
 
   using geometric_primitives::GeometricPrimitiveMap;
@@ -150,7 +148,7 @@ namespace hiqp {
     }
   };
 
-  typedef boost::shared_ptr<TaskDefinition> TaskDefinitionPtr;
+  typedef std::shared_ptr<TaskDefinition> TaskDefinitionPtr;
 }  // namespace hiqp
 
 #endif  // include guard

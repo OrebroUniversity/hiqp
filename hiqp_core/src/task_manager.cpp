@@ -18,7 +18,6 @@
 #include <hiqp/geometric_primitives/geometric_primitive_visualizer.h>
 #include <hiqp/task_manager.h>
 #include <hiqp/utilities.h>
-#include <ros/console.h>
 #include <iomanip>  // std::setw
 #include <iostream>
 #include <fstream>
@@ -132,7 +131,7 @@ bool TaskManager::getVelocityControls(RobotStatePtr robot_state,
     }
     
     if (!solver_->solve(controls_)) {
-      ROS_WARN_THROTTLE(10, "Unable to solve the hierarchical QP, setting accelerations to zero ");
+      std::cerr<<"Unable to solve the hierarchical QP, setting accelerations to zero\n";
  
       double dt=robot_state->sampling_time_;
       for (int i = 0; i < controls.size(); ++i){
@@ -258,7 +257,7 @@ bool TaskManager::getAccelerationControls(RobotStatePtr robot_state,
   }
   
   if (!solver_->solve(controls_)) {
-    ROS_WARN_THROTTLE(10, "Unable to solve the hierarchical QP, setting accelerations to zero ");
+    std::cerr<<"Unable to solve the hierarchical QP, setting accelerations to zero\n";
 
     double dt=robot_state->sampling_time_;
     for (int i = 0; i < controls.size(); ++i){

@@ -1,23 +1,23 @@
 <?xml version="1.0"?>
-<package>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
   <name>hiqp_core</name>
-  <version>0.0.3</version>
-  <description>The HiQP Control Framework</description>
+  <version>1.0.1</version>
+  <description>The HiQP Control Framework, core functionalities</description>
 
   <author email="marcus.adam.johansson@gmail.com">Marcus A Johansson</author>
-  <maintainer email="marcus.adam.johansson@gmail.com">Marcus A Johansson</maintainer>
+  <maintainer email="todor.stoyanov@oru.se">Todor Stoyanov</maintainer>
   
   <license>GPLv3</license>
 
-  <buildtool_depend>catkin</buildtool_depend>
+  <buildtool_depend>ament_cmake</buildtool_depend>
 
-  <build_depend>rosconsole</build_depend>  
-  <!--build_depend>visualization_msgs</build_depend-->
-  <!--build_depend>roscpp</build_depend-->
-  <build_depend>pluginlib</build_depend>
+  <depend>rclcpp</depend>
+  <depend>rcpputils</depend>
+  <depend>pluginlib</depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
   
-  <run_depend>rosconsole</run_depend>
-  <run_depend>pluginlib</run_depend>
-  <!--run_depend>visualization_msgs</run_depend-->  
-  <!--run_depend>roscpp</run_depend-->  
 </package>

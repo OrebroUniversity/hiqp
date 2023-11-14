@@ -1,24 +1,24 @@
 #ifndef HIQP_CLIENT_HH
 #define HIQP_CLIENT_HH
 
-#include <hiqp_msgs/ActivateTask.h>
-#include <hiqp_msgs/DeactivateTask.h>
-#include <hiqp_msgs/MonitorTask.h>
-#include <hiqp_msgs/RemoveAllPrimitives.h>
-#include <hiqp_msgs/RemoveAllTasks.h>
-#include <hiqp_msgs/RemovePrimitives.h>
-#include <hiqp_msgs/RemoveTasks.h>
-#include <hiqp_msgs/SetPrimitives.h>
-#include <hiqp_msgs/SetTasks.h>
-#include <hiqp_msgs/GetAllPrimitives.h>
-#include <hiqp_msgs/GetAllTasks.h>
-#include <hiqp_msgs/TaskMeasures.h>
-#include <hiqp_msgs/IsTaskSet.h>
+#include <hiqp_msgs/activate_task.hpp>
+#include <hiqp_msgs/deactivate_task.hpp>
+#include <hiqp_msgs/monitor_task.hpp>
+#include <hiqp_msgs/remove_all_primitives.hpp>
+#include <hiqp_msgs/remove_all_tasks.hpp>
+#include <hiqp_msgs/remove_primitives.hpp>
+#include <hiqp_msgs/remove_tasks.hpp>
+#include <hiqp_msgs/set_primitives.hpp>
+#include <hiqp_msgs/set_tasks.hpp>
+#include <hiqp_msgs/get_all_primitives.hpp>
+#include <hiqp_msgs/get_all_tasks.hpp>
+#include <hiqp_msgs/task_measures.hpp>
+#include <hiqp_msgs/is_task_set.hpp>
 
-#include <ros/ros.h>
-#include <sensor_msgs/JointState.h>
+#include <sensor_msgs/joint_state.hpp>
 #include <mutex>
 #include <numeric>
+#include <rclcpp/rclcpp.hpp>
 
 namespace hiqp_ros {
 

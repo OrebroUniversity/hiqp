@@ -18,9 +18,11 @@
 #include <hiqp/utilities.h>
 
 #include <gurobi_c++.h>
-#include <ros/assert.h>
+//#include <ros/assert.h>
+//#include <rcpputils/asserts.h>
 #include <Eigen/Dense>
 #include <cassert>
+#include <cstdio>
 #include <iomanip>
 #include <iostream>
 
@@ -109,11 +111,8 @@ bool GurobiSolver::solve(std::vector<double>& solution) {
     try {
       qp_problem.getSolution(solution);
     } catch (GRBException e) {
-      ROS_ERROR_THROTTLE(10,
-                                 "In GurobiSolver::QPProblem::getSolution : "
-                                 "Gurobi exception with error code: %d, and "
-                                 "error_message: %s.",
-                                 e.getErrorCode(), e.getMessage().c_str());
+      std::cerr<< "In GurobiSolver::QPProblem::getSolution:\nGurobi exception with error code:"<<
+                  e.getErrorCode()<<" and message "<<e.getMessage().c_str()<<std::endl;
       return false;
     }
   }
@@ -236,39 +235,38 @@ void GurobiSolver::QPProblem::setup(std::vector<double> &start) {
   // DEBUG END ==========================================
 }
 
-  bool GurobiSolver::QPProblem::solve() {
-    model_.optimize();
-    int status = model_.get(GRB_IntAttr_Status);
-    double runtime = model_.get(GRB_DoubleAttr_Runtime);
+bool GurobiSolver::QPProblem::solve() {
+  model_.optimize();
+  int status = model_.get(GRB_IntAttr_Status);
+  double runtime = model_.get(GRB_DoubleAttr_Runtime);
 
-    if (status != GRB_OPTIMAL) {
-      if (status == GRB_TIME_LIMIT){
-	//ROS_WARN("In GurobiSolver::QPProblem::solve(...): Stage solving runtime %f sec exceeds the set time limit of %f sec.",
-//		 runtime, TIME_LIMIT);
-      }
-      else if (status == GRB_SUBOPTIMAL){
-	ROS_WARN("In GurobiSolver::QPProblem::solve(...): Only suboptimal QP solution found.");
-      }
-      else if (status == GRB_NUMERIC){
-	ROS_WARN("In GurobiSolver::QPProblem::solve(...): QP optimization was terminated due to unrecoverable numerical difficulties.");
-      }
-      else if (status == GRB_ITERATION_LIMIT){
-	ROS_WARN("In GurobiSolver::QPProblem::solve(...): QP optimization was terminated because iteration limit was reached.");
-      }       
-      else{
-	ROS_ERROR("In GurobiSolver::QPProblem::solve(...): No optimal solution found for stage with "
-		  "priority %d. Status is %d.",
-		  0, status);
-     
-	//DEBUG =======================================
-	//model_.write("/home/rkg/Desktop/model.lp");
-	//exit(0);
-	//DEBUG END ====================================
-	return false;
-      }
+  if (status != GRB_OPTIMAL) {
+    if (status == GRB_TIME_LIMIT){
+      //WARN("In GurobiSolver::QPProblem::solve(...): Stage solving runtime %f sec exceeds the set time limit of %f sec.",
+      //		 runtime, TIME_LIMIT);
     }
-    return true;
+    else if (status == GRB_SUBOPTIMAL){
+      std::cerr<<"In GurobiSolver::QPProblem::solve(...): Only suboptimal QP solution found."<<std::endl;
+    }
+    else if (status == GRB_NUMERIC){
+      std::cerr<<"In GurobiSolver::QPProblem::solve(...): QP optimization was terminated due to unrecoverable numerical difficulties."<<std::endl;
+    }
+    else if (status == GRB_ITERATION_LIMIT){
+      std::cerr<<"In GurobiSolver::QPProblem::solve(...): QP optimization was terminated because iteration limit was reached."<<std::endl;
+    }       
+    else{
+      std::cerr<<"In GurobiSolver::QPProblem::solve(...): No optimal solution found for stage with "
+          "priority 0. Status is "<< status <<std::endl;
+
+      //DEBUG =======================================
+      //model_.write("/home/rkg/Desktop/model.lp");
+      //exit(0);
+      //DEBUG END ====================================
+      return false;
+    }
   }
+  return true;
+}
 
 void GurobiSolver::QPProblem::getSolution(std::vector<double>& solution) {
   unsigned int stage_dims = hqp_constraints_.n_stage_dims_;

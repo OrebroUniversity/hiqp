@@ -22,7 +22,6 @@
 
 #include <hiqp/robot_state.h>
 #include <hiqp/task_definition.h>
-#include <ros/ros.h>
 #include <kdl/treefksolverpos_recursive.hpp>
 #include <kdl/treejnttojacsolver.hpp>
 
@@ -82,9 +81,6 @@ namespace hiqp {
       double d_max_;
       double phi_max_;
       
-      /* ros::NodeHandle nh_; */
-      /*   ros::Publisher marker_pub_; */
-  
     };
 
   }  // namespace tasks

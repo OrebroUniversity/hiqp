@@ -1,44 +1,37 @@
 <?xml version="1.0"?>
-<package>
+<package format="3">
   <name>hiqp_ros</name>
-  <version>0.0.3</version>
+  <version>1.0.1</version>
   <description>The HiQP_Controllers package</description>
 
   <author email="marcus.adam.johansson@gmail.com">Marcus A Johansson</author>
-  <maintainer email="marcus.adam.johansson@gmail.com">Marcus A Johansson</maintainer>
-  <maintainer email="ksatyaki@gmail.com">Chittaranjan Srinivas Swaminathan</maintainer>
+  <maintainer email="todor.stoyanov@oru.se">Todor Stoyanov</maintainer>
   
   <license>GPLv3</license>
 
-  <buildtool_depend>catkin</buildtool_depend>
+  <buildtool_depend>ament_cmake</buildtool_depend>
 
   <build_depend>roscpp</build_depend>  
   <build_depend>controller_interface</build_depend>
   <build_depend>control_msgs</build_depend>
   <build_depend>kdl_parser</build_depend>
   <build_depend>visualization_msgs</build_depend>
-  <build_depend>liborocos-kdl</build_depend>
-  <build_depend>liborocos-kdl-dev</build_depend>
   <build_depend>hiqp_core</build_depend>
   <build_depend>hiqp_msgs</build_depend>
-  <build_depend>filters</build_depend>  
-  <build_depend>actionlib</build_depend>
   <build_depend>realtime_tools</build_depend>  
 
-  <run_depend>realtime_tools</run_depend>    
-  <run_depend>actionlib</run_depend>
-  <run_depend>roscpp</run_depend> 
-  <run_depend>kdl_parser</run_depend>
-  <run_depend>controller_interface</run_depend>
-  <run_depend>control_msgs</run_depend>
-  <run_depend>visualization_msgs</run_depend>
-  <run_depend>liborocos-kdl</run_depend>
-  <run_depend>liborocos-kdl-dev</run_depend>
-  <run_depend>hiqp_core</run_depend>
-  <run_depend>hiqp_msgs</run_depend>
+  <exec_depend>realtime_tools</exec_depend>    
+  <exec_depend>roscpp</exec_depend> 
+  <exec_depend>kdl_parser</exec_depend>
+  <exec_depend>controller_interface</exec_depend>
+  <exec_depend>control_msgs</exec_depend>
+  <exec_depend>visualization_msgs</exec_depend>
+  <exec_depend>hiqp_core</exec_depend>
+  <exec_depend>hiqp_msgs</exec_depend>
 
   <export>
+    <build_type>ament_cmake</build_type>
     <controller_interface plugin="${prefix}/plugins.xml"/>
-
   </export>
+
 </package>

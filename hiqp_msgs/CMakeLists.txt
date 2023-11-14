@@ -14,50 +14,60 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-cmake_minimum_required(VERSION 2.8.3)
+cmake_minimum_required(VERSION 3.8)
 project(hiqp_msgs)
 
-find_package(catkin REQUIRED COMPONENTS message_generation 
-                                        std_msgs
-                                        visualization_msgs
-                                        geometry_msgs)
+set(CMAKE_CXX_STANDARD 17)
 
-add_message_files(FILES TaskMeasure.msg
-                        Primitive.msg
-                        TaskMeasures.msg
-                        StringArray.msg
-                        JointControllerState.msg
-			JointInfo.msg
-			FTSInfo.msg
-                        Vector3d.msg
-                        Task.msg)
+find_package(ament_cmake REQUIRED)
+find_package(rosidl_default_generators REQUIRED)
+find_package(builtin_interfaces REQUIRED)
+find_package(std_msgs           REQUIRED)
+find_package(visualization_msgs REQUIRED)
+find_package(geometry_msgs      REQUIRED)
 
-add_service_files(FILES SetTasks.srv
-                        RemoveTasks.srv
-                        RemoveAllTasks.srv
-                        ListAllTasks.srv
-                        GetAllTasks.srv
-                        ActivateTask.srv
-                        DeactivateTask.srv
-                        MonitorTask.srv
-                        DemonitorTask.srv
-                        SetPrimitives.srv
-                        RemovePrimitives.srv
-                        RemoveAllPrimitives.srv
-                        ListAllPrimitives.srv
-                        GetAllPrimitives.srv
-                        RemovePriorityLevel.srv
-                        ActivatePriorityLevel.srv
-                        DeactivatePriorityLevel.srv
-                        MonitorPriorityLevel.srv
-                        DemonitorPriorityLevel.srv
-                        IsTaskSet.srv)
+set(msg_files
+    "msg/TaskMeasure.msg"
+    "msg/Primitive.msg"
+    "msg/TaskMeasures.msg"
+    "msg/StringArray.msg"
+    "msg/JointControllerState.msg"
+    "msg/JointInfo.msg"
+    "msg/FTSInfo.msg"
+    "msg/Vector3d.msg"
+    "msg/Task.msg"
+)
 
-generate_messages(DEPENDENCIES std_msgs
-                               geometry_msgs
-                               visualization_msgs)
+set(srv_files 
+    "srv/SetTasks.srv"
+    "srv/RemoveTasks.srv"
+    "srv/RemoveAllTasks.srv"
+    "srv/ListAllTasks.srv"
+    "srv/GetAllTasks.srv"
+    "srv/ActivateTask.srv"
+    "srv/DeactivateTask.srv"
+    "srv/MonitorTask.srv"
+    "srv/DemonitorTask.srv"
+    "srv/SetPrimitives.srv"
+    "srv/RemovePrimitives.srv"
+    "srv/RemoveAllPrimitives.srv"
+    "srv/ListAllPrimitives.srv"
+    "srv/GetAllPrimitives.srv"
+    "srv/RemovePriorityLevel.srv"
+    "srv/ActivatePriorityLevel.srv"
+    "srv/DeactivatePriorityLevel.srv"
+    "srv/MonitorPriorityLevel.srv"
+    "srv/DemonitorPriorityLevel.srv"
+    "srv/IsTaskSet.srv"
+)
 
-catkin_package(CATKIN_DEPENDS message_runtime
-                              std_msgs 
-                              visualization_msgs
-                              geometry_msgs)
+rosidl_generate_interfaces(${PROJECT_NAME}
+  ${msg_files}
+  ${srv_files}
+  DEPENDENCIES builtin_interfaces visualization_msgs geometry_msgs std_msgs
+  ADD_LINTER_TESTS
+)
+
+ament_export_dependencies(rosidl_default_runtime)
+
+ament_package()

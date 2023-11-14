@@ -28,7 +28,7 @@
 
 #include <Eigen/Dense>
 
-#include <pluginlib/class_loader.h>
+#include <pluginlib/class_loader.hpp>
 
 namespace hiqp {
 
@@ -153,8 +153,8 @@ class Task {
   /// the sizes of e, J, de*, task types, and number of joints of the robot
   bool checkConsistency(RobotStatePtr robot_state);
 
-  boost::shared_ptr<TaskDefinition> def_;
-  boost::shared_ptr<TaskDynamics> dyn_;
+  std::shared_ptr<TaskDefinition> def_;
+  std::shared_ptr<TaskDynamics> dyn_;
 
   pluginlib::ClassLoader<TaskDefinition> tdef_loader_;
   pluginlib::ClassLoader<TaskDynamics> tdyn_loader_;
@@ -171,13 +171,6 @@ class Task {
   std::vector<std::string> def_params_;
   std::vector<std::string> dyn_params_;
 
-#if 0
-  template<typename T>
-  std::shared_ptr<T> make_shared_ptr(boost::shared_ptr<T>& ptr)
-  {
-    return std::shared_ptr<T>(ptr.get(), [ptr](...) mutable {ptr.reset();});
-  }
-#endif
 };
 
 }  // namespace hiqp
