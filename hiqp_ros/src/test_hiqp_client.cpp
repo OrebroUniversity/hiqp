@@ -1,12 +1,12 @@
 #include <hiqp_ros/hiqp_client.h>
 
-int main(int argn, char* args[]) {
-  ros::init(argn, args, "test_frameonframe");
+int main(int argc, char* argv[]) {
+  rclcpp::init(argc, argv);
 
   hiqp_ros::HiQPClient client("yumi","hiqp_joint_velocity_controller");
 
-  std::vector<hiqp_msgs::Primitive> primitives;
-  hiqp_msgs::Primitive p1, p2;
+  std::vector<hiqp_msgs::msg::Primitive> primitives;
+  hiqp_msgs::msg::Primitive p1, p2;
   p1.name = "r_gripper";
   p1.type = "frame";
   p1.frame_id = "gripper_l_base";
@@ -24,9 +24,10 @@ int main(int argn, char* args[]) {
   primitives.push_back(p1);
   primitives.push_back(p2);
 
+  client.run();
   client.setPrimitives(primitives);
   client.setJointAngles(std::vector<double>(14, 1.0));
+  client.quit();
 
-  ros::spin();
   return 0;
 }

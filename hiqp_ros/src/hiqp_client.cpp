@@ -1,4 +1,6 @@
 #include <hiqp_ros/hiqp_client.h>
+#include <memory>
+#include <cassert>
 
 namespace hiqp_ros {
 
@@ -7,93 +9,124 @@ HiQPClient::HiQPClient(const std::string& robot_namespace,
                        bool auto_connect)
     : robot_namespace_(robot_namespace),
       controller_namespace_(controller_namespace),
-      nh_(robot_namespace + "/" + controller_namespace),
-      robot_nh_(robot_namespace) {
+      running_(false) {
   if (auto_connect) this->connectToServer();
+  nh_ = std::make_shared<rclcpp::Node> (robot_namespace + "/" + controller_namespace);
 }
 
 void HiQPClient::connectToServer() {
-  set_tasks_client_ = nh_.serviceClient<hiqp_msgs::SetTasks>("set_tasks");
-  set_tasks_client_.waitForExistence();
+
+  //clients for talking to controller
+  set_tasks_client_ = nh_->create_client<hiqp_msgs::srv::SetTasks>("set_tasks");
+  set_tasks_client_->wait_for_service();
 
   set_primitives_client_ =
-      nh_.serviceClient<hiqp_msgs::SetPrimitives>("set_primitives");
-  set_primitives_client_.waitForExistence();
+      nh_->create_client<hiqp_msgs::srv::SetPrimitives>("set_primitives");
+  set_primitives_client_->wait_for_service();
 
   activate_task_client_ =
-      nh_.serviceClient<hiqp_msgs::ActivateTask>("activate_task");
-  activate_task_client_.waitForExistence();
+      nh_->create_client<hiqp_msgs::srv::ActivateTask>("activate_task");
+  activate_task_client_->wait_for_service();
 
   deactivate_task_client_ =
-      nh_.serviceClient<hiqp_msgs::DeactivateTask>("deactivate_task");
-  deactivate_task_client_.waitForExistence();
+      nh_->create_client<hiqp_msgs::srv::DeactivateTask>("deactivate_task");
+  deactivate_task_client_->wait_for_service();
 
 	get_all_primitives_client_ =
-      nh_.serviceClient<hiqp_msgs::GetAllPrimitives>("get_all_primitives");
-  get_all_primitives_client_.waitForExistence();
+      nh_->create_client<hiqp_msgs::srv::GetAllPrimitives>("get_all_primitives");
+  get_all_primitives_client_->wait_for_service();
 
   get_all_tasks_client_ =
-      nh_.serviceClient<hiqp_msgs::GetAllTasks>("get_all_tasks");
-  get_all_tasks_client_.waitForExistence();
+      nh_->create_client<hiqp_msgs::srv::GetAllTasks>("get_all_tasks");
+  get_all_tasks_client_->wait_for_service();
   
   remove_tasks_client_ =
-      nh_.serviceClient<hiqp_msgs::RemoveTasks>("remove_tasks");
-  remove_tasks_client_.waitForExistence();
+      nh_->create_client<hiqp_msgs::srv::RemoveTasks>("remove_tasks");
+  remove_tasks_client_->wait_for_service();
 
   remove_primitives_client_ =
-      nh_.serviceClient<hiqp_msgs::RemovePrimitives>("remove_primitives");
-  remove_primitives_client_.waitForExistence();
+      nh_->create_client<hiqp_msgs::srv::RemovePrimitives>("remove_primitives");
+  remove_primitives_client_->wait_for_service();
 
   remove_all_tasks_client_ =
-      nh_.serviceClient<hiqp_msgs::RemoveAllTasks>("remove_all_tasks");
-  remove_all_tasks_client_.waitForExistence();
+      nh_->create_client<hiqp_msgs::srv::RemoveAllTasks>("remove_all_tasks");
+  remove_all_tasks_client_->wait_for_service();
 
   remove_all_primitives_client_ =
-      nh_.serviceClient<hiqp_msgs::RemoveAllPrimitives>(
+      nh_->create_client<hiqp_msgs::srv::RemoveAllPrimitives>(
           "remove_all_primitives");
-  remove_all_primitives_client_.waitForExistence();
+  remove_all_primitives_client_->wait_for_service();
   
   is_task_set_client_ =
-      nh_.serviceClient<hiqp_msgs::IsTaskSet>(
+      nh_->create_client<hiqp_msgs::srv::IsTaskSet>(
           "is_task_set");
-  is_task_set_client_.waitForExistence();
+  is_task_set_client_->wait_for_service();
 
+  //subscribers
   std::string topic_global= "/" + robot_namespace_ + "/" + controller_namespace_ + "/task_measures";
   //std::cerr<<"Subscribing to "<<topic_global<<std::endl;
-  task_measures_sub_ = nh_.subscribe(topic_global, 1,
-                                     &HiQPClient::taskMeasuresCallback, this);
+  task_measures_sub_ = nh_->create_subscription<hiqp_msgs::msg::TaskMeasures>(topic_global, 10,
+      std::bind(&HiQPClient::taskMeasuresCallback, this, std::placeholders::_1));
 
-  ROS_INFO("Connected to HiQP Servers.");
+  RCLCPP_INFO(nh_->get_logger(),"Connected to HiQP Servers.");
+}
+
+/** spins the nodes in a new thread, non-blocking call */
+void HiQPClient::run() {
+  if(running_) return;
+
+  running_=true;
+  async_spinner_ = std::shared_ptr<std::thread> (new std::thread(
+           [stop_token = stop_async_spinner_.get_future(), this]() {
+           rclcpp::executors::MultiThreadedExecutor executor;
+           executor.add_node(this->nh_);
+           executor.spin_until_future_complete(stop_token);
+           //at this point we are done and should signal the node
+           this->running_ = false;
+           }
+        ));
+
+}
+/** signals the spin thread to stop */
+void HiQPClient::quit() {
+  stop_async_spinner_.set_value();
+  async_spinner_->join();
 }
 
 bool HiQPClient::setPrimitives(
-    const std::vector<hiqp_msgs::Primitive>& primitives) {
-  hiqp_msgs::SetPrimitives setPrimitivesMsg;
-  setPrimitivesMsg.request.primitives = primitives;
+    const std::vector<hiqp_msgs::msg::Primitive>& primitives) {
+ 
+  hiqp_msgs::srv::SetPrimitives setPrimitivesMsg;
+  auto request = std::make_shared<hiqp_msgs::srv::SetPrimitives::Request>();
+  auto response = std::make_shared<hiqp_msgs::srv::SetPrimitives::Response>();
+ 
+  request->primitives = primitives; 
 
-  if (set_primitives_client_.call(setPrimitivesMsg)) {
+  if (this->blocking_call<hiqp_msgs::srv::SetPrimitives>
+      (set_primitives_client_, request, response)) {
     int returnValue =
-        std::accumulate(setPrimitivesMsg.response.success.begin(),
-                        setPrimitivesMsg.response.success.end(), 0);
+        std::accumulate(response->success.begin(),
+                        response->success.end(), 0);
 
-    if (returnValue == setPrimitivesMsg.response.success.size()) {
-      ROS_INFO("Set primitive(s) succeeded.");
+    if (returnValue == response->success.size()) {
+      RCLCPP_INFO(nh_->get_logger(),"Set primitive(s) succeeded.");
       return true;
     } else {
-      ROS_WARN("Either all or some of the primitives were not added.");
+      RCLCPP_WARN(nh_->get_logger(),"Either all or some of the primitives were not added.");
       return false;
     }
   } else {
-    ROS_WARN("set_primitive service call failed.");
+    RCLCPP_WARN(nh_->get_logger(),"set_primitive service call failed.");
   }
   return false;
 }
 
+#if 0
 bool HiQPClient::setPrimitive(const std::string& name, const std::string& type,
                               const std::string& frame_id, bool visible,
                               const std::vector<double>& color,
                               const std::vector<double>& parameters) {
-  hiqp_msgs::Primitive primitive;
+  hiqp_msgs::msg::Primitive primitive;
   primitive.name = name;
   primitive.type = type;
   primitive.frame_id = frame_id;
@@ -101,7 +134,7 @@ bool HiQPClient::setPrimitive(const std::string& name, const std::string& type,
   primitive.color = color;
   primitive.parameters = parameters;
 
-  std::vector<hiqp_msgs::Primitive> primitives{primitive};
+  std::vector<hiqp_msgs::msg::Primitive> primitives{primitive};
 
   return setPrimitives(primitives);
 }
@@ -110,7 +143,7 @@ bool HiQPClient::setTask(const std::string& name, int16_t priority,
                          bool visible, bool active, bool monitored,
                          const std::vector<std::string>& def_params,
                          const std::vector<std::string>& dyn_params) {
-  hiqp_msgs::Task task;
+  hiqp_msgs::msg::Task task;
 
   task.name = name;
   task.priority = priority;
@@ -120,13 +153,13 @@ bool HiQPClient::setTask(const std::string& name, int16_t priority,
   task.def_params = def_params;
   task.dyn_params = dyn_params;
 
-  std::vector<hiqp_msgs::Task> tasks{task};
+  std::vector<hiqp_msgs::msg::Task> tasks{task};
 
   return setTasks(tasks);
 }
 
-bool HiQPClient::setTasks(const std::vector<hiqp_msgs::Task>& tasks) {
-  hiqp_msgs::SetTasks setTasksMsg;
+bool HiQPClient::setTasks(const std::vector<hiqp_msgs::msg::Task>& tasks) {
+  hiqp_msgs::msg::SetTasks setTasksMsg;
   setTasksMsg.request.tasks = tasks;
 
   if (set_tasks_client_.call(setTasksMsg)) {
@@ -134,25 +167,25 @@ bool HiQPClient::setTasks(const std::vector<hiqp_msgs::Task>& tasks) {
                                       setTasksMsg.response.success.end(), 0);
 
     if (returnValue == setTasksMsg.response.success.size()) {
-      ROS_INFO("Set task(s) succeeded.");
+      RCLCPP_INFO(nh_->get_logger(),"Set task(s) succeeded.");
     } else {
-      ROS_WARN("Either all or some of the tasks were not added.");
+      RCLCPP_WARN(nh_->get_logger(),"Either all or some of the tasks were not added.");
     }
     
     return (returnValue == setTasksMsg.response.success.size());
   } else {
-    ROS_WARN("set_tasks service call failed.");
+    RCLCPP_WARN(nh_->get_logger(),"set_tasks service call failed.");
   }
   return false;
 }
 
 bool HiQPClient::removeTask(const std::string& task_name) {
-  ROS_INFO("Removing Task: %s...", task_name.c_str());
+  RCLCPP_INFO(nh_->get_logger(),"Removing Task: %s...", task_name.c_str());
   return removeTasks({task_name});
 }
 
 bool HiQPClient::removeTasks(const std::vector<std::string>& task_names) {
-  hiqp_msgs::RemoveTasks removeTasksMsg;
+  hiqp_msgs::msg::RemoveTasks removeTasksMsg;
   removeTasksMsg.request.names = task_names;
 
   if (remove_tasks_client_.call(removeTasksMsg)) {
@@ -160,7 +193,7 @@ bool HiQPClient::removeTasks(const std::vector<std::string>& task_names) {
                                       removeTasksMsg.response.success.end(), 0);
 
     if (returnValue == removeTasksMsg.response.success.size()) {
-      ROS_INFO("Remove task(s) succeeded.");
+      RCLCPP_INFO(nh_->get_logger(),"Remove task(s) succeeded.");
       
       resource_mutex_.lock();
       for(auto task_name : task_names) {
@@ -170,24 +203,24 @@ bool HiQPClient::removeTasks(const std::vector<std::string>& task_names) {
 
       return true;
     } else {
-      ROS_WARN("Either all or some of the tasks were not removed.");
+      RCLCPP_WARN(nh_->get_logger(),"Either all or some of the tasks were not removed.");
       return false;
     }
 
   } else {
-    ROS_WARN("remove_tasks service call failed.");
+    RCLCPP_WARN(nh_->get_logger(),"remove_tasks service call failed.");
     return false;
   }
 }
 
 bool HiQPClient::removePrimitive(const std::string& primitive_name) {
-  ROS_INFO("Removing primitive: %s...", primitive_name.c_str());
+  RCLCPP_INFO(nh_->get_logger(),"Removing primitive: %s...", primitive_name.c_str());
   return removePrimitives({primitive_name});
 }
 
 bool HiQPClient::removePrimitives(
     const std::vector<std::string>& primitive_names) {
-  hiqp_msgs::RemovePrimitives removePrimitivesMsg;
+  hiqp_msgs::msg::RemovePrimitives removePrimitivesMsg;
   removePrimitivesMsg.request.names = primitive_names;
 
   if (remove_primitives_client_.call(removePrimitivesMsg)) {
@@ -196,25 +229,25 @@ bool HiQPClient::removePrimitives(
                         removePrimitivesMsg.response.success.end(), 0);
 
     if (returnValue == removePrimitivesMsg.response.success.size()) {
-      ROS_INFO("Remove primitive(s) succeeded.");
+      RCLCPP_INFO(nh_->get_logger(),"Remove primitive(s) succeeded.");
       return true;
     } else {
-      ROS_WARN("Either all or some of the primitives were not removed.");
+      RCLCPP_WARN(nh_->get_logger(),"Either all or some of the primitives were not removed.");
       return false;
     }
   } else {
-    ROS_WARN("remove_primitives service call failed.");
+    RCLCPP_WARN(nh_->get_logger(),"remove_primitives service call failed.");
     return false;
   }
 }
 
 bool HiQPClient::deactivateTask(const std::string& task_name) {
-  ROS_INFO("Deactivating Task: %s...", task_name.c_str());
-  hiqp_msgs::DeactivateTask deactivateTaskMsg;
+  RCLCPP_INFO(nh_->get_logger(),"Deactivating Task: %s...", task_name.c_str());
+  hiqp_msgs::msg::DeactivateTask deactivateTaskMsg;
   deactivateTaskMsg.request.name = task_name;
 
   if (!deactivate_task_client_.call(deactivateTaskMsg)) {
-    ROS_WARN(
+    RCLCPP_WARN(nh_->get_logger(),
         "Deactivating task \'%s\' failed. See server output/log for details.",
         task_name.c_str());
     return false;
@@ -224,46 +257,46 @@ bool HiQPClient::deactivateTask(const std::string& task_name) {
 
 void HiQPClient::activateTasks(const std::vector<std::string>& task_names) {
     for (auto& task_name : task_names){
-        ROS_INFO("Activating Tasks: %s...", task_name.c_str());
-        hiqp_msgs::ActivateTask activateTaskMsg;
+        RCLCPP_INFO(nh_->get_logger(),"Activating Tasks: %s...", task_name.c_str());
+        hiqp_msgs::msg::ActivateTask activateTaskMsg;
         activateTaskMsg.request.name = task_name;
 
         if (!activate_task_client_.call(activateTaskMsg)) {
-            ROS_WARN(
+            RCLCPP_WARN(nh_->get_logger(),
                     "Activating task \'%s\' failed. See server output/log for details.",
                     task_name.c_str());
         }
     }
 }
 
-std::vector<hiqp_msgs::Primitive> HiQPClient::getAllPrimitives() {
-	hiqp_msgs::GetAllPrimitives getAllPrimitivesMsg;
-	std::vector<hiqp_msgs::Primitive> primitives;
+std::vector<hiqp_msgs::msg::Primitive> HiQPClient::getAllPrimitives() {
+	hiqp_msgs::msg::GetAllPrimitives getAllPrimitivesMsg;
+	std::vector<hiqp_msgs::msg::Primitive> primitives;
 
 	if (get_all_primitives_client_.call(getAllPrimitivesMsg)) {
     primitives = getAllPrimitivesMsg.response.primitives;
   } else {
-    ROS_WARN("get_all_primitives service call failed.");
+    RCLCPP_WARN(nh_->get_logger(),"get_all_primitives service call failed.");
     primitives = {};
   }
   return primitives;
 }
 
-std::vector<hiqp_msgs::Task> HiQPClient::getAllTasks() {
-	hiqp_msgs::GetAllTasks getAllTasksMsg;
-	std::vector<hiqp_msgs::Task> tasks;
+std::vector<hiqp_msgs::msg::Task> HiQPClient::getAllTasks() {
+	hiqp_msgs::msg::GetAllTasks getAllTasksMsg;
+	std::vector<hiqp_msgs::msg::Task> tasks;
 
 	if (get_all_tasks_client_.call(getAllTasksMsg)) {
     tasks = getAllTasksMsg.response.tasks;
   } else {
-    ROS_WARN("get_all_tasks service call failed.");
+    RCLCPP_WARN(nh_->get_logger(),"get_all_tasks service call failed.");
     tasks = {};
   }
   return tasks;
 }
 
 std::string taskMeasuresAsString(
-    const hiqp_msgs::TaskMeasuresConstPtr& task_measures) {
+    const hiqp_msgs::msg::TaskMeasuresConstPtr& task_measures) {
   std::string s;
   for (auto task_measure : task_measures->task_measures) {
     double sq_error;
@@ -286,13 +319,13 @@ std::string taskMeasuresAsString(
 }
 
 void HiQPClient::taskMeasuresCallback(
-    const hiqp_msgs::TaskMeasuresConstPtr& task_measures) {
-  ROS_INFO_THROTTLE(5, "%s",
+    const hiqp_msgs::msg::TaskMeasuresSharedPtr task_measures) {
+  RCLCPP_INFO_THROTTLE(nh_->get_logger(), nh_->get_clock(), 5000, "%s",
                             taskMeasuresAsString(task_measures).c_str());
   resource_mutex_.lock();
   for (auto task_measure : task_measures->task_measures) {
     double sq_error;
-    if (task_measure.task_sign == hiqp_msgs::TaskMeasure::EQ)
+    if (task_measure.task_sign == hiqp_msgs::msg::TaskMeasure::EQ)
       sq_error =
           std::inner_product(task_measure.e.begin(), task_measure.e.end(),
                              task_measure.e.begin(), 0.0);
@@ -319,7 +352,8 @@ void HiQPClient::waitForCompletion(
     const std::vector<std::string>& task_names,
     const std::vector<TaskDoneReaction>& reactions,
     const std::vector<double>& error_tol, double max_exec_time) {
-  ROS_ASSERT(task_names.size() == reactions.size() &&
+  
+  assert(task_names.size() == reactions.size() &&
              reactions.size() == error_tol.size());
   int status = 0;
   ros::Time start = ros::Time::now();
@@ -327,10 +361,11 @@ void HiQPClient::waitForCompletion(
   ros::Duration max_exec_dur(max_exec_time);
   bool time_exceeded = false;
   
-  hiqp_msgs::IsTaskSet isTaskSetMsg;
+  hiqp_msgs::msg::IsTaskSet isTaskSetMsg;
   
   while (status < task_names.size() && ros::ok()) {
-    ROS_INFO_THROTTLE(5, "[waitForCompletion]: %d out of %ld tasks complete.",
+  RCLCPP_INFO_THROTTLE(nh_->get_logger(), nh_->get_clock(), 5000, 
+        "[waitForCompletion]: %d out of %ld tasks complete.",
                       status, task_names.size());
     status = 0;
     for (auto i = 0; i < task_names.size(); i++) {
@@ -341,7 +376,7 @@ void HiQPClient::waitForCompletion(
       auto it_sq_error = task_name_sq_error_map_.find(task_name);
 
       if (max_exec_time != 0 && ((ros::Time::now() - start) > max_exec_dur)) {
-        ROS_INFO("Max exection time exceeded");
+        RCLCPP_INFO(nh_->get_logger(),"Max exection time exceeded");
         status += 1;
         resource_mutex_.unlock();
         time_exceeded = true;
@@ -351,13 +386,13 @@ void HiQPClient::waitForCompletion(
       isTaskSetMsg.request.name = task_name;
       if (is_task_set_client_.call(isTaskSetMsg)) {
       	if (!isTaskSetMsg.response.is_set) {
-      		ROS_INFO("%s task has been removed.", task_name.c_str());
+      		RCLCPP_INFO(nh_->get_logger(),"%s task has been removed.", task_name.c_str());
       		status += 1;
         	resource_mutex_.unlock();
         	continue;
       	}
       } else {
-      	ROS_WARN("is_task_set_ service call failed.");
+      	RCLCPP_WARN(nh_->get_logger(),"is_task_set_ service call failed.");
       }
       
       if (it_sq_error == task_name_sq_error_map_.end()) {
@@ -383,7 +418,7 @@ void HiQPClient::waitForCompletion(
     }
   }
 
-  ROS_INFO("All tasks completed.");
+  RCLCPP_INFO(nh_->get_logger(),"All tasks completed.");
 
   std::vector<std::string> tasks_to_remove;
 
@@ -398,7 +433,7 @@ void HiQPClient::waitForCompletion(
         tasks_to_remove.push_back(task_name);
         break;
       case TaskDoneReaction::PRINT_INFO:
-        ROS_INFO("Task %s completed with error %lf", task_name.c_str(),
+        RCLCPP_INFO(nh_->get_logger(),"Task %s completed with error %lf", task_name.c_str(),
                  task_name_sq_error_map_[task_name]);
         break;
       case TaskDoneReaction::DEACTIVATE:
@@ -433,38 +468,38 @@ bool HiQPClient::setJointAngles(const std::vector<double>& joint_angles,
 		  {tol});
       }
   } else {
-      ROS_ERROR("could not set joint configuration task");
+      RCLCPP_ERROR(nh_->get_logger(),"could not set joint configuration task");
   }
 
   return ret;
 }
 
 bool HiQPClient::removeAllTasks() {
-  hiqp_msgs::RemoveAllTasks removeAllTasksMsg;
+  hiqp_msgs::msg::RemoveAllTasks removeAllTasksMsg;
   if (remove_all_tasks_client_.call(removeAllTasksMsg)) {
     if (removeAllTasksMsg.response.success) {
-      ROS_INFO("All tasks removed.");
+      RCLCPP_INFO(nh_->get_logger(),"All tasks removed.");
       return true;
     } else {
-      ROS_ERROR("Failed to remove all tasks.");
+      RCLCPP_ERROR(nh_->get_logger(),"Failed to remove all tasks.");
     }
   } else {
-    ROS_FATAL("remove_all_tasks service call failed.");
+    RCLCPP_FATAL(nh_->get_logger(),"remove_all_tasks service call failed.");
   }
   return false;
 }
 
 bool HiQPClient::removeAllPrimitives() {
-  hiqp_msgs::RemoveAllPrimitives removeAllPrimitivesMsg;
+  hiqp_msgs::msg::RemoveAllPrimitives removeAllPrimitivesMsg;
   if (remove_all_primitives_client_.call(removeAllPrimitivesMsg)) {
     if (removeAllPrimitivesMsg.response.success) {
-      ROS_INFO("All primitives removed.");
+      RCLCPP_INFO(nh_->get_logger(),"All primitives removed.");
       return true;
     } else {
-      ROS_ERROR("Failed to remove all primitives.");
+      RCLCPP_ERROR(nh_->get_logger(),"Failed to remove all primitives.");
     }
   } else {
-    ROS_FATAL("remove_all_primitives service call failed.");
+    RCLCPP_FATAL(nh_->get_logger(),"remove_all_primitives service call failed.");
   }
   return false;
 }
@@ -476,25 +511,25 @@ bool HiQPClient::resetHiQPController() {
 }
 
 bool HiQPClient::isTaskSet(const std::string& task_name) {
-	hiqp_msgs::IsTaskSet isTaskSetMsg;
+	hiqp_msgs::msg::IsTaskSet isTaskSetMsg;
   isTaskSetMsg.request.name = task_name;
 
   if (is_task_set_client_.call(isTaskSetMsg)) {
 		if (isTaskSetMsg.response.is_set) {
-      ROS_INFO("All tasks removed.");
+      RCLCPP_INFO(nh_->get_logger(),"All tasks removed.");
       return true;
   	} else {
-    	ROS_WARN("is_task_set service call failed.");
+    	RCLCPP_WARN(nh_->get_logger(),"is_task_set service call failed.");
   	}
   }
   return false;
 }
 
-hiqp_msgs::Task createTaskMsg(const std::string& name, int16_t priority,
+hiqp_msgs::msg::Task createTaskMsg(const std::string& name, int16_t priority,
                               bool visible, bool active, bool monitored,
                               const std::vector<std::string>& def_params,
                               const std::vector<std::string>& dyn_params) {
-  hiqp_msgs::Task task;
+  hiqp_msgs::msg::Task task;
   task.name = name;
   task.priority = priority;
   task.visible = visible;
@@ -506,13 +541,13 @@ hiqp_msgs::Task createTaskMsg(const std::string& name, int16_t priority,
   return task;
 }
 
-hiqp_msgs::Primitive createPrimitiveMsg(const std::string& name,
+hiqp_msgs::msg::Primitive createPrimitiveMsg(const std::string& name,
                                         const std::string& type,
                                         const std::string& frame_id,
                                         bool visible,
                                         const std::vector<double>& color,
                                         const std::vector<double>& parameters) {
-  hiqp_msgs::Primitive primitive;
+  hiqp_msgs::msg::Primitive primitive;
   primitive.name = name;
   primitive.type = type;
   primitive.frame_id = frame_id;
@@ -522,4 +557,7 @@ hiqp_msgs::Primitive createPrimitiveMsg(const std::string& name,
 
   return primitive;
 }
+#endif
+
 }
+

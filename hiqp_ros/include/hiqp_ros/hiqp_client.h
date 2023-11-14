@@ -1,22 +1,27 @@
 #ifndef HIQP_CLIENT_HH
 #define HIQP_CLIENT_HH
 
-#include <hiqp_msgs/activate_task.hpp>
-#include <hiqp_msgs/deactivate_task.hpp>
-#include <hiqp_msgs/monitor_task.hpp>
-#include <hiqp_msgs/remove_all_primitives.hpp>
-#include <hiqp_msgs/remove_all_tasks.hpp>
-#include <hiqp_msgs/remove_primitives.hpp>
-#include <hiqp_msgs/remove_tasks.hpp>
-#include <hiqp_msgs/set_primitives.hpp>
-#include <hiqp_msgs/set_tasks.hpp>
-#include <hiqp_msgs/get_all_primitives.hpp>
-#include <hiqp_msgs/get_all_tasks.hpp>
-#include <hiqp_msgs/task_measures.hpp>
-#include <hiqp_msgs/is_task_set.hpp>
+#include <hiqp_msgs/srv/activate_task.hpp>
+#include <hiqp_msgs/srv/deactivate_task.hpp>
+#include <hiqp_msgs/srv/monitor_task.hpp>
+#include <hiqp_msgs/srv/remove_all_primitives.hpp>
+#include <hiqp_msgs/srv/remove_all_tasks.hpp>
+#include <hiqp_msgs/srv/remove_primitives.hpp>
+#include <hiqp_msgs/srv/remove_tasks.hpp>
+#include <hiqp_msgs/srv/set_primitives.hpp>
+#include <hiqp_msgs/srv/set_tasks.hpp>
+#include <hiqp_msgs/srv/get_all_primitives.hpp>
+#include <hiqp_msgs/srv/get_all_tasks.hpp>
+#include <hiqp_msgs/srv/is_task_set.hpp>
 
-#include <sensor_msgs/joint_state.hpp>
+#include <hiqp_msgs/msg/task_measures.hpp>
+#include <sensor_msgs/msg/joint_state.hpp>
+
 #include <mutex>
+#include <thread>
+#include <condition_variable>
+#include <chrono>
+
 #include <numeric>
 #include <rclcpp/rclcpp.hpp>
 
@@ -31,57 +36,55 @@ class HiQPClient {
    * A nodehandle for the controller namespace.
    *
    */
-  ros::NodeHandle nh_;
-
-  ros::NodeHandle robot_nh_;
+  rclcpp::Node::SharedPtr nh_;
 
 	/**
    * A client to the get_all_primitives service.
    */
-  ros::ServiceClient get_all_primitives_client_;
+  rclcpp::Client<hiqp_msgs::srv::GetAllPrimitives>::SharedPtr get_all_primitives_client_;
 
   /**
    * A client to the get_all_tasks service.
    */
-  ros::ServiceClient get_all_tasks_client_;
+  rclcpp::Client<hiqp_msgs::srv::GetAllTasks>::SharedPtr get_all_tasks_client_;
   
   /**
    * A client to the set_primitives service.
    */
-  ros::ServiceClient set_primitives_client_;
+  rclcpp::Client<hiqp_msgs::srv::SetPrimitives>::SharedPtr set_primitives_client_;
 
   /**
    * A client to the set_tasks service.
    */
-  ros::ServiceClient set_tasks_client_;
+  rclcpp::Client<hiqp_msgs::srv::SetTasks>::SharedPtr set_tasks_client_;
 
   /**
    * A client to the activate_task service.
    */
-  ros::ServiceClient activate_task_client_;
+  rclcpp::Client<hiqp_msgs::srv::ActivateTask>::SharedPtr activate_task_client_;
 
   /**
    * A client to the deactivate_task service.
    */
-  ros::ServiceClient deactivate_task_client_;
+  rclcpp::Client<hiqp_msgs::srv::DeactivateTask>::SharedPtr deactivate_task_client_;
 
   /**
    * A client to the remove_tasks service.
    */
-  ros::ServiceClient remove_tasks_client_;
+  rclcpp::Client<hiqp_msgs::srv::RemoveTasks>::SharedPtr remove_tasks_client_;
 
   /**
    * A client to the remove_primitive service.
    */
-  ros::ServiceClient remove_primitives_client_;
+  rclcpp::Client<hiqp_msgs::srv::RemovePrimitives>::SharedPtr remove_primitives_client_;
 
-  ros::ServiceClient remove_all_tasks_client_;
+  rclcpp::Client<hiqp_msgs::srv::RemoveAllTasks>::SharedPtr remove_all_tasks_client_;
 
-  ros::ServiceClient remove_all_primitives_client_;
+  rclcpp::Client<hiqp_msgs::srv::RemoveAllPrimitives>::SharedPtr remove_all_primitives_client_;
   
-  ros::ServiceClient is_task_set_client_;
+  rclcpp::Client<hiqp_msgs::srv::IsTaskSet>::SharedPtr is_task_set_client_;
 
-  ros::Subscriber task_measures_sub_;
+  rclcpp::Subscription<hiqp_msgs::msg::TaskMeasures>::SharedPtr task_measures_sub_;
 
   std::mutex resource_mutex_;
 
@@ -95,8 +98,13 @@ class HiQPClient {
    * measures.
    */
   void taskMeasuresCallback(
-      const hiqp_msgs::TaskMeasuresConstPtr& task_measures);
+      const hiqp_msgs::msg::TaskMeasures::SharedPtr task_measures);
 
+  /** execution stuff */
+  bool running_;
+  std::shared_ptr<std::thread> async_spinner_;
+  std::promise<void> stop_async_spinner_;
+  
  public:
   HiQPClient(const std::string& robot_namespace,
              const std::string& controller_namespace =
@@ -121,7 +129,7 @@ class HiQPClient {
                     const std::vector<double>& color,
                     const std::vector<double>& parameters);
 
-  bool setPrimitives(const std::vector<hiqp_msgs::Primitive>& primitives);
+  bool setPrimitives(const std::vector<hiqp_msgs::msg::Primitive>& primitives);
 
   /**
    * Call the set_task service on the hiqp controller.
@@ -141,7 +149,7 @@ class HiQPClient {
                const std::vector<std::string>& def_params,
                const std::vector<std::string>& dyn_params);
 
-  bool setTasks(const std::vector<hiqp_msgs::Task>& tasks);
+  bool setTasks(const std::vector<hiqp_msgs::msg::Task>& tasks);
 
   bool deactivateTask(const std::string& task_name);
 
@@ -159,9 +167,9 @@ class HiQPClient {
 
   bool removeAllPrimitives();
   
-  std::vector<hiqp_msgs::Primitive> getAllPrimitives();
+  std::vector<hiqp_msgs::msg::Primitive> getAllPrimitives();
 
-  std::vector<hiqp_msgs::Task> getAllTasks();
+  std::vector<hiqp_msgs::msg::Task> getAllTasks();
 
   bool resetHiQPController();
 
@@ -178,19 +186,75 @@ class HiQPClient {
                          double max_exec_time=0);
                          
   bool isTaskSet(const std::string& task_name);
+
+
+  /** spins the nodes in a new thread, non-blocking call */
+  void run();
+  /** signals the spin thread to stop */
+  void quit();
+
+  template<class T> 
+  bool blocking_call(std::shared_ptr<rclcpp::Client<T> > &client, 
+      std::shared_ptr<typename T::Request> &request, std::shared_ptr<typename T::Response> &response);
 };
 
-hiqp_msgs::Task createTaskMsg(const std::string& name, int16_t priority,
+hiqp_msgs::msg::Task createTaskMsg(const std::string& name, int16_t priority,
                               bool visible, bool active, bool monitored,
                               const std::vector<std::string>& def_params,
                               const std::vector<std::string>& dyn_params);
 
-hiqp_msgs::Primitive createPrimitiveMsg(const std::string& name,
+hiqp_msgs::msg::Primitive createPrimitiveMsg(const std::string& name,
                                         const std::string& type,
                                         const std::string& frame_id,
                                         bool visible,
                                         const std::vector<double>& color,
                                         const std::vector<double>& parameters);
+
+/** as of yet untested blocking call to a service.
+  * requires pointer to client and a formed request,
+  * result goes in response
+  * requires that someone is spinning the node on which the client is created from outside
+  * typically, we want an async spinner and to register nh_ to that
+  */
+template<class T> 
+bool HiQPClient::blocking_call(std::shared_ptr<rclcpp::Client<T> > &client, 
+      std::shared_ptr<typename T::Request> &request, 
+      std::shared_ptr<typename T::Response> &response)
+{
+  using namespace std::chrono_literals;
+  //wait for service to exist
+  while (!client->wait_for_service(1s)) {
+    if (!rclcpp::ok()) {
+      RCLCPP_ERROR(nh_->get_logger(), "Interrupted while waiting for the service. Exiting.");
+      return false;
+    }
+    RCLCPP_INFO(nh_->get_logger(), "service not available, waiting...");
+  }
+  
+  std::mutex res_mutex_;              //mutex variable to wait for response on service
+  std::condition_variable res_cv_;    //condition variable associated with service rsponse
+
+  //lambda magic to unblock once response is available 
+  auto callback =  [&res_cv_,&response](typename rclcpp::Client<T>::SharedFutureWithRequest future) 
+  {
+    std::cerr<<"Result callback\n";
+    response = future.get().second;
+    res_cv_.notify_all();
+  };
+
+  auto result = client->async_send_request(request, std::move(callback));
+  std::cerr<<"Request sent\n";
+  {
+    // Wait for the result.
+    std::unique_lock<std::mutex> response_locker(res_mutex_);
+    std::cerr<<"Waiting for result\n";
+    res_cv_.wait(response_locker);
+  }
+  
+  return true;
+}
+
+
 }
 
 #endif
