@@ -20,11 +20,10 @@
 #include <string>
 #include <vector>
 
-#include <hiqp/geometric_primitives/geometric_cylinder.h>
 #include <hiqp/task_manager.h>
 #include <hiqp/robot_state.h>
 
-#include "ros/ros.h"
+#include "rclcpp/rclcpp.hpp"
 
 using hiqp::geometric_primitives::GeometricPrimitiveMap;
 using hiqp::geometric_primitives::GeometricPoint;
@@ -48,17 +47,17 @@ class ROSTopicSubscriber {
   }
 
   template <typename ROSMessageType>
-  void addSubscription(ros::NodeHandle& controller_nh,
+  void addSubscription(rclcpp::Node::SharedPtr controller_nh,
                       const std::string& topic_name, unsigned int buffer_size) {
-    sub = controller_nh.subscribe(
-        topic_name, buffer_size,
-        &ROSTopicSubscriber::topicCallback<ROSMessageType>, this);
-    ROS_INFO_STREAM("Subsribed to topic '" << topic_name << "'");
+  
+    sub = controller_nh->create_subscription<ROSMessageType>(topic_name, buffer_size,
+      std::bind(&ROSTopicSubscriber::topicCallback<ROSMessageType>, this, std::placeholders::_1));
+    RCLCPP_INFO_STREAM(controller_nh->get_logger(),"Subsribed to topic '" << topic_name << "'");
   }
 
   /*! \brief Implement this function for your own message! */
   template <typename ROSMessageType>
-  void topicCallback(const ROSMessageType& msg);
+  void topicCallback(const typename ROSMessageType::SharedPtr msg);
 
  private:
   ROSTopicSubscriber(const ROSTopicSubscriber& other) = delete;
@@ -66,7 +65,7 @@ class ROSTopicSubscriber {
   ROSTopicSubscriber& operator=(const ROSTopicSubscriber& other) = delete;
   ROSTopicSubscriber& operator=(ROSTopicSubscriber&& other) noexcept = delete;
 
-  ros::Subscriber sub;
+  rclcpp::SubscriptionBase::SharedPtr sub;
 
   std::shared_ptr<hiqp::TaskManager> task_manager_;
   hiqp::RobotStatePtr robot_state_ptr_;

@@ -26,15 +26,21 @@ endif()
 set(CMAKE_VERBOSE_MAKEFILE off)
 
 find_package(ament_cmake          REQUIRED)
-find_package(rclcpp               REQUIRED)
-find_package(orocos_kdl           REQUIRED)
-find_package(controller_interface REQUIRED)
-find_package(visualization_msgs   REQUIRED)
-find_package(kdl_parser           REQUIRED)
-find_package(hiqp_core            REQUIRED)
-find_package(realtime_tools				REQUIRED)
-find_package(hiqp_msgs            REQUIRED)
-find_package(control_msgs         REQUIRED)
+set(THIS_PACKAGE_INCLUDE_DEPENDS
+rclcpp              
+orocos_kdl          
+controller_interface
+visualization_msgs  
+kdl_parser          
+hiqp_core           
+realtime_tools			
+hiqp_msgs           
+control_msgs       
+tf2_msgs
+)
+foreach(Dependency IN ITEMS ${THIS_PACKAGE_INCLUDE_DEPENDS})
+  find_package(${Dependency} REQUIRED)
+endforeach()
 
 set(GUROBI_INCLUDE_DIR "$ENV{GUROBI_HOME}/include")
 set(GUROBI_LIB_DIR "$ENV{GUROBI_HOME}/lib")
@@ -63,12 +69,22 @@ target_link_libraries(test_hiqp_client hiqp_client)
 
 
 # hiqp-ros library
-#add_library(${PROJECT_NAME} src/hiqp_joint_velocity_controller.cpp
+add_library(${PROJECT_NAME} 
+                            src/ros_topic_subscriber.cpp
+                            src/utilities.cpp)
+#    src/hiqp_joint_velocity_controller.cpp
 #                            src/hiqp_joint_effort_controller.cpp
 #                            src/hiqp_service_handler.cpp
 #                            src/ros_topic_subscriber.cpp
 #                            src/ros_visualizer.cpp
-#                            src/utilities.cpp)
+
+target_include_directories(
+  ${PROJECT_NAME}
+  PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include>
+)
+target_link_libraries(${PROJECT_NAME} ${GUROBI_LIBS})
 
 #add_dependencies(${PROJECT_NAME} hiqp_msgs_generate_messages_cpp)
 
@@ -86,18 +102,11 @@ target_link_libraries(test_hiqp_client hiqp_client)
 
 #add_dependencies(test_hiqp_client hiqp_msgs_generate_messages_cpp)
 #---------------------------Dependencies ------------------------#
-ament_target_dependencies(
-      hiqp_client
-      orocos_kdl          
-      controller_interface
-      visualization_msgs  
-      kdl_parser          
-      hiqp_core           
-      realtime_tools			 
-      hiqp_msgs           
-      control_msgs        
-    )
+ament_target_dependencies(hiqp_client ${THIS_PACKAGE_INCLUDE_DEPENDS})
+ament_target_dependencies(${PROJECT_NAME} ${THIS_PACKAGE_INCLUDE_DEPENDS})
 
+ament_export_targets(export_hiqp_ros HAS_LIBRARY_TARGET)
+ament_export_dependencies(${THIS_PACKAGE_INCLUDE_DEPENDS})
 ament_package()
 #===================================================================================================
 # Installation

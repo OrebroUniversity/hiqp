@@ -31,11 +31,17 @@ endif()
 set(CMAKE_VERBOSE_MAKEFILE off)
 
 find_package(ament_cmake REQUIRED)
-find_package(rclcpp REQUIRED)
-find_package(rcpputils REQUIRED)
-find_package(pluginlib REQUIRED)
-find_package(orocos_kdl REQUIRED)
-find_package(Eigen3 REQUIRED)
+
+set(THIS_PACKAGE_INCLUDE_DEPENDS
+  rclcpp
+  rcpputils 
+  pluginlib 
+  orocos_kdl
+  Eigen3 
+)
+foreach(Dependency IN ITEMS ${THIS_PACKAGE_INCLUDE_DEPENDS})
+  find_package(${Dependency} REQUIRED)
+endforeach()
 
 set(SOLVER_SOURCE_FILE "")
 if(${HIQP_QPSOLVER_BACKEND} STREQUAL "gurobi")
@@ -80,22 +86,20 @@ target_include_directories(
   ${PROJECT_NAME}
   PUBLIC
   ${EIGEN3_INCLUDE_DIRS}
-  include
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>
 )
 
-target_link_libraries(${PROJECT_NAME} ${orocos_kdl_LIBRARIES})
 if(${HIQP_QPSOLVER_BACKEND} STREQUAL "gurobi")
-    target_link_libraries(${PROJECT_NAME} ${GUROBI_LIBS})
+  target_link_libraries(${PROJECT_NAME} PUBLIC ${orocos_kdl_LIBRARIES} ${GUROBI_LIBS})
+else()
+  target_link_libraries(${PROJECT_NAME} PUBLIC ${orocos_kdl_LIBRARIES})
 endif()
 
-ament_target_dependencies(
-  ${PROJECT_NAME}
-  pluginlib 
-  rclcpp
-  rcpputils
-)
+ament_target_dependencies(${PROJECT_NAME} PUBLIC ${THIS_PACKAGE_INCLUDE_DEPENDS})
+
+ament_export_targets(export_hiqp_core HAS_LIBRARY_TARGET)
+ament_export_dependencies(${THIS_PACKAGE_INCLUDE_DEPENDS})
 
 ament_package()
 
