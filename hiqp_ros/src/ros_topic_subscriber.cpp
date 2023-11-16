@@ -111,19 +111,20 @@ void ROSTopicSubscriber::topicCallback<tf2_msgs::msg::TFMessage>(
 
 }
 
+//Code supporting an old teleoperation project, deprecated
 #if 0
 template <>
-void ROSTopicSubscriber::topicCallback<geometry_msgs::PoseStamped>(
-    const geometry_msgs::PoseStamped& msg) {
-  double x = msg.pose.position.x;
+void ROSTopicSubscriber::topicCallback<geometry_msgs::msg::PoseStamped>(
+    const geometry_msgs::msg::PoseStamped::SharedPtr msg) {
+  double x = msg->pose.position.x;
   if (x > 0.55) x = 0.55;
   if (x < 0) x = 0;
 
-  double y = msg.pose.position.y;
+  double y = msg->pose.position.y;
   if (y > 0.5) y = 0.5;
   if (y < -0.5) y = -0.5;
 
-  double z = msg.pose.position.z;
+  double z = msg->pose.position.z;
   if (z > 0.55) z = 0.55;
   if (z < 0.07) z = 0.07;
 
@@ -161,7 +162,11 @@ void ROSTopicSubscriber::topicCallback<geometry_msgs::PoseStamped>(
   // 	<< msg.pose.orientation.z << ", "
   // 	<< msg.pose.orientation.w << ")\n\n";
 }
+#endif
 
+//TSV:
+//This below is also very special-purpose code and we don't really want it here I think
+#if 0
 template <>
 void ROSTopicSubscriber::topicCallback<hiqp_msgs::Vector3d>(
     const hiqp_msgs::Vector3d& msg) {

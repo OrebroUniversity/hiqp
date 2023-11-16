@@ -18,8 +18,9 @@
 #define HIQP_ROS_VISUALIZER_H
 
 #include <hiqp/visualizer.h>
+#include <visualization_msgs/msg/marker_array.hpp>
 
-#include <ros/ros.h>
+#include <rclcpp/rclcpp.hpp>
 
 using hiqp::Visualizer;
 using hiqp::geometric_primitives::GeometricPoint;
@@ -40,7 +41,7 @@ class ROSVisualizer : public hiqp::Visualizer {
   ROSVisualizer();
   ~ROSVisualizer() noexcept {}
 
-  int init(ros::NodeHandle &controller_nh);
+  int init(rclcpp::Node::SharedPtr controller_nh);
 
   int add(std::shared_ptr<GeometricPoint> point);
   int add(std::shared_ptr<GeometricLine> line);
@@ -78,7 +79,7 @@ class ROSVisualizer : public hiqp::Visualizer {
 
   enum { ACTION_ADD = 0, ACTION_MODIFY = 1 };
 
-  const std::string kNamespace = "/yumi";
+  const std::string kNamespace = "/hiqp";
   const double kInfiniteLength = 12;
   const double kPointRadius = 0.01;
   const double kLineRadius = 0.001;
@@ -86,9 +87,9 @@ class ROSVisualizer : public hiqp::Visualizer {
   const double kFrameArrowRadius = 0.0017;
   const double kFrameArrowLength = 0.04;
 
-  ros::NodeHandle controller_nh_;
+  rclcpp::Node::SharedPtr controller_nh_;
 
-  ros::Publisher marker_array_pub_;
+  rclcpp::Publisher<visualization_msgs::msg::MarkerArray>::SharedPtr marker_array_pub_;
 
   std::size_t next_id_;
   std::string marker_prefix;

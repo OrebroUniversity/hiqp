@@ -19,8 +19,7 @@
 
 #include <hiqp_ros/ros_visualizer.h>
 
-#include <visualization_msgs/Marker.h>
-#include <visualization_msgs/MarkerArray.h>
+#include <visualization_msgs/msg/marker.hpp>
 
 #include <Eigen/Dense>
 
@@ -30,12 +29,15 @@ double marker_lifetime = 10;  // added markers live for 1 second
 
 ROSVisualizer::ROSVisualizer() : next_id_(0) {}
 
-int ROSVisualizer::init(ros::NodeHandle &controller_nh) {
+int ROSVisualizer::init(rclcpp::Node::SharedPtr controller_nh) {
   controller_nh_ = controller_nh;
   marker_array_pub_ =
-      controller_nh_.advertise<visualization_msgs::MarkerArray>(
-          "visualization_marker", 1);
-  controller_nh_.param<std::string>("marker_prefix", marker_prefix, "/");
+      controller_nh_->create_publisher<visualization_msgs::msg::MarkerArray>(
+          "visualization_marker", rclcpp::QoS(1));
+  
+  controller_nh_->declare_parameter("marker_prefix","/");
+  marker_prefix = controller_nh_->get_parameter("marker_prefix").as_string();
+  
   return 0;
 }
 
@@ -47,17 +49,17 @@ int ROSVisualizer::init(ros::NodeHandle &controller_nh) {
 
 int ROSVisualizer::apply(int id, std::shared_ptr<GeometricPoint> point,
                          int action) {
-  visualization_msgs::Marker marker;
+  visualization_msgs::msg::Marker marker;
 
   marker.header.frame_id = marker_prefix + point->getFrameId();
-  marker.header.stamp = ros::Time::now();
+  marker.header.stamp = controller_nh_->get_clock()->now();
   marker.ns = kNamespace;
   if (action == ACTION_ADD)
     marker.id = next_id_;
   else
     marker.id = id;
-  marker.type = visualization_msgs::Marker::SPHERE;
-  marker.action = visualization_msgs::Marker::ADD;
+  marker.type = visualization_msgs::msg::Marker::SPHERE;
+  marker.action = visualization_msgs::msg::Marker::ADD;
 
   marker.pose.position.x = point->getX();
   marker.pose.position.y = point->getY();
@@ -77,11 +79,11 @@ int ROSVisualizer::apply(int id, std::shared_ptr<GeometricPoint> point,
   marker.color.b = point->getBlueComponent();
   marker.color.a = point->getAlphaComponent();
 
-  marker.lifetime = ros::Duration(marker_lifetime);
+  marker.lifetime = rclcpp::Duration(std::chrono::duration<double>(marker_lifetime));
 
-  visualization_msgs::MarkerArray marker_array;
+  visualization_msgs::msg::MarkerArray marker_array;
   marker_array.markers.push_back(marker);
-  marker_array_pub_.publish(marker_array);
+  marker_array_pub_->publish(marker_array);
 
   if (action == ACTION_ADD) {
     next_id_++;
@@ -93,17 +95,17 @@ int ROSVisualizer::apply(int id, std::shared_ptr<GeometricPoint> point,
 
 int ROSVisualizer::apply(int id, std::shared_ptr<GeometricLine> line,
                          int action) {
-  visualization_msgs::Marker marker;
+  visualization_msgs::msg::Marker marker;
 
   marker.header.frame_id = marker_prefix + line->getFrameId();
-  marker.header.stamp = ros::Time::now();
+  marker.header.stamp = controller_nh_->get_clock()->now();
   marker.ns = kNamespace;
   if (action == ACTION_ADD)
     marker.id = next_id_;
   else
     marker.id = id;
-  marker.type = visualization_msgs::Marker::CYLINDER;
-  marker.action = visualization_msgs::Marker::ADD;
+  marker.type = visualization_msgs::msg::Marker::CYLINDER;
+  marker.action = visualization_msgs::msg::Marker::ADD;
 
   double length = kInfiniteLength;
 
@@ -132,11 +134,11 @@ int ROSVisualizer::apply(int id, std::shared_ptr<GeometricLine> line,
   marker.color.b = line->getBlueComponent();
   marker.color.a = line->getAlphaComponent();
 
-  marker.lifetime = ros::Duration(marker_lifetime);
+  marker.lifetime = rclcpp::Duration(std::chrono::duration<double>(marker_lifetime));
 
-  visualization_msgs::MarkerArray marker_array;
+  visualization_msgs::msg::MarkerArray marker_array;
   marker_array.markers.push_back(marker);
-  marker_array_pub_.publish(marker_array);
+  marker_array_pub_->publish(marker_array);
 
   if (action == ACTION_ADD) {
     next_id_++;
@@ -148,17 +150,17 @@ int ROSVisualizer::apply(int id, std::shared_ptr<GeometricLine> line,
 
 int ROSVisualizer::apply(int id, std::shared_ptr<GeometricPlane> plane,
                          int action) {
-  visualization_msgs::Marker marker;
+  visualization_msgs::msg::Marker marker;
 
   marker.header.frame_id = marker_prefix + plane->getFrameId();
-  marker.header.stamp = ros::Time::now();
+  marker.header.stamp = controller_nh_->get_clock()->now();
   marker.ns = kNamespace;
   if (action == ACTION_ADD)
     marker.id = next_id_;
   else
     marker.id = id;
-  marker.type = visualization_msgs::Marker::CYLINDER;
-  marker.action = visualization_msgs::Marker::ADD;
+  marker.type = visualization_msgs::msg::Marker::CYLINDER;
+  marker.action = visualization_msgs::msg::Marker::ADD;
 
   Eigen::Vector3d v = plane->getNormalEigen();
   Eigen::Vector3d p = plane->getOffset() * v;
@@ -185,11 +187,11 @@ int ROSVisualizer::apply(int id, std::shared_ptr<GeometricPlane> plane,
   marker.color.b = plane->getBlueComponent();
   marker.color.a = plane->getAlphaComponent();
 
-  marker.lifetime = ros::Duration(marker_lifetime);
+  marker.lifetime = rclcpp::Duration(std::chrono::duration<double>(marker_lifetime));
 
-  visualization_msgs::MarkerArray marker_array;
+  visualization_msgs::msg::MarkerArray marker_array;
   marker_array.markers.push_back(marker);
-  marker_array_pub_.publish(marker_array);
+  marker_array_pub_->publish(marker_array);
 
   if (action == ACTION_ADD) {
     next_id_++;
@@ -201,17 +203,17 @@ int ROSVisualizer::apply(int id, std::shared_ptr<GeometricPlane> plane,
 
 int ROSVisualizer::apply(int id, std::shared_ptr<GeometricBox> box,
                          int action) {
-  visualization_msgs::Marker marker;
+  visualization_msgs::msg::Marker marker;
 
   marker.header.frame_id = marker_prefix + box->getFrameId();
-  marker.header.stamp = ros::Time::now();
+  marker.header.stamp = controller_nh_->get_clock()->now();
   marker.ns = kNamespace;
   if (action == ACTION_ADD)
     marker.id = next_id_;
   else
     marker.id = id;
-  marker.type = visualization_msgs::Marker::CUBE;
-  marker.action = visualization_msgs::Marker::ADD;
+  marker.type = visualization_msgs::msg::Marker::CUBE;
+  marker.action = visualization_msgs::msg::Marker::ADD;
 
   Eigen::Vector3d p = box->getCenterEigen();
   Eigen::Quaterniond q = box->getQuaternionEigen();
@@ -234,11 +236,11 @@ int ROSVisualizer::apply(int id, std::shared_ptr<GeometricBox> box,
   marker.color.b = box->getBlueComponent();
   marker.color.a = box->getAlphaComponent();
 
-  marker.lifetime = ros::Duration(marker_lifetime);
+  marker.lifetime = rclcpp::Duration(std::chrono::duration<double>(marker_lifetime));
 
-  visualization_msgs::MarkerArray marker_array;
+  visualization_msgs::msg::MarkerArray marker_array;
   marker_array.markers.push_back(marker);
-  marker_array_pub_.publish(marker_array);
+  marker_array_pub_->publish(marker_array);
 
   if (action == ACTION_ADD) {
     next_id_++;
@@ -250,17 +252,17 @@ int ROSVisualizer::apply(int id, std::shared_ptr<GeometricBox> box,
 
 int ROSVisualizer::apply(int id, std::shared_ptr<GeometricCylinder> cylinder,
                          int action) {
-  visualization_msgs::Marker marker;
+  visualization_msgs::msg::Marker marker;
 
   marker.header.frame_id = marker_prefix + cylinder->getFrameId();
-  marker.header.stamp = ros::Time::now();
+  marker.header.stamp = controller_nh_->get_clock()->now();
   marker.ns = kNamespace;
   if (action == ACTION_ADD)
     marker.id = next_id_;
   else
     marker.id = id;
-  marker.type = visualization_msgs::Marker::CYLINDER;
-  marker.action = visualization_msgs::Marker::ADD;
+  marker.type = visualization_msgs::msg::Marker::CYLINDER;
+  marker.action = visualization_msgs::msg::Marker::ADD;
 
   double height = (cylinder->isInfinite() ? 0 : cylinder->getHeight());
 
@@ -289,11 +291,11 @@ int ROSVisualizer::apply(int id, std::shared_ptr<GeometricCylinder> cylinder,
   marker.color.b = cylinder->getBlueComponent();
   marker.color.a = cylinder->getAlphaComponent();
 
-  marker.lifetime = ros::Duration(marker_lifetime);
+  marker.lifetime = rclcpp::Duration(std::chrono::duration<double>(marker_lifetime));
 
-  visualization_msgs::MarkerArray marker_array;
+  visualization_msgs::msg::MarkerArray marker_array;
   marker_array.markers.push_back(marker);
-  marker_array_pub_.publish(marker_array);
+  marker_array_pub_->publish(marker_array);
 
   if (action == ACTION_ADD) {
     next_id_++;
@@ -305,17 +307,17 @@ int ROSVisualizer::apply(int id, std::shared_ptr<GeometricCylinder> cylinder,
 
 int ROSVisualizer::apply(int id, std::shared_ptr<GeometricSphere> sphere,
                          int action) {
-  visualization_msgs::Marker marker;
+  visualization_msgs::msg::Marker marker;
 
   marker.header.frame_id = marker_prefix + sphere->getFrameId();
-  marker.header.stamp = ros::Time::now();
+  marker.header.stamp = controller_nh_->get_clock()->now();
   marker.ns = kNamespace;
   if (action == ACTION_ADD)
     marker.id = next_id_;
   else
     marker.id = id;
-  marker.type = visualization_msgs::Marker::SPHERE;
-  marker.action = visualization_msgs::Marker::ADD;
+  marker.type = visualization_msgs::msg::Marker::SPHERE;
+  marker.action = visualization_msgs::msg::Marker::ADD;
 
   marker.pose.position.x = sphere->getX();
   marker.pose.position.y = sphere->getY();
@@ -335,11 +337,11 @@ int ROSVisualizer::apply(int id, std::shared_ptr<GeometricSphere> sphere,
   marker.color.b = sphere->getBlueComponent();
   marker.color.a = sphere->getAlphaComponent();
 
-  marker.lifetime = ros::Duration(marker_lifetime);
+  marker.lifetime = rclcpp::Duration(std::chrono::duration<double>(marker_lifetime));
 
-  visualization_msgs::MarkerArray marker_array;
+  visualization_msgs::msg::MarkerArray marker_array;
   marker_array.markers.push_back(marker);
-  marker_array_pub_.publish(marker_array);
+  marker_array_pub_->publish(marker_array);
 
   if (action == ACTION_ADD) {
     next_id_++;
@@ -361,18 +363,18 @@ Eigen::Quaterniond euler2Quaternion(const double roll, const double pitch,
 
 int ROSVisualizer::apply(int id, std::shared_ptr<GeometricFrame> frame,
                          int action) {
-  visualization_msgs::MarkerArray marker_array;
+  visualization_msgs::msg::MarkerArray marker_array;
   {
-    visualization_msgs::Marker marker;
+    visualization_msgs::msg::Marker marker;
     marker.header.frame_id = marker_prefix + frame->getFrameId();
-    marker.header.stamp = ros::Time::now();
+    marker.header.stamp = controller_nh_->get_clock()->now();
     marker.ns = kNamespace;
     if (action == ACTION_ADD)
       marker.id = next_id_;
     else
       marker.id = id;
-    marker.type = visualization_msgs::Marker::ARROW;
-    marker.action = visualization_msgs::Marker::ADD;
+    marker.type = visualization_msgs::msg::Marker::ARROW;
+    marker.action = visualization_msgs::msg::Marker::ADD;
     marker.pose.position.x = frame->getX();
     marker.pose.position.y = frame->getY();
     marker.pose.position.z = frame->getZ();
@@ -387,20 +389,20 @@ int ROSVisualizer::apply(int id, std::shared_ptr<GeometricFrame> frame,
     marker.color.g = 0.0;  // 0.5*frame->getGreenComponent();
     marker.color.b = 0.0;  // 0.5*frame->getBlueComponent();
     marker.color.a = frame->getAlphaComponent();
-    marker.lifetime = ros::Duration(marker_lifetime);
+    marker.lifetime = rclcpp::Duration(std::chrono::duration<double>(marker_lifetime));
     marker_array.markers.push_back(marker);
   }
   {
-    visualization_msgs::Marker marker;
+    visualization_msgs::msg::Marker marker;
     marker.header.frame_id = marker_prefix + frame->getFrameId();
-    marker.header.stamp = ros::Time::now();
+    marker.header.stamp = controller_nh_->get_clock()->now();
     marker.ns = kNamespace;
     if (action == ACTION_ADD)
       marker.id = next_id_ + 1;
     else
       marker.id = id + 1;
-    marker.type = visualization_msgs::Marker::ARROW;
-    marker.action = visualization_msgs::Marker::ADD;
+    marker.type = visualization_msgs::msg::Marker::ARROW;
+    marker.action = visualization_msgs::msg::Marker::ADD;
     marker.pose.position.x = frame->getX();
     marker.pose.position.y = frame->getY();
     marker.pose.position.z = frame->getZ();
@@ -417,20 +419,20 @@ int ROSVisualizer::apply(int id, std::shared_ptr<GeometricFrame> frame,
     marker.color.g = 1.0;  // 0.5*frame->getGreenComponent();
     marker.color.b = 0.0;  // 0.5*frame->getBlueComponent();
     marker.color.a = frame->getAlphaComponent();
-    marker.lifetime = ros::Duration(marker_lifetime);
+    marker.lifetime = rclcpp::Duration(std::chrono::duration<double>(marker_lifetime));
     marker_array.markers.push_back(marker);
   }
   {
-    visualization_msgs::Marker marker;
+    visualization_msgs::msg::Marker marker;
     marker.header.frame_id = marker_prefix + frame->getFrameId();
-    marker.header.stamp = ros::Time::now();
+    marker.header.stamp = controller_nh_->get_clock()->now();
     marker.ns = kNamespace;
     if (action == ACTION_ADD)
       marker.id = next_id_ + 2;
     else
       marker.id = id + 2;
-    marker.type = visualization_msgs::Marker::ARROW;
-    marker.action = visualization_msgs::Marker::ADD;
+    marker.type = visualization_msgs::msg::Marker::ARROW;
+    marker.action = visualization_msgs::msg::Marker::ADD;
     marker.pose.position.x = frame->getX();
     marker.pose.position.y = frame->getY();
     marker.pose.position.z = frame->getZ();
@@ -447,11 +449,11 @@ int ROSVisualizer::apply(int id, std::shared_ptr<GeometricFrame> frame,
     marker.color.g = 0.0;  // 0.5*frame->getGreenComponent();
     marker.color.b = 1.0;  // 0.5*frame->getBlueComponent();
     marker.color.a = frame->getAlphaComponent();
-    marker.lifetime = ros::Duration(marker_lifetime);
+    marker.lifetime = rclcpp::Duration(std::chrono::duration<double>(marker_lifetime));
     marker_array.markers.push_back(marker);
   }
 
-  marker_array_pub_.publish(marker_array);
+  marker_array_pub_->publish(marker_array);
 
   if (action == ACTION_ADD) {
     next_id_ += 3;
@@ -537,30 +539,29 @@ void ROSVisualizer::update(int id, std::shared_ptr<GeometricFrame> frame) {
 ////////////////////////////////////////////////////////////////////////////////
 
 void ROSVisualizer::remove(int id) {
-  visualization_msgs::Marker marker;
-  marker.header.stamp = ros::Time::now();
+  visualization_msgs::msg::Marker marker;
+  marker.header.stamp = controller_nh_->get_clock()->now();
   marker.ns = kNamespace;
   marker.id = id;
-  marker.action = visualization_msgs::Marker::DELETE;
-  visualization_msgs::MarkerArray marker_array;
+  marker.action = visualization_msgs::msg::Marker::DELETE;
+  visualization_msgs::msg::MarkerArray marker_array;
   marker_array.markers.push_back(marker);
-  marker_array_pub_.publish(marker_array);
+  marker_array_pub_->publish(marker_array);
 }
 
 void ROSVisualizer::removeMany(const std::vector<int>& ids) {
   // std::cout << "removeMany: ";
 
-  visualization_msgs::MarkerArray marker_array;
+  visualization_msgs::msg::MarkerArray marker_array;
   for (int id : ids) {
-    visualization_msgs::Marker marker;
-    marker.header.stamp = ros::Time::now();
+    visualization_msgs::msg::Marker marker;
+    marker.header.stamp = controller_nh_->get_clock()->now();
     marker.ns = kNamespace;
     marker.id = id;
-    marker.action = visualization_msgs::Marker::DELETE;
+    marker.action = visualization_msgs::msg::Marker::DELETE;
     marker_array.markers.push_back(marker);
   }
   //  std::cout << "\n";
-  marker_array_pub_.publish(marker_array);
+  marker_array_pub_->publish(marker_array);
 }
-
 }  // namespace hiqp
