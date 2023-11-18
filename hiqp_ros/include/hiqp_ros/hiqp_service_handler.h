@@ -17,35 +17,35 @@
 #ifndef HIQP_SERVICE_HANDLER_H
 #define HIQP_SERVICE_HANDLER_H
 
-#include <ros/ros.h>
+#include <rclcpp/rclcpp.hpp>
 
 #include <hiqp/PrimitiveInfo.h>
 #include <hiqp/TaskInfo.h>
 #include <hiqp/task_manager.h>
 
-#include <hiqp_msgs/ActivateTask.h>
-#include <hiqp_msgs/DeactivateTask.h>
-#include <hiqp_msgs/DemonitorTask.h>
-#include <hiqp_msgs/GetAllTasks.h>
-#include <hiqp_msgs/ListAllTasks.h>
-#include <hiqp_msgs/MonitorTask.h>
-#include <hiqp_msgs/RemoveAllTasks.h>
-#include <hiqp_msgs/RemoveTasks.h>
-#include <hiqp_msgs/SetTasks.h>
+#include <hiqp_msgs/srv/activate_task.hpp>
+#include <hiqp_msgs/srv/deactivate_task.hpp>
+#include <hiqp_msgs/srv/demonitor_task.hpp>
+#include <hiqp_msgs/srv/get_all_tasks.hpp>
+#include <hiqp_msgs/srv/list_all_tasks.hpp>
+#include <hiqp_msgs/srv/monitor_task.hpp>
+#include <hiqp_msgs/srv/remove_all_tasks.hpp>
+#include <hiqp_msgs/srv/remove_tasks.hpp>
+#include <hiqp_msgs/srv/set_tasks.hpp>
 
-#include <hiqp_msgs/GetAllPrimitives.h>
-#include <hiqp_msgs/ListAllPrimitives.h>
-#include <hiqp_msgs/RemoveAllPrimitives.h>
-#include <hiqp_msgs/RemovePrimitives.h>
-#include <hiqp_msgs/SetPrimitives.h>
+#include <hiqp_msgs/srv/get_all_primitives.hpp>
+#include <hiqp_msgs/srv/list_all_primitives.hpp>
+#include <hiqp_msgs/srv/remove_all_primitives.hpp>
+#include <hiqp_msgs/srv/remove_primitives.hpp>
+#include <hiqp_msgs/srv/set_primitives.hpp>
 
-#include <hiqp_msgs/ActivatePriorityLevel.h>
-#include <hiqp_msgs/DeactivatePriorityLevel.h>
-#include <hiqp_msgs/DemonitorPriorityLevel.h>
-#include <hiqp_msgs/MonitorPriorityLevel.h>
-#include <hiqp_msgs/RemovePriorityLevel.h>
+#include <hiqp_msgs/srv/activate_priority_level.hpp>
+#include <hiqp_msgs/srv/deactivate_priority_level.hpp>
+#include <hiqp_msgs/srv/demonitor_priority_level.hpp>
+#include <hiqp_msgs/srv/monitor_priority_level.hpp>
+#include <hiqp_msgs/srv/remove_priority_level.hpp>
 
-#include <hiqp_msgs/IsTaskSet.h>
+#include <hiqp_msgs/srv/is_task_set.hpp>
 
 class HiQPServiceHandler {
  public:
@@ -53,7 +53,7 @@ class HiQPServiceHandler {
 
   ~HiQPServiceHandler() noexcept = default;
 
-  void init(std::shared_ptr<ros::NodeHandle> node_handle,
+  void init(rclcpp::Node::SharedPtr node_handle,
             std::shared_ptr<hiqp::TaskManager> task_manager,
             hiqp::RobotStatePtr robot_state) {
     node_handle_ = node_handle;
@@ -72,78 +72,82 @@ class HiQPServiceHandler {
   /// \todo Add activate_controller ros service
   /// \todo Add deactivate_controller ros service
 
-  bool setTasks(hiqp_msgs::SetTasks::Request& req,
-                hiqp_msgs::SetTasks::Response& res);
-  bool removeTasks(hiqp_msgs::RemoveTasks::Request& req,
-                   hiqp_msgs::RemoveTasks::Response& res);
-  bool removeAllTasks(hiqp_msgs::RemoveAllTasks::Request& req,
-                      hiqp_msgs::RemoveAllTasks::Response& res);
-  bool listAllTasks(hiqp_msgs::ListAllTasks::Request& req,
-                    hiqp_msgs::ListAllTasks::Response& res);
-  bool getAllTasks(hiqp_msgs::GetAllTasks::Request& req,
-                   hiqp_msgs::GetAllTasks::Response& res);
-  bool activateTask(hiqp_msgs::ActivateTask::Request& req,
-                    hiqp_msgs::ActivateTask::Response& res);
-  bool deactivateTask(hiqp_msgs::DeactivateTask::Request& req,
-                      hiqp_msgs::DeactivateTask::Response& res);
-  bool monitorTask(hiqp_msgs::MonitorTask::Request& req,
-                   hiqp_msgs::MonitorTask::Response& res);
-  bool demonitorTask(hiqp_msgs::DemonitorTask::Request& req,
-                     hiqp_msgs::DemonitorTask::Response& res);
+  //Tasks
+  bool setTasks(const std::shared_ptr<hiqp_msgs::srv::SetTasks::Request> req,
+      std::shared_ptr<hiqp_msgs::srv::SetTasks::Response> res);
+  bool removeTasks(const std::shared_ptr<hiqp_msgs::srv::RemoveTasks::Request> req,
+      std::shared_ptr<hiqp_msgs::srv::RemoveTasks::Response> res);
+  bool removeAllTasks(const std::shared_ptr<hiqp_msgs::srv::RemoveAllTasks::Request> req,
+      std::shared_ptr<hiqp_msgs::srv::RemoveAllTasks::Response> res);
+  bool listAllTasks(const std::shared_ptr<hiqp_msgs::srv::ListAllTasks::Request> req,
+      std::shared_ptr<hiqp_msgs::srv::ListAllTasks::Response> res);
+  bool getAllTasks(const std::shared_ptr<hiqp_msgs::srv::GetAllTasks::Request> req,
+      std::shared_ptr<hiqp_msgs::srv::GetAllTasks::Response> res);
+  bool activateTask(const std::shared_ptr<hiqp_msgs::srv::ActivateTask::Request> req,
+      std::shared_ptr<hiqp_msgs::srv::ActivateTask::Response> res);
+  bool deactivateTask(const std::shared_ptr<hiqp_msgs::srv::DeactivateTask::Request> req,
+      std::shared_ptr<hiqp_msgs::srv::DeactivateTask::Response> res);
+  bool monitorTask(const std::shared_ptr<hiqp_msgs::srv::MonitorTask::Request> req,
+      std::shared_ptr<hiqp_msgs::srv::MonitorTask::Response> res);
+  bool demonitorTask(const std::shared_ptr<hiqp_msgs::srv::DemonitorTask::Request> req,
+      std::shared_ptr<hiqp_msgs::srv::DemonitorTask::Response> res);
 
-  bool setPrimitives(hiqp_msgs::SetPrimitives::Request& req,
-                     hiqp_msgs::SetPrimitives::Response& res);
-  bool removePrimitives(hiqp_msgs::RemovePrimitives::Request& req,
-                        hiqp_msgs::RemovePrimitives::Response& res);
-  bool removeAllPrimitives(hiqp_msgs::RemoveAllPrimitives::Request& req,
-                           hiqp_msgs::RemoveAllPrimitives::Response& res);
-  bool listAllPrimitives(hiqp_msgs::ListAllPrimitives::Request& req,
-                         hiqp_msgs::ListAllPrimitives::Response& res);
-  bool getAllPrimitives(hiqp_msgs::GetAllPrimitives::Request& req,
-                        hiqp_msgs::GetAllPrimitives::Response& res);
+  //Primitives
+  bool setPrimitives(const std::shared_ptr<hiqp_msgs::srv::SetPrimitives::Request> req,
+      std::shared_ptr<hiqp_msgs::srv::SetPrimitives::Response> res);
+  bool removePrimitives(const std::shared_ptr<hiqp_msgs::srv::RemovePrimitives::Request> req,
+      std::shared_ptr<hiqp_msgs::srv::RemovePrimitives::Response> res);
+  bool removeAllPrimitives(const std::shared_ptr<hiqp_msgs::srv::RemoveAllPrimitives::Request> req,
+      std::shared_ptr<hiqp_msgs::srv::RemoveAllPrimitives::Response> res);
+  bool listAllPrimitives(const std::shared_ptr<hiqp_msgs::srv::ListAllPrimitives::Request> req,
+      std::shared_ptr<hiqp_msgs::srv::ListAllPrimitives::Response> res);
+  bool getAllPrimitives(const std::shared_ptr<hiqp_msgs::srv::GetAllPrimitives::Request> req,
+      std::shared_ptr<hiqp_msgs::srv::GetAllPrimitives::Response> res);
 
-  bool removePriorityLevel(hiqp_msgs::RemovePriorityLevel::Request& req,
-                           hiqp_msgs::RemovePriorityLevel::Response& res);
-  bool activatePriorityLevel(hiqp_msgs::ActivatePriorityLevel::Request& req,
-                             hiqp_msgs::ActivatePriorityLevel::Response& res);
+  //Priority levels
+  bool removePriorityLevel(const std::shared_ptr<hiqp_msgs::srv::RemovePriorityLevel::Request> req,
+      std::shared_ptr<hiqp_msgs::srv::RemovePriorityLevel::Response> res);
+  bool activatePriorityLevel(const std::shared_ptr<hiqp_msgs::srv::ActivatePriorityLevel::Request> req,
+      std::shared_ptr<hiqp_msgs::srv::ActivatePriorityLevel::Response> res);
   bool deactivatePriorityLevel(
-      hiqp_msgs::DeactivatePriorityLevel::Request& req,
-      hiqp_msgs::DeactivatePriorityLevel::Response& res);
-  bool monitorPriorityLevel(hiqp_msgs::MonitorPriorityLevel::Request& req,
-                            hiqp_msgs::MonitorPriorityLevel::Response& res);
-  bool demonitorPriorityLevel(hiqp_msgs::DemonitorPriorityLevel::Request& req,
-                              hiqp_msgs::DemonitorPriorityLevel::Response& res);
-                              
-  bool isTaskSet(hiqp_msgs::IsTaskSet::Request& req,
-                 hiqp_msgs::IsTaskSet::Response& res);
+      const std::shared_ptr<hiqp_msgs::srv::DeactivatePriorityLevel::Request> req,
+      std::shared_ptr<hiqp_msgs::srv::DeactivatePriorityLevel::Response> res);
+  bool monitorPriorityLevel(const std::shared_ptr<hiqp_msgs::srv::MonitorPriorityLevel::Request> req,
+      std::shared_ptr<hiqp_msgs::srv::MonitorPriorityLevel::Response> res);
+  bool demonitorPriorityLevel(
+      const std::shared_ptr<hiqp_msgs::srv::DemonitorPriorityLevel::Request> req,
+      std::shared_ptr<hiqp_msgs::srv::DemonitorPriorityLevel::Response> res);
 
-  std::shared_ptr<ros::NodeHandle> node_handle_;
+  bool isTaskSet(const std::shared_ptr<hiqp_msgs::srv::IsTaskSet::Request> req,
+      std::shared_ptr<hiqp_msgs::srv::IsTaskSet::Response> res);
+
+  rclcpp::Node::SharedPtr node_handle_;
   std::shared_ptr<hiqp::TaskManager> task_manager_;
   hiqp::RobotStatePtr robot_state_;
 
-  ros::ServiceServer set_tasks_service_;
-  ros::ServiceServer remove_tasks_service_;
-  ros::ServiceServer remove_all_tasks_service_;
-  ros::ServiceServer list_all_tasks_service_;
-  ros::ServiceServer get_all_tasks_service_;
-  ros::ServiceServer activate_task_service_;
-  ros::ServiceServer deactivate_task_service_;
-  ros::ServiceServer monitor_task_service_;
-  ros::ServiceServer demonitor_task_service_;
+  std::shared_ptr<rclcpp::ServiceBase> set_tasks_service_;
+  std::shared_ptr<rclcpp::ServiceBase> remove_tasks_service_;
+  std::shared_ptr<rclcpp::ServiceBase> remove_all_tasks_service_;
+  std::shared_ptr<rclcpp::ServiceBase> list_all_tasks_service_;
+  std::shared_ptr<rclcpp::ServiceBase> get_all_tasks_service_;
+  std::shared_ptr<rclcpp::ServiceBase> activate_task_service_;
+  std::shared_ptr<rclcpp::ServiceBase> deactivate_task_service_;
+  std::shared_ptr<rclcpp::ServiceBase> monitor_task_service_;
+  std::shared_ptr<rclcpp::ServiceBase> demonitor_task_service_;
 
-  ros::ServiceServer set_primitives_service_;
-  ros::ServiceServer remove_primitives_service_;
-  ros::ServiceServer remove_all_primitives_service_;
-  ros::ServiceServer list_all_primitives_service_;
-  ros::ServiceServer get_all_primitives_service_;
+  std::shared_ptr<rclcpp::ServiceBase> set_primitives_service_;
+  std::shared_ptr<rclcpp::ServiceBase> remove_primitives_service_;
+  std::shared_ptr<rclcpp::ServiceBase> remove_all_primitives_service_;
+  std::shared_ptr<rclcpp::ServiceBase> list_all_primitives_service_;
+  std::shared_ptr<rclcpp::ServiceBase> get_all_primitives_service_;
 
-  ros::ServiceServer remove_priority_level_service_;
-  ros::ServiceServer activate_priority_level_service_;
-  ros::ServiceServer deactivate_priority_level_service_;
-  ros::ServiceServer monitor_priority_level_service_;
-  ros::ServiceServer demonitor_priority_level_service_;
+  std::shared_ptr<rclcpp::ServiceBase> remove_priority_level_service_;
+  std::shared_ptr<rclcpp::ServiceBase> activate_priority_level_service_;
+  std::shared_ptr<rclcpp::ServiceBase> deactivate_priority_level_service_;
+  std::shared_ptr<rclcpp::ServiceBase> monitor_priority_level_service_;
+  std::shared_ptr<rclcpp::ServiceBase> demonitor_priority_level_service_;
   
-  ros::ServiceServer is_task_set_service_;
+  std::shared_ptr<rclcpp::ServiceBase> is_task_set_service_;
 };
 
 #endif

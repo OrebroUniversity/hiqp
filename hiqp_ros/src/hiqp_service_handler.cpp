@@ -16,78 +16,84 @@
 
 #include <hiqp_ros/hiqp_service_handler.h>
 
+using std::placeholders::_1;
+using std::placeholders::_2;
+
 void HiQPServiceHandler::advertiseAll() {
-  set_tasks_service_ = node_handle_->advertiseService(
-      "set_tasks", &HiQPServiceHandler::setTasks, this);
-  remove_tasks_service_ = node_handle_->advertiseService(
-      "remove_tasks", &HiQPServiceHandler::removeTasks, this);
-  remove_all_tasks_service_ = node_handle_->advertiseService(
-      "remove_all_tasks", &HiQPServiceHandler::removeAllTasks, this);
-  list_all_tasks_service_ = node_handle_->advertiseService(
-      "list_all_tasks", &HiQPServiceHandler::listAllTasks, this);
-  get_all_tasks_service_ = node_handle_->advertiseService(
-      "get_all_tasks", &HiQPServiceHandler::getAllTasks, this);
-  activate_task_service_ = node_handle_->advertiseService(
-      "activate_task", &HiQPServiceHandler::activateTask, this);
-  deactivate_task_service_ = node_handle_->advertiseService(
-      "deactivate_task", &HiQPServiceHandler::deactivateTask, this);
-  monitor_task_service_ = node_handle_->advertiseService(
-      "monitor_task", &HiQPServiceHandler::monitorTask, this);
-  demonitor_task_service_ = node_handle_->advertiseService(
-      "demonitor_task", &HiQPServiceHandler::demonitorTask, this);
+  set_tasks_service_ = node_handle_->create_service<hiqp_msgs::srv::SetTasks>(
+      "set_tasks", std::bind(&HiQPServiceHandler::setTasks, this, _1, _2));
+  remove_tasks_service_ = node_handle_->create_service<hiqp_msgs::srv::RemoveTasks>(
+      "remove_tasks",std::bind(&HiQPServiceHandler::removeTasks, this, _1, _2));
+  remove_all_tasks_service_ = node_handle_->create_service<hiqp_msgs::srv::RemoveAllTasks>(
+      "remove_all_tasks",std::bind(&HiQPServiceHandler::removeAllTasks, this, _1, _2));
+  list_all_tasks_service_ = node_handle_->create_service<hiqp_msgs::srv::ListAllTasks>(
+      "list_all_tasks", std::bind(&HiQPServiceHandler::listAllTasks, this, _1, _2));
+  get_all_tasks_service_ = node_handle_->create_service<hiqp_msgs::srv::GetAllTasks>(
+      "get_all_tasks", std::bind(&HiQPServiceHandler::getAllTasks, this, _1, _2));
+  activate_task_service_ = node_handle_->create_service<hiqp_msgs::srv::ActivateTask>(
+      "activate_task", std::bind(&HiQPServiceHandler::activateTask, this, _1, _2));
+  deactivate_task_service_ = node_handle_->create_service<hiqp_msgs::srv::DeactivateTask>(
+      "deactivate_task", std::bind(&HiQPServiceHandler::deactivateTask, this, _1, _2));
+  monitor_task_service_ = node_handle_->create_service<hiqp_msgs::srv::MonitorTask>(
+      "monitor_task", std::bind(&HiQPServiceHandler::monitorTask, this, _1, _2));
+  demonitor_task_service_ = node_handle_->create_service<hiqp_msgs::srv::DemonitorTask>(
+      "demonitor_task", std::bind(&HiQPServiceHandler::demonitorTask, this, _1, _2));
 
-  set_primitives_service_ = node_handle_->advertiseService(
-      "set_primitives", &HiQPServiceHandler::setPrimitives, this);
-  remove_primitives_service_ = node_handle_->advertiseService(
-      "remove_primitives", &HiQPServiceHandler::removePrimitives, this);
-  remove_all_primitives_service_ = node_handle_->advertiseService(
-      "remove_all_primitives", &HiQPServiceHandler::removeAllPrimitives, this);
-  list_all_primitives_service_ = node_handle_->advertiseService(
-      "list_all_primitives", &HiQPServiceHandler::listAllPrimitives, this);
-  get_all_primitives_service_ = node_handle_->advertiseService(
-      "get_all_primitives", &HiQPServiceHandler::getAllPrimitives, this);
+  set_primitives_service_ = node_handle_->create_service<hiqp_msgs::srv::SetPrimitives>(
+      "set_primitives", std::bind(&HiQPServiceHandler::setPrimitives, this, _1, _2));
+  remove_primitives_service_ = node_handle_->create_service<hiqp_msgs::srv::RemovePrimitives>(
+      "remove_primitives", std::bind(&HiQPServiceHandler::removePrimitives, this, _1, _2));
+  remove_all_primitives_service_ = node_handle_->create_service<hiqp_msgs::srv::RemoveAllPrimitives>(
+      "remove_all_primitives", std::bind(&HiQPServiceHandler::removeAllPrimitives, this, _1, _2));
+  list_all_primitives_service_ = node_handle_->create_service<hiqp_msgs::srv::ListAllPrimitives>(
+      "list_all_primitives",std::bind(&HiQPServiceHandler::listAllPrimitives, this, _1, _2));
+  get_all_primitives_service_ = node_handle_->create_service<hiqp_msgs::srv::GetAllPrimitives>(
+      "get_all_primitives", std::bind(&HiQPServiceHandler::getAllPrimitives, this, _1, _2));
 
-  remove_priority_level_service_ = node_handle_->advertiseService(
-      "remove_priority_level", &HiQPServiceHandler::removePriorityLevel, this);
-  activate_priority_level_service_ = node_handle_->advertiseService(
-      "activate_priority_level", &HiQPServiceHandler::activatePriorityLevel,
-      this);
-  deactivate_priority_level_service_ = node_handle_->advertiseService(
-      "deactivate_priority_level", &HiQPServiceHandler::deactivatePriorityLevel,
-      this);
-  monitor_priority_level_service_ = node_handle_->advertiseService(
-      "monitor_priority_level", &HiQPServiceHandler::monitorPriorityLevel,
-      this);
-  demonitor_priority_level_service_ = node_handle_->advertiseService(
-      "demonitor_priority_level", &HiQPServiceHandler::demonitorPriorityLevel,
-      this);
+  remove_priority_level_service_ = node_handle_->create_service<hiqp_msgs::srv::RemovePriorityLevel>(
+      "remove_priority_level", std::bind(&HiQPServiceHandler::removePriorityLevel, this, _1, _2));
+  activate_priority_level_service_ = node_handle_->create_service<hiqp_msgs::srv::ActivatePriorityLevel>
+    ( "activate_priority_level", 
+      std::bind(&HiQPServiceHandler::activatePriorityLevel, this, _1, _2));
+  deactivate_priority_level_service_ = 
+    node_handle_->create_service<hiqp_msgs::srv::DeactivatePriorityLevel>(
+      "deactivate_priority_level", 
+      std::bind(&HiQPServiceHandler::deactivatePriorityLevel, this, _1, _2));
+  monitor_priority_level_service_ = 
+    node_handle_->create_service<hiqp_msgs::srv::MonitorPriorityLevel>(
+      "monitor_priority_level", 
+      std::bind(&HiQPServiceHandler::monitorPriorityLevel, this, _1, _2));
+  demonitor_priority_level_service_ = 
+    node_handle_->create_service<hiqp_msgs::srv::DemonitorPriorityLevel>(
+      "demonitor_priority_level", 
+      std::bind(&HiQPServiceHandler::demonitorPriorityLevel, this, _1, _2));
 
-  is_task_set_service_ = node_handle_->advertiseService(
-      "is_task_set", &HiQPServiceHandler::isTaskSet,
-      this);
+  is_task_set_service_ = node_handle_->create_service<hiqp_msgs::srv::IsTaskSet>(
+      "is_task_set",
+      std::bind(&HiQPServiceHandler::isTaskSet, this, _1, _2));
 }
 
-bool HiQPServiceHandler::setTasks(hiqp_msgs::SetTasks::Request& req,
-                                  hiqp_msgs::SetTasks::Response& res) {
-  for (auto task : req.tasks) {
+bool HiQPServiceHandler::setTasks(const std::shared_ptr<hiqp_msgs::srv::SetTasks::Request> req,
+    std::shared_ptr<hiqp_msgs::srv::SetTasks::Response> res) {
+  for (auto task : req->tasks) {
     
     int retval = task_manager_->setTask(
         task.name, task.priority, task.visible, task.active, task.monitored,
         task.def_params, task.dyn_params, robot_state_);
-    res.success.push_back(retval < 0 ? false : true);
+    res->success.push_back(retval < 0 ? false : true);
   }
   return true;
 }
 
-bool HiQPServiceHandler::removeTasks(hiqp_msgs::RemoveTasks::Request& req,
-                                     hiqp_msgs::RemoveTasks::Response& res) {
-  for (auto name : req.names) {
+bool HiQPServiceHandler::removeTasks(const std::shared_ptr<hiqp_msgs::srv::RemoveTasks::Request> req,
+    std::shared_ptr<hiqp_msgs::srv::RemoveTasks::Response> res) {
+  for (auto name : req->names) {
     if (task_manager_->removeTask(name) == 0)
-      res.success.push_back(true);
+      res->success.push_back(true);
     else
-      res.success.push_back(false);
+      res->success.push_back(false);
 
-    if (res.success.back()) {
+    if (res->success.back()) {
       hiqp::printHiqpInfo("Removed task '" + name + "'.");
     } else {
       hiqp::printHiqpInfo("Couldn't remove task '" + name + "'!");
@@ -97,78 +103,83 @@ bool HiQPServiceHandler::removeTasks(hiqp_msgs::RemoveTasks::Request& req,
 }
 
 bool HiQPServiceHandler::removeAllTasks(
-    hiqp_msgs::RemoveAllTasks::Request& req,
-    hiqp_msgs::RemoveAllTasks::Response& res) {
+    const std::shared_ptr<hiqp_msgs::srv::RemoveAllTasks::Request> req,
+    std::shared_ptr<hiqp_msgs::srv::RemoveAllTasks::Response> res){
   task_manager_->removeAllTasks();
   hiqp::printHiqpInfo("Removed all tasks successfully!");
-  res.success = true;
+  res->success = true;
   return true;
 }
 
-bool HiQPServiceHandler::listAllTasks(hiqp_msgs::ListAllTasks::Request& req,
-                                      hiqp_msgs::ListAllTasks::Response& res) {
+bool HiQPServiceHandler::listAllTasks(
+    const std::shared_ptr<hiqp_msgs::srv::ListAllTasks::Request> req,
+    std::shared_ptr<hiqp_msgs::srv::ListAllTasks::Response> res){
   task_manager_->listAllTasks();
-  res.success = true;
+  res->success = true;
   return true;
 }
 
-bool HiQPServiceHandler::getAllTasks(hiqp_msgs::GetAllTasks::Request& req,
-                                     hiqp_msgs::GetAllTasks::Response& res) {
+bool HiQPServiceHandler::getAllTasks(
+    const std::shared_ptr<hiqp_msgs::srv::GetAllTasks::Request> req,
+    std::shared_ptr<hiqp_msgs::srv::GetAllTasks::Response> res){
   std::vector<hiqp::TaskInfo> all_task_info = task_manager_->getAllTaskInfo();
   for (auto it : all_task_info) {
-    hiqp_msgs::Task t;
+    hiqp_msgs::msg::Task t;
     t.name = it.name;
     t.priority = it.priority;
     t.active = it.active;
     t.monitored = it.monitored;
     t.def_params = it.def_params;
     t.dyn_params = it.dyn_params;
-    res.tasks.push_back(t);
+    res->tasks.push_back(t);
   }
   return true;
 }
 
-bool HiQPServiceHandler::activateTask(hiqp_msgs::ActivateTask::Request& req,
-                                      hiqp_msgs::ActivateTask::Response& res) {
-  task_manager_->activateTask(req.name);
-  res.success = true;
-  return true;
-}
-bool HiQPServiceHandler::deactivateTask(
-    hiqp_msgs::DeactivateTask::Request& req,
-    hiqp_msgs::DeactivateTask::Response& res) {
-  task_manager_->deactivateTask(req.name);
-  res.success = true;
+bool HiQPServiceHandler::activateTask(
+    const std::shared_ptr<hiqp_msgs::srv::ActivateTask::Request> req,
+    std::shared_ptr<hiqp_msgs::srv::ActivateTask::Response> res){
+  task_manager_->activateTask(req->name);
+  res->success = true;
   return true;
 }
 
-bool HiQPServiceHandler::monitorTask(hiqp_msgs::MonitorTask::Request& req,
-                                     hiqp_msgs::MonitorTask::Response& res) {
-  task_manager_->monitorTask(req.name);
-  res.success = true;
+bool HiQPServiceHandler::deactivateTask(
+    const std::shared_ptr<hiqp_msgs::srv::DeactivateTask::Request> req,
+    std::shared_ptr<hiqp_msgs::srv::DeactivateTask::Response> res){
+  task_manager_->deactivateTask(req->name);
+  res->success = true;
+  return true;
+}
+
+bool HiQPServiceHandler::monitorTask(
+    const std::shared_ptr<hiqp_msgs::srv::MonitorTask::Request> req,
+    std::shared_ptr<hiqp_msgs::srv::MonitorTask::Response> res){
+  task_manager_->monitorTask(req->name);
+  res->success = true;
   return true;
 }
 
 bool HiQPServiceHandler::demonitorTask(
-    hiqp_msgs::DemonitorTask::Request& req,
-    hiqp_msgs::DemonitorTask::Response& res) {
-  task_manager_->demonitorTask(req.name);
-  res.success = true;
+    const std::shared_ptr<hiqp_msgs::srv::DemonitorTask::Request> req,
+    std::shared_ptr<hiqp_msgs::srv::DemonitorTask::Response> res){
+  task_manager_->demonitorTask(req->name);
+  res->success = true;
   return true;
 }
 
 bool HiQPServiceHandler::setPrimitives(
-    hiqp_msgs::SetPrimitives::Request& req,
-    hiqp_msgs::SetPrimitives::Response& res) {
+    const std::shared_ptr<hiqp_msgs::srv::SetPrimitives::Request> req,
+    std::shared_ptr<hiqp_msgs::srv::SetPrimitives::Response> res){
 
-  for (auto primitive : req.primitives) {
-    ROS_INFO_STREAM("Setting primitive "<<primitive.name<<" of type "<<primitive.type); 
+  for (auto primitive : req->primitives) {
+    RCLCPP_INFO_STREAM(node_handle_->get_logger(), "Setting primitive "<<primitive.name<<" of type "<<primitive.type); 
     int retval = task_manager_->setPrimitive(
         primitive.name, primitive.type, primitive.frame_id, primitive.visible,
         primitive.color, primitive.parameters);
-    res.success.push_back(retval == 0 ? true : false);
+    res->success.push_back(retval == 0 ? true : false);
 
-    if (res.success.back()) {
+    if (res->success.back()) {
       hiqp::printHiqpInfo("Set geometric primitive of type '" + primitive.type +
                           "' with name '" + primitive.name + "'.");
     }
@@ -177,15 +188,15 @@ bool HiQPServiceHandler::setPrimitives(
 }
 
 bool HiQPServiceHandler::removePrimitives(
-    hiqp_msgs::RemovePrimitives::Request& req,
-    hiqp_msgs::RemovePrimitives::Response& res) {
-  for (auto name : req.names) {
+    const std::shared_ptr<hiqp_msgs::srv::RemovePrimitives::Request> req,
+    std::shared_ptr<hiqp_msgs::srv::RemovePrimitives::Response> res){
+  for (auto name : req->names) {
     if (task_manager_->removePrimitive(name) == 0)
-      res.success.push_back(true);
+      res->success.push_back(true);
     else
-      res.success.push_back(false);
+      res->success.push_back(false);
 
-    if (res.success.back()) {
+    if (res->success.back()) {
       hiqp::printHiqpInfo("Removed primitive '" + name + "' successfully!");
     } else {
       hiqp::printHiqpInfo("Couldn't remove primitive '" + name + "'!");
@@ -195,83 +206,82 @@ bool HiQPServiceHandler::removePrimitives(
 }
 
 bool HiQPServiceHandler::removeAllPrimitives(
-    hiqp_msgs::RemoveAllPrimitives::Request& req,
-    hiqp_msgs::RemoveAllPrimitives::Response& res) {
+    const std::shared_ptr<hiqp_msgs::srv::RemoveAllPrimitives::Request> req,
+    std::shared_ptr<hiqp_msgs::srv::RemoveAllPrimitives::Response> res){
   task_manager_->removeAllPrimitives();
   hiqp::printHiqpInfo("Removed all primitives successfully!");
-  res.success = true;
+  res->success = true;
   return true;
 }
 
 bool HiQPServiceHandler::listAllPrimitives(
-    hiqp_msgs::ListAllPrimitives::Request& req,
-    hiqp_msgs::ListAllPrimitives::Response& res) {
+    const std::shared_ptr<hiqp_msgs::srv::ListAllPrimitives::Request> req,
+    std::shared_ptr<hiqp_msgs::srv::ListAllPrimitives::Response> res){
   task_manager_->listAllPrimitives();
-  res.success = true;
+  res->success = true;
   return true;
 }
 
 bool HiQPServiceHandler::getAllPrimitives(
-    hiqp_msgs::GetAllPrimitives::Request& req,
-    hiqp_msgs::GetAllPrimitives::Response& res) {
+    const std::shared_ptr<hiqp_msgs::srv::GetAllPrimitives::Request> req,
+    std::shared_ptr<hiqp_msgs::srv::GetAllPrimitives::Response> res){
   std::vector<hiqp::PrimitiveInfo> all_task_info =
       task_manager_->getAllPrimitiveInfo();
   for (auto it : all_task_info) {
-    hiqp_msgs::Primitive p;
+    hiqp_msgs::msg::Primitive p;
     p.name = it.name;
     p.type = it.type;
     p.frame_id = it.frame_id;
     p.visible = it.visible;
     p.color = it.color;
     p.parameters = it.parameters;
-    res.primitives.push_back(p);
+    res->primitives.push_back(p);
   }
   return true;
 }
 
 bool HiQPServiceHandler::removePriorityLevel(
-    hiqp_msgs::RemovePriorityLevel::Request& req,
-    hiqp_msgs::RemovePriorityLevel::Response& res) {
-  task_manager_->removePriorityLevel(req.priority);
-  res.success = true;
+    const std::shared_ptr<hiqp_msgs::srv::RemovePriorityLevel::Request> req,
+    std::shared_ptr<hiqp_msgs::srv::RemovePriorityLevel::Response> res){
+  task_manager_->removePriorityLevel(req->priority);
+  res->success = true;
   return true;
 }
 
 bool HiQPServiceHandler::activatePriorityLevel(
-    hiqp_msgs::ActivatePriorityLevel::Request& req,
-    hiqp_msgs::ActivatePriorityLevel::Response& res) {
-  task_manager_->activatePriorityLevel(req.priority);
-  res.success = true;
+    const std::shared_ptr<hiqp_msgs::srv::ActivatePriorityLevel::Request> req,
+    std::shared_ptr<hiqp_msgs::srv::ActivatePriorityLevel::Response> res){
+  task_manager_->activatePriorityLevel(req->priority);
+  res->success = true;
   return true;
 }
 
 bool HiQPServiceHandler::deactivatePriorityLevel(
-    hiqp_msgs::DeactivatePriorityLevel::Request& req,
-    hiqp_msgs::DeactivatePriorityLevel::Response& res) {
-  task_manager_->deactivatePriorityLevel(req.priority);
-  res.success = true;
+    const std::shared_ptr<hiqp_msgs::srv::DeactivatePriorityLevel::Request> req,
+    std::shared_ptr<hiqp_msgs::srv::DeactivatePriorityLevel::Response> res){
+  task_manager_->deactivatePriorityLevel(req->priority);
+  res->success = true;
   return true;
 }
 
 bool HiQPServiceHandler::monitorPriorityLevel(
-    hiqp_msgs::MonitorPriorityLevel::Request& req,
-    hiqp_msgs::MonitorPriorityLevel::Response& res) {
-  task_manager_->monitorPriorityLevel(req.priority);
-  res.success = true;
+    const std::shared_ptr<hiqp_msgs::srv::MonitorPriorityLevel::Request> req,
+    std::shared_ptr<hiqp_msgs::srv::MonitorPriorityLevel::Response> res){
+  task_manager_->monitorPriorityLevel(req->priority);
+  res->success = true;
   return true;
 }
 
 bool HiQPServiceHandler::demonitorPriorityLevel(
-    hiqp_msgs::DemonitorPriorityLevel::Request& req,
-    hiqp_msgs::DemonitorPriorityLevel::Response& res) {
-  task_manager_->demonitorPriorityLevel(req.priority);
-  res.success = true;
+    const std::shared_ptr<hiqp_msgs::srv::DemonitorPriorityLevel::Request> req,
+    std::shared_ptr<hiqp_msgs::srv::DemonitorPriorityLevel::Response> res){
+  task_manager_->demonitorPriorityLevel(req->priority);
+  res->success = true;
   return true;
 }
 
-bool HiQPServiceHandler::isTaskSet(
-    hiqp_msgs::IsTaskSet::Request& req,
-    hiqp_msgs::IsTaskSet::Response& res) {
-  res.is_set = task_manager_->isTaskSet(req.name);
+bool HiQPServiceHandler::isTaskSet(const std::shared_ptr<hiqp_msgs::srv::IsTaskSet::Request> req,
+    std::shared_ptr<hiqp_msgs::srv::IsTaskSet::Response> res){
+  res->is_set = task_manager_->isTaskSet(req->name);
   return true;
 }

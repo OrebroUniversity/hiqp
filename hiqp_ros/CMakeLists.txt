@@ -72,10 +72,10 @@ target_link_libraries(test_hiqp_client hiqp_client)
 add_library(${PROJECT_NAME} 
                             src/ros_topic_subscriber.cpp
                             src/ros_visualizer.cpp
+                            src/hiqp_service_handler.cpp
                             src/utilities.cpp)
 #    src/hiqp_joint_velocity_controller.cpp
 #                            src/hiqp_joint_effort_controller.cpp
-#                            src/hiqp_service_handler.cpp
 
 target_include_directories(
   ${PROJECT_NAME}
