@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<library path="hiqp_ros">
+  <class name="hiqp_ros/HiqpController" type="hiqp_ros::HiqpController" base_class_type="controller_interface::ControllerInterface">
+  <description>
+    The HiqpController generates velocity / acceleration commands for a set of joints. 
+  </description>
+  </class>
+</library>

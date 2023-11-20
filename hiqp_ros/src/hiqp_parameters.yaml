@@ -1,0 +1,37 @@
+hiqp_ros:
+  joints: {
+    type: string_array,
+    default_value: [],
+    description: "Names of joints used by the controller",
+    read_only: true,
+    validation: {
+      unique<>: null,
+    }
+  }
+  command_joints: {
+    type: string_array,
+    default_value: [],
+    description: "Names of the commanding joints used by the controller",
+    read_only: true,
+    validation: {
+      unique<>: null,
+    }
+  }
+  command_interfaces: {
+    type: string_array,
+    default_value: [],
+    description: "Names of command interfaces to claim",
+    read_only: true,
+    validation: {
+      unique<>: null,
+    }
+  }
+  state_interfaces: {
+    type: string_array,
+    default_value: [],
+    description: "Names of state interfaces to claim",
+    read_only: true,
+    validation: {
+      unique<>: null,
+    }
+  }

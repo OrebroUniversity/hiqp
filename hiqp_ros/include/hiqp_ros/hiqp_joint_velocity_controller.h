@@ -20,9 +20,6 @@
 #include <string>
 #include <vector>
 
-#include <hardware_interface/joint_command_interface.h>
-#include <ros/ros.h>
-
 #include <kdl/jntarray.hpp>
 #include <kdl/jntarrayvel.hpp>
 #include <kdl/tree.hpp>
@@ -87,8 +84,6 @@ namespace hiqp_ros {
 
         HiQPServiceHandler service_handler_;  // takes care of all ros service calls
 
-        //ROSVisualizer ros_visualizer_;
-        //hiqp::TaskManager task_manager_;
         std::shared_ptr<Visualizer> visualizer_;
         std::shared_ptr<hiqp::TaskManager> task_manager_ptr_;
         Eigen::VectorXd u_vel_;

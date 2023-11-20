@@ -18,6 +18,7 @@ cmake_minimum_required(VERSION 3.8)
 project(hiqp_ros)
 
 set(CMAKE_BUILD_TYPE RelWithDebInfo)
+#set(CMAKE_BUILD_TYPE Debug)
   
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic -std=c++17 -Wl,-z,defs)
@@ -37,60 +38,66 @@ realtime_tools
 hiqp_msgs           
 control_msgs       
 tf2_msgs
+pluginlib
+generate_parameter_library
 )
 foreach(Dependency IN ITEMS ${THIS_PACKAGE_INCLUDE_DEPENDS})
   find_package(${Dependency} REQUIRED)
 endforeach()
 
+generate_parameter_library(
+    hiqp_parameters
+    src/hiqp_parameters.yaml
+    )
+
 set(GUROBI_INCLUDE_DIR "$ENV{GUROBI_HOME}/include")
 set(GUROBI_LIB_DIR "$ENV{GUROBI_HOME}/lib")
 set(GUROBI_LIBS gurobi_c++ gurobi100)
 
-include_directories(
-  ${GUROBI_INCLUDE_DIR}
-)
-link_directories(${GUROBI_LIB_DIR})
-
 #------------------------------- Targets ------------------------------#
 
-# hiqp-client library
-add_library(hiqp_client src/hiqp_client.cpp)
+# hiqp-client library and executale
+add_library(hiqp_client SHARED src/hiqp_client.cpp)
 target_include_directories(
   hiqp_client
   PUBLIC
+  ${GUROBI_INCLUDE_DIR}
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>
 )
-target_link_libraries(hiqp_client ${GUROBI_LIBS})
-
+target_link_directories(hiqp_client PUBLIC ${GUROBI_LIB_DIR})
+target_link_libraries(hiqp_client PUBLIC ${GUROBI_LIBS})
 # hiqp_client_test
 add_executable (test_hiqp_client src/test_hiqp_client.cpp)
-target_link_libraries(test_hiqp_client hiqp_client)
-
+target_link_libraries(test_hiqp_client PUBLIC hiqp_client)
+ament_target_dependencies(hiqp_client PUBLIC ${THIS_PACKAGE_INCLUDE_DEPENDS})
+#----------------------------------------------------------------------#
 
 # hiqp-ros library
-add_library(${PROJECT_NAME} 
+add_library(${PROJECT_NAME} SHARED 
                             src/ros_topic_subscriber.cpp
                             src/ros_visualizer.cpp
                             src/hiqp_service_handler.cpp
+                            src/hiqp_controller.cpp
                             src/utilities.cpp)
-#    src/hiqp_joint_velocity_controller.cpp
-#                            src/hiqp_joint_effort_controller.cpp
-
 target_include_directories(
   ${PROJECT_NAME}
   PUBLIC
+  ${GUROBI_INCLUDE_DIR}
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>
 )
-target_link_libraries(${PROJECT_NAME} ${GUROBI_LIBS})
+target_link_directories(${PROJECT_NAME} PUBLIC ${GUROBI_LIB_DIR})
+target_link_libraries(${PROJECT_NAME} PUBLIC hiqp_parameters ${GUROBI_LIBS})
+pluginlib_export_plugin_description_file(controller_interface hiqp_plugin.xml)
+ament_target_dependencies(${PROJECT_NAME} PUBLIC ${THIS_PACKAGE_INCLUDE_DEPENDS})
+#----------------------------------------------------------------------#
 
 #add_dependencies(${PROJECT_NAME} hiqp_msgs_generate_messages_cpp)
 
 #target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} ${orocos_kdl_LIBRARIES} ${GUROBI_LIBS})
 
 #add_dependencies(hiqp_client hiqp_msgs_generate_messages_cpp)
-
 
 # TODO needs to be ported again if anyone cares for it?
 # hiqp-joint-trajectory-controller
@@ -101,16 +108,14 @@ target_link_libraries(${PROJECT_NAME} ${GUROBI_LIBS})
 
 #add_dependencies(test_hiqp_client hiqp_msgs_generate_messages_cpp)
 #---------------------------Dependencies ------------------------#
-ament_target_dependencies(hiqp_client ${THIS_PACKAGE_INCLUDE_DEPENDS})
-ament_target_dependencies(${PROJECT_NAME} ${THIS_PACKAGE_INCLUDE_DEPENDS})
 
-ament_export_targets(export_hiqp_ros HAS_LIBRARY_TARGET)
-ament_export_dependencies(${THIS_PACKAGE_INCLUDE_DEPENDS})
-ament_package()
 #===================================================================================================
 # Installation
 #===================================================================================================
-install(TARGETS hiqp_client
+ament_export_targets(export_hiqp_ros HAS_LIBRARY_TARGET)
+ament_export_dependencies(${THIS_PACKAGE_INCLUDE_DEPENDS})
+ament_package()
+install(TARGETS hiqp_client hiqp_parameters ${PROJECT_NAME}
         EXPORT export_hiqp_ros
         ARCHIVE DESTINATION lib 
         LIBRARY DESTINATION lib 
