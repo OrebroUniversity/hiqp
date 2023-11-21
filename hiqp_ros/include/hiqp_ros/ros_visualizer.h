@@ -21,6 +21,7 @@
 #include <visualization_msgs/msg/marker_array.hpp>
 
 #include <rclcpp/rclcpp.hpp>
+#include <rclcpp_lifecycle/lifecycle_node.hpp>
 
 using hiqp::Visualizer;
 using hiqp::geometric_primitives::GeometricPoint;
@@ -41,7 +42,7 @@ class ROSVisualizer : public hiqp::Visualizer {
   ROSVisualizer();
   ~ROSVisualizer() noexcept {}
 
-  int init(rclcpp::Node::SharedPtr controller_nh);
+  int init(std::shared_ptr<rclcpp_lifecycle::LifecycleNode> controller_nh);
 
   int add(std::shared_ptr<GeometricPoint> point);
   int add(std::shared_ptr<GeometricLine> line);
@@ -87,7 +88,7 @@ class ROSVisualizer : public hiqp::Visualizer {
   const double kFrameArrowRadius = 0.0017;
   const double kFrameArrowLength = 0.04;
 
-  rclcpp::Node::SharedPtr controller_nh_;
+  std::shared_ptr<rclcpp_lifecycle::LifecycleNode> controller_nh_;
 
   rclcpp::Publisher<visualization_msgs::msg::MarkerArray>::SharedPtr marker_array_pub_;
 

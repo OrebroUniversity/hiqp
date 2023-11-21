@@ -3,7 +3,7 @@
 int main(int argc, char* argv[]) {
   rclcpp::init(argc, argv);
 
-  hiqp_ros::HiQPClient client("yumi","hiqp_joint_velocity_controller");
+  hiqp_ros::HiQPClient client("","hiqp_controller");
 
   std::vector<hiqp_msgs::msg::Primitive> primitives;
   hiqp_msgs::msg::Primitive p1, p2;
@@ -26,7 +26,7 @@ int main(int argc, char* argv[]) {
 
   client.run();
   client.setPrimitives(primitives);
-  client.setJointAngles(std::vector<double>(14, 1.0));
+  client.setJointAngles(std::vector<double>(2, -0.5));
   client.quit();
 
   return 0;

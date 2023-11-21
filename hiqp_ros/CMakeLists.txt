@@ -29,6 +29,7 @@ set(CMAKE_VERBOSE_MAKEFILE off)
 find_package(ament_cmake          REQUIRED)
 set(THIS_PACKAGE_INCLUDE_DEPENDS
 rclcpp              
+rclcpp_lifecycle              
 orocos_kdl          
 controller_interface
 visualization_msgs  
@@ -115,7 +116,7 @@ ament_target_dependencies(${PROJECT_NAME} PUBLIC ${THIS_PACKAGE_INCLUDE_DEPENDS}
 ament_export_targets(export_hiqp_ros HAS_LIBRARY_TARGET)
 ament_export_dependencies(${THIS_PACKAGE_INCLUDE_DEPENDS})
 ament_package()
-install(TARGETS hiqp_client hiqp_parameters ${PROJECT_NAME}
+install(TARGETS hiqp_client hiqp_parameters ${PROJECT_NAME} test_hiqp_client
         EXPORT export_hiqp_ros
         ARCHIVE DESTINATION lib 
         LIBRARY DESTINATION lib 

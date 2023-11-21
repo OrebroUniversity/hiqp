@@ -35,3 +35,33 @@ hiqp_ros:
       unique<>: null,
     }
   }
+  state_publish_rate: {
+    type: double,
+    default_value: 100.0,
+    description: "Frequency to publish state messages",
+    read_only: true,
+    validation: {
+      gt_eq: [1.0]
+    }
+  }
+  load_tf: {
+    type: bool,
+    default_value: false,
+    description: "Set to true if TF frames should be tracked as primitives",
+    read_only: true,
+  }
+  monitor: {
+    type: bool,
+    default_value: true,
+    description: "Should we publish the monitored tasks progress?",
+    read_only: true,
+  }
+  monitor_rate: {
+    type: double,
+    default_value: 20.0,
+    description: "Frequency to publish task measure messages",
+    read_only: true,
+    validation: {
+      gt_eq: [1.0]
+    }
+  }

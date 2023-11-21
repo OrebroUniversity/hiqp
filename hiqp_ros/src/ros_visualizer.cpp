@@ -29,11 +29,11 @@ double marker_lifetime = 10;  // added markers live for 1 second
 
 ROSVisualizer::ROSVisualizer() : next_id_(0) {}
 
-int ROSVisualizer::init(rclcpp::Node::SharedPtr controller_nh) {
+int ROSVisualizer::init(rclcpp_lifecycle::LifecycleNode::SharedPtr controller_nh) {
   controller_nh_ = controller_nh;
   marker_array_pub_ =
       controller_nh_->create_publisher<visualization_msgs::msg::MarkerArray>(
-          "visualization_marker", rclcpp::QoS(1));
+          "/hiqp_controller/visualization_marker", rclcpp::QoS(1));
   
   controller_nh_->declare_parameter("marker_prefix","/");
   marker_prefix = controller_nh_->get_parameter("marker_prefix").as_string();

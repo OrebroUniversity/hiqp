@@ -2,6 +2,8 @@
 #include <memory>
 #include <cassert>
 
+#include <rclcpp/executor.hpp>
+
 namespace hiqp_ros {
 
 HiQPClient::HiQPClient(const std::string& robot_namespace,
@@ -10,60 +12,61 @@ HiQPClient::HiQPClient(const std::string& robot_namespace,
     : robot_namespace_(robot_namespace),
       controller_namespace_(controller_namespace),
       running_(false) {
+  controller_node_name_ = (robot_namespace == "") ? controller_namespace : (robot_namespace + "/" + controller_namespace);
+  nh_ = std::make_shared<rclcpp::Node> ("hiqp_client");
   if (auto_connect) this->connectToServer();
-  nh_ = std::make_shared<rclcpp::Node> (robot_namespace + "/" + controller_namespace);
 }
 
 void HiQPClient::connectToServer() {
 
   //clients for talking to controller
-  set_tasks_client_ = nh_->create_client<hiqp_msgs::srv::SetTasks>("set_tasks");
+  set_tasks_client_ = nh_->create_client<hiqp_msgs::srv::SetTasks>(controller_node_name_+"/set_tasks");
   set_tasks_client_->wait_for_service();
 
   set_primitives_client_ =
-      nh_->create_client<hiqp_msgs::srv::SetPrimitives>("set_primitives");
+      nh_->create_client<hiqp_msgs::srv::SetPrimitives>(controller_node_name_+"/set_primitives");
   set_primitives_client_->wait_for_service();
 
   activate_task_client_ =
-      nh_->create_client<hiqp_msgs::srv::ActivateTask>("activate_task");
+      nh_->create_client<hiqp_msgs::srv::ActivateTask>(controller_node_name_+"/activate_task");
   activate_task_client_->wait_for_service();
 
   deactivate_task_client_ =
-      nh_->create_client<hiqp_msgs::srv::DeactivateTask>("deactivate_task");
+      nh_->create_client<hiqp_msgs::srv::DeactivateTask>(controller_node_name_+"/deactivate_task");
   deactivate_task_client_->wait_for_service();
 
 	get_all_primitives_client_ =
-      nh_->create_client<hiqp_msgs::srv::GetAllPrimitives>("get_all_primitives");
+      nh_->create_client<hiqp_msgs::srv::GetAllPrimitives>(controller_node_name_+"/get_all_primitives");
   get_all_primitives_client_->wait_for_service();
 
   get_all_tasks_client_ =
-      nh_->create_client<hiqp_msgs::srv::GetAllTasks>("get_all_tasks");
+      nh_->create_client<hiqp_msgs::srv::GetAllTasks>(controller_node_name_+"/get_all_tasks");
   get_all_tasks_client_->wait_for_service();
   
   remove_tasks_client_ =
-      nh_->create_client<hiqp_msgs::srv::RemoveTasks>("remove_tasks");
+      nh_->create_client<hiqp_msgs::srv::RemoveTasks>(controller_node_name_+"/remove_tasks");
   remove_tasks_client_->wait_for_service();
 
   remove_primitives_client_ =
-      nh_->create_client<hiqp_msgs::srv::RemovePrimitives>("remove_primitives");
+      nh_->create_client<hiqp_msgs::srv::RemovePrimitives>(controller_node_name_+"/remove_primitives");
   remove_primitives_client_->wait_for_service();
 
   remove_all_tasks_client_ =
-      nh_->create_client<hiqp_msgs::srv::RemoveAllTasks>("remove_all_tasks");
+      nh_->create_client<hiqp_msgs::srv::RemoveAllTasks>(controller_node_name_+"/remove_all_tasks");
   remove_all_tasks_client_->wait_for_service();
 
   remove_all_primitives_client_ =
       nh_->create_client<hiqp_msgs::srv::RemoveAllPrimitives>(
-          "remove_all_primitives");
+          controller_node_name_+"/remove_all_primitives");
   remove_all_primitives_client_->wait_for_service();
   
   is_task_set_client_ =
       nh_->create_client<hiqp_msgs::srv::IsTaskSet>(
-          "is_task_set");
+          controller_node_name_+"/is_task_set");
   is_task_set_client_->wait_for_service();
 
   //subscribers
-  std::string topic_global= "/" + robot_namespace_ + "/" + controller_namespace_ + "/task_measures";
+  std::string topic_global= controller_node_name_ + "/task_measures";
   //std::cerr<<"Subscribing to "<<topic_global<<std::endl;
   task_measures_sub_ = nh_->create_subscription<hiqp_msgs::msg::TaskMeasures>(topic_global, 10,
       std::bind(&HiQPClient::taskMeasuresCallback, this, std::placeholders::_1));
@@ -78,7 +81,9 @@ void HiQPClient::run() {
   running_=true;
   async_spinner_ = std::shared_ptr<std::thread> (new std::thread(
            [stop_token = stop_async_spinner_.get_future(), this]() {
-           rclcpp::executors::MultiThreadedExecutor executor;
+           auto args = rclcpp::ExecutorOptions();
+           //4 threads
+           rclcpp::executors::MultiThreadedExecutor executor(args,4);
            executor.add_node(this->nh_);
            executor.spin_until_future_complete(stop_token);
            //at this point we are done and should signal the node
@@ -396,7 +401,7 @@ void HiQPClient::waitForCompletion(
   auto isTaskSetResponse = std::make_shared<hiqp_msgs::srv::IsTaskSet::Response>();
   
   while (status < task_names.size() && rclcpp::ok()) {
-    RCLCPP_INFO_THROTTLE(nh_->get_logger(), *clock, 5000, 
+    RCLCPP_WARN_THROTTLE(nh_->get_logger(), *clock, 1000, 
         "[waitForCompletion]: %d out of %ld tasks complete.",
                       status, task_names.size());
     status = 0;
@@ -417,7 +422,7 @@ void HiQPClient::waitForCompletion(
       
       isTaskSet->name = task_name;
 
-      if (!this->blocking_call<hiqp_msgs::srv::IsTaskSet>
+      if (this->blocking_call<hiqp_msgs::srv::IsTaskSet>
           (is_task_set_client_, isTaskSet, isTaskSetResponse)) {
       	if (!isTaskSetResponse->is_set) {
       		RCLCPP_INFO(nh_->get_logger(),"%s task has been removed.", task_name.c_str());
@@ -490,7 +495,7 @@ bool HiQPClient::setJointAngles(const std::vector<double>& joint_angles,
   }
 
   bool ret = this->setTask("joint_configuration", 3, true, true, true, def_params,
-      {"TDynPD", "0.75"});
+      {"TDynLinear", "0.75"});
   if (ret) {
     if (remove) {
       waitForCompletion({"joint_configuration"}, {TaskDoneReaction::REMOVE},

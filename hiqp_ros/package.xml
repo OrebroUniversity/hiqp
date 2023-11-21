@@ -5,6 +5,7 @@
   <description>The HiQP_Controllers package</description>
 
   <author email="marcus.adam.johansson@gmail.com">Marcus A Johansson</author>
+  <author email="todor.stoyanov@oru.se">Todor Stoyanov</author>
   <maintainer email="todor.stoyanov@oru.se">Todor Stoyanov</maintainer>
   
   <license>GPLv3</license>
@@ -12,6 +13,7 @@
   <buildtool_depend>ament_cmake</buildtool_depend>
 
   <depend>rclcpp</depend>  
+  <depend>rclcpp_lifecycle</depend>  
   <depend>controller_interface</depend>
   <depend>control_msgs</depend>
   <depend>kdl_parser</depend>

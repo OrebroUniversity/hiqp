@@ -38,6 +38,7 @@
 
 #include <hiqp/robot_state.h>
 #include <hiqp_msgs/msg/joint_controller_state.hpp>
+#include <hiqp_msgs/msg/task_measures.hpp>
 #include <hiqp_ros/utilities.h>
 #include <hiqp_ros/ros_topic_subscriber.h>
 #include <hiqp_ros/ros_visualizer.h>
@@ -99,6 +100,10 @@ namespace hiqp_ros {
 
       protected:
 
+        std::string urdf_;
+        //fetches robot description and stores in urdf
+        bool getRobotDescriptionFromServer();
+
         // Parameters from ROS for joint_trajectory_controller
         std::shared_ptr<ParamListener> param_listener_;
         Params params_;
@@ -113,10 +118,9 @@ namespace hiqp_ros {
         int loadUrdfToKdlTree();
 
         //These should not be neded anymore, we use resource manager
-        //int loadJointsAndSetJointHandlesMap();
         //int loadSensorsAndSetSensorHandlesMap();
         
-        void readState();
+        void sampleJointValues();
         void setControls();
         void publishControllerState();
 
@@ -142,16 +146,23 @@ namespace hiqp_ros {
          // Storing command joint names for interfaces
         std::vector<std::string> command_joint_names_;
 
-
-        realtime_tools::RealtimePublisher<hiqp_msgs::msg::JointControllerState>
-          c_state_pub_;
+        typedef realtime_tools::RealtimePublisher<hiqp_msgs::msg::JointControllerState> RTPublisher;
+        typedef realtime_tools::RealtimePublisher<hiqp_msgs::msg::TaskMeasures> MonitorPublisher;
+        std::shared_ptr<RTPublisher> c_state_pub_;
+        std::shared_ptr<MonitorPublisher> monitoring_pub_;
         rclcpp::Time last_c_state_update_;
         double c_state_publish_rate_;
 
         //controller can work with the following hardware interfaces
         const std::vector<std::string> allowed_interface_types_ = {
-          hardware_interface::HW_IF_VELOCITY
-         // hardware_interface::HW_IF_ACCELERATION,
+          hardware_interface::HW_IF_VELOCITY,
+          hardware_interface::HW_IF_ACCELERATION
+         // hardware_interface::HW_IF_EFFORT,
+        };
+        const std::vector<std::string> allowed_state_interface_types_ = {
+          hardware_interface::HW_IF_POSITION,
+          hardware_interface::HW_IF_VELOCITY,
+          hardware_interface::HW_IF_ACCELERATION
          // hardware_interface::HW_IF_EFFORT,
         };
 
@@ -170,6 +181,7 @@ namespace hiqp_ros {
         void loadJointLimitsFromParamServer();
         void loadGeometricPrimitivesFromParamServer();
         void loadTasksFromParamServer();
+        int loadJointsAndSetJointHandlesMap();
 
         bool is_active_;
         bool monitoring_active_;
@@ -179,14 +191,17 @@ namespace hiqp_ros {
         double rendering_publish_rate_;
         rclcpp::Time last_rendering_update_;
 
-        //ros::Publisher monitoring_pub_;
-
         ROSTopicSubscriber topic_subscriber_;
 
         HiQPServiceHandler service_handler_;  // takes care of all ros service calls
 
-        std::shared_ptr<Visualizer> visualizer_;
+        std::shared_ptr<ROSVisualizer> visualizer_;
         std::shared_ptr<hiqp::TaskManager> task_manager_ptr_;
+
+        bool is_velocity_, is_acceleration_;
+
+        //links joint number q to index in joint_command_interface_
+        std::map<int,int> joint_handles_map_;
     };
 
 

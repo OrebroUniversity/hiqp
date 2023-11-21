@@ -27,13 +27,17 @@
 #include <hiqp_ros/utilities.h>
 
 #include <hiqp_msgs/msg/string_array.hpp>
-#include <hiqp_msgs/msg/task_measures.hpp>
 #include <hiqp_msgs/msg/vector3d.hpp>
 
 #include <tf2_msgs/msg/tf_message.hpp>
 
+#include <controller_interface/controller_interface_base.hpp>
+#include "controller_interface/helpers.hpp"
+#include<chrono>
+
 using hiqp::TaskMeasure;
 using namespace hiqp_ros;
+using namespace std::chrono_literals;
 
 ////////////////////////////////////////////////////////////////////////////////
 //  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
@@ -59,7 +63,38 @@ controller_interface::CallbackReturn HiqpController::on_init() {
     return CallbackReturn::ERROR;
   }
   RCLCPP_INFO(get_node()->get_logger(), "HiQP controller initializing");
+
+  if(!getRobotDescriptionFromServer()) 
+  {
+    RCLCPP_ERROR(get_node()->get_logger(), "Could not fetch robot_description from server");
+    return CallbackReturn::ERROR;
+  }
+
   return CallbackReturn::SUCCESS;
+}
+        
+bool HiqpController::getRobotDescriptionFromServer() {
+  auto param_client = std::make_shared<rclcpp::SyncParametersClient>(get_node(), "/robot_state_publisher");
+  while (!param_client->wait_for_service(1s))
+  {
+    if (!rclcpp::ok())
+    {
+      RCLCPP_ERROR(get_node()->get_logger(), "Interrupted while waiting for the service. Exiting.");
+      return false;
+    }
+    RCLCPP_INFO(get_node()->get_logger(), "Service not available, waiting again...");
+  }
+
+  auto parameters = param_client->get_parameters({ "robot_description" });
+  for (auto& parameter : parameters)
+  {
+    if (parameter.get_name() == "robot_description")
+    {
+      urdf_ = parameter.value_to_string();
+      break;
+    }
+  }
+  return true;
 }
 
 //called during configuration of command interfaces
@@ -133,7 +168,6 @@ controller_interface::CallbackReturn HiqpController::on_configure(
 
   if (params_.joints.empty())
   {
-    // TODO(destogl): is this correct? Can we really move-on if no joint names are not provided?
     RCLCPP_WARN(logger, "'joints' parameter is empty.");
   }
 
@@ -162,43 +196,32 @@ controller_interface::CallbackReturn HiqpController::on_configure(
   // allocation during activation
   joint_command_interface_.resize(allowed_interface_types_.size());
 
-#if 0
-  if (!reset())
-  {
+  robot_state_ptr_ = RobotStatePtr(new RobotState()); //.reset(&robot_state_data_);
+
+  rclcpp::Time t = get_node()->get_clock()->now();
+  int64_t sec = t.nanoseconds()*1e-9;
+  int64_t nsec = t.nanoseconds() - sec*1e9;
+  last_sampling_time_point_.setTimePoint(sec, nsec);
+
+  //load urdf into the robot pointer
+  if(loadUrdfToKdlTree()<0) {
     return CallbackReturn::FAILURE;
   }
+  RCLCPP_INFO(logger,"Loaded KDL tree");
 
-  has_position_command_interface_ =
-    contains_interface_type(params_.command_interfaces, hardware_interface::HW_IF_POSITION);
-  has_velocity_command_interface_ =
-    contains_interface_type(params_.command_interfaces, hardware_interface::HW_IF_VELOCITY);
-  has_acceleration_command_interface_ =
-    contains_interface_type(params_.command_interfaces, hardware_interface::HW_IF_ACCELERATION);
-  has_effort_command_interface_ =
-    contains_interface_type(params_.command_interfaces, hardware_interface::HW_IF_EFFORT);
+  //check if all interfaces are of a given type
+  auto check_ifce_type = [](const std::vector<std::string> & interface_type_list, const std::string & interface_type) {
+    bool has=true;
+    for( auto ifce : interface_type_list) has = has && (ifce == interface_type);
+    return has;
+  };
 
-  // if there is only velocity or if there is effort command interface
-  // then use also PID adapter
-  use_closed_loop_pid_adapter_ =
-    (has_velocity_command_interface_ && params_.command_interfaces.size() == 1 &&
-     !params_.open_loop_control) ||
-    has_effort_command_interface_;
-
-  if (use_closed_loop_pid_adapter_)
-  {
-    pids_.resize(dof_);
-    ff_velocity_scale_.resize(dof_);
-    tmp_command_.resize(dof_, 0.0);
-
-    update_pids();
-  }
-
-  // Configure joint position error normalization from ROS parameters (angle_wraparound)
-  joints_angle_wraparound_.resize(dof_);
-  for (size_t i = 0; i < dof_; ++i)
-  {
-    const auto & gains = params_.gains.joints_map.at(params_.joints[i]);
-    joints_angle_wraparound_[i] = gains.angle_wraparound;
+  is_velocity_ = check_ifce_type(params_.command_interfaces, hardware_interface::HW_IF_VELOCITY);
+  is_acceleration_ = check_ifce_type(params_.command_interfaces, hardware_interface::HW_IF_ACCELERATION);
+ 
+  if(!(is_velocity_ || is_acceleration_)) {
+    RCLCPP_ERROR(logger, "'command_interfaces' should be either velocity or acceleration for all joints.");
+    return CallbackReturn::FAILURE;
   }
 
   if (params_.state_interfaces.empty())
@@ -209,42 +232,22 @@ controller_interface::CallbackReturn HiqpController::on_configure(
 
   // Check if only allowed interface types are used and initialize storage to avoid memory
   // allocation during activation
-  // Note: 'effort' storage is also here, but never used. Still, for this is OK.
   joint_state_interface_.resize(allowed_interface_types_.size());
 
-  has_position_state_interface_ =
-    contains_interface_type(params_.state_interfaces, hardware_interface::HW_IF_POSITION);
-  has_velocity_state_interface_ =
-    contains_interface_type(params_.state_interfaces, hardware_interface::HW_IF_VELOCITY);
-  has_acceleration_state_interface_ =
-    contains_interface_type(params_.state_interfaces, hardware_interface::HW_IF_ACCELERATION);
+  auto has_ifce_type = [](const std::vector<std::string> & interface_type_list, const std::string & interface_type) {
+    return std::find(interface_type_list.begin(), interface_type_list.end(), interface_type) !=
+         interface_type_list.end();
+  };
+  bool has_pos = has_ifce_type(params_.state_interfaces, hardware_interface::HW_IF_POSITION);
+  bool has_vel = has_ifce_type(params_.state_interfaces, hardware_interface::HW_IF_VELOCITY);
 
-  // Validation of combinations of state and velocity together have to be done
-  // here because the parameter validators only deal with each parameter
-  // separately.
-  if (
-    has_velocity_command_interface_ && params_.command_interfaces.size() == 1 &&
-    (!has_velocity_state_interface_ || !has_position_state_interface_))
-  {
-    RCLCPP_ERROR(
-      logger,
-      "'velocity' command interface can only be used alone if 'velocity' and "
-      "'position' state interfaces are present");
+  if(has_pos && has_vel) {
+    RCLCPP_INFO(logger,"We have both position and velocity state info, all good.\n");
+  } else {
+    RCLCPP_ERROR(logger, "'state_interfaces' need to contain both position and velocity");
     return CallbackReturn::FAILURE;
   }
-
-  // effort is always used alone so no need for size check
-  if (
-    has_effort_command_interface_ &&
-    (!has_velocity_state_interface_ || !has_position_state_interface_))
-  {
-    RCLCPP_ERROR(
-      logger,
-      "'effort' command interface can only be used alone if 'velocity' and "
-      "'position' state interfaces are present");
-    return CallbackReturn::FAILURE;
-  }
-
+  
   auto get_interface_list = [](const std::vector<std::string> & interface_types)
   {
     std::stringstream ss_interfaces;
@@ -259,98 +262,51 @@ controller_interface::CallbackReturn HiqpController::on_configure(
     return ss_interfaces.str();
   };
 
+
   // Print output so users can be sure the interface setup is correct
   RCLCPP_INFO(
     logger, "Command interfaces are [%s] and state interfaces are [%s].",
     get_interface_list(params_.command_interfaces).c_str(),
     get_interface_list(params_.state_interfaces).c_str());
 
-  // parse remaining parameters
-  const std::string interpolation_string =
-    get_node()->get_parameter("interpolation_method").as_string();
-  interpolation_method_ = interpolation_methods::from_string(interpolation_string);
-  RCLCPP_INFO(
-    logger, "Using '%s' interpolation method.",
-    interpolation_methods::InterpolationMethodMap.at(interpolation_method_).c_str());
 
-  // prepare hold_position_msg
-  init_hold_position_msg();
+  //initialize realtime publisher
+  c_state_pub_ = std::shared_ptr<RTPublisher> (new RTPublisher(get_node()->create_publisher<hiqp_msgs::msg::JointControllerState>("hiqp_controller_state",1)));
+  last_c_state_update_ = get_node()->get_clock()->now();
+ 
+  monitoring_pub_ = std::shared_ptr<MonitorPublisher> (new MonitorPublisher(get_node()->create_publisher<hiqp_msgs::msg::TaskMeasures>("/hiqp_controller/task_measures",1)));
+  monitoring_active_ = params_.monitor; 
+  monitoring_publish_rate_ = params_.monitor_rate;
+  last_monitoring_update_ = get_node()->get_clock()->now();
 
-  // create subscriber and publishers
-  joint_command_subscriber_ =
-    get_node()->create_subscription<trajectory_msgs::msg::JointTrajectory>(
-      "~/joint_trajectory", rclcpp::SystemDefaultsQoS(),
-      std::bind(&JointTrajectoryController::topic_callback, this, std::placeholders::_1));
+  c_state_publish_rate_ = params_.state_publish_rate;
 
-  publisher_ = get_node()->create_publisher<ControllerStateMsg>(
-    "~/controller_state", rclcpp::SystemDefaultsQoS());
-  state_publisher_ = std::make_unique<StatePublisher>(publisher_);
+  c_state_pub_->msg_.joints.resize(n_joints_);
+  //c_state_pub_->msg_.sensors.resize(n_sensors_);
 
-  state_publisher_->lock();
-  state_publisher_->msg_.joint_names = params_.joints;
-  state_publisher_->msg_.reference.positions.resize(dof_);
-  state_publisher_->msg_.reference.velocities.resize(dof_);
-  state_publisher_->msg_.reference.accelerations.resize(dof_);
-  state_publisher_->msg_.feedback.positions.resize(dof_);
-  state_publisher_->msg_.error.positions.resize(dof_);
-  if (has_velocity_state_interface_)
-  {
-    state_publisher_->msg_.feedback.velocities.resize(dof_);
-    state_publisher_->msg_.error.velocities.resize(dof_);
-  }
-  if (has_acceleration_state_interface_)
-  {
-    state_publisher_->msg_.feedback.accelerations.resize(dof_);
-    state_publisher_->msg_.error.accelerations.resize(dof_);
-  }
-  if (has_position_command_interface_)
-  {
-    state_publisher_->msg_.output.positions.resize(dof_);
-  }
-  if (has_velocity_command_interface_)
-  {
-    state_publisher_->msg_.output.velocities.resize(dof_);
-  }
-  if (has_acceleration_command_interface_)
-  {
-    state_publisher_->msg_.output.accelerations.resize(dof_);
-  }
-  if (has_effort_command_interface_)
-  {
-    state_publisher_->msg_.output.effort.resize(dof_);
+  for (auto &&it : robot_state_ptr_->kdl_tree_.getSegments()) {
+    c_state_pub_->msg_.joints.at(it.second.q_nr).name = it.second.segment.getJoint().getName();
   }
 
-  state_publisher_->unlock();
+  //initialize topic subscribers, visualization and service handlers
+  visualizer_->init(get_node());
+  service_handler_.init(get_node(), task_manager_ptr_, this->getRobotState());
 
-  // action server configuration
-  if (params_.allow_partial_joints_goal)
-  {
-    RCLCPP_INFO(logger, "Goals with partial set of joints are allowed");
+  //loadRenderingParameters();
+
+  if(params_.load_tf) {
+  //  addTfTopicSubscriptions();
   }
 
-  RCLCPP_INFO(
-    logger, "Action status changes will be monitored at %.2f Hz.", params_.action_monitor_rate);
-  action_monitor_period_ = rclcpp::Duration::from_seconds(1.0 / params_.action_monitor_rate);
+  service_handler_.advertiseAll();
 
-  using namespace std::placeholders;
-  action_server_ = rclcpp_action::create_server<FollowJTrajAction>(
-    get_node()->get_node_base_interface(), get_node()->get_node_clock_interface(),
-    get_node()->get_node_logging_interface(), get_node()->get_node_waitables_interface(),
-    std::string(get_node()->get_name()) + "/follow_joint_trajectory",
-    std::bind(&JointTrajectoryController::goal_received_callback, this, _1, _2),
-    std::bind(&JointTrajectoryController::goal_cancelled_callback, this, _1),
-    std::bind(&JointTrajectoryController::goal_accepted_callback, this, _1));
+  task_manager_ptr_->init(getNJoints(), true);
 
-  resize_joint_trajectory_point(state_current_, dof_);
-  resize_joint_trajectory_point_command(command_current_, dof_);
-  resize_joint_trajectory_point(state_desired_, dof_);
-  resize_joint_trajectory_point(state_error_, dof_);
-  resize_joint_trajectory_point(last_commanded_state_, dof_);
+  //loadJointLimitsFromParamServer();
+  //loadGeometricPrimitivesFromParamServer();
+  //loadTasksFromParamServer();
 
-  query_state_srv_ = get_node()->create_service<control_msgs::srv::QueryTrajectoryState>(
-    std::string(get_node()->get_name()) + "/query_state",
-    std::bind(&JointTrajectoryController::query_state_service, this, _1, _2));
-#endif
+  u_vel_ = Eigen::VectorXd::Zero(getNJoints());
   return CallbackReturn::SUCCESS;
 
 }
@@ -359,7 +315,8 @@ controller_interface::CallbackReturn HiqpController::on_configure(
 controller_interface::CallbackReturn HiqpController::on_activate(
     const rclcpp_lifecycle::State & previous_state) {
 
-  RCLCPP_INFO(get_node()->get_logger(), "HiQP controller activating");
+  const auto logger = get_node()->get_logger();
+  RCLCPP_INFO(logger, "HiQP controller activating");
 
   // update the dynamic map parameters
   param_listener_->refresh_dynamic_parameters();
@@ -367,7 +324,48 @@ controller_interface::CallbackReturn HiqpController::on_activate(
   // get parameters from the listener in case they were updated
   params_ = param_listener_->get_params();
 
+  //order all joints in storage
+  for (const auto & interface : params_.command_interfaces)
+  {
+    auto it =
+      std::find(allowed_interface_types_.begin(), allowed_interface_types_.end(), interface);
+    auto index = std::distance(allowed_interface_types_.begin(), it);
+    if (!controller_interface::get_ordered_interfaces(
+          command_interfaces_, command_joint_names_, interface, joint_command_interface_[index]))
+    {
+      RCLCPP_ERROR(
+        get_node()->get_logger(), "Expected %zu '%s' command interfaces, got %zu.", n_joints_,
+        interface.c_str(), joint_command_interface_[index].size());
+      return CallbackReturn::ERROR;
+    }
+  }
+  for (const auto & interface : params_.state_interfaces)
+  {
+    auto it =
+      std::find(allowed_state_interface_types_.begin(), allowed_state_interface_types_.end(), interface);
+    auto index = std::distance(allowed_state_interface_types_.begin(), it);
+    if (it==allowed_state_interface_types_.end()) {
+      RCLCPP_ERROR(logger, "Could not find interface of type %s in allowed interfaces",interface.c_str());
+      return CallbackReturn::ERROR;
+    }
+    if (!controller_interface::get_ordered_interfaces(
+          state_interfaces_, params_.joints, interface, joint_state_interface_[index]))
+    {
+      RCLCPP_ERROR(
+        get_node()->get_logger(), "Expected %zu '%s' state interfaces, got %zu.", n_joints_,
+        interface.c_str(), joint_state_interface_[index].size());
+      return CallbackReturn::ERROR;
+    }
+  }
+
+  //create the handles in hiqp 
+  if(loadJointsAndSetJointHandlesMap() < 0) {
+    RCLCPP_ERROR(logger, "failure in setting up joints map");
+    return CallbackReturn::FAILURE;
+  }
+
   //read current state
+  sampleJointValues();
 
   return CallbackReturn::SUCCESS;
 }
@@ -384,11 +382,17 @@ controller_interface::CallbackReturn HiqpController::on_deactivate(
 controller_interface::return_type HiqpController::update(
     const rclcpp::Time & time, const rclcpp::Duration & period) {
 
+  period_ = period;
+  sampleJointValues();
+  //sampleSensorValues();    
+  updateControls(ddq_, u_);
+  setControls();
+  publishControllerState();
   return controller_interface::return_type::OK;
 } 
 
 void HiqpController::updateControls(Eigen::VectorXd& dq, Eigen::VectorXd& u) {
-  if (!is_active_) return;
+  //if (!is_active_) return;
 
   std::vector<double> _dq(dq.size());
 
@@ -406,46 +410,197 @@ void HiqpController::updateControls(Eigen::VectorXd& dq, Eigen::VectorXd& u) {
         //u_vel_=u; //store the computed velocity controls for the next integration step
 
   //renderPrimitives();
-  //monitorTasks(static_cast<double>(opt_time.count()));
+  monitorTasks(static_cast<double>(opt_time.count()));
 
   return;
 }
 
-#if 0
-  robot_state_ptr_ = RobotStatePtr(new RobotState()); //.reset(&robot_state_data_);
+//=====================================================================================
+int HiqpController::loadUrdfToKdlTree() {
 
-  ROS_INFO("Set up all handles");
-
-  ros::Time t = ros::Time::now();
-  last_sampling_time_point_.setTimePoint(t.sec, t.nsec);
-
-  loadUrdfToKdlTree();
-  ROS_INFO("Loaded KDL tree");
-
-  sampleJointValues();
-  //ROS_INFO("Sampled joint values");
-  //sampleSensorValues();  
-  //ROS_INFO("Calling initialize to derived instance");
-  initialize();
-
-  c_state_pub_.init(controller_nh, "joint_controller_state", 1);
-  last_c_state_update_ = ros::Time::now();
-  controller_nh.param("c_state_publish_rate", c_state_publish_rate_, 100.0);
-  c_state_pub_.msg_.joints.resize(n_joints_);
-  c_state_pub_.msg_.sensors.resize(n_sensors_);
-
-  for (auto &&it : robot_state_ptr_->kdl_tree_.getSegments()) {
-    c_state_pub_.msg_.joints.at(it.second.q_nr).name = it.second.segment.getJoint().getName();
+  bool success =
+    kdl_parser::treeFromString(urdf_, robot_state_ptr_->kdl_tree_);
+  if(!success) {
+    RCLCPP_ERROR(get_node()->get_logger(),"Could not parse urdf to kdl tree");
+    return -1;
   }
-
-
-  for (unsigned int i=0; i<n_sensors_;i++){
-    c_state_pub_.msg_.sensors.at(i).name=robot_state_ptr_->sensor_handle_info_[i].sensor_name_;
-    c_state_pub_.msg_.sensors.at(i).frame_id=robot_state_ptr_->sensor_handle_info_[i].frame_id_;    
-  }
-
-  return CallbackReturn::SUCCESS;
+  return 0;
 }
+
+//=====================================================================================
+int HiqpController::loadJointsAndSetJointHandlesMap() {
+  
+  const auto logger = get_node()->get_logger();
+  RCLCPP_INFO(logger,"Setting up joint handle map...");
+
+  auto n_joints_kdl_ = robot_state_ptr_->kdl_tree_.getNrOfJoints();
+
+  if(n_joints_kdl_ != n_joints_) {
+    RCLCPP_ERROR(logger, "Number of controlled joints is not the same as number of joints in URDF");
+    return -1;
+  }
+
+  std::vector<unsigned int> qnrs;
+
+  qnrs.clear();
+  KDL::SegmentMap all_segments = robot_state_ptr_->kdl_tree_.getSegments();
+  std::cerr<<"KDL tree has "<<all_segments.size()<<" elements\n";
+  for (KDL::SegmentMap::const_iterator element=all_segments.cbegin(); 
+      element!=all_segments.cend(); element++ ) {
+    qnrs.push_back(element->second.q_nr);
+    std::cerr<<element->first<<" added joint "<<element->second.q_nr
+      <<" for segment "<<element->second.segment.getName()<<std::endl;
+  }
+
+  robot_state_ptr_->joint_handle_info_.clear();
+
+  for (auto name = command_joint_names_.begin(); name!=command_joint_names_.end(); name++) {
+    unsigned int q_nr =
+      hiqp::kdl_getQNrFromJointName(robot_state_ptr_->kdl_tree_, *name);
+    RCLCPP_INFO_STREAM(logger, "Joint found: '" << *name << "', qnr: " << q_nr);
+    
+    joint_handles_map_.emplace(q_nr, name-command_joint_names_.begin());
+    qnrs.erase(std::remove(qnrs.begin(), qnrs.end(), q_nr), qnrs.end());
+    robot_state_ptr_->joint_handle_info_.push_back(
+        hiqp::JointHandleInfo(q_nr, *name, true, true));
+  }
+
+#if 0
+  //these are joints for which we don't have an interface
+  for (auto &&qnr : qnrs) {
+    std::string joint_name =
+      hiqp::kdl_getJointNameFromQNr(robot_state_ptr_->kdl_tree_, qnr);
+    hiqp::JointHandleInfo jhi(qnr, joint_name, true, false);
+    robot_state_ptr_->joint_handle_info_.push_back(jhi);
+  }
+#endif
+
+  std::cout << "Joint handle info:\n";
+  for (auto &&jhi : robot_state_ptr_->joint_handle_info_) {
+    std::cout << jhi.q_nr_ << ", " << jhi.joint_name_ << ", " << jhi.readable_
+      << ", " << jhi.writable_ << "\n";
+  }
+
+  robot_state_ptr_->kdl_jnt_array_vel_.resize(n_joints_);
+  KDL::SetToZero(robot_state_ptr_->kdl_jnt_array_vel_.q);
+  KDL::SetToZero(robot_state_ptr_->kdl_jnt_array_vel_.qdot);
+  robot_state_ptr_->kdl_effort_.resize(n_joints_);
+  KDL::SetToZero(robot_state_ptr_->kdl_effort_);
+  ddq_ = Eigen::VectorXd::Zero(n_joints_);
+  u_ = Eigen::VectorXd::Zero(n_joints_);
+  return 0;
+}
+//=====================================================================================
+void HiqpController::sampleJointValues() {
+  robot_state_ptr_->sampling_time_ = period_.nanoseconds()*1e-9;
+
+  KDL::JntArray &q = robot_state_ptr_->kdl_jnt_array_vel_.q;
+  KDL::JntArray &qdot = robot_state_ptr_->kdl_jnt_array_vel_.qdot;
+  //KDL::JntArray &effort = robot_state_ptr_->kdl_effort_;
+  q.data.setZero();
+  qdot.data.setZero();
+  //effort.data.setZero();
+  //double alpha = 0.05;
+
+  //handles_mutex_.lock();
+  //handles_mutex_.unlock();
+  
+  for (auto &&handle : joint_handles_map_) {
+    q(handle.first) = joint_state_interface_[0][handle.second].get().get_value();
+    qdot(handle.first) = joint_state_interface_[1][handle.second].get().get_value(); 
+  }
+
+}
+//=====================================================================================
+void HiqpController::setControls() {
+  //handles_mutex_.lock();
+  for (auto &&handle : joint_handles_map_) {
+    joint_command_interface_[0][handle.second].get().set_value(u_(handle.first));
+  }
+  //handles_mutex_.unlock();
+}
+//=====================================================================================
+
+void HiqpController::monitorTasks(double acc_ctl_comp_time) {
+  if (monitoring_active_) {
+    rclcpp::Time now = get_node()->get_clock()->now();
+    rclcpp::Duration d = now - last_monitoring_update_;
+    if (d.seconds() >= 1.0 / monitoring_publish_rate_) {
+      std::vector<TaskMeasure> measures;
+
+      if(monitoring_pub_->trylock()) {
+        last_monitoring_update_ = now;
+        task_manager_ptr_->getTaskMeasures(measures);
+
+        //std::cerr<<"Generating task measure message with "<<measures.size()<<" tasks\n";
+        hiqp_msgs::msg::TaskMeasures msgs;
+        msgs.stamp = now;
+        for (auto&& measure : measures) {
+          hiqp_msgs::msg::TaskMeasure msg;
+          msg.task_name = measure.task_name_;
+          msg.task_sign = measure.task_sign_;
+          msg.e = std::vector<double>(
+              measure.e_.data(),
+              measure.e_.data() + measure.e_.rows() * measure.e_.cols());
+          msg.de = std::vector<double>(
+              measure.de_.data(),
+              measure.de_.data() + measure.de_.rows() * measure.de_.cols());
+          msg.dde_star = std::vector<double>(
+              measure.dde_star_.data(),
+              measure.dde_star_.data() + measure.dde_star_.rows() * measure.dde_star_.cols());
+          msg.pm = std::vector<double>(
+              measure.pm_.data(),
+              measure.pm_.data() + measure.pm_.rows() * measure.pm_.cols());
+          msgs.task_measures.push_back(msg);
+        }
+        msgs.acc_ctl_comp_time = acc_ctl_comp_time;
+        monitoring_pub_->msg_ = msgs;
+        monitoring_pub_->unlockAndPublish();
+      }
+    }
+  }
+}
+
+//=====================================================================================
+void HiqpController::publishControllerState() {
+
+  rclcpp::Time now = get_node()->get_clock()->now();
+  rclcpp::Duration d = now - last_c_state_update_;
+  if (d.seconds() >= 1.0 / c_state_publish_rate_) {
+    last_c_state_update_ = now;
+
+    if (c_state_pub_->trylock()) {
+
+      KDL::JntArray q = robot_state_ptr_->kdl_jnt_array_vel_.q;
+      KDL::JntArray qdot = robot_state_ptr_->kdl_jnt_array_vel_.qdot;
+      //KDL::JntArray effort = robot_state_ptr_->kdl_effort_;
+
+      c_state_pub_->msg_.header.stamp = now;
+
+      for (unsigned int i = 0; i < n_joints_; i++) {
+        c_state_pub_->msg_.joints[i].command = u_(i);
+        c_state_pub_->msg_.joints[i].position = q(i);
+        c_state_pub_->msg_.joints[i].velocity = qdot(i);
+        //c_state_pub_->msg_.joints[i].effort = effort(i);
+      }
+#if 0
+      for (unsigned int i = 0; i < n_sensors_; i++) {
+        c_state_pub_->msg_.sensors[i].force.clear();
+        c_state_pub_->msg_.sensors[i].force.push_back(robot_state_ptr_->sensor_handle_info_[i].force_(0));
+        c_state_pub_->msg_.sensors[i].force.push_back(robot_state_ptr_->sensor_handle_info_[i].force_(1));
+        c_state_pub_->msg_.sensors[i].force.push_back(robot_state_ptr_->sensor_handle_info_[i].force_(2));
+        c_state_pub_->msg_.sensors[i].torque.clear();
+        c_state_pub_->msg_.sensors[i].torque.push_back(robot_state_ptr_->sensor_handle_info_[i].torque_(0));
+        c_state_pub_->msg_.sensors[i].torque.push_back(robot_state_ptr_->sensor_handle_info_[i].torque_(1));
+        c_state_pub_->msg_.sensors[i].torque.push_back(robot_state_ptr_->sensor_handle_info_[i].torque_(2));
+      }
+#endif
+      c_state_pub_->unlockAndPublish();
+    }
+  }
+}
+
+#if 0
 
 //=====================================================================================
 void HiqpController::update(const ros::Time &time,
@@ -457,26 +612,6 @@ void HiqpController::update(const ros::Time &time,
   setControls();
   publishControllerState();
 }
-//=====================================================================================
-int HiqpController::loadUrdfToKdlTree() {
-  std::string full_parameter_path;
-  std::string robot_urdf;
-  if (controller_nh_.searchParam("robot_description", full_parameter_path)) {
-    controller_nh_.getParam(full_parameter_path, robot_urdf);
-    bool success =
-      kdl_parser::treeFromString(robot_urdf, robot_state_ptr_->kdl_tree_);
-    ROS_ASSERT(success);
-    ROS_INFO("Loaded the robot's urdf model and initialized the KDL tree "
-        "successfully");
-  } else {
-    ROS_ERROR("Could not find parameter 'robot_description' on the parameter "
-        "server.");
-    return -1;
-  }
-  return 0;
-}
-
-//=====================================================================================
 #if 0
 int HiqpController::loadSensorsAndSetSensorHandlesMap() {
   if (!fts_hw_){
@@ -497,87 +632,6 @@ int HiqpController::loadSensorsAndSetSensorHandlesMap() {
 }
 #endif
 //=====================================================================================
-int HiqpController::loadJointsAndSetJointHandlesMap() {
-  ROS_INFO("Setting up joint handle map...");
-  std::string param_name = "joints";
-  std::vector<std::string> joint_names;
-  if (!controller_nh_.getParam(param_name, joint_names)) {
-    ROS_ERROR_STREAM("In ROSKinematicsController: Call to getParam('"
-        << param_name << "') in namespace '"
-        << controller_nh_.getNamespace() << "' failed.");
-    return -1;
-  }
-
-  unsigned int n_joint_names = joint_names.size();
-  n_joints_ = robot_state_ptr_->kdl_tree_.getNrOfJoints();
-
-  //ROS_INFO_STREAM("We have " << n_joint_names << " joints in the controller parameter and " << n_joints_ << " joints in the robot model");
-  if (n_joint_names > n_joints_) {
-    ROS_ERROR_STREAM(
-        "In ROSKinematicsController: The .yaml file"
-        << " includes more joint names (" << n_joint_names
-        << ") than specified in the .urdf file (" << n_joints_
-        << ") Could not successfully initialize controller. Aborting!\n");
-    return -3;
-  }
-
-  std::vector<unsigned int> qnrs;
-
-  qnrs.clear();
-  KDL::SegmentMap all_segments = robot_state_ptr_->kdl_tree_.getSegments();
-  std::cerr<<"KDL tree has "<<all_segments.size()<<" elements\n";
-  for (KDL::SegmentMap::const_iterator element=all_segments.cbegin(); 
-      element!=all_segments.cend(); element++ ) {
-    qnrs.push_back(element->second.q_nr);
-    std::cerr<<element->first<<" added joint "<<element->second.q_nr
-      <<" for segment "<<element->second.segment.getName()<<std::endl;
-  }
-
-  //FIXME: this breaks, code duplication above instead.
-  //hiqp::kdl_getAllQNrFromTree(robot_state_data_.kdl_tree_, qnrs);
-
-  robot_state_ptr_->joint_handle_info_.clear();
-
-  for (auto &&name : joint_names) {
-    try {
-      unsigned int q_nr =
-        hiqp::kdl_getQNrFromJointName(robot_state_ptr_->kdl_tree_, name);
-      ROS_INFO_STREAM("Joint found: '" << name << "', qnr: " << q_nr);
-      joint_handles_map_.emplace(q_nr, jnt_hw_->getHandle(name));
-      qnrs.erase(std::remove(qnrs.begin(), qnrs.end(), q_nr), qnrs.end());
-      robot_state_ptr_->joint_handle_info_.push_back(
-          hiqp::JointHandleInfo(q_nr, name, true, true));
-    } catch (const hardware_interface::HardwareInterfaceException &e) {
-      ROS_ERROR_STREAM("Exception thrown: " << e.what());
-      return -2;
-    }
-    // catch (MAP INSERT FAIL EXCEPTION)
-    // catch (HIQP Q_NR NOT AVAILABLE EXCEPTION)
-  }
-
-  for (auto &&qnr : qnrs) {
-    std::string joint_name =
-      hiqp::kdl_getJointNameFromQNr(robot_state_ptr_->kdl_tree_, qnr);
-    hiqp::JointHandleInfo jhi(qnr, joint_name, true, false);
-    robot_state_ptr_->joint_handle_info_.push_back(jhi);
-  }
-
-  std::cout << "Joint handle info:\n";
-  for (auto &&jhi : robot_state_ptr_->joint_handle_info_) {
-    std::cout << jhi.q_nr_ << ", " << jhi.joint_name_ << ", " << jhi.readable_
-      << ", " << jhi.writable_ << "\n";
-  }
-
-  robot_state_ptr_->kdl_jnt_array_vel_.resize(n_joints_);
-  KDL::SetToZero(robot_state_ptr_->kdl_jnt_array_vel_.q);
-  KDL::SetToZero(robot_state_ptr_->kdl_jnt_array_vel_.qdot);
-  robot_state_ptr_->kdl_effort_.resize(n_joints_);
-  KDL::SetToZero(robot_state_ptr_->kdl_effort_);
-  ddq_ = Eigen::VectorXd::Zero(n_joints_);
-  u_ = Eigen::VectorXd::Zero(n_joints_);
-  return 0;
-}
-//=====================================================================================
 #if 0
 void HiqpController::sampleSensorValues() {
 
@@ -595,114 +649,9 @@ void HiqpController::sampleSensorValues() {
   handles_mutex_.unlock();
 }
 #endif
-//=====================================================================================
-void HiqpController::sampleJointValues() {
-  robot_state_ptr_->sampling_time_ = period_.toSec();
-
-  KDL::JntArray &q = robot_state_ptr_->kdl_jnt_array_vel_.q;
-  KDL::JntArray &qdot = robot_state_ptr_->kdl_jnt_array_vel_.qdot;
-  KDL::JntArray &effort = robot_state_ptr_->kdl_effort_;
-  q.data.setZero();
-  qdot.data.setZero();
-  effort.data.setZero();
-  //double alpha = 0.05;
-
-  handles_mutex_.lock();
-  for (auto &&handle : joint_handles_map_) {
-    q(handle.first) = handle.second.getPosition();
-    qdot(handle.first) = handle.second.getVelocity(); 
-    //qdot(handle.first) = (1-alpha)*qdot(handle.first) +alpha*handle.second.getVelocity(); //FIXME!! low-pass on velocity
-    effort(handle.first) = handle.second.getEffort();
-  }
-
-  handles_mutex_.unlock();
-}
-//=====================================================================================
-void HiqpController::setControls() {
-  handles_mutex_.lock();
-  for (auto &&handle : joint_handles_map_) {
-    handle.second.setCommand(u_(handle.first));
-  }
-  handles_mutex_.unlock();
-}
-//=====================================================================================
-void HiqpController::publishControllerState() {
-
-  ros::Time now = ros::Time::now();
-  ros::Duration d = now - last_c_state_update_;
-  if (d.toSec() >= 1.0 / c_state_publish_rate_) {
-    last_c_state_update_ = now;
-
-    if (c_state_pub_.trylock()) {
-
-      KDL::JntArray q = robot_state_ptr_->kdl_jnt_array_vel_.q;
-      KDL::JntArray qdot = robot_state_ptr_->kdl_jnt_array_vel_.qdot;
-      KDL::JntArray effort = robot_state_ptr_->kdl_effort_;
-
-      c_state_pub_.msg_.header.stamp = ros::Time::now();
-
-      for (unsigned int i = 0; i < n_joints_; i++) {
-        c_state_pub_.msg_.joints[i].command = u_(i);
-        c_state_pub_.msg_.joints[i].position = q(i);
-        c_state_pub_.msg_.joints[i].velocity = qdot(i);
-        c_state_pub_.msg_.joints[i].effort = effort(i);
-      }
-      for (unsigned int i = 0; i < n_sensors_; i++) {
-        c_state_pub_.msg_.sensors[i].force.clear();
-        c_state_pub_.msg_.sensors[i].force.push_back(robot_state_ptr_->sensor_handle_info_[i].force_(0));
-        c_state_pub_.msg_.sensors[i].force.push_back(robot_state_ptr_->sensor_handle_info_[i].force_(1));
-        c_state_pub_.msg_.sensors[i].force.push_back(robot_state_ptr_->sensor_handle_info_[i].force_(2));
-        c_state_pub_.msg_.sensors[i].torque.clear();
-        c_state_pub_.msg_.sensors[i].torque.push_back(robot_state_ptr_->sensor_handle_info_[i].torque_(0));
-        c_state_pub_.msg_.sensors[i].torque.push_back(robot_state_ptr_->sensor_handle_info_[i].torque_(1));
-        c_state_pub_.msg_.sensors[i].torque.push_back(robot_state_ptr_->sensor_handle_info_[i].torque_(2));
-      }
-
-      c_state_pub_.unlockAndPublish();
-    }
-  }
-}
-
-HiqpController::HiqpController()
-  : is_active_(true),
-  monitoring_active_(false),
-  visualizer_(new ROSVisualizer()),
-  task_manager_ptr_(new hiqp::TaskManager(visualizer_)) {}
-
-HiqpController::~HiqpController() noexcept {}
 
 void HiqpController::initialize() {
   std::shared_ptr<ROSVisualizer> ros_visualizer = std::static_pointer_cast<ROSVisualizer>(visualizer_);
-  ros_visualizer->init(this->controller_nh_);
-
-  service_handler_.init(this->getControllerNodeHandlePtr(), task_manager_ptr_, this->getRobotState());
-
-  loadRenderingParameters();
-
-  if (loadAndSetupTaskMonitoring() != 0) return;
-
-  bool tf_primitives = false;
-  if (!this->getControllerNodeHandle().getParam("load_primitives_from_tf",
-        tf_primitives)) {
-    ROS_WARN(
-        "Couldn't find parameter 'load_primitives_from_tf' on parameter "
-        "server, defaulting to no tf primitive tracking.");
-  }
-  if(tf_primitives) {
-    addTfTopicSubscriptions();
-  }
-
-  service_handler_.advertiseAll();
-
-  task_manager_ptr_->init(getNJoints(), true);
-
-  loadJointLimitsFromParamServer();
-
-  loadGeometricPrimitivesFromParamServer();
-
-  loadTasksFromParamServer();
-
-  u_vel_ = Eigen::VectorXd::Zero(getNJoints());
 }
 
 
@@ -725,40 +674,6 @@ void HiqpController::renderPrimitives() {
   }
 }
 
-void HiqpController::monitorTasks(double acc_ctl_comp_time) {
-  if (monitoring_active_) {
-    ros::Time now = ros::Time::now();
-    ros::Duration d = now - last_monitoring_update_;
-    if (d.toSec() >= 1.0 / monitoring_publish_rate_) {
-      last_monitoring_update_ = now;
-      std::vector<TaskMeasure> measures;
-      task_manager_ptr_->getTaskMeasures(measures);
-
-      hiqp_msgs::TaskMeasures msgs;
-      msgs.stamp = now;
-      for (auto&& measure : measures) {
-        hiqp_msgs::TaskMeasure msg;
-        msg.task_name = measure.task_name_;
-        msg.task_sign = measure.task_sign_;
-        msg.e = std::vector<double>(
-            measure.e_.data(),
-            measure.e_.data() + measure.e_.rows() * measure.e_.cols());
-        msg.de = std::vector<double>(
-            measure.de_.data(),
-            measure.de_.data() + measure.de_.rows() * measure.de_.cols());
-        msg.dde_star = std::vector<double>(
-            measure.dde_star_.data(),
-            measure.dde_star_.data() + measure.dde_star_.rows() * measure.dde_star_.cols());
-        msg.pm = std::vector<double>(
-            measure.pm_.data(),
-            measure.pm_.data() + measure.pm_.rows() * measure.pm_.cols());
-        msgs.task_measures.push_back(msg);
-      }
-      msgs.acc_ctl_comp_time = acc_ctl_comp_time;
-      if (!msgs.task_measures.empty()) monitoring_pub_.publish(msgs);
-    }
-  }
-}
 
 void HiqpController::loadRenderingParameters() {
   rendering_publish_rate_ = 1000;  // defaults to 1 kHz
@@ -791,9 +706,6 @@ int HiqpController::loadAndSetupTaskMonitoring() {
   monitoring_publish_rate_ =
     static_cast<double>(task_monitoring["publish_rate"]);
 
-  monitoring_pub_ =
-    this->getControllerNodeHandle().advertise<hiqp_msgs::TaskMeasures>(
-        "task_measures", 1);
 
   return 0;
 }

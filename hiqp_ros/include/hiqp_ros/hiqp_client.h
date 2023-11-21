@@ -32,6 +32,7 @@ enum TaskDoneReaction { NONE = 0, PRINT_INFO = 1, DEACTIVATE = 2, REMOVE = 3 };
 class HiQPClient {
   std::string robot_namespace_;
   std::string controller_namespace_;
+  std::string controller_node_name_;
   /**
    * A nodehandle for the controller namespace.
    *
@@ -242,12 +243,12 @@ bool HiQPClient::blocking_call(std::shared_ptr<rclcpp::Client<T> > &client,
     res_cv_.notify_all();
   };
 
-  auto result = client->async_send_request(request, std::move(callback));
-  std::cerr<<"Request sent\n";
   {
     // Wait for the result.
     std::unique_lock<std::mutex> response_locker(res_mutex_);
-    std::cerr<<"Waiting for result\n";
+    std::cerr<<"Request sent\n";
+    auto result = client->async_send_request(request, std::move(callback));
+    //std::cerr<<"Waiting for result\n";
     res_cv_.wait(response_locker);
   }
   

@@ -18,6 +18,7 @@
 #define HIQP_SERVICE_HANDLER_H
 
 #include <rclcpp/rclcpp.hpp>
+#include <rclcpp_lifecycle/lifecycle_node.hpp>
 
 #include <hiqp/PrimitiveInfo.h>
 #include <hiqp/TaskInfo.h>
@@ -53,7 +54,7 @@ class HiQPServiceHandler {
 
   ~HiQPServiceHandler() noexcept = default;
 
-  void init(rclcpp::Node::SharedPtr node_handle,
+  void init(std::shared_ptr<rclcpp_lifecycle::LifecycleNode> node_handle,
             std::shared_ptr<hiqp::TaskManager> task_manager,
             hiqp::RobotStatePtr robot_state) {
     node_handle_ = node_handle;
@@ -121,7 +122,7 @@ class HiQPServiceHandler {
   bool isTaskSet(const std::shared_ptr<hiqp_msgs::srv::IsTaskSet::Request> req,
       std::shared_ptr<hiqp_msgs::srv::IsTaskSet::Response> res);
 
-  rclcpp::Node::SharedPtr node_handle_;
+  std::shared_ptr<rclcpp_lifecycle::LifecycleNode> node_handle_;
   std::shared_ptr<hiqp::TaskManager> task_manager_;
   hiqp::RobotStatePtr robot_state_;
 

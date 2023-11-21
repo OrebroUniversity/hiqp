@@ -27,39 +27,39 @@ namespace hiqp {
       int dim = e_initial.rows();
       int size = parameters.size();
       assert((e_dot_initial.rows()==dim) && (e_final.rows() == dim) && (e_dot_final.rows() == dim) );
-  
+
       if ((size != 2*dim*dim+1) && (size != dim*2+1) && (size != 3)) {
-	printHiqpWarning("TDynPD for a " + std::to_string(dim) + "-dimensional task requires either 3 or" + std::to_string(2*dim+1) +" or "+std::to_string(2*dim*dim+1) + " parameters, got " + std::to_string(size) + "! Initialization failed!");
-	return -1;
+        printHiqpWarning("TDynPD for a " + std::to_string(dim) + "-dimensional task requires either 3 or " + std::to_string(2*dim+1) +" or "+std::to_string(2*dim*dim+1) + " parameters, got " + std::to_string(size) + "! Initialization failed!");
+        return -1;
       }
-  
+
       //read the gain matrices either given by the single gains, their diagonal elements or in full
       if(size == 3){
-	Kp_=Eigen::MatrixXd::Identity(dim,dim)*std::stod(parameters.at(1));
-	Kd_=Eigen::MatrixXd::Identity(dim,dim)*std::stod(parameters.at(2));
+        Kp_=Eigen::MatrixXd::Identity(dim,dim)*std::stod(parameters.at(1));
+        Kd_=Eigen::MatrixXd::Identity(dim,dim)*std::stod(parameters.at(2));
       }
       else if(size==dim*2+1){ //read the diagonal elements
-	//mat1 = vec1.asDiagonal();
-	Eigen::VectorXd Kp_diag(dim);
-	Eigen::VectorXd Kd_diag(dim);
-	for(unsigned int i=0; i<dim;i++){
-	  Kp_diag(i)=std::stod(parameters.at(i+1));
-	  Kd_diag(i)=std::stod(parameters.at(i+1+dim));	    
-	}
-	Kp_=Kp_diag.asDiagonal();
-	Kd_=Kd_diag.asDiagonal();	
+                              //mat1 = vec1.asDiagonal();
+        Eigen::VectorXd Kp_diag(dim);
+        Eigen::VectorXd Kd_diag(dim);
+        for(unsigned int i=0; i<dim;i++){
+          Kp_diag(i)=std::stod(parameters.at(i+1));
+          Kd_diag(i)=std::stod(parameters.at(i+1+dim));	    
+        }
+        Kp_=Kp_diag.asDiagonal();
+        Kd_=Kd_diag.asDiagonal();	
       }
       else{ //read the full matrices
-	double* Kp_data = new double[dim*dim];
-	double* Kd_data = new double[dim*dim];
-	for (int i=0; i<dim*dim; i++){
-	  Kp_data[i]=std::stod(parameters.at(i+1));
-	  Kd_data[i]=stod(parameters.at(dim*dim+1+i));
-	}
-	Kp_ = (Eigen::Map<Eigen::MatrixXd>(Kp_data,dim,dim)).transpose();
-	Kd_ = (Eigen::Map<Eigen::MatrixXd>(Kd_data,dim,dim)).transpose();
-	delete Kp_data;
-	delete Kd_data;
+        double* Kp_data = new double[dim*dim];
+        double* Kd_data = new double[dim*dim];
+        for (int i=0; i<dim*dim; i++){
+          Kp_data[i]=std::stod(parameters.at(i+1));
+          Kd_data[i]=stod(parameters.at(dim*dim+1+i));
+        }
+        Kp_ = (Eigen::Map<Eigen::MatrixXd>(Kp_data,dim,dim)).transpose();
+        Kd_ = (Eigen::Map<Eigen::MatrixXd>(Kd_data,dim,dim)).transpose();
+        delete Kp_data;
+        delete Kd_data;
       }
       //assemble the corresponding dynamics matrix [0 I, -Kp_ -Kd_]
       Eigen::MatrixXd A(2*dim,2*dim);
@@ -67,12 +67,12 @@ namespace hiqp {
       A.topRightCorner(dim,dim)=Eigen::MatrixXd::Identity(dim,dim);
       A.bottomLeftCorner(dim,dim)= -Kp_;
       A.bottomRightCorner(dim,dim)= -Kd_;
-  
+
       //assert that the controller dynamics are stable
       Eigen::EigenSolver<Eigen::MatrixXd> es(A, false);
       if (es.eigenvalues().real().maxCoeff() >= 0.0) {
-	printHiqpWarning("Unstable controller dynamics! Initialization failed!");
-	return -1;
+        printHiqpWarning("Unstable controller dynamics! Initialization failed!");
+        return -1;
       }
 
       //initialize the controller
