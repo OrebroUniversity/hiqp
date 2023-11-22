@@ -65,3 +65,12 @@ hiqp_ros:
       gt_eq: [1.0]
     }
   }
+  visualization_publish_rate: {
+    type: double,
+    default_value: 100.0,
+    description: "Frequency to publish visualization messages",
+    read_only: true,
+    validation: {
+      gt_eq: [1.0]
+    }
+  }

@@ -58,14 +58,14 @@ namespace hiqp {
 	delete;
 
       int align(std::shared_ptr<PrimitiveA> first,
-		std::shared_ptr<PrimitiveB> second,
-		const RobotStatePtr robot_state);
+          std::shared_ptr<PrimitiveB> second,
+          const RobotStatePtr robot_state);
       /// \brief helper function to compute the task quantities for constant unit vectors whose time derivative is zero in the link frame - uses dot product formulation
       int alignUnitVectors(const KDL::Vector& v1, const KDL::Vector v2, const RobotStatePtr robot_state);
       /// \brief helper function to compute the task quantities for one constant unit vector and one general vector whose time derivative in the link frame can change - uses dot product formulation 
       int alignUnitVectorVector(const Eigen::VectorXd& qdot, const Eigen::Vector3d& v1, const Eigen::Vector3d& v2, const Eigen::Vector3d& v1_dot, const Eigen::Vector3d& v2_dot, const Eigen::Matrix3Xd& J_v1, const Eigen::Matrix3Xd& J_v2, const Eigen::Matrix3Xd& J_v1_dot, const Eigen::Matrix3Xd& J_v2_dot);
 
-            /// \brief helper function to compute the task quantities for aligning two vectors - uses cross product notation
+      /// \brief helper function to compute the task quantities for aligning two vectors - uses cross product notation
       int rotateVectors(const Eigen::Vector3d& v1, const Eigen::Vector3d& v2, const Eigen::Vector3d& v1_dot, const Eigen::Vector3d& v2_dot, const Eigen::Matrix3Xd& J_v1, const Eigen::Matrix3Xd& J_v2, const Eigen::Matrix3Xd& J_v1_dot, const Eigen::Matrix3Xd& J_v2_dot);
 
       /// \brief This sets jacobian columns corresponding to non-writable joints to

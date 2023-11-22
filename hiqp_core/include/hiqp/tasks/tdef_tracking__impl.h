@@ -37,45 +37,46 @@ namespace hiqp {
 
     template <typename PrimitiveA, typename PrimitiveB>
       int TDefTracking<PrimitiveA, PrimitiveB>::init(const std::vector<std::string>& parameters, RobotStatePtr robot_state) {
-      int parameters_size = parameters.size();
-      if (parameters_size != 4 && parameters_size != 5 && parameters_size != 6) {
-	printHiqpWarning("'" + getTaskName() + "': TDefTracking takes 4, 5 or 6 parameters, got " +
-			 std::to_string(parameters_size) + "! The task was not added!");
-	return -1;
-      }
+        
+        int parameters_size = parameters.size();
+        if (parameters_size != 4 && parameters_size != 5 && parameters_size != 6) {
+          printHiqpWarning("'" + getTaskName() + "': TDefTracking takes 4, 5 or 6 parameters, got " +
+              std::to_string(parameters_size) + "! The task was not added!");
+          return -1;
+        }
 
-      std::string prim_type1 = parameters.at(1);
-      std::string prim_type2 = parameters.at(2);
+        std::string prim_type1 = parameters.at(1);
+        std::string prim_type2 = parameters.at(2);
 
-      std::stringstream ss(parameters.at(3));
-      std::vector<std::string> args(std::istream_iterator<std::string>{ss},
-				    std::istream_iterator<std::string>{});
+        std::stringstream ss(parameters.at(3));
+        std::vector<std::string> args(std::istream_iterator<std::string>{ss},
+            std::istream_iterator<std::string>{});
 
-      if (args.size() != 3) {
-	printHiqpWarning("'" + getTaskName() + "': TDefTracking's parameter nr.4 needs whitespace "
-			 "separation! The task was not added!");
-	return -2;
-      }
+        if (args.size() != 3) {
+          printHiqpWarning("'" + getTaskName() + "': TDefTracking's parameter nr.4 needs whitespace "
+              "separation! The task was not added!");
+          return -2;
+        }
 
-      if(parameters_size >= 5){
-	d_max_= std::stod(parameters.at(4));
-	if(d_max_ <= 0.0){
-	  printHiqpWarning("'" + getTaskName() + "': TDefTracking's parameter 5 needs to be positive! The task was not added!");
-	  return -3;
-	}
-      }
+        if(parameters_size >= 5){
+          d_max_= std::stod(parameters.at(4));
+          if(d_max_ <= 0.0){
+            printHiqpWarning("'" + getTaskName() + "': TDefTracking's parameter 5 needs to be positive! The task was not added!");
+            return -3;
+          }
+        }
 
-      if(parameters_size >= 6){
-	phi_max_= std::stod(parameters.at(5));
-	if(phi_max_ <= 0.0 || phi_max_ > 3.1415927/2 ){
-	  printHiqpWarning("'" + getTaskName() + "': TDefTracking's parameter 6 needs to be between 0 and PI/2! The task was not added!");
-	  return -4;
-	}
-      }
+        if(parameters_size >= 6){
+          phi_max_= std::stod(parameters.at(5));
+          if(phi_max_ <= 0.0 || phi_max_ > 3.1415927/2 ){
+            printHiqpWarning("'" + getTaskName() + "': TDefTracking's parameter 6 needs to be between 0 and PI/2! The task was not added!");
+            return -4;
+          }
+        }
 
       unsigned int n_task_dimensions = 3;
       if (prim_type1.compare("frame") == 0 && prim_type2.compare("frame") == 0) {
-	n_task_dimensions = 6;
+        n_task_dimensions = 6;
       }
 
       unsigned int n_joints = robot_state->getNumJoints();

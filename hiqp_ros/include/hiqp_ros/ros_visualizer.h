@@ -34,7 +34,6 @@ using hiqp::geometric_primitives::GeometricFrame;
 
 namespace hiqp_ros {
 
-/// \todo Make node handle pointer a shared pointer
 /*! \brief
  *  \author Marcus A Johansson */
 class ROSVisualizer : public hiqp::Visualizer {
@@ -86,7 +85,7 @@ class ROSVisualizer : public hiqp::Visualizer {
   const double kLineRadius = 0.001;
   const double kPlaneThickness = 0.001;
   const double kFrameArrowRadius = 0.0017;
-  const double kFrameArrowLength = 0.04;
+  const double kFrameArrowLength = 0.10;
 
   std::shared_ptr<rclcpp_lifecycle::LifecycleNode> controller_nh_;
 

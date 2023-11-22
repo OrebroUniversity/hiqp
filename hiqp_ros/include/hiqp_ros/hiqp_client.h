@@ -90,7 +90,7 @@ class HiQPClient {
   std::mutex resource_mutex_;
 
   std::map<std::string, double> task_name_sq_error_map_;
-  std::map<std::string, int8_t> task_name_task_sign_map_;
+  std::map<std::string, int> task_name_task_sign_map_;
 
   /**
    * A callback function for monitoring the task.
@@ -194,6 +194,9 @@ class HiQPClient {
   /** signals the spin thread to stop */
   void quit();
 
+  //special group to actually do multithreading
+  rclcpp::CallbackGroup::SharedPtr callback_group_;
+
   template<class T> 
   bool blocking_call(std::shared_ptr<rclcpp::Client<T> > &client, 
       std::shared_ptr<typename T::Request> &request, std::shared_ptr<typename T::Response> &response);
@@ -238,7 +241,7 @@ bool HiQPClient::blocking_call(std::shared_ptr<rclcpp::Client<T> > &client,
   //lambda magic to unblock once response is available 
   auto callback =  [&res_cv_,&response](typename rclcpp::Client<T>::SharedFutureWithRequest future) 
   {
-    std::cerr<<"Result callback\n";
+    //std::cerr<<"Result callback\n";
     response = future.get().second;
     res_cv_.notify_all();
   };
@@ -246,10 +249,16 @@ bool HiQPClient::blocking_call(std::shared_ptr<rclcpp::Client<T> > &client,
   {
     // Wait for the result.
     std::unique_lock<std::mutex> response_locker(res_mutex_);
-    std::cerr<<"Request sent\n";
+    //std::cerr<<"Request sent\n";
     auto result = client->async_send_request(request, std::move(callback));
     //std::cerr<<"Waiting for result\n";
-    res_cv_.wait(response_locker);
+    auto endTime = std::chrono::system_clock::now() + std::chrono::seconds(1);
+    auto res = res_cv_.wait_until(response_locker, endTime);
+    if (res == std::cv_status::timeout)
+    {
+      RCLCPP_ERROR(nh_->get_logger(),"Service %s timed out waiting for response!",client->get_service_name());
+      return false;
+    }
   }
   
   return true;

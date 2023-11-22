@@ -19,57 +19,62 @@ HiQPClient::HiQPClient(const std::string& robot_namespace,
 
 void HiQPClient::connectToServer() {
 
+  //callback_group_ = nh_->create_callback_group(rclcpp::CallbackGroupType::Reentrant);
+  callback_group_ = nh_->create_callback_group(rclcpp::CallbackGroupType::MutuallyExclusive);
+
   //clients for talking to controller
-  set_tasks_client_ = nh_->create_client<hiqp_msgs::srv::SetTasks>(controller_node_name_+"/set_tasks");
+  set_tasks_client_ = nh_->create_client<hiqp_msgs::srv::SetTasks>(controller_node_name_+"/set_tasks",rmw_qos_profile_services_default, callback_group_);
   set_tasks_client_->wait_for_service();
 
   set_primitives_client_ =
-      nh_->create_client<hiqp_msgs::srv::SetPrimitives>(controller_node_name_+"/set_primitives");
+      nh_->create_client<hiqp_msgs::srv::SetPrimitives>(controller_node_name_+"/set_primitives",rmw_qos_profile_services_default, callback_group_);
   set_primitives_client_->wait_for_service();
 
   activate_task_client_ =
-      nh_->create_client<hiqp_msgs::srv::ActivateTask>(controller_node_name_+"/activate_task");
+      nh_->create_client<hiqp_msgs::srv::ActivateTask>(controller_node_name_+"/activate_task",rmw_qos_profile_services_default, callback_group_);
   activate_task_client_->wait_for_service();
 
   deactivate_task_client_ =
-      nh_->create_client<hiqp_msgs::srv::DeactivateTask>(controller_node_name_+"/deactivate_task");
+      nh_->create_client<hiqp_msgs::srv::DeactivateTask>(controller_node_name_+"/deactivate_task",rmw_qos_profile_services_default, callback_group_);
   deactivate_task_client_->wait_for_service();
 
 	get_all_primitives_client_ =
-      nh_->create_client<hiqp_msgs::srv::GetAllPrimitives>(controller_node_name_+"/get_all_primitives");
+      nh_->create_client<hiqp_msgs::srv::GetAllPrimitives>(controller_node_name_+"/get_all_primitives",rmw_qos_profile_services_default, callback_group_);
   get_all_primitives_client_->wait_for_service();
 
   get_all_tasks_client_ =
-      nh_->create_client<hiqp_msgs::srv::GetAllTasks>(controller_node_name_+"/get_all_tasks");
+      nh_->create_client<hiqp_msgs::srv::GetAllTasks>(controller_node_name_+"/get_all_tasks",rmw_qos_profile_services_default, callback_group_);
   get_all_tasks_client_->wait_for_service();
   
   remove_tasks_client_ =
-      nh_->create_client<hiqp_msgs::srv::RemoveTasks>(controller_node_name_+"/remove_tasks");
+      nh_->create_client<hiqp_msgs::srv::RemoveTasks>(controller_node_name_+"/remove_tasks",rmw_qos_profile_services_default, callback_group_);
   remove_tasks_client_->wait_for_service();
 
   remove_primitives_client_ =
-      nh_->create_client<hiqp_msgs::srv::RemovePrimitives>(controller_node_name_+"/remove_primitives");
+      nh_->create_client<hiqp_msgs::srv::RemovePrimitives>(controller_node_name_+"/remove_primitives",rmw_qos_profile_services_default, callback_group_);
   remove_primitives_client_->wait_for_service();
 
   remove_all_tasks_client_ =
-      nh_->create_client<hiqp_msgs::srv::RemoveAllTasks>(controller_node_name_+"/remove_all_tasks");
+      nh_->create_client<hiqp_msgs::srv::RemoveAllTasks>(controller_node_name_+"/remove_all_tasks",rmw_qos_profile_services_default, callback_group_);
   remove_all_tasks_client_->wait_for_service();
 
   remove_all_primitives_client_ =
       nh_->create_client<hiqp_msgs::srv::RemoveAllPrimitives>(
-          controller_node_name_+"/remove_all_primitives");
+          controller_node_name_+"/remove_all_primitives",rmw_qos_profile_services_default, callback_group_);
   remove_all_primitives_client_->wait_for_service();
   
   is_task_set_client_ =
       nh_->create_client<hiqp_msgs::srv::IsTaskSet>(
-          controller_node_name_+"/is_task_set");
+          controller_node_name_+"/is_task_set",rmw_qos_profile_services_default, callback_group_);
   is_task_set_client_->wait_for_service();
 
   //subscribers
   std::string topic_global= controller_node_name_ + "/task_measures";
+  rclcpp::SubscriptionOptions options;
+  options.callback_group = callback_group_;
   //std::cerr<<"Subscribing to "<<topic_global<<std::endl;
   task_measures_sub_ = nh_->create_subscription<hiqp_msgs::msg::TaskMeasures>(topic_global, 10,
-      std::bind(&HiQPClient::taskMeasuresCallback, this, std::placeholders::_1));
+      std::bind(&HiQPClient::taskMeasuresCallback, this, std::placeholders::_1), options);
 
   RCLCPP_INFO(nh_->get_logger(),"Connected to HiQP Servers.");
 }
@@ -83,7 +88,8 @@ void HiQPClient::run() {
            [stop_token = stop_async_spinner_.get_future(), this]() {
            auto args = rclcpp::ExecutorOptions();
            //4 threads
-           rclcpp::executors::MultiThreadedExecutor executor(args,4);
+           rclcpp::executors::SingleThreadedExecutor executor; //
+           //rclcpp::executors::MultiThreadedExecutor executor(args,4);
            executor.add_node(this->nh_);
            executor.spin_until_future_complete(stop_token);
            //at this point we are done and should signal the node
@@ -209,11 +215,11 @@ bool HiQPClient::removeTasks(const std::vector<std::string>& task_names) {
     if (returnValue == response->success.size()) {
       RCLCPP_INFO(nh_->get_logger(),"Remove task(s) succeeded.");
       
-      resource_mutex_.lock();
+      //resource_mutex_.lock();
       for(auto task_name : task_names) {
          task_name_sq_error_map_.erase(task_name);
       }
-      resource_mutex_.unlock();
+      //resource_mutex_.unlock();
 
       return true;
     } else {
@@ -354,7 +360,7 @@ void HiQPClient::taskMeasuresCallback(
     const hiqp_msgs::msg::TaskMeasures::SharedPtr task_measures) {
   RCLCPP_INFO_THROTTLE(nh_->get_logger(), *nh_->get_clock(), 5000, "%s",
                             taskMeasuresAsString(task_measures).c_str());
-  resource_mutex_.lock();
+  //resource_mutex_.lock();
   for (auto task_measure : task_measures->task_measures) {
     double sq_error;
     if (task_measure.task_sign == hiqp_msgs::msg::TaskMeasure::EQ)
@@ -367,7 +373,7 @@ void HiQPClient::taskMeasuresCallback(
     task_name_task_sign_map_[task_measure.task_name] = task_measure.task_sign;
     task_name_sq_error_map_[task_measure.task_name] = sq_error;
   }
-  resource_mutex_.unlock();
+  //resource_mutex_.unlock();
 }
 
 std::string taskNamesVectorAsString(
@@ -399,7 +405,8 @@ void HiQPClient::waitForCompletion(
   
   auto isTaskSet = std::make_shared<hiqp_msgs::srv::IsTaskSet::Request>();
   auto isTaskSetResponse = std::make_shared<hiqp_msgs::srv::IsTaskSet::Response>();
-  
+ 
+  std::cerr<<"task "<<task_names[0]<<" with tolerance "<<error_tol[0]<<std::endl; 
   while (status < task_names.size() && rclcpp::ok()) {
     RCLCPP_WARN_THROTTLE(nh_->get_logger(), *clock, 1000, 
         "[waitForCompletion]: %d out of %ld tasks complete.",
@@ -407,15 +414,16 @@ void HiQPClient::waitForCompletion(
     status = 0;
     for (auto i = 0; i < task_names.size(); i++) {
       auto& task_name = task_names[i];
-      auto& tol = error_tol[i];
+      double tol = error_tol[i];
 
-      resource_mutex_.lock();
+      //resource_mutex_.lock();
       auto it_sq_error = task_name_sq_error_map_.find(task_name);
+      auto it_sign = task_name_task_sign_map_.find(task_name);
 
       if (max_exec_time != 0 && ((clock->now() - start) > max_exec_dur)) {
         RCLCPP_INFO(nh_->get_logger(),"Max exection time exceeded");
         status += 1;
-        resource_mutex_.unlock();
+        //resource_mutex_.unlock();
         time_exceeded = true;
         break;
       }
@@ -427,30 +435,34 @@ void HiQPClient::waitForCompletion(
       	if (!isTaskSetResponse->is_set) {
       		RCLCPP_INFO(nh_->get_logger(),"%s task has been removed.", task_name.c_str());
       		status += 1;
-        	resource_mutex_.unlock();
+        	//resource_mutex_.unlock();
         	continue;
       	}
       } else {
       	RCLCPP_WARN(nh_->get_logger(),"is_task_set_ service call failed.");
+        continue;
       }
       
-      if (it_sq_error == task_name_sq_error_map_.end()) {
-        resource_mutex_.unlock();
+      if (it_sq_error == task_name_sq_error_map_.end() || it_sign == task_name_task_sign_map_.end()) {
+        //resource_mutex_.unlock();
         continue;
       }
 
-      //std::cerr<<"error "<<it_sq_error->second<<std::endl;
-      if (task_name_task_sign_map_[task_name] == 0) {
+      //std::cerr<<"task "<<it_sq_error->first<<" error "<<it_sq_error->second<<" tol "
+      //  <<tol<<" sign "<<it_sign->second<<std::endl;
+      if (it_sign->second == 0) {
         if (it_sq_error->second < tol) {
           status += 1;
+          //std::cerr<<"equality task done\n";
         }
       } else {
-        if (it_sq_error->second * task_name_task_sign_map_[task_name] >
+        if (it_sq_error->second * it_sign->second  >
             -1 * tol) {
           status += 1;
+          //std::cerr<<"inequality task done\n";
         }
       }
-      resource_mutex_.unlock();
+      //resource_mutex_.unlock();
     }
     if (time_exceeded) {
       break;
@@ -479,9 +491,9 @@ void HiQPClient::waitForCompletion(
         deactivateTask(task_name);
         break;
     }
-    resource_mutex_.lock();
+    //resource_mutex_.lock();
     task_name_sq_error_map_.erase(task_name);
-    resource_mutex_.unlock();
+    //resource_mutex_.unlock();
   }
   removeTasks(tasks_to_remove);
 }
@@ -498,6 +510,7 @@ bool HiQPClient::setJointAngles(const std::vector<double>& joint_angles,
       {"TDynLinear", "0.75"});
   if (ret) {
     if (remove) {
+      std::cerr<<"setting golerance of "<<tol<<std::endl;
       waitForCompletion({"joint_configuration"}, {TaskDoneReaction::REMOVE},
           {tol});
     }

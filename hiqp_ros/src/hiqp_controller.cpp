@@ -20,9 +20,6 @@
 #include <iostream>
 #include <string>
 
-//#include <XmlRpcException.h>
-//#include <XmlRpcValue.h>
-
 #include <hiqp_ros/hiqp_controller.h>
 #include <hiqp_ros/utilities.h>
 
@@ -292,7 +289,7 @@ controller_interface::CallbackReturn HiqpController::on_configure(
   visualizer_->init(get_node());
   service_handler_.init(get_node(), task_manager_ptr_, this->getRobotState());
 
-  //loadRenderingParameters();
+  loadRenderingParameters();
 
   if(params_.load_tf) {
   //  addTfTopicSubscriptions();
@@ -409,7 +406,7 @@ void HiqpController::updateControls(Eigen::VectorXd& dq, Eigen::VectorXd& u) {
   u=dq; //u_vel_+ddq*period_.toSec();
         //u_vel_=u; //store the computed velocity controls for the next integration step
 
-  //renderPrimitives();
+  renderPrimitives();
   monitorTasks(static_cast<double>(opt_time.count()));
 
   return;
@@ -600,6 +597,20 @@ void HiqpController::publishControllerState() {
   }
 }
 
+void HiqpController::renderPrimitives() {
+  rclcpp::Time now = get_node()->get_clock()->now();
+  rclcpp::Duration d = now - last_rendering_update_;
+  if (d.seconds() >= 1.0 / rendering_publish_rate_) {
+    last_rendering_update_ = now;
+    task_manager_ptr_->renderPrimitives();
+  }
+}
+
+
+void HiqpController::loadRenderingParameters() {
+  rendering_publish_rate_ = params_.visualization_publish_rate;  // defaults to 1 kHz
+  last_rendering_update_ = get_node()->get_clock()->now();
+}
 #if 0
 
 //=====================================================================================
@@ -665,26 +676,6 @@ void HiqpController::initialize() {
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-void HiqpController::renderPrimitives() {
-  ros::Time now = ros::Time::now();
-  ros::Duration d = now - last_rendering_update_;
-  if (d.toSec() >= 1.0 / rendering_publish_rate_) {
-    last_rendering_update_ = now;
-    task_manager_ptr_->renderPrimitives();
-  }
-}
-
-
-void HiqpController::loadRenderingParameters() {
-  rendering_publish_rate_ = 1000;  // defaults to 1 kHz
-  if (!this->getControllerNodeHandle().getParam("visualization_publish_rate",
-        rendering_publish_rate_)) {
-    ROS_WARN(
-        "Couldn't find parameter 'visualization_publish_rate' on parameter "
-        "server, defaulting to 1 kHz.");
-  }
-  last_rendering_update_ = ros::Time::now();
-}
 
 /// \todo Task monitoring should publish an array of all task infos at each
 /// publication time step, rather than indeterministacally publishing single
