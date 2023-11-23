@@ -94,14 +94,14 @@ int main(int argc, char* argv[]) {
   p4.frame_id = "base_link";
   p4.visible = true;
   p4.color = {0.0, 0.5, 0.5, 1.0};
-  p4.parameters = {0.55, 0.2, 1.15, 0.2};
+  p4.parameters = {0.5, 0.2, 1.1, 0.2};
   
   p1.name = "link2_target2";
   p1.type = "sphere";
   p1.frame_id = "base_link";
   p1.visible = true;
   p1.color = {0.0, 0.5, 0.5, 1.0};
-  p1.parameters = {0.9, 0.2, 1.6, 0.2};
+  p1.parameters = {1.0, 0.2, 1.8, 0.2};
 
   primitives.clear();
   primitives.push_back(p1);
@@ -116,18 +116,18 @@ int main(int argc, char* argv[]) {
   if (success) {
     std::cerr<<"Waiting for completion of task "<<tname<<std::endl;
     client.waitForCompletion({"nullspace_sphere","point_in_sphere"}, {hiqp_ros::TaskDoneReaction::REMOVE, hiqp_ros::TaskDoneReaction::NONE},
-        {tol, 2*tol});
+        {tol, tol});
   }
 
-  tname = "nullspace_sphere";
+  tname = "nullspace_sphere2";
   def_params = {"TDefGeomProj", "point", "sphere", "second_point < link2_target2"};
   success = client.setTask(tname, 2, true, true, true,
                  def_params, {"TDynLinear", "0.75"});
 
   if (success) {
     std::cerr<<"Waiting for completion of task "<<tname<<std::endl;
-    client.waitForCompletion({"nullspace_sphere","point_in_sphere"}, {hiqp_ros::TaskDoneReaction::REMOVE, hiqp_ros::TaskDoneReaction::NONE},
-        {tol, 2*tol});
+    client.waitForCompletion({"nullspace_sphere2","point_in_sphere"}, {hiqp_ros::TaskDoneReaction::REMOVE, hiqp_ros::TaskDoneReaction::NONE},
+        {tol, tol});
   }
 
   //cleanup

@@ -281,11 +281,13 @@ namespace hiqp {
   }
 
   void printHiqpInfo(const std::string& msg) {
-    std::cout << "[HiQP INFO] : " << msg << "\n";
+    std::cerr << "[HiQP INFO] : " << msg << "\n";
+    std::cerr.flush();
   }
 
   void printHiqpWarning(const std::string& msg) {
     std::cerr << "[HiQP WARNING] : " << msg << "\n";
+    std::cerr.flush();
   }
 
   Eigen::Matrix3d skewSymmetricMatrix(const Eigen::Vector3d& vec){

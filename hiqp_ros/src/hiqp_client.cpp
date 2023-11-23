@@ -21,6 +21,7 @@ void HiQPClient::connectToServer() {
 
   //callback_group_ = nh_->create_callback_group(rclcpp::CallbackGroupType::Reentrant);
   callback_group_ = nh_->create_callback_group(rclcpp::CallbackGroupType::MutuallyExclusive);
+  auto callback_group2 = nh_->create_callback_group(rclcpp::CallbackGroupType::MutuallyExclusive);
 
   //clients for talking to controller
   set_tasks_client_ = nh_->create_client<hiqp_msgs::srv::SetTasks>(controller_node_name_+"/set_tasks",rmw_qos_profile_services_default, callback_group_);
@@ -71,7 +72,7 @@ void HiQPClient::connectToServer() {
   //subscribers
   std::string topic_global= controller_node_name_ + "/task_measures";
   rclcpp::SubscriptionOptions options;
-  options.callback_group = callback_group_;
+  options.callback_group = callback_group2;
   //std::cerr<<"Subscribing to "<<topic_global<<std::endl;
   task_measures_sub_ = nh_->create_subscription<hiqp_msgs::msg::TaskMeasures>(topic_global, 10,
       std::bind(&HiQPClient::taskMeasuresCallback, this, std::placeholders::_1), options);
@@ -351,16 +352,18 @@ std::string taskMeasuresAsString(
            (sq_error * task_measure.task_sign > 0 ? "In limits" : "Off limits");
     }
   }
-  s += "\n";
+  //s += "\n";
   return s;
 }
 
 
 void HiQPClient::taskMeasuresCallback(
     const hiqp_msgs::msg::TaskMeasures::SharedPtr task_measures) {
-  RCLCPP_INFO_THROTTLE(nh_->get_logger(), *nh_->get_clock(), 5000, "%s",
+  RCLCPP_INFO_THROTTLE(nh_->get_logger(), *nh_->get_clock(), 1000, "%s",
                             taskMeasuresAsString(task_measures).c_str());
   //resource_mutex_.lock();
+  //task_name_task_sign_map_.clear();
+  //task_name_sq_error_map_.clear();
   for (auto task_measure : task_measures->task_measures) {
     double sq_error;
     if (task_measure.task_sign == hiqp_msgs::msg::TaskMeasure::EQ)
@@ -406,6 +409,22 @@ void HiQPClient::waitForCompletion(
   auto isTaskSet = std::make_shared<hiqp_msgs::srv::IsTaskSet::Request>();
   auto isTaskSetResponse = std::make_shared<hiqp_msgs::srv::IsTaskSet::Response>();
  
+  std::cerr<<"waiting for all tasks to be monitored\n";
+  while (status < task_names.size() && rclcpp::ok()) {
+    status=0;
+    for (auto i = 0; i < task_names.size(); i++) {
+      auto& task_name = task_names[i];
+      auto it_sq_error = task_name_sq_error_map_.find(task_name);
+      auto it_sign = task_name_task_sign_map_.find(task_name);
+      if (it_sq_error != task_name_sq_error_map_.end() && it_sign != task_name_task_sign_map_.end()) {
+        RCLCPP_INFO(nh_->get_logger(),"%s task is now being monitored.", task_name.c_str());
+        status += 1;
+        continue;
+      }
+    }
+  }
+  status=0;
+
   std::cerr<<"task "<<task_names[0]<<" with tolerance "<<error_tol[0]<<std::endl; 
   while (status < task_names.size() && rclcpp::ok()) {
     RCLCPP_WARN_THROTTLE(nh_->get_logger(), *clock, 1000, 
@@ -427,7 +446,8 @@ void HiQPClient::waitForCompletion(
         time_exceeded = true;
         break;
       }
-      
+     
+      /* 
       isTaskSet->name = task_name;
 
       if (this->blocking_call<hiqp_msgs::srv::IsTaskSet>
@@ -442,8 +462,11 @@ void HiQPClient::waitForCompletion(
       	RCLCPP_WARN(nh_->get_logger(),"is_task_set_ service call failed.");
         continue;
       }
+      */
       
       if (it_sq_error == task_name_sq_error_map_.end() || it_sign == task_name_task_sign_map_.end()) {
+        RCLCPP_INFO(nh_->get_logger(),"%s task is not monitored.", task_name.c_str());
+        status += 1;
         //resource_mutex_.unlock();
         continue;
       }
@@ -453,12 +476,14 @@ void HiQPClient::waitForCompletion(
       if (it_sign->second == 0) {
         if (it_sq_error->second < tol) {
           status += 1;
+      		//RCLCPP_INFO(nh_->get_logger(),"%s task has been completed with error %lf.", task_name.c_str(), it_sq_error->second);
           //std::cerr<<"equality task done\n";
         }
       } else {
         if (it_sq_error->second * it_sign->second  >
             -1 * tol) {
           status += 1;
+      		//RCLCPP_INFO(nh_->get_logger(),"%s task (inequality) has been completed with error %lf.", task_name.c_str(), it_sq_error->second);
           //std::cerr<<"inequality task done\n";
         }
       }

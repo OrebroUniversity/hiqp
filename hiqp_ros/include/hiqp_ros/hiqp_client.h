@@ -252,7 +252,7 @@ bool HiQPClient::blocking_call(std::shared_ptr<rclcpp::Client<T> > &client,
     //std::cerr<<"Request sent\n";
     auto result = client->async_send_request(request, std::move(callback));
     //std::cerr<<"Waiting for result\n";
-    auto endTime = std::chrono::system_clock::now() + std::chrono::seconds(1);
+    auto endTime = std::chrono::system_clock::now() + std::chrono::seconds(5);
     auto res = res_cv_.wait_until(response_locker, endTime);
     if (res == std::cv_status::timeout)
     {
