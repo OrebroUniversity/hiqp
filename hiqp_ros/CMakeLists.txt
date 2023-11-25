@@ -68,10 +68,11 @@ target_include_directories(
 )
 target_link_directories(hiqp_client PUBLIC ${GUROBI_LIB_DIR})
 target_link_libraries(hiqp_client PUBLIC ${GUROBI_LIBS})
+ament_target_dependencies(hiqp_client PUBLIC ${THIS_PACKAGE_INCLUDE_DEPENDS})
 # hiqp_client_test
 add_executable (test_hiqp_client src/test_hiqp_client.cpp)
 target_link_libraries(test_hiqp_client PUBLIC hiqp_client)
-ament_target_dependencies(hiqp_client PUBLIC ${THIS_PACKAGE_INCLUDE_DEPENDS})
+ament_target_dependencies(test_hiqp_client PUBLIC ${THIS_PACKAGE_INCLUDE_DEPENDS})
 #----------------------------------------------------------------------#
 
 # hiqp-ros library
@@ -120,7 +121,7 @@ install(TARGETS hiqp_client hiqp_parameters ${PROJECT_NAME} test_hiqp_client
         EXPORT export_hiqp_ros
         ARCHIVE DESTINATION lib 
         LIBRARY DESTINATION lib 
-        RUNTIME DESTINATION bin)
+        RUNTIME DESTINATION lib/${PROJECT_NAME})
 
 install(
   DIRECTORY "include/"
