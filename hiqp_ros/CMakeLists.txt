@@ -117,11 +117,16 @@ ament_target_dependencies(${PROJECT_NAME} PUBLIC ${THIS_PACKAGE_INCLUDE_DEPENDS}
 ament_export_targets(export_hiqp_ros HAS_LIBRARY_TARGET)
 ament_export_dependencies(${THIS_PACKAGE_INCLUDE_DEPENDS})
 ament_package()
-install(TARGETS hiqp_client hiqp_parameters ${PROJECT_NAME} test_hiqp_client
+install(TARGETS hiqp_client hiqp_parameters ${PROJECT_NAME}
         EXPORT export_hiqp_ros
         ARCHIVE DESTINATION lib 
         LIBRARY DESTINATION lib 
         RUNTIME DESTINATION lib/${PROJECT_NAME})
+
+install(
+  TARGETS test_hiqp_client
+  DESTINATION lib/${PROJECT_NAME}
+)
 
 install(
   DIRECTORY "include/"
