@@ -266,7 +266,6 @@ controller_interface::CallbackReturn HiqpController::on_configure(
     get_interface_list(params_.command_interfaces).c_str(),
     get_interface_list(params_.state_interfaces).c_str());
 
-
   //initialize realtime publisher
   c_state_pub_ = std::shared_ptr<RTPublisher> (new RTPublisher(get_node()->create_publisher<hiqp_msgs::msg::JointControllerState>("hiqp_controller_state",1)));
   last_c_state_update_ = get_node()->get_clock()->now();
@@ -282,7 +281,11 @@ controller_interface::CallbackReturn HiqpController::on_configure(
   //c_state_pub_->msg_.sensors.resize(n_sensors_);
 
   for (auto &&it : robot_state_ptr_->kdl_tree_.getSegments()) {
-    c_state_pub_->msg_.joints.at(it.second.q_nr).name = it.second.segment.getJoint().getName();
+    if(it.second.q_nr < n_joints_) {
+      c_state_pub_->msg_.joints.at(it.second.q_nr).name = it.second.segment.getJoint().getName();
+    } else {
+      RCLCPP_WARN(logger,"Ignoring joint %s with joint number %d", it.second.segment.getJoint().getName().c_str(), it.second.q_nr);
+    }
   }
 
   //initialize topic subscribers, visualization and service handlers
@@ -304,6 +307,7 @@ controller_interface::CallbackReturn HiqpController::on_configure(
   //loadTasksFromParamServer();
 
   u_vel_ = Eigen::VectorXd::Zero(getNJoints());
+  RCLCPP_INFO(logger, "HiQP controller configured");
   return CallbackReturn::SUCCESS;
 
 }

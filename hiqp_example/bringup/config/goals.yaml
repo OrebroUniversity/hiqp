@@ -1,0 +1,12 @@
+publisher_forward_position_controller:
+  ros__parameters:
+
+    wait_sec_between_publish: 5
+    publish_topic: "/forward_position_controller/commands"
+
+    goal_names: ["vel1", "vel2", "vel3", "vel4"]
+    vel1: [0.1,-0.1]
+    vel2: [0,0]
+    vel3: [-0.1,0.1]
+    vel4: [0,0]
+

@@ -535,7 +535,7 @@ bool HiQPClient::setJointAngles(const std::vector<double>& joint_angles,
       {"TDynLinear", "0.75"});
   if (ret) {
     if (remove) {
-      std::cerr<<"setting golerance of "<<tol<<std::endl;
+      std::cerr<<"setting tolerance of "<<tol<<std::endl;
       waitForCompletion({"joint_configuration"}, {TaskDoneReaction::REMOVE},
           {tol});
     }

@@ -106,6 +106,7 @@ def generate_launch_description():
         package="controller_manager",
         executable="spawner",
         arguments=["hiqp_controller", "--controller-manager", "/controller_manager"],
+#        arguments=["forward_position_controller", "--controller-manager", "/controller_manager"],
     )
 
     # Delay rviz start after `joint_state_broadcaster`
@@ -123,6 +124,24 @@ def generate_launch_description():
             on_exit=[robot_controller_spawner],
         )
     )
+ 
+#code below to evaluate how well gazebo tracks joint velocities. Short answer: not well at all    
+#    position_goals = PathJoinSubstitution(
+#        [
+#        FindPackageShare("hiqp_example"),
+#        "config",
+#        "goals.yaml",
+#        ]
+#        )
+#
+#    test_node=Node(
+#        package="ros2_controllers_test_nodes",
+#        executable="publisher_forward_position_controller",
+#        name="publisher_forward_position_controller",
+#        parameters=[position_goals],
+#        output="both",
+#        )
+
 
     nodes = [
         gazebo, 
@@ -131,6 +150,7 @@ def generate_launch_description():
         joint_state_broadcaster_spawner,
         delay_rviz_after_joint_state_broadcaster_spawner,
         delay_robot_controller_spawner_after_joint_state_broadcaster_spawner,
+#        test_node
     ]
 
     return LaunchDescription(declared_arguments + nodes)

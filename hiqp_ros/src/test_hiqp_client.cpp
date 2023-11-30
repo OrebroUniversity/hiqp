@@ -32,7 +32,7 @@ int main(int argc, char* argv[]) {
   p4.type = "sphere";
   p4.frame_id = "base_link";
   p4.visible = true;
-  p4.color = {0.0, 0.0, 1.0, 1.0};
+  p4.color = {0.0, 0.0, 1.0, 0.5};
   p4.parameters = {1.5, 0.2, 0.5, 0.35};
   
   //test nullspace
@@ -93,14 +93,14 @@ int main(int argc, char* argv[]) {
   p4.type = "sphere";
   p4.frame_id = "base_link";
   p4.visible = true;
-  p4.color = {0.0, 0.5, 0.5, 1.0};
+  p4.color = {0.0, 0.5, 0.5, 0.5};
   p4.parameters = {0.5, 0.2, 1.1, 0.2};
   
   p1.name = "link2_target2";
   p1.type = "sphere";
   p1.frame_id = "base_link";
   p1.visible = true;
-  p1.color = {0.0, 0.5, 0.5, 1.0};
+  p1.color = {0.0, 0.5, 0.5, 0.5};
   p1.parameters = {1.0, 0.2, 1.8, 0.2};
 
   primitives.clear();
