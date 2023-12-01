@@ -200,6 +200,9 @@ class HiQPClient {
   template<class T> 
   bool blocking_call(std::shared_ptr<rclcpp::Client<T> > &client, 
       std::shared_ptr<typename T::Request> &request, std::shared_ptr<typename T::Response> &response);
+  
+  //returns node handle, can be used to add more to the client callback groups
+  rclcpp::Node::SharedPtr getHandle() { return nh_; }
 };
 
 hiqp_msgs::msg::Task createTaskMsg(const std::string& name, int16_t priority,

@@ -100,9 +100,9 @@ controller_interface::InterfaceConfiguration HiqpController::command_interface_c
   RCLCPP_INFO(get_node()->get_logger(), "HiQP controller claiming command interfaces");
   
   controller_interface::InterfaceConfiguration conf;
-  //conf.type = controller_interface::interface_configuration_type::INDIVIDUAL;
+  conf.type = controller_interface::interface_configuration_type::INDIVIDUAL;
   //HIQP assumes uniform interface type
-  conf.type = controller_interface::interface_configuration_type::ALL;
+  //conf.type = controller_interface::interface_configuration_type::ALL;
   if (n_joints_ == 0)
   {
     fprintf(
@@ -118,6 +118,7 @@ controller_interface::InterfaceConfiguration HiqpController::command_interface_c
     for (const auto & interface_type : params_.command_interfaces)
     {
       conf.names.push_back(joint_name + "/" + interface_type);
+      //std::cerr<<"HIQP claiming command interface "<<joint_name<<"/"<<interface_type<<std::endl;
     }
   }
   return conf;
