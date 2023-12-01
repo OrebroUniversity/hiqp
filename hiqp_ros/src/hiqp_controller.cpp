@@ -130,7 +130,7 @@ controller_interface::InterfaceConfiguration HiqpController::state_interface_con
   
   controller_interface::InterfaceConfiguration conf;
   conf.type = controller_interface::interface_configuration_type::INDIVIDUAL;
-  conf.names.reserve(n_joints_ * params_.state_interfaces.size());
+  conf.names.reserve(n_state_joints_ * params_.state_interfaces.size());
   for (const auto & joint_name : params_.joints)
   {
     for (const auto & interface_type : params_.state_interfaces)
@@ -160,14 +160,13 @@ controller_interface::CallbackReturn HiqpController::on_configure(
   // get parameters from the listener in case they were updated
   params_ = param_listener_->get_params();
 
-  // get degrees of freedom
-  n_joints_ = params_.joints.size();
-
   if (params_.joints.empty())
   {
-    RCLCPP_WARN(logger, "'joints' parameter is empty.");
+    RCLCPP_ERROR(logger, "'joints' parameter is empty.");
+    return CallbackReturn::FAILURE;
   }
 
+  joint_names_ =  params_.joints;
   command_joint_names_ = params_.command_joints;
 
   if (command_joint_names_.empty())
@@ -176,12 +175,17 @@ controller_interface::CallbackReturn HiqpController::on_configure(
     RCLCPP_INFO(
       logger, "No specific joint names are used for command interfaces. Using 'joints' parameter.");
   }
-  else if (command_joint_names_.size() != params_.joints.size())
+  else if (command_joint_names_.size() > params_.joints.size())
   {
     RCLCPP_ERROR(
-      logger, "'command_joints' parameter has to have the same size as 'joints' parameter.");
+      logger, "Cannot 'command_joints' that are not read in the 'joints' parameter.");
     return CallbackReturn::FAILURE;
   }
+  
+  // get degrees of freedom
+  n_state_joints_ = joint_names_.size();
+  n_joints_ = command_joint_names_.size();
+
 
   if (params_.command_interfaces.empty())
   {
@@ -277,11 +281,11 @@ controller_interface::CallbackReturn HiqpController::on_configure(
 
   c_state_publish_rate_ = params_.state_publish_rate;
 
-  c_state_pub_->msg_.joints.resize(n_joints_);
+  c_state_pub_->msg_.joints.resize(n_state_joints_);
   //c_state_pub_->msg_.sensors.resize(n_sensors_);
 
   for (auto &&it : robot_state_ptr_->kdl_tree_.getSegments()) {
-    if(it.second.q_nr < n_joints_) {
+    if(it.second.q_nr < n_state_joints_) {
       c_state_pub_->msg_.joints.at(it.second.q_nr).name = it.second.segment.getJoint().getName();
     } else {
       RCLCPP_WARN(logger,"Ignoring joint %s with joint number %d", it.second.segment.getJoint().getName().c_str(), it.second.q_nr);
@@ -350,13 +354,13 @@ controller_interface::CallbackReturn HiqpController::on_activate(
       return CallbackReturn::ERROR;
     }
     if (!controller_interface::get_ordered_interfaces(
-          state_interfaces_, params_.joints, interface, joint_state_interface_[index]))
+          state_interfaces_, joint_names_, interface, joint_state_interface_[index]))
     {
       RCLCPP_ERROR(
-        get_node()->get_logger(), "Expected %zu '%s' state interfaces, got %zu.", n_joints_,
+        get_node()->get_logger(), "Expected %zu '%s' state interfaces, got %zu.", n_state_joints_,
         interface.c_str(), joint_state_interface_[index].size());
       return CallbackReturn::ERROR;
-    }
+    } 
   }
 
   //create the handles in hiqp 
@@ -436,8 +440,9 @@ int HiqpController::loadJointsAndSetJointHandlesMap() {
 
   auto n_joints_kdl_ = robot_state_ptr_->kdl_tree_.getNrOfJoints();
 
-  if(n_joints_kdl_ != n_joints_) {
-    RCLCPP_ERROR(logger, "Number of controlled joints is not the same as number of joints in URDF");
+  if(n_joints_kdl_ != n_state_joints_) {
+    RCLCPP_ERROR(logger, "Controller needs state interface access to all joints in the URDF. URDF has %d joints, controller claims %d",
+        n_joints_kdl_, n_state_joints_);
     return -1;
   }
 
@@ -450,6 +455,7 @@ int HiqpController::loadJointsAndSetJointHandlesMap() {
       element!=all_segments.cend(); element++ ) {
     qnrs.push_back(element->second.q_nr);
     std::cerr<<element->first<<" added joint "<<element->second.q_nr
+      <<" name "<<element->second.segment.getJoint().getName() 
       <<" for segment "<<element->second.segment.getName()<<std::endl;
   }
 
@@ -458,23 +464,29 @@ int HiqpController::loadJointsAndSetJointHandlesMap() {
   for (auto name = command_joint_names_.begin(); name!=command_joint_names_.end(); name++) {
     unsigned int q_nr =
       hiqp::kdl_getQNrFromJointName(robot_state_ptr_->kdl_tree_, *name);
-    RCLCPP_INFO_STREAM(logger, "Joint found: '" << *name << "', qnr: " << q_nr);
-    
+    RCLCPP_INFO_STREAM(logger, "Command joint found: '" << *name << "', qnr: " << q_nr);
     joint_handles_map_.emplace(q_nr, name-command_joint_names_.begin());
-    qnrs.erase(std::remove(qnrs.begin(), qnrs.end(), q_nr), qnrs.end());
-    robot_state_ptr_->joint_handle_info_.push_back(
-        hiqp::JointHandleInfo(q_nr, *name, true, true));
+    //robot_state_ptr_->joint_handle_info_.push_back(
+    //    hiqp::JointHandleInfo(q_nr, *name, true, true));
   }
 
-#if 0
-  //these are joints for which we don't have an interface
-  for (auto &&qnr : qnrs) {
-    std::string joint_name =
-      hiqp::kdl_getJointNameFromQNr(robot_state_ptr_->kdl_tree_, qnr);
-    hiqp::JointHandleInfo jhi(qnr, joint_name, true, false);
-    robot_state_ptr_->joint_handle_info_.push_back(jhi);
+  for (auto name = joint_names_.begin(); name!=joint_names_.end(); name++) {
+    unsigned int q_nr =
+      hiqp::kdl_getQNrFromJointName(robot_state_ptr_->kdl_tree_, *name);
+    RCLCPP_INFO_STREAM(logger, "State joint found: '" << *name << "', qnr: " << q_nr);
+    joint_state_handles_map_.emplace(q_nr, name-joint_names_.begin());
+    
+    bool controlled = (std::find(command_joint_names_.begin(), command_joint_names_.end(), *name) != 
+        command_joint_names_.end());
+    robot_state_ptr_->joint_handle_info_.push_back(
+        hiqp::JointHandleInfo(q_nr, *name, true, controlled));
+    qnrs.erase(std::remove(qnrs.begin(), qnrs.end(), q_nr), qnrs.end());
   }
-#endif
+
+  if(qnrs.size()>0) {
+    RCLCPP_ERROR(get_node()->get_logger(),"FATAL: There are joints we can't read in the model");
+    return -1;
+  }
 
   std::cout << "Joint handle info:\n";
   for (auto &&jhi : robot_state_ptr_->joint_handle_info_) {
@@ -482,13 +494,15 @@ int HiqpController::loadJointsAndSetJointHandlesMap() {
       << ", " << jhi.writable_ << "\n";
   }
 
-  robot_state_ptr_->kdl_jnt_array_vel_.resize(n_joints_);
+  //state has dimension n_state_joints_
+  robot_state_ptr_->kdl_jnt_array_vel_.resize(n_state_joints_);
   KDL::SetToZero(robot_state_ptr_->kdl_jnt_array_vel_.q);
   KDL::SetToZero(robot_state_ptr_->kdl_jnt_array_vel_.qdot);
-  robot_state_ptr_->kdl_effort_.resize(n_joints_);
+  robot_state_ptr_->kdl_effort_.resize(n_state_joints_);
   KDL::SetToZero(robot_state_ptr_->kdl_effort_);
-  ddq_ = Eigen::VectorXd::Zero(n_joints_);
-  u_ = Eigen::VectorXd::Zero(n_joints_);
+  ddq_ = Eigen::VectorXd::Zero(n_state_joints_);
+  //commands have dimension n_joints_
+  u_ = Eigen::VectorXd::Zero(n_state_joints_);
   return 0;
 }
 //=====================================================================================
@@ -506,7 +520,7 @@ void HiqpController::sampleJointValues() {
   //handles_mutex_.lock();
   //handles_mutex_.unlock();
   
-  for (auto &&handle : joint_handles_map_) {
+  for (auto &&handle : joint_state_handles_map_) {
     q(handle.first) = joint_state_interface_[0][handle.second].get().get_value();
     qdot(handle.first) = joint_state_interface_[1][handle.second].get().get_value(); 
   }
@@ -514,6 +528,7 @@ void HiqpController::sampleJointValues() {
 }
 //=====================================================================================
 void HiqpController::setControls() {
+  //RCLCPP_WARN_STREAM(get_node()->get_logger(),"u = ["<<u_.transpose()<<"]");
   //handles_mutex_.lock();
   for (auto &&handle : joint_handles_map_) {
     joint_command_interface_[0][handle.second].get().set_value(u_(handle.first));
@@ -578,7 +593,7 @@ void HiqpController::publishControllerState() {
 
       c_state_pub_->msg_.header.stamp = now;
 
-      for (unsigned int i = 0; i < n_joints_; i++) {
+      for (unsigned int i = 0; i < n_state_joints_; i++) {
         c_state_pub_->msg_.joints[i].command = u_(i);
         c_state_pub_->msg_.joints[i].position = q(i);
         c_state_pub_->msg_.joints[i].velocity = qdot(i);

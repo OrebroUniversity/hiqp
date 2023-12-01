@@ -119,10 +119,10 @@ namespace hiqp {
   }
 
   std::string kdl_getJointNameFromQNr(const KDL::Tree& kdl_tree,
-				      unsigned int q_nr) {
+      unsigned int q_nr) {
     for (auto&& it : kdl_tree.getSegments()) {
       if (it.second.q_nr == q_nr) {
-	return it.second.segment.getName();
+        return it.second.segment.getJoint().getName();
       }
     }
     return "";

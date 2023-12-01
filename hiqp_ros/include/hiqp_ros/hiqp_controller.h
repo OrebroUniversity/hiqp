@@ -135,6 +135,7 @@ namespace hiqp_ros {
         //I don't think this is needed either
         //std::mutex handles_mutex_;
         unsigned int n_joints_;
+        unsigned int n_state_joints_;
         unsigned int n_sensors_;  
 
         //New way of dealing with hardware interfaces
@@ -145,6 +146,7 @@ namespace hiqp_ros {
 
          // Storing command joint names for interfaces
         std::vector<std::string> command_joint_names_;
+        std::vector<std::string> joint_names_;
 
         typedef realtime_tools::RealtimePublisher<hiqp_msgs::msg::JointControllerState> RTPublisher;
         typedef realtime_tools::RealtimePublisher<hiqp_msgs::msg::TaskMeasures> MonitorPublisher;
@@ -202,6 +204,7 @@ namespace hiqp_ros {
 
         //links joint number q to index in joint_command_interface_
         std::map<int,int> joint_handles_map_;
+        std::map<int,int> joint_state_handles_map_;
     };
 
 
