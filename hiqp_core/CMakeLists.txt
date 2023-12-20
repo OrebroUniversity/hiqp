@@ -47,7 +47,22 @@ set(SOLVER_SOURCE_FILE "")
 if(${HIQP_QPSOLVER_BACKEND} STREQUAL "gurobi")
 set(GUROBI_INCLUDE_DIR "$ENV{GUROBI_HOME}/include") 
 set(GUROBI_LIB_DIR "$ENV{GUROBI_HOME}/lib")
-set(GUROBI_LIBS gurobi_c++ gurobi100)
+
+# ACQUIRE GUROBI VERSION NUMBER
+file(GLOB GUROBI_LIB_FILES "${GUROBI_LIB_DIR}/libgurobi*.so")
+if(GUROBI_LIB_FILES)  # if any matching files were found
+    list(GET GUROBI_LIB_FILES 0 GUROBI_FIRST_LIB)
+    string(REGEX MATCH "libgurobi([0-9]+)\\.so" GUROBI_VERSION_MATCH ${GUROBI_FIRST_LIB})
+    if(GUROBI_VERSION_MATCH)  # Check if a version number was found
+        set(GUROBI_VERSION ${CMAKE_MATCH_1})
+    else()
+        message(FATAL_ERROR "Unable to infer Gurobi version number from the filename.")
+    endif()
+else()
+    message(FATAL_ERROR "No Gurobi library files found in the specified directory ${GUROBI_LIB_DIR}")
+endif()
+
+set(GUROBI_LIBS gurobi_c++ gurobi${GUROBI_VERSION})
 include_directories(${GUROBI_INCLUDE_DIR})
 link_directories(${GUROBI_LIB_DIR})
 set(SOLVER_SOURCE_FILE "src/solvers/gurobi_solver.cpp" "src/solvers/gurobi_solver_cascade.cpp")
