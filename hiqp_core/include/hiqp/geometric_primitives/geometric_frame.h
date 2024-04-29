@@ -49,6 +49,8 @@ class GeometricFrame : public GeometricPrimitive {
       return -1;
     }
 
+    //std::cerr<<"Setting frame parameters for "<<name_<<std::endl;
+
     kdl_c_(0) = parameters.at(0);
     kdl_c_(1) = parameters.at(1);
     kdl_c_(2) = parameters.at(2);

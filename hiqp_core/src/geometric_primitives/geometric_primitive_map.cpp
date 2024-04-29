@@ -29,10 +29,23 @@ int GeometricPrimitiveMap::setGeometricPrimitive(
     const std::string& name, const std::string& type,
     const std::string& frame_id, bool visible, const std::vector<double>& color,
     const std::vector<double>& parameters) {
-  if (std::find(all_primitive_names_.begin(), all_primitive_names_.end(),
-                name) != all_primitive_names_.end()) {
+  
+  auto primitive = std::find(all_primitive_names_.begin(), all_primitive_names_.end(), name);
+  if ( primitive != all_primitive_names_.end()) {
     printHiqpWarning("A primitive with name '" + name +
                      "' already exists. No new primitive was added!");
+
+    //exception for frames
+    if (type.compare("frame") == 0) {
+      auto primitive_frame = frame_map_.find(name);
+          //dynamic_cast<std::shared_ptr<GeometricFrame> > (primitive->second);
+      if(primitive_frame != frame_map_.end()) {
+        printHiqpWarning("updating frame parameters for '" + name + "'");
+        primitive_frame->second->init(parameters);
+        return 0;
+      }
+    } 
+
     return -1;
   }
 

@@ -39,6 +39,13 @@ class HiQPClient {
    */
   rclcpp::Node::SharedPtr nh_;
 
+
+  /**
+    * If the user wants to add more nodes into the executor, they should push them into this
+    * vector
+    */
+  std::vector<rclcpp::Node::SharedPtr> other_nodes_;
+
 	/**
    * A client to the get_all_primitives service.
    */
@@ -111,7 +118,9 @@ class HiQPClient {
              const std::string& controller_namespace =
                  "hiqp_joint_velocity_controller",
              bool auto_connect = true);
-
+  /**
+    * Connects service clients to the hiqp controller
+    */
   void connectToServer();
   
   /**
@@ -203,6 +212,15 @@ class HiQPClient {
   
   //returns node handle, can be used to add more to the client callback groups
   rclcpp::Node::SharedPtr getHandle() { return nh_; }
+
+  /** Adds a user-specified node to the list that will be passed to the
+    * executor. Note: should be called prior to calling run();
+    */
+  bool addNodeToExecutorList(rclcpp::Node::SharedPtr node) {
+      if(running_) return false;
+      other_nodes_.push_back(node);
+      return true;
+  }
 };
 
 hiqp_msgs::msg::Task createTaskMsg(const std::string& name, int16_t priority,

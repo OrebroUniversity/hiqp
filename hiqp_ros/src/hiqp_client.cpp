@@ -92,6 +92,7 @@ void HiQPClient::run() {
            rclcpp::executors::SingleThreadedExecutor executor; //
            //rclcpp::executors::MultiThreadedExecutor executor(args,4);
            executor.add_node(this->nh_);
+           for(int a=0; a<other_nodes_.size(); a++) executor.add_node(this->other_nodes_[a]);
            executor.spin_until_future_complete(stop_token);
            //at this point we are done and should signal the node
            this->running_ = false;
