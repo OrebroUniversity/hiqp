@@ -178,82 +178,82 @@ bool TaskManager::getAccelerationControls(RobotStatePtr robot_state,
   }
 
   while(!task_queue.empty()) {
-      std::shared_ptr<Task> task = task_queue.top();
-      if (task->update(robot_state) == 0) {
-        solver_->appendStage(task->getPriority(),
-			     task->getDynamics(),
-                             task->getJacobian(),
-			     task->getJacobianDerivative(),
-			     robot_state->kdl_jnt_array_vel_.qdot,
-                             task->getTaskTypes());
+    std::shared_ptr<Task> task = task_queue.top();
+    if (task->update(robot_state) == 0) {
+      solver_->appendStage(task->getPriority(),
+          task->getDynamics(),
+          task->getJacobian(),
+          task->getJacobianDerivative(),
+          robot_state->kdl_jnt_array_vel_.qdot,
+          task->getTaskTypes());
 
-	///TSV: added below to enable anyone with a robot state to check what tasks are running
-	///     Logic being: some tasks (RL in particular) can use information about the null-space
-	///     of higher priority tasks to decide on actions
-	//fill in task state
-	TaskStatus state;
-	state.priority_ = task->getPriority();
-	state.J_ = task->getJacobian();
-	state.dJ_ = task->getJacobianDerivative();
-	state.e_ = task->getValue();
-	state.de_ = task->getValueDerivative();
-	state.dde_star_ = task->getDynamics();
-	state.task_signs_ = task->getTaskTypes();
-	//push it into the buffer
-	robot_state->task_status_map_.push_back(state);
+      ///TSV: added below to enable anyone with a robot state to check what tasks are running
+      ///     Logic being: some tasks (RL in particular) can use information about the null-space
+      ///     of higher priority tasks to decide on actions
+      //fill in task state
+      TaskStatus state;
+      state.priority_ = task->getPriority();
+      state.J_ = task->getJacobian();
+      state.dJ_ = task->getJacobianDerivative();
+      state.e_ = task->getValue();
+      state.de_ = task->getValueDerivative();
+      state.dde_star_ = task->getDynamics();
+      state.task_signs_ = task->getTaskTypes();
+      //push it into the buffer
+      robot_state->task_status_map_.push_back(state);
 
-	//DEBUG ==================================================
-	//std::cerr<<"Task: "<<task->getTaskName()<<" at prio "<<task->getPriority()<<std::endl;
-	//std::cerr<<"task map is now "<<robot_state->task_status_map_.size()<<" tasks long\n";
-	// std::cerr<<"J_: "<<std::endl<<task->getJacobian()<<std::endl;
-	// std::cerr<<"J_dot_: "<<std::endl<< task->getJacobianDerivative()<<std::endl;
-	//std::cerr<<"e_: "<<task->getValue().transpose()<<std::endl;
-	// std::cerr<<"e_dot_: "<<task->getValueDerivative().transpose()<<std::endl;
-	// std::cerr<<"dde_star: "<<task->getDynamics().transpose()<<std::endl;
-	// std::cerr<<"dq: "<<robot_state->kdl_jnt_array_vel_.qdot.data.transpose()<<std::endl;
-        // std::cerr<<"q: "<<robot_state->kdl_jnt_array_vel_.q.data.transpose()<<std::endl;
-	// std::cerr<<"__________________________________________________________"<<std::endl<<std::endl;
+      //DEBUG ==================================================
+      //std::cerr<<"Task: "<<task->getTaskName()<<" at prio "<<task->getPriority()<<std::endl;
+      //std::cerr<<"task map is now "<<robot_state->task_status_map_.size()<<" tasks long\n";
+      //std::cerr<<"J_: "<<std::endl<<task->getJacobian()<<std::endl;
+      //std::cerr<<"J_dot_: "<<std::endl<< task->getJacobianDerivative()<<std::endl;
+      //std::cerr<<"e_: "<<task->getValue().transpose()<<std::endl;
+      //std::cerr<<"e_dot_: "<<task->getValueDerivative().transpose()<<std::endl;
+      //std::cerr<<"dde_star: "<<task->getDynamics().transpose()<<std::endl;
+      //std::cerr<<"dq: "<<robot_state->kdl_jnt_array_vel_.qdot.data.transpose()<<std::endl;
+      //std::cerr<<"q: "<<robot_state->kdl_jnt_array_vel_.q.data.transpose()<<std::endl;
+      //std::cerr<<"__________________________________________________________"<<std::endl<<std::endl;
 #if 0
-	KDL::JntArray qdot__ = robot_state->kdl_jnt_array_vel_.qdot;
-	KDL::JntArray q__ = robot_state->kdl_jnt_array_vel_.q;
-	unsigned int q_nr=qdot__.rows();
-	std::ofstream dq;
-	std::ofstream q;
-	std::ofstream de;
-	std::ofstream e;
-	std::ofstream dde_star;
-	std::ofstream J;
-	std::ofstream dJ;
-	dq.open ("/home/tsv/hiqp_logs/"+task->getTaskName()+"_dq.dat", std::ios::out | std::ios::app );
-	q.open ("/home/tsv/hiqp_logs/"+task->getTaskName()+"_q.dat", std::ios::out | std::ios::app );
-	de.open ("/home/tsv/hiqp_logs/"+task->getTaskName()+"_de.dat", std::ios::out | std::ios::app );
-	e.open ("/home/tsv/hiqp_logs/"+task->getTaskName()+"_e.dat", std::ios::out | std::ios::app );
-	dde_star.open ("/home/tsv/hiqp_logs/"+task->getTaskName()+"_dde_star.dat", std::ios::out | std::ios::app );
-	J.open ("/home/tsv/hiqp_logs/"+task->getTaskName()+"_J.dat", std::ios::out | std::ios::app );
-	dJ.open ("/home/tsv/hiqp_logs/"+task->getTaskName()+"_dJ.dat", std::ios::out | std::ios::app );	  
-	for(unsigned int i=0; i<q_nr; i++){
-	  dq<<qdot__(i)<<" ";
-          q<<q__(i)<<" ";	    
-	}
-	e<<task->getValue().transpose()<<"\n";
-        de<<task->getValueDerivative().transpose()<<"\n";
-        dde_star<<task->getDynamics().transpose()<<"\n";
-	J<<task->getJacobian()<<"\n"<<"\n";
-	dJ<<task->getJacobianDerivative()<<"\n"<<"\n";	  
-	dq<<"\n";
-	q<<"\n";	  
-	dq.close();
-	q.close();
-	e.close();
-	de.close();
-	dde_star.close();
-	J.close();
-	dJ.close();
+      KDL::JntArray qdot__ = robot_state->kdl_jnt_array_vel_.qdot;
+      KDL::JntArray q__ = robot_state->kdl_jnt_array_vel_.q;
+      unsigned int q_nr=qdot__.rows();
+      std::ofstream dq;
+      std::ofstream q;
+      std::ofstream de;
+      std::ofstream e;
+      std::ofstream dde_star;
+      std::ofstream J;
+      std::ofstream dJ;
+      dq.open ("/home/tsv/hiqp_logs/"+task->getTaskName()+"_dq.dat", std::ios::out | std::ios::app );
+      q.open ("/home/tsv/hiqp_logs/"+task->getTaskName()+"_q.dat", std::ios::out | std::ios::app );
+      de.open ("/home/tsv/hiqp_logs/"+task->getTaskName()+"_de.dat", std::ios::out | std::ios::app );
+      e.open ("/home/tsv/hiqp_logs/"+task->getTaskName()+"_e.dat", std::ios::out | std::ios::app );
+      dde_star.open ("/home/tsv/hiqp_logs/"+task->getTaskName()+"_dde_star.dat", std::ios::out | std::ios::app );
+      J.open ("/home/tsv/hiqp_logs/"+task->getTaskName()+"_J.dat", std::ios::out | std::ios::app );
+      dJ.open ("/home/tsv/hiqp_logs/"+task->getTaskName()+"_dJ.dat", std::ios::out | std::ios::app );	  
+      for(unsigned int i=0; i<q_nr; i++){
+        dq<<qdot__(i)<<" ";
+        q<<q__(i)<<" ";	    
+      }
+      e<<task->getValue().transpose()<<"\n";
+      de<<task->getValueDerivative().transpose()<<"\n";
+      dde_star<<task->getDynamics().transpose()<<"\n";
+      J<<task->getJacobian()<<"\n"<<"\n";
+      dJ<<task->getJacobianDerivative()<<"\n"<<"\n";	  
+      dq<<"\n";
+      q<<"\n";	  
+      dq.close();
+      q.close();
+      e.close();
+      de.close();
+      dde_star.close();
+      J.close();
+      dJ.close();
 #endif
 
-	//DEBUG END ===============================================
-      }
-      task_queue.pop();  
+      //DEBUG END ===============================================
+    }
+    task_queue.pop();  
   }
   
   if (!solver_->solve(controls_)) {

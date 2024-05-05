@@ -67,6 +67,14 @@ controller_interface::CallbackReturn HiqpController::on_init() {
     return CallbackReturn::ERROR;
   }
 
+  try {
+    auto_declare<std::vector<double>>("k_gains", {});
+    auto_declare<std::vector<double>>("d_gains", {});
+  } catch (const std::exception& e) {
+    fprintf(stderr, "Exception thrown during init stage with message: %s \n", e.what());
+    return CallbackReturn::ERROR;
+  }
+
   return CallbackReturn::SUCCESS;
 }
         
@@ -97,7 +105,7 @@ bool HiqpController::getRobotDescriptionFromServer() {
 //called during configuration of command interfaces
 controller_interface::InterfaceConfiguration HiqpController::command_interface_configuration() const
 {
-  RCLCPP_INFO(get_node()->get_logger(), "HiQP controller claiming command interfaces");
+  //RCLCPP_INFO(get_node()->get_logger(), "HiQP controller claiming command interfaces");
   
   controller_interface::InterfaceConfiguration conf;
   conf.type = controller_interface::interface_configuration_type::INDIVIDUAL;
@@ -108,7 +116,7 @@ controller_interface::InterfaceConfiguration HiqpController::command_interface_c
     fprintf(
       stderr,
       "During ros2_control interface configuration, degrees of freedom is not valid;"
-      " it should be positive. Actual DOF is %zu\n",
+      " it should be positive. Actual DOF is %u\n",
       n_joints_);
     std::exit(EXIT_FAILURE);
   }
@@ -118,7 +126,7 @@ controller_interface::InterfaceConfiguration HiqpController::command_interface_c
     for (const auto & interface_type : params_.command_interfaces)
     {
       conf.names.push_back(joint_name + "/" + interface_type);
-      //std::cerr<<"HIQP claiming command interface "<<joint_name<<"/"<<interface_type<<std::endl;
+     // std::cerr<<"HIQP claiming command interface "<<joint_name<<"/"<<interface_type<<std::endl;
     }
   }
   return conf;
@@ -127,7 +135,7 @@ controller_interface::InterfaceConfiguration HiqpController::command_interface_c
 //called during configuration of state interfaces
 controller_interface::InterfaceConfiguration HiqpController::state_interface_configuration() const 
 {
-  RCLCPP_INFO(get_node()->get_logger(), "HiQP controller claiming state interfaces");
+  //RCLCPP_INFO(get_node()->get_logger(), "HiQP controller claiming state interfaces");
   
   controller_interface::InterfaceConfiguration conf;
   conf.type = controller_interface::interface_configuration_type::INDIVIDUAL;
@@ -137,6 +145,7 @@ controller_interface::InterfaceConfiguration HiqpController::state_interface_con
     for (const auto & interface_type : params_.state_interfaces)
     {
       conf.names.push_back(joint_name + "/" + interface_type);
+      //std::cerr<<"HIQP claiming STATE interface "<<joint_name<<"/"<<interface_type<<std::endl;
     }
   }
   return conf; 
@@ -146,6 +155,7 @@ controller_interface::InterfaceConfiguration HiqpController::state_interface_con
 controller_interface::CallbackReturn HiqpController::on_configure(
     const rclcpp_lifecycle::State & previous_state) {
 
+  (void) previous_state; //clears warning 
   const auto logger = get_node()->get_logger();
   RCLCPP_INFO(get_node()->get_logger(), "HiQP controller configuring");
 
@@ -219,12 +229,14 @@ controller_interface::CallbackReturn HiqpController::on_configure(
   };
 
   is_velocity_ = check_ifce_type(params_.command_interfaces, hardware_interface::HW_IF_VELOCITY);
-  is_acceleration_ = check_ifce_type(params_.command_interfaces, hardware_interface::HW_IF_ACCELERATION);
- 
-  if(!(is_velocity_ || is_acceleration_)) {
+  is_effort_ = check_ifce_type(params_.command_interfaces, hardware_interface::HW_IF_EFFORT);
+  
+  if(!(is_velocity_ || is_effort_)) {
     RCLCPP_ERROR(logger, "'command_interfaces' should be either velocity or acceleration for all joints.");
     return CallbackReturn::FAILURE;
   }
+  //set the command interface to the correct dimension
+  cmd_ifce_ = is_velocity_ ? 0 : 1;
 
   if (params_.state_interfaces.empty())
   {
@@ -270,6 +282,62 @@ controller_interface::CallbackReturn HiqpController::on_configure(
     logger, "Command interfaces are [%s] and state interfaces are [%s].",
     get_interface_list(params_.command_interfaces).c_str(),
     get_interface_list(params_.state_interfaces).c_str());
+
+  //load up parameters for effort controller
+  if(is_effort_) {
+    std::cerr<<"number of actuated joints is "<<n_joints_<<std::endl;
+
+    //get impedance parameters from config file
+    std::string param_name = "kv";
+    auto k_gains = get_node()->get_parameter("k_gains").as_double_array();
+    auto d_gains = get_node()->get_parameter("d_gains").as_double_array();
+
+    if(k_gains.size() != d_gains.size() || k_gains.size() != n_joints_) {
+      RCLCPP_ERROR_STREAM(logger, "In HiQPController: k and d gains not correct size. Expected "
+		     << n_joints_ << " Got "<<k_gains.size() <<" and "<<d_gains.size());
+      return CallbackReturn::FAILURE;
+    }
+
+    Kv = Eigen::MatrixXd::Identity(n_joints_,n_joints_);// Eigen::Matrix<double,7,7>::Identity();
+    Kd = Eigen::MatrixXd::Identity(n_joints_,n_joints_);//Eigen::Matrix<double, 7, 7>::Identity();
+
+    for(int i=0; i<n_joints_; i++) {
+      Kv(i,i) = k_gains.at(i);
+      Kd(i,i) = d_gains.at(i);
+    }
+    /*
+    controller_nh.param("alpha_vel", alpha_vel_, 0.99);
+    controller_nh.param("delta_tau_max", delta_tau_max_, 0.1);
+    alpha_vel_ = std::max(std::min(alpha_vel_, 1.0), 0.0);
+    */
+
+    std::cerr<<"Kv = "<<Kv<<std::endl;
+
+    //setup KDL related parameters
+    gravity_vector_kdl = KDL::Vector(0.0,0.0,-9.81);
+
+    std::string chain_root, chain_tip;
+    chain_root = get_node()->get_parameter("chain_root").as_string();
+    chain_tip = get_node()->get_parameter("chain_tip").as_string();
+    RCLCPP_DEBUG(get_node()->get_logger(), "configuring for root %s and tip %s", chain_root.c_str(), chain_tip.c_str());
+
+    if(this->getRobotState()->kdl_tree_.getChain(chain_root, chain_tip, robot_chain)) {
+      std::cerr<<"Got chain: "<<robot_chain<<std::endl;
+      std::cerr<<"Chain has "<<robot_chain.getNrOfJoints()<<" joints and "
+	       <<robot_chain.getNrOfSegments()<< " segments\n";
+    } else {
+      RCLCPP_WARN(logger, "Could not get KDL chain, quitting");
+      return CallbackReturn::FAILURE;
+    }
+    u_vel_ = Eigen::VectorXd::Zero(n_joints_);
+    q_int_ = Eigen::VectorXd::Zero(n_joints_);
+    //sample initial joint values
+    //for (auto &&handle : joint_state_handles_map_) {
+    //  q_int_(handle.first) = joint_state_interface_[0][handle.second].get().get_value();
+    //}
+    //std::cerr<<"Initial joint config is "<<q_int_<<std::endl;
+
+  }
 
   //initialize realtime publisher
   c_state_pub_ = std::shared_ptr<RTPublisher> (new RTPublisher(get_node()->create_publisher<hiqp_msgs::msg::JointControllerState>("hiqp_controller_state",1)));
@@ -321,6 +389,7 @@ controller_interface::CallbackReturn HiqpController::on_configure(
 controller_interface::CallbackReturn HiqpController::on_activate(
     const rclcpp_lifecycle::State & previous_state) {
 
+  (void)previous_state;
   const auto logger = get_node()->get_logger();
   RCLCPP_INFO(logger, "HiQP controller activating");
 
@@ -340,7 +409,7 @@ controller_interface::CallbackReturn HiqpController::on_activate(
           command_interfaces_, command_joint_names_, interface, joint_command_interface_[index]))
     {
       RCLCPP_ERROR(
-        get_node()->get_logger(), "Expected %zu '%s' command interfaces, got %zu.", n_joints_,
+        get_node()->get_logger(), "Expected %u '%s' command interfaces, got %lu.", n_joints_,
         interface.c_str(), joint_command_interface_[index].size());
       return CallbackReturn::ERROR;
     }
@@ -358,7 +427,7 @@ controller_interface::CallbackReturn HiqpController::on_activate(
           state_interfaces_, joint_names_, interface, joint_state_interface_[index]))
     {
       RCLCPP_ERROR(
-        get_node()->get_logger(), "Expected %zu '%s' state interfaces, got %zu.", n_state_joints_,
+        get_node()->get_logger(), "Expected %u '%s' state interfaces, got %lu.", n_state_joints_,
         interface.c_str(), joint_state_interface_[index].size());
       return CallbackReturn::ERROR;
     } 
@@ -373,6 +442,7 @@ controller_interface::CallbackReturn HiqpController::on_activate(
   //read current state
   sampleJointValues();
 
+  RCLCPP_INFO(logger, "HiQP controller activated");
   return CallbackReturn::SUCCESS;
 }
 
@@ -380,6 +450,7 @@ controller_interface::CallbackReturn HiqpController::on_activate(
 controller_interface::CallbackReturn HiqpController::on_deactivate(
     const rclcpp_lifecycle::State & previous_state) {
 
+  (void)previous_state;
   RCLCPP_INFO(get_node()->get_logger(), "HiQP controller deactivating");
   return CallbackReturn::SUCCESS;
 }
@@ -400,24 +471,100 @@ controller_interface::return_type HiqpController::update(
 void HiqpController::updateControls(Eigen::VectorXd& dq, Eigen::VectorXd& u) {
   //if (!is_active_) return;
 
-  std::vector<double> _dq(dq.size());
+  if(is_velocity_) {
+    std::vector<double> _dq(dq.size());
 
-  // Time the acceleration control computation
-  auto t_begin = std::chrono::high_resolution_clock::now();
-  task_manager_ptr_->getVelocityControls(this->getRobotState(), _dq);
-  auto t_end = std::chrono::high_resolution_clock::now();
-  std::chrono::duration<double, std::milli> opt_time = t_end - t_begin;
+    // Time the acceleration control computation
+    auto t_begin = std::chrono::high_resolution_clock::now();
+    task_manager_ptr_->getVelocityControls(this->getRobotState(), _dq);
+    auto t_end = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double, std::milli> opt_time = t_end - t_begin;
 
-  int i = 0;
-  for (auto&& oc : _dq) {
-    dq(i++) = oc;
+    int i = 0;
+    for (auto&& oc : _dq) {
+      dq(i++) = oc;
+    }
+    u=dq; //u_vel_+ddq*period_.toSec();
+          //u_vel_=u; //store the computed velocity controls for the next integration step
+
+    renderPrimitives();
+    monitorTasks(static_cast<double>(opt_time.count()));
   }
-  u=dq; //u_vel_+ddq*period_.toSec();
-        //u_vel_=u; //store the computed velocity controls for the next integration step
 
-  renderPrimitives();
-  monitorTasks(static_cast<double>(opt_time.count()));
+  //here the fun begins, model-based computed torque control
+  if(is_effort_) {
+  
+    std::vector<double> _ddq(dq.size());
+    Eigen::VectorXd ddq(dq.size());
+    
+    // Time the acceleration control computation
+    auto t_begin = std::chrono::high_resolution_clock::now();
+    task_manager_ptr_->getAccelerationControls(this->getRobotState(), _ddq);
+    auto t_end = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double, std::milli> opt_time = t_end - t_begin;
 
+    int i = 0;
+    for (auto&& oc : _ddq) {
+      ddq(i++) = oc;
+    }
+
+    double dt = this->getRobotState()->sampling_time_;
+    Eigen::MatrixXd q_d; 	  //q desired					//<double, 7, 1>
+    Eigen::MatrixXd dq_d;	  //q dot desired     //<double, 7, 1>
+    Eigen::MatrixXd ddq_d = ddq.head(n_joints_); //q dot dot desired     <double, 7, 1>
+    //double alpha = 0.9;      //low-pass filter bandwidth
+    dq_d  = u_vel_ + dt*ddq_d; //computed velocity target
+    u_vel_= dq_d;              //store the computed velocity controls for the next integration step
+    q_d = q_int_ + dt*dq_d;    //compute joint target
+    q_int_= q_d;               //store the computed desired q for the next integration step
+
+    KDL::ChainDynParam id_solver(robot_chain,gravity_vector_kdl);
+    
+    //setup varriables
+    KDL::JntArray q_actuated(n_joints_),
+                  dq_actuated(n_joints_),
+                  ddq_desired(n_joints_), 
+                  torques(n_joints_);
+
+    q_actuated.data = this->getRobotState()->kdl_jnt_array_vel_.q.data.head(n_joints_);
+    dq_actuated.data = this->getRobotState()->kdl_jnt_array_vel_.qdot.data.head(n_joints_);
+
+    //ddq_desired.data = ddq.head(n_actuated_joints_);
+    
+    KDL::JntArray coriolis_kdl(n_joints_), 
+	          gravity_kdl(n_joints_);
+    KDL::JntSpaceInertiaMatrix mass_kdl(n_joints_);
+
+    //get gravity torque
+    int error_number = id_solver.JntToGravity(q_actuated, gravity_kdl);
+    //std::cerr<<"Gravity errno "<<error_number<<" value: "<<gravity_kdl.data.transpose()<<std::endl;
+
+    error_number = id_solver.JntToCoriolis(q_actuated, dq_actuated, coriolis_kdl);
+    //std::cerr<<"Coriolis errno "<<error_number<<" value: "<<coriolis_kdl.data.transpose()<<std::endl;
+
+    error_number = id_solver.JntToMass(q_actuated, mass_kdl);
+    //std::cerr<<"Mass errno "<<error_number<<" value:\n" <<mass_kdl.data<<std::endl; 
+
+    Eigen::MatrixXd tau (n_joints_, 1);
+    //computed torque control: forward model + impedance term
+    tau = mass_kdl.data*ddq_d + coriolis_kdl.data + gravity_kdl.data + 
+	    Kv*(dq_d-dq_actuated.data) + Kd*(q_d-q_actuated.data);
+    //tau = gravity_kdl.data;
+
+    //TODO: here saturate torques?
+
+    u.head(n_joints_) = tau;
+
+    /*
+    std::cerr<<"Setting model-based commands: "
+             //<<"\n q   = "<<q_actuated.data.transpose()
+             //<<"\n dq  = "<<dq_actuated.data.transpose()
+             <<"\n ddq_d = "<<ddq_d.transpose()
+	     <<"\n imp_t = "<<(Kv*(dq_d-dq_actuated.data) + Kd*(q_d-q_actuated.data)).transpose()
+             <<"\n tau = "<<tau.transpose()<<std::endl;
+	     */
+
+  }
   return;
 }
 
@@ -523,7 +670,7 @@ void HiqpController::sampleJointValues() {
   
   for (auto &&handle : joint_state_handles_map_) {
     q(handle.first) = joint_state_interface_[0][handle.second].get().get_value();
-    qdot(handle.first) = joint_state_interface_[1][handle.second].get().get_value(); 
+    qdot(handle.first) = joint_state_interface_[1][handle.second].get().get_value();
   }
 
 }
@@ -531,8 +678,11 @@ void HiqpController::sampleJointValues() {
 void HiqpController::setControls() {
   //RCLCPP_WARN_STREAM(get_node()->get_logger(),"u = ["<<u_.transpose()<<"]");
   //handles_mutex_.lock();
+  //std::cerr<<"commands "<<joint_command_interface_.size();
+  //std::cerr<<" for njoints "<<joint_command_interface_[cmd_ifce_].size()<<std::endl;
   for (auto &&handle : joint_handles_map_) {
-    joint_command_interface_[0][handle.second].get().set_value(u_(handle.first));
+    if(fabs(u_(handle.first))<0.02) u_(handle.first)=0.0; //FIXME testing if deadbnd makes sense
+    joint_command_interface_[cmd_ifce_][handle.second].get().set_value(u_(handle.first));
   }
   //handles_mutex_.unlock();
 }

@@ -64,9 +64,9 @@ namespace hiqp_ros {
       public:
         HiqpController()
           : controller_interface::ControllerInterface(),
+          period_(0,0),
           is_active_(true),
           monitoring_active_(false),
-          period_(0,0),
           visualizer_(new ROSVisualizer()),
           task_manager_ptr_(new hiqp::TaskManager(visualizer_)) {};
         ~HiqpController() noexcept = default;
@@ -158,8 +158,8 @@ namespace hiqp_ros {
         //controller can work with the following hardware interfaces
         const std::vector<std::string> allowed_interface_types_ = {
           hardware_interface::HW_IF_VELOCITY,
-          hardware_interface::HW_IF_ACCELERATION
-         // hardware_interface::HW_IF_EFFORT,
+          hardware_interface::HW_IF_EFFORT
+          //hardware_interface::HW_IF_ACCELERATION,
         };
         const std::vector<std::string> allowed_state_interface_types_ = {
           hardware_interface::HW_IF_POSITION,
@@ -200,11 +200,25 @@ namespace hiqp_ros {
         std::shared_ptr<ROSVisualizer> visualizer_;
         std::shared_ptr<hiqp::TaskManager> task_manager_ptr_;
 
-        bool is_velocity_, is_acceleration_;
+        bool is_velocity_, is_effort_;
+        int cmd_ifce_{0};
 
         //links joint number q to index in joint_command_interface_
         std::map<int,int> joint_handles_map_;
         std::map<int,int> joint_state_handles_map_;
+  
+        //for computed torque control
+        KDL::Vector gravity_vector_kdl;
+        KDL::Chain robot_chain;
+        //previous commanded joint velocity
+        //Eigen::VectorXd u_vel_;
+        //previous commanded 
+        Eigen::VectorXd q_int_;
+        //stiffness of impedance tracking behavior
+        Eigen::MatrixXd Kv;
+        Eigen::MatrixXd Kd;
+        //Eigen::MatrixXd dq_filtered_;
+        //Eigen::MatrixXd tau_;
     };
 
 
