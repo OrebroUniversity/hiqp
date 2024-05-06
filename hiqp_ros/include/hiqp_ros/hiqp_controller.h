@@ -215,7 +215,7 @@ namespace hiqp_ros {
         //previous commanded 
         Eigen::VectorXd q_int_;
         //stiffness of impedance tracking behavior
-        Eigen::MatrixXd Kv;
+        Eigen::MatrixXd Kp;
         Eigen::MatrixXd Kd;
         //Eigen::MatrixXd dq_filtered_;
         //Eigen::MatrixXd tau_;

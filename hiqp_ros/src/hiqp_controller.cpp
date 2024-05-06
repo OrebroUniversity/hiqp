@@ -288,7 +288,6 @@ controller_interface::CallbackReturn HiqpController::on_configure(
     std::cerr<<"number of actuated joints is "<<n_joints_<<std::endl;
 
     //get impedance parameters from config file
-    std::string param_name = "kv";
     auto k_gains = get_node()->get_parameter("k_gains").as_double_array();
     auto d_gains = get_node()->get_parameter("d_gains").as_double_array();
 
@@ -298,11 +297,11 @@ controller_interface::CallbackReturn HiqpController::on_configure(
       return CallbackReturn::FAILURE;
     }
 
-    Kv = Eigen::MatrixXd::Identity(n_joints_,n_joints_);// Eigen::Matrix<double,7,7>::Identity();
+    Kp = Eigen::MatrixXd::Identity(n_joints_,n_joints_);// Eigen::Matrix<double,7,7>::Identity();
     Kd = Eigen::MatrixXd::Identity(n_joints_,n_joints_);//Eigen::Matrix<double, 7, 7>::Identity();
 
     for(int i=0; i<n_joints_; i++) {
-      Kv(i,i) = k_gains.at(i);
+      Kp(i,i) = k_gains.at(i);
       Kd(i,i) = d_gains.at(i);
     }
     /*
@@ -311,7 +310,7 @@ controller_interface::CallbackReturn HiqpController::on_configure(
     alpha_vel_ = std::max(std::min(alpha_vel_, 1.0), 0.0);
     */
 
-    std::cerr<<"Kv = "<<Kv<<std::endl;
+    std::cerr<<"Kp = "<<Kp<<std::endl;
 
     //setup KDL related parameters
     gravity_vector_kdl = KDL::Vector(0.0,0.0,-9.81);
@@ -332,9 +331,9 @@ controller_interface::CallbackReturn HiqpController::on_configure(
     u_vel_ = Eigen::VectorXd::Zero(n_joints_);
     q_int_ = Eigen::VectorXd::Zero(n_joints_);
     //sample initial joint values
-    //for (auto &&handle : joint_state_handles_map_) {
-    //  q_int_(handle.first) = joint_state_interface_[0][handle.second].get().get_value();
-    //}
+    for (auto &&handle : joint_state_handles_map_) {
+      q_int_(handle.first) = joint_state_interface_[0][handle.second].get().get_value();
+    }
     //std::cerr<<"Initial joint config is "<<q_int_<<std::endl;
 
   }
@@ -546,23 +545,28 @@ void HiqpController::updateControls(Eigen::VectorXd& dq, Eigen::VectorXd& u) {
     //std::cerr<<"Mass errno "<<error_number<<" value:\n" <<mass_kdl.data<<std::endl; 
 
     Eigen::MatrixXd tau (n_joints_, 1);
+    
+    //NOTE: below old formula used previously
     //computed torque control: forward model + impedance term
-    tau = mass_kdl.data*ddq_d + coriolis_kdl.data + gravity_kdl.data + 
-	    Kv*(dq_d-dq_actuated.data) + Kd*(q_d-q_actuated.data);
-    //tau = gravity_kdl.data;
+    //tau = mass_kdl.data*ddq_d + coriolis_kdl.data + gravity_kdl.data + 
+	  //  Kp*(dq_d-dq_actuated.data) + Kd*(q_d-q_actuated.data);
+    
+    tau =  Kp*(q_d-q_actuated.data) + Kd*(dq_d-dq_actuated.data) ;
 
     //TODO: here saturate torques?
 
     u.head(n_joints_) = tau;
 
     /*
-    std::cerr<<"Setting model-based commands: "
-             //<<"\n q   = "<<q_actuated.data.transpose()
-             //<<"\n dq  = "<<dq_actuated.data.transpose()
-             <<"\n ddq_d = "<<ddq_d.transpose()
-	     <<"\n imp_t = "<<(Kv*(dq_d-dq_actuated.data) + Kd*(q_d-q_actuated.data)).transpose()
-             <<"\n tau = "<<tau.transpose()<<std::endl;
 	     */
+    std::cerr<<"Setting model-based commands: "
+             <<"\n q   = "<<q_actuated.data.transpose()
+             <<"\n q_d   = "<<q_d.transpose()
+             <<"\n dq  = "<<dq_actuated.data.transpose()
+             <<"\n dq_d  = "<<dq_d.transpose()
+             <<"\n ddq_d = "<<ddq_d.transpose()
+             //<<"\n imp_t = "<<(Kp*(dq_d-dq_actuated.data) + Kd*(q_d-q_actuated.data)).transpose()
+             <<"\n tau = "<<tau.transpose()<<std::endl;
 
   }
   return;
