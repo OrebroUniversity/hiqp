@@ -203,6 +203,9 @@ namespace hiqp_ros {
         bool is_velocity_, is_effort_;
         int cmd_ifce_{0};
 
+        double dead_band_{0.0};
+        double filter_alpha_{0.0};
+
         //links joint number q to index in joint_command_interface_
         std::map<int,int> joint_handles_map_;
         std::map<int,int> joint_state_handles_map_;

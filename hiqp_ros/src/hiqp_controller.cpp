@@ -379,6 +379,10 @@ controller_interface::CallbackReturn HiqpController::on_configure(
   //loadTasksFromParamServer();
 
   u_vel_ = Eigen::VectorXd::Zero(getNJoints());
+
+  dead_band_ = params_.dead_band;
+  filter_alpha_ = params_.filter_alpha;
+
   RCLCPP_INFO(logger, "HiQP controller configured");
   return CallbackReturn::SUCCESS;
 
@@ -663,19 +667,21 @@ void HiqpController::sampleJointValues() {
 
   KDL::JntArray &q = robot_state_ptr_->kdl_jnt_array_vel_.q;
   KDL::JntArray &qdot = robot_state_ptr_->kdl_jnt_array_vel_.qdot;
+  KDL::JntArray qdot_current = robot_state_ptr_->kdl_jnt_array_vel_.qdot;
   //KDL::JntArray &effort = robot_state_ptr_->kdl_effort_;
   q.data.setZero();
-  qdot.data.setZero();
+  qdot_current.data.setZero();
+  //qdot.data.setZero();
   //effort.data.setZero();
-  //double alpha = 0.05;
 
   //handles_mutex_.lock();
   //handles_mutex_.unlock();
   
   for (auto &&handle : joint_state_handles_map_) {
     q(handle.first) = joint_state_interface_[0][handle.second].get().get_value();
-    qdot(handle.first) = joint_state_interface_[1][handle.second].get().get_value();
+    qdot_current(handle.first) = joint_state_interface_[1][handle.second].get().get_value();
   }
+  qdot.data = (1-filter_alpha_)*qdot_current.data + filter_alpha_*qdot.data;
 
 }
 //=====================================================================================
@@ -685,7 +691,7 @@ void HiqpController::setControls() {
   //std::cerr<<"commands "<<joint_command_interface_.size();
   //std::cerr<<" for njoints "<<joint_command_interface_[cmd_ifce_].size()<<std::endl;
   for (auto &&handle : joint_handles_map_) {
-    if(fabs(u_(handle.first))<0.02) u_(handle.first)=0.0; //FIXME testing if deadbnd makes sense
+    if(fabs(u_(handle.first))<dead_band_) u_(handle.first)=0.0; 
     joint_command_interface_[cmd_ifce_][handle.second].get().set_value(u_(handle.first));
   }
   //handles_mutex_.unlock();

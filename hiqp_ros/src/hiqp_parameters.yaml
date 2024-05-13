@@ -74,3 +74,22 @@ hiqp_ros:
       gt_eq: [1.0]
     }
   }
+  dead_band: {
+    type: double,
+    default_value: 0.0,
+    description: "Cutoff for velocity/torque commands. Commands with abd value lower than this are not sent to the robot",
+    read_only: true,
+    validation: {
+      gt_eq: [0.0]
+    }
+  }
+  filter_alpha: {
+    type: double,
+    default_value: 0.0,
+    description: "Weigh in old velocity by this much. Between 0 and 1",
+    read_only: true,
+    validation: {
+      gt_eq: [0.0],
+      lt_eq: [1.0]
+    }
+  }
