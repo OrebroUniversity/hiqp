@@ -79,7 +79,8 @@ controller_interface::CallbackReturn HiqpController::on_init() {
 }
         
 bool HiqpController::getRobotDescriptionFromServer() {
-  auto param_client = std::make_shared<rclcpp::SyncParametersClient>(get_node(), "/robot_state_publisher");
+  //auto param_client = std::make_shared<rclcpp::SyncParametersClient>(get_node(), "/robot_state_publisher");
+  auto param_client = std::make_shared<rclcpp::SyncParametersClient>(get_node(), params_.robot_state_publisher);
   while (!param_client->wait_for_service(1s))
   {
     if (!rclcpp::ok())

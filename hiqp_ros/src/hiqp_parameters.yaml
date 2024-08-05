@@ -93,3 +93,9 @@ hiqp_ros:
       lt_eq: [1.0]
     }
   }
+  robot_state_publisher: {
+    type: string,
+    default_value: "/robot_state_publisher",
+    description: "Node to get the robot description from",
+    read_only: true,
+  }
