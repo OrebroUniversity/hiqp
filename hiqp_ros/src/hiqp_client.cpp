@@ -525,15 +525,16 @@ void HiQPClient::waitForCompletion(
 }
 
 bool HiQPClient::setJointAngles(const std::vector<double>& joint_angles,
-    bool remove, double tol) {
+    bool remove, double tol, double tdyn_gain) {
   std::vector<std::string> def_params{"TDefFullPose"};
 
   for (auto jointValue : joint_angles) {
     def_params.push_back(std::to_string(jointValue));
   }
 
+  std::string gain = std::to_string(tdyn_gain);
   bool ret = this->setTask("joint_configuration", 3, true, true, true, def_params,
-      {"TDynLinear", "0.75"});
+      {"TDynLinear", gain});
   if (ret) {
     if (remove) {
       std::cerr<<"setting tolerance of "<<tol<<std::endl;
