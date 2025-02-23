@@ -99,3 +99,21 @@ hiqp_ros:
     description: "Node to get the robot description from",
     read_only: true,
   }
+#  hiqp_preload_jnt_limits: 
+#    __map_command_joints:
+#      link_frame:
+#        type: string
+#        description: "Link frame to limit"
+#      dq_max:
+#        type: double
+#        description: "Max joint velocity"
+#        validation: 
+#          gt_eq<>: [ 0.0001 ]
+#      ddq_max:
+#        type: double
+#        description: "Max joint acceleration"
+#        validation: 
+#          gt_eq<>: [ 0.0001 ]
+
+
+

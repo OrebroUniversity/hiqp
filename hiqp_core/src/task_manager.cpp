@@ -345,7 +345,8 @@ int TaskManager::setTask(const std::string& task_name, unsigned int priority,
     return -1;
   } else {
     task_map_.emplace(task_name, task);
-    printHiqpInfo(action + " task '" + task_name + "'");
+    printHiqpInfo(action + " task '" + task_name + "' at priority level " 
+        + std::to_string(priority));
   }
   resource_mutex_.unlock();
   return 0;

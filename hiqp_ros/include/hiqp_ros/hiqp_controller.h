@@ -45,7 +45,7 @@
 #include <hiqp_ros/hiqp_service_handler.h>
 
 //auto-gernerated by generate_parameters library
-#include "hiqp_parameters.hpp"
+#include <hiqp_ros/hiqp_parameters.hpp>
 
 namespace hiqp_ros {
 
@@ -180,9 +180,9 @@ namespace hiqp_ros {
         void loadRenderingParameters();
         int loadAndSetupTaskMonitoring();
         void addTfTopicSubscriptions();
-        void loadJointLimitsFromParamServer();
-        void loadGeometricPrimitivesFromParamServer();
-        void loadTasksFromParamServer();
+        //void loadJointLimitsFromParamServer();
+        //void loadGeometricPrimitivesFromParamServer();
+        //void loadTasksFromParamServer();
         int loadJointsAndSetJointHandlesMap();
 
         bool is_active_;

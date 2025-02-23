@@ -68,10 +68,10 @@ namespace hiqp {
       task_signs_.resize(6);
       task_signs_.at(0) = 1;   // < upper joint limit 
       task_signs_.at(1) = -1;  // > lower joint limit
-      task_signs_.at(2) = 1;   // < upper joint velocity limit
-      task_signs_.at(3) = -1;  // > lower joint velocity limit
-      task_signs_.at(4) = 1;   // < upper joint acceleration limit
-      task_signs_.at(5) = -1;  // > lower joint acceleration limit      
+      task_signs_.at(2) = -1;   // < upper joint velocity limit
+      task_signs_.at(3) = 1;  // > lower joint velocity limit
+      task_signs_.at(4) = -1;   // < upper joint acceleration limit
+      task_signs_.at(5) = 1;  // > lower joint acceleration limit      
 
       J_(0,link_frame_q_nr_)=-1.0;      
       J_(1,link_frame_q_nr_)=-1.0;

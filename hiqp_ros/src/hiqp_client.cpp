@@ -164,6 +164,7 @@ bool HiQPClient::setTask(const std::string& name, int16_t priority,
   task.def_params = def_params;
   task.dyn_params = dyn_params;
 
+  std::cerr<<"setting task "<<name<<" at priority level "<<task.priority<<std::endl;
   std::vector<hiqp_msgs::msg::Task> tasks{task};
 
   return setTasks(tasks);

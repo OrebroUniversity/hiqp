@@ -792,7 +792,59 @@ void HiqpController::loadRenderingParameters() {
   rendering_publish_rate_ = params_.visualization_publish_rate;  // defaults to 1 kHz
   last_rendering_update_ = get_node()->get_clock()->now();
 }
+
+
 #if 0
+///TODO NOTE For future developers: This code was deprecated, as it makes the specification of joint limits obligatory.
+///It seems it is difficult to specify an optional array of complex stuff in generate_parameter
+///So, be warned, this should not be added back!
+
+/// \bug Having both, joint limits and avoidance tasks at the highest hierarchy
+/// level can cause an infeasible problem TODO:replicate
+
+void HiqpController::loadJointLimitsFromParamServer() {
+  std::cerr<<"\n\n\n\n\nLOADING JOINT LIMITS\n\n\n\n";
+  if (params_.hiqp_preload_jnt_limits.command_joints_map.size() == 0 ) {
+    RCLCPP_WARN(get_node()->get_logger(), "Could not find hiqp_preload_jnt_limits in parameters");
+  } else {
+    RCLCPP_ERROR(get_node()->get_logger(), "Processing joint limits");
+    for(auto lmt=params_.hiqp_preload_jnt_limits.command_joints_map.begin(); 
+             lmt!=params_.hiqp_preload_jnt_limits.command_joints_map.end(); lmt++) {
+      std::vector<std::string> def_params;
+      def_params.push_back("TDefJntLimits");
+      std::string link_frame = lmt->second.link_frame; //look up link frame from joint name
+      def_params.push_back(link_frame);
+      def_params.push_back(std::to_string(static_cast<double>(lmt->second.dq_max)));
+      def_params.push_back(std::to_string(lmt->second.ddq_max));
+      std::cerr<<"Task "<<link_frame<<"_jntlimits ";
+      std::cerr<<"def_params "<<def_params[0]<<" "<<def_params[1]<<std::endl;
+/*          
+      def_params.push_back(
+          std::to_string(static_cast<double>(lmt->second.limitations[2])));
+      def_params.push_back(
+          std::to_string(static_cast<double>(lmt->second.limitations[3])));
+
+
+      std::vector<std::string> dyn_params;
+      dyn_params.push_back("TDynJntLimits");
+      dyn_params.push_back(
+          std::to_string(static_cast<double>(lmt->second.limitations[4])));
+      dyn_params.push_back(
+          std::to_string(static_cast<double>(lmt->second.limitations[5])));
+      std::cerr<<"Task "<<link_frame<<"_jntlimits ";
+      std::cerr<<"def_params "<<def_params[0]<<" "<<def_params[1]<<" "<<def_params[2]<<" "<<def_params[3]<<std::endl;
+      if(task_manager_ptr_->setTask(link_frame + "_jntlimits", 0, true, true, false,
+            def_params, dyn_params, this->getRobotState()) !=0){
+        RCLCPP_WARN_STREAM(get_node()->get_logger(), 
+            "Error while loading "
+            << "hiqp_preload_jnt_limits parameter from the "
+            << "parameter server. Could not set task.");
+      }
+*/
+    }
+  }
+
+}
 
 //=====================================================================================
 void HiqpController::update(const ros::Time &time,
@@ -882,70 +934,6 @@ int HiqpController::loadAndSetupTaskMonitoring() {
   return 0;
 }
 
-/// \bug Having both, joint limits and avoidance tasks at the highest hierarchy
-/// level can cause an infeasible problem (e.g., via starting with
-/// yumi_hiqp_preload.yaml tasks)
-void HiqpController::loadJointLimitsFromParamServer() {
-  XmlRpc::XmlRpcValue hiqp_preload_jnt_limits;
-  if (!this->getControllerNodeHandle().getParam("hiqp_preload_jnt_limits",
-        hiqp_preload_jnt_limits)) {
-    ROS_WARN_STREAM("No hiqp_preload_jnt_limits parameter found on "
-        << "the parameter server. No joint limits were loaded!");
-  } else {
-    bool parsing_success = true;
-    for (int i = 0; i < hiqp_preload_jnt_limits.size(); ++i) {
-      try {
-        std::string link_frame =
-          static_cast<std::string>(hiqp_preload_jnt_limits[i]["link_frame"]);
-
-        XmlRpc::XmlRpcValue& limitations =
-          hiqp_preload_jnt_limits[i]["limitations"];
-
-        std::vector<std::string> def_params;
-        def_params.push_back("TDefJntLimits");
-        def_params.push_back(link_frame);
-        def_params.push_back(
-            std::to_string(static_cast<double>(limitations[0])));
-        def_params.push_back(
-            std::to_string(static_cast<double>(limitations[1])));
-        def_params.push_back(
-            std::to_string(static_cast<double>(limitations[2])));
-        def_params.push_back(
-            std::to_string(static_cast<double>(limitations[3])));
-
-
-        std::vector<std::string> dyn_params;
-        dyn_params.push_back("TDynJntLimits");
-        dyn_params.push_back(
-            std::to_string(static_cast<double>(limitations[4])));
-        dyn_params.push_back(
-            std::to_string(static_cast<double>(limitations[5])));
-
-        if(task_manager_ptr_->setTask(link_frame + "_jntlimits", 1, true, true, false,
-              def_params, dyn_params, this->getRobotState()) !=0){
-          ROS_WARN_STREAM(
-              "Error while loading "
-              << "hiqp_preload_jnt_limits parameter from the "
-              << "parameter server. Could not set task.");
-          parsing_success = false;
-        }
-
-      } catch (const XmlRpc::XmlRpcException& e) {
-        ROS_WARN_STREAM(
-            "Error while loading "
-            << "hiqp_preload_jnt_limits parameter from the "
-            << "parameter server. XmlRcpException thrown with message: "
-            << e.getMessage());
-        parsing_success = false;
-        break;
-      }
-    }
-
-    if (parsing_success)
-      ROS_INFO_STREAM("Loaded and initiated joint limit tasks from .yaml "
-          << "file successfully!");
-  }
-}
 
 void HiqpController::loadGeometricPrimitivesFromParamServer() {
   XmlRpc::XmlRpcValue hiqp_preload_geometric_primitives;

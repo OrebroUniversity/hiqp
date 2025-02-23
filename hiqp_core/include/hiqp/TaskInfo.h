@@ -3,7 +3,7 @@
 namespace hiqp {
 
 struct TaskInfo {
-  TaskInfo(const std::string& _name, bool _priority, bool _active,
+  TaskInfo(const std::string& _name, uint16_t _priority, bool _active,
            bool _monitored, const std::vector<std::string>& _def_params,
            const std::vector<std::string>& _dyn_params)
       : name(_name),
@@ -14,7 +14,7 @@ struct TaskInfo {
         dyn_params(_dyn_params) {}
 
   std::string name;
-  bool priority;
+  uint16_t priority;
   bool active;
   bool monitored;
   std::vector<std::string> def_params;
