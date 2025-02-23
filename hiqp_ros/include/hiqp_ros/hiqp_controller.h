@@ -202,10 +202,21 @@ namespace hiqp_ros {
 
         bool is_velocity_, is_effort_;
         int cmd_ifce_{0};
-
+        double delta_tau_max_{0.1};
         double dead_band_{0.0};
         double filter_alpha_{0.0};
-
+        std::vector<double> prev_output;
+        std::vector<double> prev_derivative;
+        double second_order_lpf(double input, size_t index);
+        ///////Additions by Da for effort control mode/////////////
+        //Torque saturation interface
+        Eigen::VectorXd saturateTorqueRate(
+          const Eigen::VectorXd& tau_d_calculated,
+          const Eigen::VectorXd& tau_J_d); // NOLINT (readability-identifier-naming)
+        double omega_n = 0.001;  // natural frequency (adjust this value to change the filter's response speed)
+        double zeta = 0.5;      // damping ratio (0.5 ~ 1.0 is usually optimal)
+        double dt = 0.001;      // sampling interval (seconds)
+        //////////////////////////////////////////////////////////
         //links joint number q to index in joint_command_interface_
         std::map<int,int> joint_handles_map_;
         std::map<int,int> joint_state_handles_map_;
@@ -217,6 +228,7 @@ namespace hiqp_ros {
         //Eigen::VectorXd u_vel_;
         //previous commanded 
         Eigen::VectorXd q_int_;
+        Eigen::VectorXd tau_;
         //stiffness of impedance tracking behavior
         Eigen::MatrixXd Kp;
         Eigen::MatrixXd Kd;

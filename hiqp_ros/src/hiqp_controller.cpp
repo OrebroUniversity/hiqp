@@ -74,13 +74,14 @@ controller_interface::CallbackReturn HiqpController::on_init() {
     fprintf(stderr, "Exception thrown during init stage with message: %s \n", e.what());
     return CallbackReturn::ERROR;
   }
-
+  
   return CallbackReturn::SUCCESS;
 }
         
 bool HiqpController::getRobotDescriptionFromServer() {
   //auto param_client = std::make_shared<rclcpp::SyncParametersClient>(get_node(), "/robot_state_publisher");
   auto param_client = std::make_shared<rclcpp::SyncParametersClient>(get_node(), params_.robot_state_publisher);
+  
   while (!param_client->wait_for_service(1s))
   {
     if (!rclcpp::ok())
@@ -197,7 +198,8 @@ controller_interface::CallbackReturn HiqpController::on_configure(
   // get degrees of freedom
   n_state_joints_ = joint_names_.size();
   n_joints_ = command_joint_names_.size();
-
+  prev_output.resize(n_state_joints_, 0.0);
+  prev_derivative.resize(n_state_joints_, 0.0);
 
   if (params_.command_interfaces.empty())
   {
@@ -373,7 +375,8 @@ controller_interface::CallbackReturn HiqpController::on_configure(
 
   service_handler_.advertiseAll();
 
-  task_manager_ptr_->init(getNJoints(), true);
+  //FIXME this should come through the type of interfaces in config file!
+  task_manager_ptr_->init(getNJoints(), true);//true: velocity control; false: effort control
 
   //loadJointLimitsFromParamServer();
   //loadGeometricPrimitivesFromParamServer();
@@ -465,7 +468,7 @@ controller_interface::return_type HiqpController::update(
 
   period_ = period;
   sampleJointValues();
-  //sampleSensorValues();    
+  //sampleSensorValues(); 
   updateControls(ddq_, u_);
   setControls();
   publishControllerState();
@@ -477,20 +480,17 @@ void HiqpController::updateControls(Eigen::VectorXd& dq, Eigen::VectorXd& u) {
 
   if(is_velocity_) {
     std::vector<double> _dq(dq.size());
-
+    //constexpr double alpha_lpf = 0.001;
     // Time the acceleration control computation
     auto t_begin = std::chrono::high_resolution_clock::now();
     task_manager_ptr_->getVelocityControls(this->getRobotState(), _dq);
     auto t_end = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double, std::milli> opt_time = t_end - t_begin;
 
-    int i = 0;
-    for (auto&& oc : _dq) {
-      dq(i++) = oc;
+    for (size_t i = 0; i < _dq.size(); ++i) {
+      //FIXME: this should only be done if filtering is enabled?
+      u[i] = second_order_lpf(_dq[i], i);
     }
-    u=dq; //u_vel_+ddq*period_.toSec();
-          //u_vel_=u; //store the computed velocity controls for the next integration step
-
     renderPrimitives();
     monitorTasks(static_cast<double>(opt_time.count()));
   }
@@ -516,7 +516,6 @@ void HiqpController::updateControls(Eigen::VectorXd& dq, Eigen::VectorXd& u) {
     Eigen::MatrixXd q_d; 	  //q desired					//<double, 7, 1>
     Eigen::MatrixXd dq_d;	  //q dot desired     //<double, 7, 1>
     Eigen::MatrixXd ddq_d = ddq.head(n_joints_); //q dot dot desired     <double, 7, 1>
-    //double alpha = 0.9;      //low-pass filter bandwidth
     dq_d  = u_vel_ + dt*ddq_d; //computed velocity target
     u_vel_= dq_d;              //store the computed velocity controls for the next integration step
     q_d = q_int_ + dt*dq_d;    //compute joint target
@@ -550,34 +549,87 @@ void HiqpController::updateControls(Eigen::VectorXd& dq, Eigen::VectorXd& u) {
     //std::cerr<<"Mass errno "<<error_number<<" value:\n" <<mass_kdl.data<<std::endl; 
 
     Eigen::MatrixXd tau (n_joints_, 1);
-    
+    Eigen::MatrixXd tau_ (n_joints_, 1);
+  
     //NOTE: below old formula used previously
     //computed torque control: forward model + impedance term
-    //tau = mass_kdl.data*ddq_d + coriolis_kdl.data + gravity_kdl.data + 
-	  //  Kp*(dq_d-dq_actuated.data) + Kd*(q_d-q_actuated.data);
-    
-    tau =  Kp*(q_d-q_actuated.data) + Kd*(dq_d-dq_actuated.data) ;
+    //tau_ = mass_kdl.data*ddq_d + coriolis_kdl.data + 
+	    //Kd*(dq_d-dq_actuated.data) + Kp*position_error;
+      //for (size_t i = 0; i < tau_.size(); ++i) {
+      //  tau(i,0) = second_order_lpf(tau_(i,0), i);
+    //}
 
-    //TODO: here saturate torques?
+    // Check if the errors of all joints are within the dead zone range
+    int kz = 1;
+    bool all_within_deadzone = true;  // check if all axes are within the deadband
+    for (int i = 0; i < q_d.size(); i++) {
+      if (std::abs(q_d(i,0)) >= dead_band_) {
+          all_within_deadzone = false;
+          break;//As long as one axis error exceeds the dead band, the check will be exited
+      }
+    }
+
+    // If all errors are within the deadband, set kz to zero.
+    if (all_within_deadzone) {
+      kz=0;
+    }
+    
+    tau =  mass_kdl.data*ddq_d + coriolis_kdl.data + kz*3*Kp*(q_d-q_actuated.data) + kz*6*Kd*(dq_d-dq) ;
+    //saturate torque
+    tau_ << saturateTorqueRate(tau, tau_);
 
     u.head(n_joints_) = tau;
 
-    /*
-	     */
+ 	     /*  
     std::cerr<<"Setting model-based commands: "
              <<"\n q   = "<<q_actuated.data.transpose()
              <<"\n q_d   = "<<q_d.transpose()
              <<"\n dq  = "<<dq_actuated.data.transpose()
              <<"\n dq_d  = "<<dq_d.transpose()
              <<"\n ddq_d = "<<ddq_d.transpose()
-             //<<"\n imp_t = "<<(Kp*(dq_d-dq_actuated.data) + Kd*(q_d-q_actuated.data)).transpose()
+             <<"\n imp_t = "<<(Kp*(dq_d-dq_actuated.data) + Kd*(q_d-q_actuated.data)).transpose()
              <<"\n tau = "<<tau.transpose()<<std::endl;
-
+ */
+    renderPrimitives();
+    monitorTasks(static_cast<double>(opt_time.count()));
   }
   return;
 }
+// **Quadratic low-pass filter function**
+double HiqpController::second_order_lpf(double input, size_t index) {
+  // Calculate filter parameters
+  double alpha_0 = omega_n * omega_n;
+  double alpha_1 = 2 * zeta * omega_n;
+  double alpha_2 = omega_n * omega_n;
+  //double dt = this->getRobotState()->sampling_time_;
 
+  //Compute first-order differences (discretized derivatives)
+  double derivative = (input - prev_output[index]) / dt;
+  
+  //Calculate the filtered output
+  double output = prev_output[index] + dt * prev_derivative[index];
+
+  // Update stored value
+  prev_derivative[index] = alpha_0 * input + alpha_1 * derivative - alpha_2 * output;
+  prev_output[index] = output;
+
+  return output;
+}
 //=====================================================================================
+
+Eigen::VectorXd  HiqpController::saturateTorqueRate(
+  const Eigen::VectorXd& tau_d_calculated,
+  const Eigen::VectorXd& tau_J_d) {
+  assert(tau_d_calculated.size() == tau_J_d.size() && "Size mismatch in torque saturation!");
+  Eigen::VectorXd tau_d_saturated(tau_d_calculated.size());
+  for (size_t i = 0; i < n_joints_; i++) {
+     double difference = tau_d_calculated[i] - tau_J_d[i];
+     tau_d_saturated[i] =
+         tau_J_d[i] + std::max(std::min(difference, delta_tau_max_), -delta_tau_max_);
+   }
+   return tau_d_saturated;
+}
+
 int HiqpController::loadUrdfToKdlTree() {
 
   bool success =
@@ -682,8 +734,8 @@ void HiqpController::sampleJointValues() {
     q(handle.first) = joint_state_interface_[0][handle.second].get().get_value();
     qdot_current(handle.first) = joint_state_interface_[1][handle.second].get().get_value();
   }
-  qdot.data = (1-filter_alpha_)*qdot_current.data + filter_alpha_*qdot.data;
-
+  qdot.data = filter_alpha_*qdot_current.data + (1-filter_alpha_)*qdot.data;
+  ddq_ = Eigen::Map<Eigen::VectorXd>(qdot.data.data(), qdot.rows());
 }
 //=====================================================================================
 void HiqpController::setControls() {
@@ -692,7 +744,7 @@ void HiqpController::setControls() {
   //std::cerr<<"commands "<<joint_command_interface_.size();
   //std::cerr<<" for njoints "<<joint_command_interface_[cmd_ifce_].size()<<std::endl;
   for (auto &&handle : joint_handles_map_) {
-    if(fabs(u_(handle.first))<dead_band_) u_(handle.first)=0.0; 
+    //if(fabs(u_(handle.first))<dead_band_) u_(handle.first)=0.0; 
     joint_command_interface_[cmd_ifce_][handle.second].get().set_value(u_(handle.first));
   }
   //handles_mutex_.unlock();
@@ -793,8 +845,8 @@ void HiqpController::loadRenderingParameters() {
   last_rendering_update_ = get_node()->get_clock()->now();
 }
 
-
 #if 0
+
 ///TODO NOTE For future developers: This code was deprecated, as it makes the specification of joint limits obligatory.
 ///It seems it is difficult to specify an optional array of complex stuff in generate_parameter
 ///So, be warned, this should not be added back!
@@ -933,7 +985,6 @@ int HiqpController::loadAndSetupTaskMonitoring() {
 
   return 0;
 }
-
 
 void HiqpController::loadGeometricPrimitivesFromParamServer() {
   XmlRpc::XmlRpcValue hiqp_preload_geometric_primitives;
